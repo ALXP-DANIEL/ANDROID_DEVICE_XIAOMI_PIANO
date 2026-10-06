@@ -30,10 +30,11 @@ class ReadingEnhancement : public aidl::vendor::lineage::livedisplay::BnReadingE
         *enabled = mEnabled;
         return ScopedAStatus::ok();
     }
+    // PianoParts follows Lineage's reading mode setting and applies the
+    // stock effect (warmth, paper colors and texture), so only keep the state.
     ScopedAStatus setEnabled(bool enabled) override {
-        bool ok = xiaomi::setDisplayFeature(xiaomi::FEATURE_PAPER_MODE, enabled ? 1 : 0);
-        if (ok) mEnabled = enabled;
-        return result(ok);
+        mEnabled = enabled;
+        return ScopedAStatus::ok();
     }
 
   private:
