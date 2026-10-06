@@ -1,0 +1,80 @@
+ORS fixes: twrp_sideload() already installs the package, so do not install it
+a second time from the FUSE path; and remove the queued script file as soon
+as it is opened, so commands from a run that never finished (sideload) are
+not replayed by the next "twrp <cmd>".
+Also use the existing restore_btn string for the ORS restore heading: there is
+no "restore" string, so every scripted restore logged
+"String resource restore not found".
+And run Fox_Post_Zip_Install() after a ROM/OTA installed with "twrp install",
+like a GUI install, so OrangeFox also reflashes itself into the other slot.
+
+diff --git a/openrecoveryscript.cpp b/openrecoveryscript.cpp
+index 3b8d3e4..57fd7c6 100755
+--- a/openrecoveryscript.cpp
++++ b/openrecoveryscript.cpp
+@@ -112,6 +112,11 @@ int OpenRecoveryScript::run_script_file(void) {
+ 
+ 	FILE *fp = fopen(SCRIPT_FILE_TMP, "r");
+ 	if (fp != NULL) {
++		// Remove the queue file as soon as it is open (fp still reads it). It
++		// used to be removed only after the last command, so a run that never
++		// got there (e.g. sideload) left its commands queued, and the next
++		// "twrp <cmd>" appended to them and replayed them.
++		unlink(SCRIPT_FILE_TMP);
+ 		DataManager::SetValue(TW_SIMULATE_ACTIONS, 0);
+ 		DataManager::SetValue("ui_progress", 0); // Reset the progress bar
+ 		while (fgets(script_line, SCRIPT_COMMAND_SIZE, fp) != NULL && ret_val == 0) {
+@@ -212,7 +217,7 @@ int OpenRecoveryScript::run_script_file(void) {
+ 				ret_val = Backup_Command(value1);
+ 			} else if (strcmp(command, "restore") == 0) {
+ 				// Restore
+-				DataManager::SetValue("tw_action_text2", gui_parse_text("{@restore}"));
++				DataManager::SetValue("tw_action_text2", gui_parse_text("{@restore_btn}"));
+ 				PartitionManager.Mount_All_Storage();
+ 				DataManager::SetValue(TW_SKIP_DIGEST_CHECK_VAR, 0);
+ 				char folder_path[512], partitions[512];
+@@ -418,16 +423,20 @@ int OpenRecoveryScript::run_script_file(void) {
+ 
+ 				// ret_val = apply_from_adb("/", &sideload_child_pid);
+ 				Device::BuiltinAction reboot_action = Device::REBOOT_BOOTLOADER;
++				// twrp_sideload() installs the package itself, from its
++				// minadbd install handler. Installing FUSE_SIDELOAD_HOST_PATHNAME
++				// a second time here, as older code did, read from the sideload
++				// channel again: the device sat in sideload mode waiting for a
++				// package that never came, the script never finished, and the
++				// command stayed queued to be replayed by the next CLI command.
++				// The GUI sideload action already works this way.
+ 				ret_val = twrp_sideload("/", &reboot_action);
+ 				if (ret_val != 0) {
+ 					if (ret_val == -2)
+ 						gui_err("need_new_adb=You need adb 1.0.32 or newer to sideload to this device.");
+ 					ret_val = 1; // failure
+-				} else if (TWinstall_zip(FUSE_SIDELOAD_HOST_PATHNAME, &wipe_cache) == 0) {
+-					if (wipe_cache)
+-						PartitionManager.Wipe_By_Path("/cache");
+-				} else {
+-					ret_val = 1; // failure
++				} else if (wipe_cache) {
++					PartitionManager.Wipe_By_Path("/cache");
+ 				}
+ 				PartitionManager.Unlock_Block_Partitions();
+ 				PartitionManager.Update_System_Details();
+@@ -583,8 +592,16 @@ int OpenRecoveryScript::Install_Command(string Zip) {
+ 		LOGINFO ("OpenRecoveryScript::Install_Command() error.\n");
+ 		gui_msg(Msg(msg::kError, "zip_err=Error installing zip file '{1}'")(Zip));
+ 		ret_val = 1;
+-	} else if (wipe_cache)
+-		PartitionManager.Wipe_By_Path("/cache");
++	} else {
++		if (wipe_cache)
++			PartitionManager.Wipe_By_Path("/cache");
++		// Run the same post-ROM processing as a GUI install (including the
++		// A/B self-reflash of OrangeFox into the other recovery slot). Without
++		// it, an OTA installed with "twrp install" left stock recovery in the
++		// new slot.
++		if (DataManager::GetIntValue(FOX_ZIP_INSTALLER_CODE) != 0)
++			Fox_Post_Zip_Install(0 /* INSTALL_SUCCESS */);
++	}
+ 
+ 	TWFunc::Dump_Current_Settings();
+ 

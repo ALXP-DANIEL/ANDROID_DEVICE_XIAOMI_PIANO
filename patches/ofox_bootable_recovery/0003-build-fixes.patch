@@ -1,0 +1,24 @@
+Build fix: ozip_decrypt() returns unsupported when no TW_OZIP_DECRYPT_KEY is set.
+
+diff --git a/gui/action.cpp b/gui/action.cpp
+index bd5da2516..ccae16b5e 100644
+--- a/gui/action.cpp
++++ b/gui/action.cpp
+@@ -1484,6 +1484,9 @@ void GUIAction::reinject_after_flash()
+ 
+ int GUIAction::ozip_decrypt(string zip_path)
+ {
++#ifndef TW_OZIP_DECRYPT_KEY
++   return 1;
++#else
+    if (!TWFunc::Path_Exists(Fox_Bin_Dir + "/ozip_decrypt"))
+       {
+          return 1;
+@@ -1492,6 +1495,7 @@ int GUIAction::ozip_decrypt(string zip_path)
+    TWFunc::Exec_Cmd("ozip_decrypt " + (string)TW_OZIP_DECRYPT_KEY + " '" + zip_path + "'");
+    gui_msg("ozip_decrypt_finish=Ozip Decryption Finished!");
+    return 0;
++#endif
+ }
+ 
+ int GUIAction::flash(std::string arg)

@@ -1,0 +1,208 @@
+diff --git a/partitionmanager.cpp b/partitionmanager.cpp
+index e51c549..6eccef5 100755
+--- a/partitionmanager.cpp
++++ b/partitionmanager.cpp
+@@ -2485,9 +2485,16 @@ int TWPartitionManager::Partition_SDCard() {
+ void TWPartitionManager::Get_Partition_List(std::string ListType, std::vector<PartitionList> *Partition_List) {
+     if (ListType == "mount") {
+         for (TWPartition *partition: Partitions) {
+-            // Setup_File_System() calls everything mountable, so ask whether
+-            // there is a device to mount as well.
+-            if (partition->Can_Be_Mounted && partition->Is_Present) {
++            // Keep internal firmware, persist, metadata and diagnostic mounts
++            // out of the user-facing list. Recovery still mounts them itself.
++            const std::string& path = partition->Mount_Point;
++            const bool user_mount = partition->Is_Storage ||
++                path == "/system" || path == "/system_root" ||
++                path == "/system_ext" || path == "/product" ||
++                path == "/vendor" || path == "/vendor_dlkm" ||
++                path == "/system_dlkm" || path == "/odm" ||
++                path == "/data";
++            if (user_mount && partition->Can_Be_Mounted && partition->Is_Present) {
+                 Partition_List->push_back({
+                     .Display_Name = partition->Display_Name,
+                     .Mount_Point = partition->Mount_Point,
+diff --git a/twrpinstall/Android.bp b/twrpinstall/Android.bp
+index 5d0c7ec..9e8c8a4 100755
+--- a/twrpinstall/Android.bp
++++ b/twrpinstall/Android.bp
+@@ -25,6 +25,7 @@ cc_defaults {
+ 
+     shared_libs: [
+         "libbase",
++        "libboot_control_client",
+         "libbootloader_message",
+         "libcrypto",
+         "libext4_utils",
+diff --git a/twrpinstall/twinstall.cpp b/twrpinstall/twinstall.cpp
+index d920972..027a5ae 100755
+--- a/twrpinstall/twinstall.cpp
++++ b/twrpinstall/twinstall.cpp
+@@ -25,10 +25,15 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <limits.h>
++#include <linux/fs.h>
++#include <sys/ioctl.h>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
+ #include <sys/wait.h>
+ #include <unistd.h>
++#include <algorithm>
++#include <cstdint>
++#include <vector>
+ 
+ #include <string.h>
+ #include <stdio.h>
+@@ -52,6 +57,9 @@
+ #include "twinstall.h"
+ #include "installcommand.h"
+ #include "../twrpRepacker.hpp"
++#ifdef AB_OTA_UPDATER
++#include <BootControlClient.h>
++#endif
+ extern "C" {
+ 	#include "gui/gui.h"
+ }
+@@ -243,6 +251,92 @@ bool isUpdatePkg(ZipArchiveHandle Zip) {
+ 	return false;
+ }
+ 
++// Back up dedicated A/B recovery before update_engine can replace it.
++static std::string Recovery_Block_Device(const std::string& slot) {
++	if (slot != "A" && slot != "B") return {};
++	return "/dev/block/bootdevice/by-name/recovery_" + std::string(1, tolower(slot[0]));
++}
++
++static std::string Current_Boot_Slot() {
++#ifdef AB_OTA_UPDATER
++	const auto module = android::hal::BootControlClient::WaitForService();
++	if (module == nullptr) return {};
++	const int32_t slot = module->GetCurrentSlot();
++	if (slot == 0) return "A";
++	if (slot == 1) return "B";
++	return {};
++#else
++	return PartitionManager.Get_Active_Slot_Display();
++#endif
++}
++
++static bool Copy_Recovery_Image(int source, int destination, uint64_t bytes) {
++	std::vector<char> buffer(1024 * 1024);
++	while (bytes != 0) {
++		const size_t amount = std::min<uint64_t>(buffer.size(), bytes);
++		const ssize_t count = TEMP_FAILURE_RETRY(read(source, buffer.data(), amount));
++		if (count <= 0) return false;
++		ssize_t written = 0;
++		while (written < count) {
++			const ssize_t result = TEMP_FAILURE_RETRY(write(destination, buffer.data() + written, count - written));
++			if (result <= 0) return false;
++			written += result;
++		}
++		bytes -= count;
++	}
++	return fsync(destination) == 0;
++}
++
++static bool Verify_Recovery_Image(const std::string& image, const std::string& block, uint64_t bytes) {
++	android::base::unique_fd source(open(image.c_str(), O_RDONLY | O_CLOEXEC));
++	android::base::unique_fd destination(open(block.c_str(), O_RDONLY | O_CLOEXEC));
++	if (source.get() < 0 || destination.get() < 0) return false;
++	std::vector<char> expected(1024 * 1024), actual(1024 * 1024);
++	while (bytes != 0) {
++		const size_t amount = std::min<uint64_t>(expected.size(), bytes);
++		if (TEMP_FAILURE_RETRY(read(source.get(), expected.data(), amount)) != static_cast<ssize_t>(amount) ||
++		    TEMP_FAILURE_RETRY(read(destination.get(), actual.data(), amount)) != static_cast<ssize_t>(amount) ||
++		    memcmp(expected.data(), actual.data(), amount) != 0) return false;
++		bytes -= amount;
++	}
++	return true;
++}
++
++static bool Backup_Recovery_Image(const std::string& slot, std::string* backup, uint64_t* size) {
++	const std::string block = Recovery_Block_Device(slot);
++	if (block.empty()) return false;
++	android::base::unique_fd source(open(block.c_str(), O_RDONLY | O_CLOEXEC));
++	if (source.get() < 0 || ioctl(source.get(), BLKGETSIZE64, size) != 0 || *size == 0 || *size > 256 * 1024 * 1024)
++		return false;
++	char path[] = "/tmp/twrp-recovery-XXXXXX";
++	android::base::unique_fd destination(mkstemp(path));
++	if (destination.get() < 0) return false;
++	*backup = path;
++	if (!Copy_Recovery_Image(source.get(), destination.get(), *size)) {
++		unlink(path);
++		backup->clear();
++		return false;
++	}
++	destination.reset();
++	if (Verify_Recovery_Image(*backup, block, *size)) return true;
++	unlink(path);
++	backup->clear();
++	return false;
++}
++
++static bool Restore_Recovery_Image(const std::string& backup, const std::string& slot, uint64_t size) {
++	const std::string block = Recovery_Block_Device(slot);
++	if (block.empty()) return false;
++	android::base::unique_fd source(open(backup.c_str(), O_RDONLY | O_CLOEXEC));
++	android::base::unique_fd destination(open(block.c_str(), O_WRONLY | O_CLOEXEC));
++	if (source.get() < 0 || destination.get() < 0) return false;
++	uint64_t block_size = 0;
++	if (ioctl(destination.get(), BLKGETSIZE64, &block_size) != 0 || block_size != size) return false;
++	if (!Copy_Recovery_Image(source.get(), destination.get(), size)) return false;
++	destination.reset();
++	return Verify_Recovery_Image(backup, block, size);
++}
++
+ int TWinstall_zip(const char* path, int* wipe_cache, bool check_for_digest) {
+ 	int ret_val, zip_verify = 1, unmount_system = 1, reflashtwrp = 0;
+ 
+@@ -334,6 +428,19 @@ int TWinstall_zip(const char* path, int* wipe_cache, bool check_for_digest) {
+ 		if (FindEntry(Zip, ab_binary_name, &ab_binary_entry) == 0) {
+ 			LOGINFO("AB zip\n");
+ 			gui_msg(Msg(msg::kHighlight, "flash_ab_inactive=Flashing A/B zip to inactive slot: {1}")(PartitionManager.Get_Active_Slot_Display()=="A"?"B":"A"));
++			DataManager::GetValue(TW_AUTO_REFLASHTWRP_VAR, reflashtwrp);
++			const bool dedicated_recovery = PartitionManager.Find_Partition_By_Path("/recovery") != nullptr;
++			const std::string original_slot = Current_Boot_Slot();
++			const std::string target_slot =
++				original_slot == "A" ? "B" :
++				original_slot == "B" ? "A" : "";
++			std::string recovery_backup;
++			uint64_t recovery_size = 0;
++			if (reflashtwrp && dedicated_recovery &&
++			    !Backup_Recovery_Image(original_slot, &recovery_backup, &recovery_size)) {
++				gui_err("Unable to back up recovery before A/B update; update cancelled.");
++				return INSTALL_ERROR;
++			}
+ 			// We need this so backuptool can do its magic
+ 			bool system_mount_state = PartitionManager.Is_Mounted_By_Path(PartitionManager.Get_Android_Root_Path());
+ 			bool vendor_mount_state = PartitionManager.Is_Mounted_By_Path("/vendor");
+@@ -354,11 +461,24 @@ int TWinstall_zip(const char* path, int* wipe_cache, bool check_for_digest) {
+ 				gui_warn("mount_vab_partitions=Devices on super may not mount until rebooting recovery.");
+ 			}
+ 			gui_warn("flash_ab_reboot=To flash additional zips, please reboot recovery to switch to the updated slot.");
+-			DataManager::GetValue(TW_AUTO_REFLASHTWRP_VAR, reflashtwrp);
+-			if (reflashtwrp) {
+-			twrpRepacker repacker;
+-			repacker.Flash_Current_Twrp();
++			if (reflashtwrp && ret_val == INSTALL_SUCCESS) {
++				if (dedicated_recovery) {
++					LOGINFO("A/B recovery preservation: source slot=%s target slot=%s\n",
++					        original_slot.c_str(), target_slot.c_str());
++					if (target_slot.empty()) {
++						gui_err("Unable to determine A/B OTA target slot; recovery was not restored.");
++					} else if (!Restore_Recovery_Image(recovery_backup, target_slot, recovery_size) ||
++					           !Restore_Recovery_Image(recovery_backup, original_slot, recovery_size)) {
++						gui_err("A/B update succeeded, but recovery restore or verification failed. Reflash TWRP before rebooting recovery.");
++					} else {
++						gui_msg("TWRP restored and verified on both recovery slots.");
++					}
++				} else {
++					twrpRepacker repacker;
++					repacker.Flash_Current_Twrp();
++				}
+ 			}
++			if (!recovery_backup.empty()) unlink(recovery_backup.c_str());
+ 		} else {
+ 			std::string binary_name("ui.xml");
+ 			ZipEntry64 binary_entry;

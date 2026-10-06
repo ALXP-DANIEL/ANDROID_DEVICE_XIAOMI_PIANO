@@ -1,0 +1,66 @@
+Use servicemanager.recovery instead of the system servicemanager.
+The system binary looks for the VINTF manifest in the system layout and logs
+"NULL VINTF MANIFEST" in recovery, so Weaver and Gatekeeper fail to register.
+Also stop relinking the system libvintf.so into recovery: it overwrites the
+recovery variant, which servicemanager.recovery needs for VintfObjectRecovery.
+
+Also add system/update_engine to the recovery include path: TWRP-Test's
+libsnapshot (system/core) includes payload_consumer/file_descriptor.h
+(also libupdate_engine_headers for install/libinstall).
+
+diff --git a/Android.mk b/Android.mk
+index 95a4b9c..dd261f0 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -124,6 +124,7 @@ LOCAL_CLANG := true
+ 
+ LOCAL_C_INCLUDES += \
+     system/core/fs_mgr \
++    system/update_engine \
+     system/gsid/include \
+     system/core/libsparse \
+     external/freetype/include \
+@@ -613,8 +614,7 @@ TWRP_REQUIRED_MODULES += \
+     vndservicemanager \
+     vndservicemanager.rc \
+     plat_service_contexts \
+-    servicemanager \
+-    servicemanager.rc
++    servicemanager.recovery
+ 
+ ifneq ($(TW_INCLUDE_CRYPTO),)
+ TWRP_REQUIRED_MODULES += \
+diff --git a/install/Android.bp b/install/Android.bp
+index b8f7876..de82073 100644
+--- a/install/Android.bp
++++ b/install/Android.bp
+@@ -122,6 +122,9 @@ cc_library_static {
+ 
+     header_libs: [
+         "libminadbd_headers",
++        // TWRP-Test libsnapshot (system/core) includes
++        // payload_consumer/file_descriptor.h from update_engine.
++        "libupdate_engine_headers",
+     ],
+ 
+     shared_libs: [
+diff --git a/prebuilt/Android.mk b/prebuilt/Android.mk
+index e5c42b9..9abdef7 100644
+--- a/prebuilt/Android.mk
++++ b/prebuilt/Android.mk
+@@ -91,7 +91,6 @@ RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/keystore
+ RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/keystore_auth
+ RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/keystore_cli_v2
+ RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_SYSTEM_EXT_EXECUTABLES)/hwservicemanager
+-RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/servicemanager
+ RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/vold_prepare_subdirs
+ RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_VENDOR_EXECUTABLES)/vndservicemanager
+ RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_EXECUTABLES)/toybox
+@@ -392,7 +391,6 @@ RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libziparchive.so
+ RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libext2_blkid.so
+ RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libext2_quota.so
+ RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libhidl-gen-utils.so
+-RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libvintf.so
+ RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libtinyxml2.so
+ RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/android.hidl.token@1.0.so
+ RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.vibrator@1.0.so

@@ -1,0 +1,52 @@
+Pass TW_X/Y/W/H_OFFSET to the GUI build so the theme can be drawn into part
+of the screen, and fix drawing that ignored the offset: keyboard long-press
+labels (drawn outside their keys) and the list group arrow (drawn over the
+item icons instead of at the right end of the row).
+
+diff --git a/gui/keyboard.cpp b/gui/keyboard.cpp
+index 0027947..aa63433 100644
+--- a/gui/keyboard.cpp
++++ b/gui/keyboard.cpp
+@@ -89,6 +89,11 @@ GUIKeyboard::GUIKeyboard(xml_node<>* node)
+ 	mLongpressFont = PageManager::GetResources()->FindFont(LoadAttrString(child, "font", "keylabel-longpress"));
+ 	mLongpressFontColor = LoadAttrColor(child, "textcolor", COLOR(128,128,128,255));
+ 	LoadPlacement(child, &longpressOffsetX, &longpressOffsetY);
++	extern int tw_x_offset, tw_y_offset;
++	// LoadPlacement adds the screen offset, but these are distances inside a
++	// key, not screen positions.
++	longpressOffsetX -= tw_x_offset;
++	longpressOffsetY -= tw_y_offset;
+ 
+ 	LoadKeyLabels(node, 0); // load global key labels
+ 
+diff --git a/gui/libfoxui_defaults.go b/gui/libfoxui_defaults.go
+index 88d0e6a..80dc43c 100644
+--- a/gui/libfoxui_defaults.go
++++ b/gui/libfoxui_defaults.go
+@@ -274,6 +274,13 @@ func globalFlags(ctx android.BaseContext) []string {
+ 	var cflags []string
+ 
+ 
++	// Draw the theme inside a smaller area of the screen (TWRP offsets).
++	for _, v := range []string{"TW_X_OFFSET", "TW_Y_OFFSET", "TW_W_OFFSET", "TW_H_OFFSET"} {
++		if getMakeVars(ctx, v) != "" {
++			cflags = append(cflags, "-D"+v+"="+getMakeVars(ctx, v))
++		}
++	}
++
+ 	if getMakeVars(ctx, "AB_OTA_UPDATER") == "true" {
+ 		cflags = append(cflags, "-DAB_OTA_UPDATER=1")
+ 	}
+diff --git a/gui/scrolllist.cpp b/gui/scrolllist.cpp
+index e1e62dd..8edb0c3 100755
+--- a/gui/scrolllist.cpp
++++ b/gui/scrolllist.cpp
+@@ -485,7 +485,7 @@ void GUIScrollList::RenderStdItem(int yPos, bool selected, ImageResource* icon,
+ 			int arrowH = groupArrow->GetHeight();
+ 			int arrowW = groupArrow->GetWidth();
+ 			int arrowY = yPos + (iconAndTextH - arrowH) / 2;
+-			int arrowX = mRenderW - groupOffset - 75;
++			int arrowX = mRenderX + mRenderW - groupOffset - 75;
+ 			gr_blit(groupArrow->GetResource(), 0, 0, arrowW, arrowH, arrowX, arrowY);
+ 		}
+ 	} else if (isHighlight) {
