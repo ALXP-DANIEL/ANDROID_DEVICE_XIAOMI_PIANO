@@ -1,0 +1,57 @@
+#!/system/bin/sh
+
+# Run by TWRP before it destroys the logical-partition mappers (Format Data,
+# Merge Snapshots and Unmap Super Devices), from patch 0006.
+#
+# The secure stack used for decryption and batterysecret run from the
+# installed ROM's read-only vendor and odm views. A mapper that is mounted
+# or still held open cannot be destroyed, and Format Data then failed with
+#   E:Unable to unmap dynamic partitions.
+# Stop those services and release the views first. touch_report runs from
+# the recovery ramdisk and is left alone, so touch keeps working.
+#
+# Decryption is finished by the time any of these operations can be chosen,
+# and each of them ends with a reboot of the recovery.
+
+SERVICES="
+vendor.qwesd
+vendor.weaver_hos3
+vendor.weaver_hos4
+vendor.keymint
+vendor.gatekeeper_default
+vendor.ssgtzd
+vendor.minkdaemon
+vendor.qseecomd
+vendor.piano_batterysecret
+"
+
+for svc in ${SERVICES}; do
+    stop "${svc}"
+done
+
+# init reports "stopped" once the process has exited.
+for i in $(seq 1 50); do
+    busy=0
+    for svc in ${SERVICES}; do
+        case "$(getprop "init.svc.${svc}")" in
+            ""|stopped) ;;
+            *) busy=1 ;;
+        esac
+    done
+    [ "${busy}" -eq 0 ] && break
+    sleep 0.1
+done
+
+rc=0
+for mnt in /piano/vendor-stock /piano/odm-stock $(ls -d /tmp/tz_* 2>/dev/null); do
+    grep -q " ${mnt} " /proc/mounts || continue
+    if ! umount "${mnt}"; then
+        echo "twrp-pre-unmap: ${mnt} is still busy" >&2
+        rc=1
+    fi
+done
+
+# vendor.piano.stock.mounted stays 1 on purpose: resetting it would make
+# init mount the views and restart the stack again at once.
+
+exit ${rc}
