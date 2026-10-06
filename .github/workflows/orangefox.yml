@@ -1,0 +1,175 @@
+name: OrangeFox R12 Builder (piano)
+
+# Xiaomi Pad 8 Pro (piano) OrangeFox R12.0 (fox_16.0) recovery build.
+#
+# Source setup follows patches/README.md: the OrangeFox16 base manifest, the
+# two local manifests in manifests/, OrangeFox's vendor/recovery, then the
+# device's source patches.
+#
+# CI proves that the source builds. Released images are signed locally; the
+# private AVB key never enters GitHub Actions. A CI image is signed with a
+# disposable key and is not the tested release image.
+
+on:
+  workflow_dispatch:
+    inputs:
+      MANIFEST_URL:
+        description: "Base manifest url (OrangeFox16 base manifest)"
+        required: true
+        default: "https://github.com/OrangeFox16/platform_manifest_twrp_aosp"
+      MANIFEST_BRANCH:
+        description: "Base manifest branch"
+        required: true
+        default: "twrp-16"
+      LUNCH_TARGET:
+        description: "Full lunch target"
+        required: true
+        default: "twrp_piano-bp2a-eng"
+
+env:
+  DEVICE_PATH: device/xiaomi/piano
+  DEVICE_NAME: piano
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Free disk space
+        uses: rokibhasansagar/slimhub_actions@main
+
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+
+      # Checked out after maximize-build-space, which remounts the workspace
+      # and discards anything already there.
+      - name: Check out device tree
+        uses: actions/checkout@v4
+        with:
+          path: device_tree
+          ref: ofox-16
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          create-symlink: true
+          max-size: 5G
+
+      # A GitHub runner has 16 GB of RAM; Soong's analysis of an Android 16
+      # tree needs about 15-20 GB. Without zram the runner OOM-kills Soong.
+      - name: Setup zram
+        run: |
+          df -h /
+          sudo apt-get install -y --no-install-recommends zram-tools
+          if ! sudo modprobe zram; then
+            sudo apt-get install -y --no-install-recommends \
+              linux-modules-extra-$(uname -r)
+            sudo modprobe zram
+          fi
+          sudo sed -i 's/^#\?PERCENT=.*/PERCENT=90/' /etc/default/zramswap
+          sudo sed -i 's/^#\?PRIORITY=.*/PRIORITY=1000/' /etc/default/zramswap
+          sudo systemctl restart zramswap
+          zramctl
+          free -h
+
+      - name: Setup environment
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt-get update
+          sudo apt-get install -y repo lz4 cpio python3 openssl
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Sync source
+        run: |
+          repo init -u ${{ inputs.MANIFEST_URL }} -b ${{ inputs.MANIFEST_BRANCH }} --depth=1
+          mkdir -p .repo/local_manifests
+          cp "$GITHUB_WORKSPACE"/device_tree/manifests/*.xml .repo/local_manifests/
+          (while true; do echo "$(date +%T) syncing..."; sleep 60; done) &
+          TIP=$!
+          repo sync -c -j$(nproc) --no-clone-bundle --no-tags --force-sync
+          kill $TIP || true
+          git clone --depth=1 -b fox_16.0 https://gitlab.com/OrangeFox/vendor/recovery.git vendor/recovery
+
+      - name: Install device tree
+        run: |
+          mkdir -p "$DEVICE_PATH"
+          rsync -a --exclude '.git' --exclude '.github' \
+            "$GITHUB_WORKSPACE/device_tree/" "$DEVICE_PATH/"
+          # The checkout sits inside the build root; remove it so kati does not
+          # parse the device Android.mk twice.
+          rm -rf "$GITHUB_WORKSPACE/device_tree"
+
+      - name: Apply OrangeFox source patches
+        run: bash "$DEVICE_PATH/tools/apply-ofox-patches.sh" "$GITHUB_WORKSPACE"
+
+      - name: Generate disposable CI AVB key
+        run: |
+          set -euo pipefail
+          umask 077
+          KEY="$DEVICE_PATH/security/recovery_avb.pem"
+          mkdir -p "$(dirname "$KEY")"
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out "$KEY" >/dev/null 2>&1
+          test -s "$KEY"
+
+      - name: Add QTI boot control
+        run: |
+          set -euo pipefail
+          # The recovery needs a Boot Control HAL to install A/B zips. Without
+          # this checkout, ALLOW_MISSING_DEPENDENCIES dropped the module silently
+          # and every install failed with "AIDL IBootControl not available".
+          rm -rf hardware/qcom/bootctrl
+          git clone --depth=1 -b lineage-23.2-caf https://github.com/LineageOS/android_hardware_qcom_bootctrl.git hardware/qcom/bootctrl
+          git -C hardware/qcom/bootctrl apply "$GITHUB_WORKSPACE/$DEVICE_PATH/patches/hardware_qcom_bootctrl/0001-drop-generated-kernel-headers.patch"
+
+      - name: Build recovery
+        run: |
+          export ALLOW_MISSING_DEPENDENCIES=true
+          export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+          export LC_ALL=C
+          export CCACHE_EXEC=$(command -v ccache)
+          export USE_CCACHE=1
+          # ckati overflows the default 8 MB stack on a tree this size.
+          ulimit -s unlimited
+          source build/envsetup.sh
+          lunch ${{ inputs.LUNCH_TARGET }}
+          (while true; do echo "$(date +%T) building..."; free -h | sed -n 2p; sleep 30; done) &
+          TIP=$!
+          m recoveryimage -j$(nproc)
+          kill $TIP || true
+
+      # ---- gates: nothing is uploaded unless both pass --------------------
+
+      - name: Gate - image invariants and size budget
+        run: bash "$DEVICE_PATH/tools/piano16-preflash-audit.sh" "out/target/product/$DEVICE_NAME/recovery.img"
+
+      - name: Gate - ELF closure
+        run: python3 "$DEVICE_PATH/tools/piano16-elf-closure-audit.py" "out/target/product/$DEVICE_NAME/recovery.img"
+
+      - name: Collect artifacts
+        run: |
+          P=out/target/product/$DEVICE_NAME
+          mkdir -p artifacts
+          cp $P/OrangeFox-*.img $P/OrangeFox-*.zip artifacts/ 2>/dev/null || cp $P/recovery.img artifacts/
+          (cd artifacts && sha256sum * | tee SHA256SUMS)
+          echo 'CI build signed with a disposable key; this is not the tested release image.' > artifacts/CI_BUILD_NOTICE.txt
+
+      # A workflow artifact, not a public release: the ramdisk contains
+      # proprietary Xiaomi files whose redistribution rights are not settled.
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: orangefox-${{ env.DEVICE_NAME }}-ci-testkey
+          path: artifacts/
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Remove disposable CI AVB key
+        if: always()
+        run: rm -f "$DEVICE_PATH/security/recovery_avb.pem"
