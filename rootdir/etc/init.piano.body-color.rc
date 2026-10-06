@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# Persist is mounted by the non-late fstab pass before post-fs-data. Read the
+# colour before framework services start and select their default wallpaper.
+on post-fs-data
+    exec_start piano-body-color
+
+service piano-body-color /vendor/bin/piano-body-color.sh
+    user system
+    group system
+    disabled
+    oneshot

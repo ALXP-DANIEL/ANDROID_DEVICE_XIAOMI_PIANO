@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Like HyperOS, make the stock wallpaper matching the body colour the default
+# wallpaper (first boot and wallpaper reset). This runs from system_ext so init
+# may set the platform ro.config.wallpaper property.
+on property:ro.vendor.piano.body_color=*
+    setprop ro.config.wallpaper /product/media/wallpaper/wallpaper_${ro.vendor.piano.body_color}.jpg
