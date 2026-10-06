@@ -1,0 +1,11 @@
+cc_binary {
+    name: "piano_fscryptclone",
+    srcs: ["fscryptclone.cpp"],
+    recovery_available: true,
+    compile_multilib: "64",
+    cflags: [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+}
