@@ -29,14 +29,9 @@ ROM=""
 RECOVERY=""
 
 DEVICE_BRANCH=""
-COMMON_BRANCH="device-common-16"
-VENDOR_BRANCH="vendor-16"
-VENDOR_COMMON_BRANCH="vendor-common-16"
-KERNEL_BRANCH="kernel-16"
-CAMERA_BRANCH="miuicamera-16"
-
-TWRP_BRANCH="twrp-16"
-OFOX_BRANCH="ofox-16"
+# Android 16 branches end in -16 and Android 17 branches in -17.
+ANDROID=""
+LINEAGE_BRANCH=""
 
 MANIFEST_DIR=".repo/local_manifests"
 MANIFEST_FILE="${MANIFEST_DIR}/piano.xml"
@@ -129,6 +124,38 @@ case "${choice:-1}" in
         ;;
 esac
 
+echo
+echo "Android version:"
+echo
+echo "  1) Android 17 (active)"
+echo "  2) Android 16 (maintenance)"
+echo
+
+read -r -p "Choose [1]: " choice
+
+case "${choice:-1}" in
+    1)
+        ANDROID=17
+        LINEAGE_BRANCH="lineage-24.0"
+        ;;
+    2)
+        ANDROID=16
+        LINEAGE_BRANCH="lineage-23.2"
+        ;;
+    *)
+        die "Invalid Android version."
+        ;;
+esac
+
+COMMON_BRANCH="device-common-${ANDROID}"
+VENDOR_BRANCH="vendor-${ANDROID}"
+VENDOR_COMMON_BRANCH="vendor-common-${ANDROID}"
+KERNEL_BRANCH="kernel-${ANDROID}"
+CAMERA_BRANCH="miuicamera-${ANDROID}"
+
+TWRP_BRANCH="twrp-${ANDROID}"
+OFOX_BRANCH="ofox-${ANDROID}"
+
 # ============================================================
 # ROM
 # ============================================================
@@ -138,7 +165,7 @@ if [[ "$TARGET" == "rom" ]]; then
     echo
     echo "Select ROM:"
     echo
-    echo "  1) LineageOS 23.2"
+    echo "  1) LineageOS ${LINEAGE_BRANCH#lineage-}"
     echo "  2) Evolution X"
     echo
 
@@ -147,8 +174,8 @@ if [[ "$TARGET" == "rom" ]]; then
     case "${choice:-1}" in
         1)
             ROM="lineage"
-            DEVICE_BRANCH="lineage-23.2"
-            ROM_NAME="LineageOS 23.2"
+            DEVICE_BRANCH="$LINEAGE_BRANCH"
+            ROM_NAME="LineageOS ${LINEAGE_BRANCH#lineage-}"
             ;;
 
         2)
@@ -269,8 +296,8 @@ if [[ "$TARGET" == "recovery" ]]; then
     echo
     echo "Select Recovery:"
     echo
-    echo "  1) TWRP 16"
-    echo "  2) OrangeFox 16"
+    echo "  1) TWRP ${ANDROID}"
+    echo "  2) OrangeFox ${ANDROID}"
     echo
 
     read -r -p "Choose [1]: " choice
@@ -278,13 +305,13 @@ if [[ "$TARGET" == "recovery" ]]; then
     case "${choice:-1}" in
         1)
             RECOVERY="twrp"
-            RECOVERY_NAME="TWRP 16"
+            RECOVERY_NAME="TWRP ${ANDROID}"
             DEVICE_BRANCH="$TWRP_BRANCH"
             ;;
 
         2)
             RECOVERY="ofox"
-            RECOVERY_NAME="OrangeFox 16"
+            RECOVERY_NAME="OrangeFox ${ANDROID}"
             DEVICE_BRANCH="$OFOX_BRANCH"
             ;;
 

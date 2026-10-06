@@ -4,18 +4,19 @@ Android device trees for the Xiaomi Pad 8 Pro (SM8750).
 
 ## Branches
 
-| Branch | Purpose |
-| --- | --- |
-| `lineage-23.2` | LineageOS device tree |
-| `device-common-16` | SM8750 common device tree |
-| `vendor-16` | Device vendor files |
-| `vendor-common-16` | SM8750 common vendor files |
-| `kernel-16` | Prebuilt kernel and modules |
-| `miuicamera-16` | MiuiCamera |
-| `twrp-16` | TWRP recovery |
-| `ofox-16` | OrangeFox recovery |
+| Android 17 (active) | Android 16 (maintenance) | Purpose |
+| --- | --- | --- |
+| `lineage-24.0` | `lineage-23.2` | LineageOS device tree |
+| `device-common-17` | `device-common-16` | SM8750 common device tree |
+| `vendor-17` | `vendor-16` | Device vendor files |
+| `vendor-common-17` | `vendor-common-16` | SM8750 common vendor files |
+| `kernel-17` | `kernel-16` | GKI kernel built from source, with the stock modules |
+| `miuicamera-17` | `miuicamera-16` | MiuiCamera |
+| `twrp-17` | `twrp-16` | TWRP recovery |
+| `ofox-17` | `ofox-16` | OrangeFox recovery |
 
-The shared Android 16 branches are intended to be reused by compatible ROMs.
+Android 16 branches only get fixes and monthly security updates. The shared
+branches are intended to be reused by compatible ROMs.
 
 ## Sync
 
@@ -26,4 +27,5 @@ curl -fsSLO https://raw.githubusercontent.com/ALXP-DANIEL/android_device_xiaomi_
 bash sync-device.sh
 ```
 
-The script syncs device trees only.
+The script asks for the ROM or recovery and the Android version, and syncs
+the device trees only.
