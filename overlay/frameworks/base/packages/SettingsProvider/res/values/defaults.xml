@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The keyboard cover driver registers an alphabetic keyboard even when
+         no cover is attached, so keep the on-screen keyboard available. -->
+    <bool name="def_show_ime_with_hard_keyboard">true</bool>
+
+    <!-- Tablet: follow the accelerometer by default so landscape works out of
+         the box. -->
+    <bool name="def_accelerometer_rotation">true</bool>
+
+    <!-- Landscape (ROTATION_90) when auto-rotate is off. -->
+    <integer name="def_user_rotation">1</integer>
+</resources>
