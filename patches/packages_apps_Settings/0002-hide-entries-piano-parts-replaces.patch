@@ -1,0 +1,56 @@
+From: MUHAMMAD ALIF DANIEL BIN MOHD HAIRUL HEZZELIN <alifdaniel.personalspace@gmail.com>
+Subject: [PATCH] Settings: Hide entries piano Parts replaces
+
+Piano keeps the stock HyperOS controls: game touch mode on the touch
+tile, the stylus settings on the Focus Pen page and battery protection
+in place of charging control.
+
+---
+diff --git a/res/xml/display_settings.xml b/res/xml/display_settings.xml
+index 05e7c2ab992..6867b11cf2c 100644
+--- a/res/xml/display_settings.xml
++++ b/res/xml/display_settings.xml
+@@ -268,13 +268,6 @@
+             android:defaultValue="@*android:bool/config_unplugTurnsOnScreen"
+             settings:requiresConfig="@bool/config_show_top_level_battery" />
+ 
+-        <lineageos.preference.LineageSystemSettingSwitchPreference
+-            android:key="high_touch_polling_rate_enable"
+-            android:title="@string/high_touch_polling_rate_title"
+-            android:summary="@string/high_touch_polling_rate_summary"
+-            android:defaultValue="false"
+-            settings:requiresFeature="lineagehardware:FEATURE_HIGH_TOUCH_POLLING_RATE" />
+-
+         <lineageos.preference.LineageSystemSettingSwitchPreference
+             android:key="high_touch_sensitivity_enable"
+             android:title="@string/high_touch_sensitivity_title"
+diff --git a/res/xml/power_usage_summary.xml b/res/xml/power_usage_summary.xml
+index 950ca2de9e9..688091bac6c 100644
+--- a/res/xml/power_usage_summary.xml
++++ b/res/xml/power_usage_summary.xml
+@@ -76,11 +76,6 @@
+ 
+     <com.android.settingslib.widget.UntitledPreferenceCategory
+         android:key="charging_category">
+-        <!-- Charging control -->
+-        <lineageos.preference.LineagePartsPreference
+-            android:key="charging_control"
+-            settings:requiresService="lineagehealth" />
+-
+         <!-- Charging speed -->
+         <ListPreference
+             android:entries="@*lineageos.platform:array/charging_speed_entries"
+diff --git a/src/com/android/settings/connecteddevice/stylus/StylusDevicesController.java b/src/com/android/settings/connecteddevice/stylus/StylusDevicesController.java
+index 1dcf2217ed7..081b16a916c 100644
+--- a/src/com/android/settings/connecteddevice/stylus/StylusDevicesController.java
++++ b/src/com/android/settings/connecteddevice/stylus/StylusDevicesController.java
+@@ -106,7 +106,8 @@ public class StylusDevicesController extends AbstractPreferenceController implem
+ 
+     @Override
+     public boolean isAvailable() {
+-        return BluetoothUtils.isDeviceStylus(mInputDevice, mCachedBluetoothDevice);
++        // The piano Focus Pen page has these settings.
++        return false;
+     }
+ 
+     @Nullable
