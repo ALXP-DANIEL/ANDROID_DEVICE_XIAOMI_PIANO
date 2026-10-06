@@ -1,0 +1,11 @@
+diff --git a/config/BoardConfigSoong.mk b/config/BoardConfigSoong.mk
+index fd9d121..d646491 100644
+--- a/config/BoardConfigSoong.mk
++++ b/config/BoardConfigSoong.mk
+@@ -55,4 +55,6 @@ EXPORT_TO_SOONG := \
+     TARGET_OTA_ASSERT_DEVICE \
+     TW_BACKUP_EXCLUSIONS \
+     BOARD_BOOT_HEADER_VERSION \
++    TW_INCLUDE_CRYPTO_FBE \
++    TW_USE_FSCRYPT_POLICY \
+     TARGET_RECOVERY_TWRP_LIB
