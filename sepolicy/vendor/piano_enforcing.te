@@ -1,0 +1,94 @@
+# Denials seen on Lineage, sorted into what piano needs and what Xiaomi's
+# logging and probing code only tries. The latter is silenced so that an
+# enforcing log shows the real problems.
+
+# vendor_init: properties and nodes set by the stock init scripts.
+set_prop(vendor_init, vendor_batteryantiaging_prop)
+set_prop(vendor_init, vendor_wlan_chip_prop)
+allow vendor_init proc_hung_task:file w_file_perms;
+allow vendor_init migt_dev:chr_file getattr;
+
+# mi_thermald reports when the BCL setup is done.
+set_prop(mi_thermald, vendor_thermal_normal_prop)
+
+# /sys/kernel/reserve_pool: Xiaomi's memory reserve, init writes the pid.
+type vendor_sysfs_reserve_pool, sysfs_type, fs_type;
+allow init vendor_sysfs_reserve_pool:dir search;
+allow init vendor_sysfs_reserve_pool:file w_file_perms;
+
+# Properties without a vendor label: the reads fall back to defaults.
+dontaudit {
+    hal_audio_default
+    hal_hypsys_vendor
+    hal_sensors_default
+    hal_touchfeature_xiaomi_default
+    vendor_hal_citsensorservice_xiaomi_default
+    vendor_ntagtool
+    vendor_qti_init_shell
+} default_prop:file { getattr map open read };
+dontaudit hal_graphics_composer_default system_prop:file { getattr map open read };
+dontaudit { platform_app untrusted_app } vendor_default_prop:file { getattr map open read };
+
+# Stock vendor_init sets system properties that Lineage keeps for itself.
+dontaudit vendor_init { audio_prop bluetooth_prop shell_prop }:property_service set;
+dontaudit vendor_init { cache_file update_engine_log_data_file }:dir { getattr open read search };
+dontaudit vendor_init { cache_file update_engine_log_data_file }:file getattr;
+dontaudit vendor_init device:chr_file getattr;
+dontaudit vendor_init system_file:file { getattr read };
+dontaudit vendor_init sysfs:lnk_file setattr;
+
+# hypsys: Xiaomi system logging. It probes boot logs and debug nodes.
+dontaudit hal_hypsys_vendor { block_device vfat }:dir search;
+dontaudit hal_hypsys_vendor vfat:file { getattr open read write };
+dontaudit hal_hypsys_vendor { proc sysfs }:file { getattr open read };
+dontaudit hal_hypsys_vendor device:chr_file { open read write };
+dontaudit hal_hypsys_vendor vendor_default_prop:property_service set;
+
+# Other probes.
+dontaudit hal_audio_default debugfs:dir { open read };
+dontaudit hal_bluetooth_default vendor_bsp_data_log_file:dir { open read search };
+dontaudit hal_camera_default { shell_data_file system_data_file }:dir search;
+dontaudit vendor_qti_init_shell sysfs:file write;
+dontaudit kernel block_device:dir search;
+dontaudit kernel sepolicy_file:file getattr;
+dontaudit kernel { system_bootstrap_lib_file system_dlkm_file }:dir getattr;
+dontaudit kernel system_bootstrap_lib_file:file getattr;
+dontaudit init debugfs_bootreceiver_tracing:dir { add_name write };
+dontaudit system_server sysfs:file { getattr open read };
+dontaudit netutils_wrapper minetd:fd use;
+dontaudit netutils_wrapper minetd:fifo_file write;
+dontaudit netutils_wrapper minetd:unix_stream_socket { read write };
+
+# vendor_init inspects the Xiaomi event device during boot.
+allow vendor_init miev_device:chr_file getattr;
+
+# The camera HAL reads a zoom remap table from /data/misc/camera, which is a
+# core data directory that vendor code may not access.
+dontaudit hal_camera_default system_data_file:file { getattr open read };
+dontaudit hal_fingerprint_default { rootfs system_data_root_file }:dir { open read };
+dontaudit vendor_cacertservice_app system_data_file:dir { add_name create remove_name };
+dontaudit vendor_cacertservice_app system_data_file:file { create open rename setattr write };
+dontaudit { platform_app system_app } { vendor_audio_prop vendor_default_prop }:file { getattr map open read };
+dontaudit platform_app proc_pressure_io:file { getattr open read };
+dontaudit system_server vendor_file:dir read;
+
+# The camera HAL caches its zoom remap table in /data/misc/cameraserver, a core
+# directory that vendor code may not write; it recomputes the table instead.
+dontaudit hal_camera_default system_data_file:dir { write add_name remove_name };
+dontaudit hal_camera_default system_data_file:file { create write setattr unlink rename };
+# A property without a vendor label: the read falls back to the default.
+dontaudit hal_camera_default system_prop:file { getattr map open read };
+# The perf HAL looks for mediacodec threads to boost; Xiaomi's probing only.
+dontaudit vendor_hal_perf_default mediacodec:dir search;
+dontaudit vendor_hal_perf_default mediacodec:file { getattr open read };
+dontaudit vendor_hal_perf_default kernel:process setsched;
+dontaudit mediacodec { adaptive_haptics_prop ab_update_gki_prop }:file { getattr map open };
+
+# Optional diagnostic probes do not need additional privileges.
+dontaudit hal_mtdservice_default self:capability { dac_override sys_admin };
+dontaudit hal_mtdservice_default mnt_vendor_file:dir read;
+dontaudit vendor_init { default_prop radio_prop powerctl_prop }:file read;
+dontaudit init sysfs:file write;
+dontaudit kernel self:capability net_bind_service;
+dontaudit hal_hypsys_vendor kmsg_device:chr_file write;
+dontaudit shell vendor_piano_body_color_prop:file read;

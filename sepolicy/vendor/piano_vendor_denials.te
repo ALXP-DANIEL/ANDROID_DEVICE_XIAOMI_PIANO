@@ -1,0 +1,29 @@
+# Stock Xiaomi and QTI vendor services: access seen on Lineage build 17 in
+# permissive mode, reviewed against the platform neverallows.
+
+allow hal_camera_default vendor_sysfs_displayfeature:dir { search };
+allow hal_camera_default vendor_sysfs_displayfeature:file { open read };
+allow hal_hypsys_vendor boot_status_prop:file { getattr map open read };
+allow hal_hypsys_vendor minidump_data_file:file { getattr };
+allow hal_hypsys_vendor proc_tp_file:file { getattr open read };
+allow hal_hypsys_vendor proc_tp_lockdown:file { getattr open read };
+allow hal_hypsys_vendor vendor_fp_prop:file { getattr map open read };
+allow hal_hypsys_vendor vendor_sysfs_displayfeature:dir { search };
+allow hal_hypsys_vendor vendor_sysfs_displayfeature:file { getattr open read };
+allow hal_hypsys_vendor vendor_sysfs_hardwareinfo:file { open read write };
+allow hal_hypsys_vendor vendor_sysfs_soc_sensitive:file { getattr open read };
+allow hal_hypsys_vendor vendor_wifi_version:file { getattr map open read };
+dontaudit hal_mtdservice_default self:capability dac_read_search;
+allow nanoapp_aidl vndbinder_device:chr_file { ioctl map open read write };
+allow vendor_hal_perf_default hal_camera_default:dir { search };
+allow vendor_hal_perf_default hal_camera_default:file { open read };
+allow vendor_hal_perf_default vendor_hal_poweroptservice_qti:file { open read };
+allow vendor_hal_weaver_default tee_device:chr_file { ioctl open read write };
+allow vendor_sensors vendor_sysfs_displayfeature:file { getattr open };
+
+# Probes that need no access.
+dontaudit hal_hypsys_vendor vendor_default_prop:property_service set;
+dontaudit hal_hypsys_vendor init:unix_stream_socket connectto;
+dontaudit hal_hypsys_vendor property_socket:sock_file write;
+dontaudit hal_mtdservice_default file_contexts_file:file { getattr open read };
+dontaudit vendor_modprobe kernel:process setsched;
