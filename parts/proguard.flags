@@ -1,0 +1,2 @@
+# system_server loads the stylus KeyHandler by name.
+-keep class org.lineageos.pianoparts.** { *; }
