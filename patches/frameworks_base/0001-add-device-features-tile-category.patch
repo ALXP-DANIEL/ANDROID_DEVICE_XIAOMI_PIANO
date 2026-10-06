@@ -1,0 +1,69 @@
+diff --git a/packages/SystemUI/res/drawable/ic_qs_category_device.xml b/packages/SystemUI/res/drawable/ic_qs_category_device.xml
+new file mode 100644
+index 0000000..4932bfb
+--- /dev/null
++++ b/packages/SystemUI/res/drawable/ic_qs_category_device.xml
+@@ -0,0 +1,15 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++     SPDX-FileCopyrightText: The LineageOS Project
++     SPDX-License-Identifier: Apache-2.0
++-->
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:tint="?attr/colorControlNormal"
++    android:viewportHeight="960"
++    android:viewportWidth="960">
++    <path
++        android:fillColor="@android:color/white"
++        android:pathData="M200,880Q167,880 143.5,856.5Q120,833 120,800L120,160Q120,127 143.5,103.5Q167,80 200,80L760,80Q793,80 816.5,103.5Q840,127 840,160L840,800Q840,833 816.5,856.5Q793,880 760,880L200,880ZM200,800L760,800Q760,800 760,800Q760,800 760,800L760,160Q760,160 760,160Q760,160 760,160L200,160Q200,160 200,160Q200,160 200,160L200,800Q200,800 200,800Q200,800 200,800ZM400,760L560,760L560,720L400,720L400,760Z" />
++</vector>
+diff --git a/packages/SystemUI/res/values/lineage_qs_category_strings.xml b/packages/SystemUI/res/values/lineage_qs_category_strings.xml
+new file mode 100644
+index 0000000..0c78c04
+--- /dev/null
++++ b/packages/SystemUI/res/values/lineage_qs_category_strings.xml
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++     SPDX-FileCopyrightText: The LineageOS Project
++     SPDX-License-Identifier: Apache-2.0
++-->
++<resources>
++    <!-- Label for category in QS Edit mode list of tiles, for tiles of device specific features. Devices overlay it with their own name. [CHAR LIMIT=NONE] -->
++    <string name="qs_edit_mode_category_device">Device features</string>
++</resources>
+diff --git a/packages/SystemUI/src/com/android/systemui/qs/shared/model/TileCategory.kt b/packages/SystemUI/src/com/android/systemui/qs/shared/model/TileCategory.kt
+index 94f0125..a0a50e5 100644
+--- a/packages/SystemUI/src/com/android/systemui/qs/shared/model/TileCategory.kt
++++ b/packages/SystemUI/src/com/android/systemui/qs/shared/model/TileCategory.kt
+@@ -47,6 +47,10 @@ enum class TileCategory(val label: Text, val iconId: Int) {
+         Text.Resource(R.string.qs_edit_mode_category_accessibility),
+         R.drawable.ic_qs_category_accessibility,
+     ),
++    DEVICE(
++        Text.Resource(R.string.qs_edit_mode_category_device),
++        R.drawable.ic_qs_category_device,
++    ),
+     PROVIDED_BY_SYSTEM_APP(
+         Text.Resource(R.string.qs_edit_mode_category_providedBySystemApps),
+         R.drawable.ic_qs_category_system_apps,
+@@ -66,6 +70,9 @@ interface CategoryAndName {
+     val name: String
+ }
+ 
++/** Category for tiles of device features, labelled by the device's overlay. */
++const val CATEGORY_DEVICE = "org.lineageos.qs.CATEGORY_DEVICE"
++
+ /** Returns the [TileCategory] for the [Categories] received. */
+ fun tileCategoryFor(@Categories value: String): TileCategory? {
+     return when (value) {
+@@ -74,6 +81,7 @@ fun tileCategoryFor(@Categories value: String): TileCategory? {
+         CATEGORY_DISPLAY -> TileCategory.DISPLAY
+         CATEGORY_PRIVACY -> TileCategory.PRIVACY
+         CATEGORY_ACCESSIBILITY -> TileCategory.ACCESSIBILITY
++        CATEGORY_DEVICE -> TileCategory.DEVICE
+         else -> null
+     }
+ }

@@ -1,0 +1,20 @@
+Settings shows the piano Color scheme page in place of LiveDisplay. The
+LiveDisplay page stays reachable from it.
+
+117:                <action android:name="com.android.settings.action.IA_SETTINGS" />
+145:                <action android:name="com.android.settings.action.IA_SETTINGS" />
+179:                <action android:name="com.android.settings.action.IA_SETTINGS" />
+222:                <action android:name="com.android.settings.action.IA_SETTINGS" />
+254:                <action android:name="com.android.settings.action.IA_SETTINGS" />
+280:                <action android:name="com.android.settings.action.IA_SETTINGS" />
+306:                <action android:name="com.android.settings.action.IA_SETTINGS" />
+--- a/AndroidManifest.xml
++++ b/AndroidManifest.xml
+@@ -114,7 +114,6 @@
+             android:label="@*lineageos.platform:string/live_display_title"
+             android:targetActivity="PartsActivity">
+             <intent-filter>
+-                <action android:name="com.android.settings.action.IA_SETTINGS" />
+                 <action android:name="org.lineageos.lineageparts.LIVEDISPLAY_SETTINGS" />
+                 <category android:name="android.intent.category.DEFAULT" />
+             </intent-filter>
