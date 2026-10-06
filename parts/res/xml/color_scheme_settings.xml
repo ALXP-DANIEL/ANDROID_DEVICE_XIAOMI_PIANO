@@ -30,12 +30,5 @@
             android:title="@string/true_tone_title"
             android:summary="@string/true_tone_summary"
             android:persistent="false" />
-
-        <Preference
-            android:key="livedisplay"
-            android:title="@string/livedisplay_title"
-            android:summary="@string/livedisplay_summary">
-            <intent android:action="org.lineageos.lineageparts.LIVEDISPLAY_SETTINGS" />
-        </Preference>
     </PreferenceCategory>
 </PreferenceScreen>
