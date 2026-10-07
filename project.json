@@ -15,8 +15,8 @@
   "actions": {
     "github": "https://github.com/ALXP-DANIEL/ANDROID_DEVICE_XIAOMI_PIANO"
   },
-  "thumbnail": "./metadata/picture/cover-thumbnail-safe.jpeg",
-  "spotlightImage": "./metadata/picture/cover-spotlight-safe.jpeg",
+  "thumbnail": "metadata/picture/cover-thumbnail-proportions.jpeg",
+  "spotlightImage": "metadata/picture/cover-spotlight-proportions.jpeg",
   "profileImage": "./metadata/picture/profile-cover-v2.jpeg",
   "profileSummary": "Android development"
 }
