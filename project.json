@@ -1,0 +1,22 @@
+{
+  "slug": "xiaomi-pad-8-pro",
+  "title": "Xiaomi Pad 8 Pro",
+  "type": "Android development",
+  "category": "Android development",
+  "summary": "Device trees for LineageOS, TWRP, and OrangeFox on Xiaomi Pad 8 Pro.",
+  "year": "2026",
+  "spotlight": true,
+  "techStack": [
+    "Android",
+    "LineageOS",
+    "TWRP",
+    "OrangeFox"
+  ],
+  "actions": {
+    "github": "https://github.com/ALXP-DANIEL/ANDROID_DEVICE_XIAOMI_PIANO"
+  },
+  "thumbnail": "./metadata/picture/cover-thumbnail.jpeg",
+  "spotlightImage": "./metadata/picture/cover-spotlight.jpeg",
+  "profileImage": "./metadata/picture/profile-cover-v2.jpeg",
+  "profileSummary": "Android development"
+}
