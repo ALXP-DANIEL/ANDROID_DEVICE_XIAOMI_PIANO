@@ -124,6 +124,7 @@ case "${choice:-1}" in
         ;;
 esac
 
+if [[ "$TARGET" == "rom" ]]; then
 echo
 echo "Android version:"
 echo
@@ -147,14 +148,19 @@ case "${choice:-1}" in
         ;;
 esac
 
+else
+    ANDROID=17
+    LINEAGE_BRANCH="lineage-24.0"
+fi
+
 COMMON_BRANCH="device-common-${ANDROID}"
 VENDOR_BRANCH="vendor-${ANDROID}"
 VENDOR_COMMON_BRANCH="vendor-common-${ANDROID}"
 KERNEL_BRANCH="kernel-${ANDROID}"
 CAMERA_BRANCH="miuicamera-${ANDROID}"
 
-TWRP_BRANCH="twrp-${ANDROID}"
-OFOX_BRANCH="ofox-${ANDROID}"
+TWRP_BRANCH="twrp"
+OFOX_BRANCH="ofox"
 
 # ============================================================
 # ROM
@@ -296,8 +302,8 @@ if [[ "$TARGET" == "recovery" ]]; then
     echo
     echo "Select Recovery:"
     echo
-    echo "  1) TWRP ${ANDROID}"
-    echo "  2) OrangeFox ${ANDROID}"
+    echo "  1) TWRP"
+    echo "  2) OrangeFox"
     echo
 
     read -r -p "Choose [1]: " choice
@@ -305,13 +311,13 @@ if [[ "$TARGET" == "recovery" ]]; then
     case "${choice:-1}" in
         1)
             RECOVERY="twrp"
-            RECOVERY_NAME="TWRP ${ANDROID}"
+            RECOVERY_NAME="TWRP"
             DEVICE_BRANCH="$TWRP_BRANCH"
             ;;
 
         2)
             RECOVERY="ofox"
-            RECOVERY_NAME="OrangeFox ${ANDROID}"
+            RECOVERY_NAME="OrangeFox"
             DEVICE_BRANCH="$OFOX_BRANCH"
             ;;
 
