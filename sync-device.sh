@@ -157,7 +157,7 @@ COMMON_BRANCH="device-common-${ANDROID}"
 VENDOR_BRANCH="vendor-${ANDROID}"
 VENDOR_COMMON_BRANCH="vendor-common-${ANDROID}"
 KERNEL_BRANCH="kernel-${ANDROID}"
-CAMERA_BRANCH="miuicamera-${ANDROID}"
+CAMERA_BRANCH="miuicamera-16"
 
 TWRP_BRANCH="twrp"
 OFOX_BRANCH="ofox"
