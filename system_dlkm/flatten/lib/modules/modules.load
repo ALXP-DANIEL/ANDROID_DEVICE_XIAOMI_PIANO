@@ -35,6 +35,8 @@ usbnet.ko
 cdc_ncm.ko
 aqc111.ko
 r8153_ecm.ko
+xhci-pci.ko
+xhci-pci-renesas.ko
 usbmon.ko
 cdc-acm.ko
 usbserial.ko
@@ -48,7 +50,6 @@ btbcm.ko
 btqca.ko
 8021q.ko
 vmw_vsock_virtio_transport.ko
-tls.ko
 can.ko
 can-raw.ko
 can-bcm.ko
