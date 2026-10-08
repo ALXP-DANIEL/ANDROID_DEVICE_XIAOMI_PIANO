@@ -1,0 +1,47 @@
+# Stock Xiaomi Weaver HAL (miweaver).
+#
+# The hal_weaver_default domain and its exec type are already declared by
+# system/sepolicy/vendor/hal_weaver_default.te, and hal_weaver_service plus
+# the IWeaver/default service_contexts entry exist in the platform policy, so
+# nothing is declared here.
+
+# TWRP runs servicemanager inside the recovery domain.
+# Recovery is a legitimate client of the Weaver AIDL HAL during FBE
+# synthetic-password decryption. Use the standard HAL client attribute rather
+# than granting hal_weaver_service directly; AOSP protects the service with a
+# neverallow for non-Weaver clients.
+hal_client_domain(recovery, hal_weaver)
+
+allow hal_weaver_default recovery:binder { call transfer };
+allow recovery hal_weaver_default:binder { call transfer };
+
+# Secure-world transport. libmi_weaver -> libGPTEE_vendor dlopens
+# libGPMTEEC_vendor (Qualcomm TZComWrap), which links libminkdescriptor and
+# libminksocket_vendor - the same smcinvoke/Mink path as qseecomd, not a
+# separate GlobalPlatform driver.
+#
+# Stock vendor policy grants this domain exactly this rule for the secure
+# path and nothing else:
+#   (allow vendor_hal_weaver_default tee_device_202404
+#          (chr_file (ioctl read write getattr lock append map open
+#                     watch watch_reads)))
+allow hal_weaver_default tee_device:chr_file {
+    ioctl
+    read
+    write
+    getattr
+    lock
+    append
+    map
+    open
+    watch
+    watch_reads
+};
+
+# Also granted to this domain by stock vendor policy.
+allow hal_weaver_default self:capability2 wake_alarm;
+
+# Deliberately NOT carried from stock, because the objects do not exist here:
+# the secure_element binder/fd/service_manager rules and boot_status_prop.
+# Not added without evidence: the QSEE dma heap (stock grants this domain no
+# heap access), /dev/membuf and /dev/qti-smmu-proxy.

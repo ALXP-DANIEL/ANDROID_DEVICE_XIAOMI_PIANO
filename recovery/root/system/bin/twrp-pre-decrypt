@@ -1,0 +1,41 @@
+#!/system/bin/sh
+
+TARGET=/vendor/firmware_mnt
+
+# Idempotent: do nothing if the trusted-application tree is already
+# reachable at TARGET.
+#
+# A /proc/mounts test alone is not enough. This mount is created on the
+# recovery rootfs when the stock vendor image is absent, and mounting
+# /vendor afterwards shadows it: the mount is still listed while the path
+# resolves to an empty directory on the stock image. Testing the payload
+# instead of the mount table covers both cases, and mounting again on top
+# of the stock mountpoint is the correct recovery from a shadowed mount.
+if [ -d "${TARGET}/image" ]; then
+    exit 0
+fi
+
+SLOT_SUFFIX="$(getprop ro.boot.slot_suffix)"
+MODEM="/dev/block/by-name/modem${SLOT_SUFFIX}"
+
+if [ ! -b "${MODEM}" ]; then
+    echo "twrp-pre-decrypt: missing ${MODEM}" >&2
+    exit 1
+fi
+
+# The mountpoint is not guaranteed to exist. /vendor is only transiently
+# mounted by TWRP, so when the stock vendor image is not present the
+# directory has to come from the recovery rootfs instead.
+if [ ! -d "${TARGET}" ]; then
+    mkdir -p "${TARGET}" || exit 1
+    chmod 0771 "${TARGET}"
+fi
+
+mount -t vfat \
+    -o ro,shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337,context=u:object_r:firmware_file:s0 \
+    "${MODEM}" \
+    "${TARGET}" || exit 1
+
+# Verify the trusted applications are readable before allowing FBE
+# credential decrypt.
+[ -d "${TARGET}/image" ]

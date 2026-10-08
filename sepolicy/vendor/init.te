@@ -1,0 +1,8 @@
+# Recovery QSEE stock-vendor mount one-shot state.
+set_prop(init, vendor_piano_qsee_mount_state_prop)
+
+# Secure-service security level selector, mirroring stock build.prop.
+set_prop(init, vendor_piano_spu_level_prop)
+
+# KeyMint retry interval, mirroring stock build.prop.
+set_prop(init, vendor_keymint_retry_timer_prop)

@@ -1,0 +1,4 @@
+vendor.sys.listeners.registered    u:object_r:vendor_tee_listener_prop:s0
+vendor.piano.stock.mounted    u:object_r:vendor_piano_qsee_mount_state_prop:s0
+vendor.gatekeeper.is_security_level_spu    u:object_r:vendor_piano_spu_level_prop:s0
+vendor.keymint.retry_timer    u:object_r:vendor_keymint_retry_timer_prop:s0
