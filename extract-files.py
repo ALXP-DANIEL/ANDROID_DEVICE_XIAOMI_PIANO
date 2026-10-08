@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 import extract_utils.tools
+from extract_utils.fixups import flatten_fixups
 from extract_utils.fixups_blob import (
     blob_fixup,
     blob_fixups_user_type,
@@ -260,6 +261,29 @@ blob_fixups: blob_fixups_user_type = {
     ): blob_fixup()
         .replace_needed('libtensorflowlite_c.so', 'libtensorflowlite_c_vendor.so'),
 }  # fmt: skip
+
+# Keep stock V6 audio types separate from the unfrozen platform V6 module.
+blob_fixups = flatten_fixups(blob_fixups)
+for source, destination in (
+    ('vendor/lib64/libaudioserviceexampleimpl.so', 'vendor/lib64/libaudioserviceexampleimpl.so'),
+    ('vendor/lib64/soundfx/libbundleaidl.so', 'vendor/lib64/soundfx/libbundleaidl.so'),
+    ('vendor/lib64/soundfx/libdownmixaidl.so', 'vendor/lib64/soundfx/libdownmixaidl.so'),
+    ('vendor/lib64/soundfx/libdynamicsprocessingaidl.so', 'vendor/lib64/soundfx/libdynamicsprocessingaidl.so'),
+    ('vendor/lib64/soundfx/libhwdapaidl.so', 'vendor/lib64/soundfx/libhwdapaidl.so'),
+    ('vendor/lib64/soundfx/libloudnessenhanceraidl.so', 'vendor/lib64/soundfx/libloudnessenhanceraidl.so'),
+    ('vendor/lib64/soundfx/liblvacfsprocessingaidl.so', 'vendor/lib64/soundfx/liblvacfsprocessingaidl.so'),
+    ('vendor/lib64/soundfx/libmiwndnsprocessingaidl.so', 'vendor/lib64/soundfx/libmiwndnsprocessingaidl.so'),
+    ('vendor/lib64/soundfx/libozoaidl.so', 'vendor/lib64/soundfx/libozoaidl.so'),
+    ('vendor/lib64/soundfx/libreverbaidl.so', 'vendor/lib64/soundfx/libreverbaidl.so'),
+    ('vendor/lib64/soundfx/libvisualizeraidl.so', 'vendor/lib64/soundfx/libvisualizeraidl.so'),
+    ('vendor/lib64/android.hardware.audio.core.sounddose-V2-ndk.so', 'vendor/lib64/android.hardware.audio.core.sounddose-V2-ndk_xiaomi.so'),
+    ('vendor/lib64/libaudio_aidl_conversion_common_ndk.so', 'vendor/lib64/libaudio_aidl_conversion_common_ndk_xiaomi.so'),
+    ('vendor/lib64/hw/android.hardware.bluetooth.audio_sw.so', 'vendor/lib64/hw/android.hardware.bluetooth.audio_sw.so'),
+):
+    fixup = blob_fixups.get(destination, blob_fixups.get(source, blob_fixup()))
+    blob_fixups[destination] = fixup.replace_needed(
+        'android.media.audio.common.types-V6-ndk.so',
+        'android.media.audio.common.types-V6-ndk_xiaomi.so')
 
 module = ExtractUtilsModule(
     'sm8750-common',
