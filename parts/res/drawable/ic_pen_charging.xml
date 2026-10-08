@@ -1,0 +1,13 @@
+<!-- Stock Settings ic_stylus_in_charging. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="8dp"
+    android:height="12.88dp"
+    android:viewportWidth="18"
+    android:viewportHeight="29"
+    android:tint="?android:attr/colorControlNormal">
+
+    <path
+        android:fillColor="#000000"
+        android:fillType="evenOdd"
+        android:pathData="M11.0567,12.5667H18L2.8421,29L7.1725,16.8915L6.9433,16.4333H0L15.1579,0L10.8265,12.1085L11.0567,12.5667Z"/>
+</vector>
