@@ -1,0 +1,56 @@
+--- a/provider.go
++++ b/provider.go
+@@ -180,6 +180,9 @@
+ 	}
+ 
+ 	c.setProviderInternal(&m.providerInfo, provider, value)
++	if m.Name() == "android.media.audio.common.types-V6-ndk" && provider.typ == "*android.CommonModuleInfo" {
++		pianoProviderFields.Store(value, pianoProviderFieldHashes(value))
++	}
+ }
+ 
+ func (c *Context) setSingletonProvider(s *singletonInfo, provider *providerKey, value any) {
+--- a/context.go
++++ b/context.go
+@@ -5224,6 +5224,26 @@
+ // Checks that the hashes of all the providers match the hashes from when they were first set.
+ // Does nothing on success, returns a list of errors otherwise. It's recommended to run this
+ // in a goroutine.
++// Capture only the failing audio module; retain provider validation unchanged.
++var pianoProviderFields sync.Map
++
++func pianoProviderFieldHashes(value any) map[string]proptools.Hash {
++	v := reflect.ValueOf(value).Elem()
++	fields := make(map[string]proptools.Hash)
++	for i := 0; i < v.NumField(); i++ {
++		if v.Field(i).CanInterface() {
++			if v.Field(i).Kind() == reflect.Pointer && v.Field(i).IsNil() {
++				fields[v.Type().Field(i).Name] = proptools.ZeroHash
++				continue
++			}
++			if hash, err := proptools.CalculateHashReflection(v.Field(i).Interface()); err == nil {
++				fields[v.Type().Field(i).Name] = hash
++			}
++		}
++	}
++	return fields
++}
++
+ func (c *Context) VerifyProvidersWereUnchanged() []error {
+ 	if !c.buildActionsReady {
+ 		return []error{ErrBuildActionsNotReady}
+@@ -5239,6 +5259,14 @@
+ 					continue
+ 				}
+ 				if m.providerInitialValueHashes[i] != hash {
++					if initial, ok := pianoProviderFields.Load(provider); ok {
++						before := initial.(map[string]proptools.Hash)
++						for name, after := range pianoProviderFieldHashes(provider) {
++							if before[name] != after {
++								errors = append(errors, fmt.Errorf("piano diagnostic: module %q provider field %s changed", m.Name(), name))
++							}
++						}
++					}
+ 					errors = append(errors, fmt.Errorf("provider %q on module %q was modified after being set", providerRegistry[i].typ, m.Name()))
+ 				}
+ 			} else if m.providerInitialValueHashes[i] != proptools.ZeroHash && !m.hasUnrestoredProvider[i] {
