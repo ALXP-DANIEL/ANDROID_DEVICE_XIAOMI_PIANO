@@ -1,0 +1,40 @@
+# Build output and local workspaces
+/out/
+/.repo/
+/ccache/
+/.ccache/
+/build-output/
+/stock/
+/analysis/
+/dumps/
+/proprietary/
+
+# Firmware packages and images
+*.img
+*.bin
+*.zip
+*.7z
+*.tgz
+*.tar
+*.tar.gz
+
+# Local files, logs and credentials
+.DS_Store
+._*
+*.log
+*.tmp
+*.bak
+*.orig
+*.rej
+*~
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+/.idea/
+/.vscode/
+
+__pycache__/
+*.pyc
