@@ -35,6 +35,8 @@
 /system/lib/modules/cdc_ncm.ko: /system/lib/modules/cdc_ether.ko /system/lib/modules/usbnet.ko /system/lib/modules/mii.ko
 /system/lib/modules/aqc111.ko: /system/lib/modules/usbnet.ko /system/lib/modules/mii.ko
 /system/lib/modules/r8153_ecm.ko: /system/lib/modules/r8152.ko /system/lib/modules/cdc_ether.ko /system/lib/modules/usbnet.ko /system/lib/modules/mii.ko
+/system/lib/modules/xhci-pci.ko: /system/lib/modules/xhci-pci-renesas.ko
+/system/lib/modules/xhci-pci-renesas.ko:
 /system/lib/modules/usbmon.ko:
 /system/lib/modules/cdc-acm.ko:
 /system/lib/modules/usbserial.ko:
@@ -48,7 +50,6 @@
 /system/lib/modules/btqca.ko: /system/lib/modules/bluetooth.ko /system/lib/modules/rfkill.ko
 /system/lib/modules/8021q.ko:
 /system/lib/modules/vmw_vsock_virtio_transport.ko:
-/system/lib/modules/tls.ko:
 /system/lib/modules/can.ko:
 /system/lib/modules/can-raw.ko: /system/lib/modules/can.ko
 /system/lib/modules/can-bcm.ko: /system/lib/modules/can.ko
