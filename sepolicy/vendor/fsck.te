@@ -1,0 +1,4 @@
+# The rescue partition is an ext4 filesystem mounted with the fstab "check"
+# flag. Match the stock policy so first-stage fsck can repair it in enforcing
+# mode after ueventd assigns the device-specific block label.
+allow fsck rescue_block_device:blk_file rw_file_perms;

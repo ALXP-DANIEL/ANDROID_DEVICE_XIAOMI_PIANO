@@ -1,0 +1,20 @@
+type hal_ozonotify_default, domain;
+type hal_ozonotify_default_exec, exec_type, file_type, vendor_file_type;
+type hal_ozonotify_service, hal_service_type, service_manager_type;
+
+binder_use(hal_ozonotify_default)
+hal_server_domain(hal_ozonotify_default, hal_ozonotify)
+hal_attribute_service(hal_ozonotify, hal_ozonotify_service)
+init_daemon_domain(hal_ozonotify_default)
+
+# Matches the original ROM clients: the media path, audio HAL, Xiaomi camera and this
+# platform-signed diagnostics/configuration app.
+hal_client_domain(mediaserver, hal_ozonotify)
+hal_client_domain(hal_audio_default, hal_ozonotify)
+hal_client_domain(platform_app, hal_ozonotify)
+hal_client_domain(priv_app, hal_ozonotify)
+
+allow hal_ozonotify_client hal_ozonotify_server:binder { call transfer };
+allow hal_ozonotify_server hal_ozonotify_client:binder { call transfer };
+allow hal_ozonotify_client hal_ozonotify_server:fd use;
+allow hal_ozonotify_server hal_ozonotify_client:fd use;
