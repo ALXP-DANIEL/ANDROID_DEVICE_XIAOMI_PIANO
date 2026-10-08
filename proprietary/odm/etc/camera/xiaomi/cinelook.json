@@ -1,0 +1,117 @@
+{
+    "PipelineName": "CineLook",
+    "NodesList": {
+        "Node": [
+            {
+                "NodeName": "com.xiaomi.plugin.offlineyuvsplit",
+                "NodeInstance": "Y2YSplitInstance1",
+                "NodeProperty":[
+                  {
+                       "NodePropertyName":"NodeMask",
+                       "NodePropertyValue":4
+                  }
+                ]
+            },       
+             {
+                "NodeName": "com.xiaomi.plugin.virtual",
+                "NodeInstance": "virtualInstance0",
+                "NodeProperty":[
+                 {
+                     "NodePropertyName":"NodeMask",
+                     "NodePropertyValue":512
+                 }
+                 ]
+            },
+            {
+                "NodeName": "com.xiaomi.plugin.offlineyuvsplit",
+                "NodeInstance": "Y2YSplitInstance2",
+                "NodeProperty":[
+                  {
+                       "NodePropertyName":"NodeMask",
+                       "NodePropertyValue":4
+                  }
+                ]
+            }
+        ]
+    },
+      "PortLinkages": {
+          "Link": [
+            {
+                "SrcPort": {
+                    "PortId": 0,
+                    "NodeInstance": "SourceBuffer"
+                },
+                "DstPort": {
+                    "PortId": 0,
+                    "NodeInstance": "virtualInstance0"
+                }
+            },
+            {
+                "SrcPort": {
+                    "PortId": 0,
+                    "NodeInstance": "virtualInstance0"
+                },
+                "DstPort": {
+                    "PortId": 0,
+                  "NodeInstance": "Y2YSplitInstance1",
+                      "PortFormat": "P010"
+                }
+            },
+            {
+                "SrcPort": {
+                    "PortId": 1,
+                    "NodeInstance": "virtualInstance0"
+                },
+                "DstPort": {
+                    "PortId": 0,
+                  "NodeInstance": "Y2YSplitInstance2",
+                      "PortFormat": "P010"
+                }
+            },
+                  {
+                    "SrcPort": {
+                        "PortId": 0,
+                        "NodeInstance": "Y2YSplitInstance1",
+                        "PortFormat": "P010"
+                    },
+                      "DstPort": {
+                      "PortId": 0,
+                      "NodeInstance": "SinkBuffer0"
+                  }
+              },
+            {
+                    "SrcPort": {
+                    "PortId": 1,
+                    "NodeInstance": "Y2YSplitInstance1",
+                    "PortFormat": "P010"
+                },
+                    "DstPort": {
+                    "PortId": 1,
+                    "NodeInstance": "SinkBuffer1"
+                }
+            },
+            {
+                "SrcPort": {
+                    "PortId": 0,
+                    "NodeInstance": "Y2YSplitInstance2",
+                    "PortFormat": "P010"
+                },
+                  "DstPort": {
+                  "PortId": 0,
+                  "NodeInstance": "SinkBuffer0"
+              }
+          },
+        {
+                "SrcPort": {
+                "PortId": 1,
+                "NodeInstance": "Y2YSplitInstance2",
+                "PortFormat": "P010"
+            },
+                "DstPort": {
+                "PortId": 1,
+                "NodeInstance": "SinkBuffer1"
+            }
+        }
+          ]
+      }
+  }

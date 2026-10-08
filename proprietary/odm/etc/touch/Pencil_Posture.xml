@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <device>
+        <name>NVTCapacitivePenP81c</name>
+    </device>
+    <complementary>
+        <name>complementary filter</name>
+        <kp>40</kp>
+        <ki>0.1</ki>
+        <Fs>50</Fs>
+        <ACC_Kp>0.6</ACC_Kp>
+    </complementary>
+    <filter>
+        <name>Butterworth filter</name>
+        <input>
+            <name>input filter</name>
+            <Specify>2</Specify>
+            <Denominator>1 -1.454243586251584785529189502994995564222 0.574061915083954654726028365985257551074</Denominator>
+            <Numerator>0.029954582208092474238103619654793874361 0.059909164416184948476207239309587748721 0.029954582208092474238103619654793874361</Numerator>
+        </input>
+        <output>
+            <name>output filter</name>
+            <Specify>2</Specify>
+            <Denominator>1 -0.671029090774096226290623690147185698152 0.252324626282265929155812500539468601346</Denominator>
+            <Numerator>0.145323883877042425716297202598070725799 0.290647767754084851432594405196141451597 0.145323883877042425716297202598070725799</Numerator>
+        </output>
+    </filter>
+</root>

@@ -1,0 +1,74 @@
+/*
+device:o10u
+*/
+
+{
+    // SAT fallback settings
+    "SatFallback": {
+        "satFallbackSwitch": 2,
+        "disFbZoomRatio": "0:0:0:0|0:0:0:0",
+        "luxFbZoomRatio": "0:0:2.4:19.999|0:0:2.4:15.1",
+        "satFallbackUT2T": "0:0:9999:9999|0:0:9999:9999",
+        "satFallbackUT2W": "0:0:9999:9999|0:0:9999:9999",
+        "satFallbackT2W": "40:50:520:480|48:58:480:420",
+        "satFallbackDelta": "0:10:0:0:0|0:10:0:0:0"
+    },
+    // InSensorZoom settings
+    "InSensorZoom": {
+        "enableInSensorZoom": true,
+        // Wide: 0x02 Tele3x: 0x04 Tele5x: 0x08
+        "ISZEnableCameraRole": 2,
+        "zoomOutProtection": true,
+        // Zoom support range threshold: Wide , Tele , UltraTele, todo:static meta
+        "ISZThresholdZoomRange": "2.0:19.999:4.8:60.1:0:0",
+        // Correponding sensor condition threshold: Wide , Tele , UltraTele
+        "ISZThresholdInterval": "1:380:410|1:340:370",
+        // Video correponding sensor condition threshold: Wide , Tele , UltraTele
+        "VideoISZThresholdInterval": "1:300:340|1:300:340",
+        "enableVideoISZ": "0:1:0:0"
+    },
+    // BinningModeWide settings
+    "BinningModeWide": {
+        "wideSHDRModeSwitchThre": "1:255:270:4:5|1:180:200:3:4",
+        "wideDXGModeSwitchThre": "1:368:380:3.8:4.6|1:360:380:3:4",
+        "wideCMSModeSwitchThre": "0:9999:9999:9999:9999|0:9999:9999:9999:9999",
+        "wideDxgModeExptimeMin": 21332,
+        // Ratio support range DXG: UW, Wide , Tele , UltraTele
+        "DXGModeRatioRange": "0:0|1.0:1.9999|2.4:4.799|0:0",
+        // Ratio support range SHDR: UW, Wide , Tele , UltraTele
+        "SHDRModeRatioRange": "0:0|1.0:1.9999|0:0|0:0"
+    },
+    // BinningModeTele settings
+    "BinningModeTele": {
+        "teleBinningModeSwitchThre": "0:0:9999:9999:9999:9999",
+        "teleDxgModeExptimeMin": 21332
+    },
+    //SAT PIP
+    "SatPipControlInfo": {
+        "isSatPipSupported": false,
+        // PIP role id |UW:1|W:2|T:3|UT:4|
+        "satPipCameraRoleId": 3,
+        "satPipZoomRatioStarted": 20.0
+    },
+    "satZoomAnimation":{
+        "satZoomTime":"750|750|2000|1000",
+        "maxDigitalZoom":10.0,
+        "maxDigitalZoomVideo":15.0,
+        // 0:beizer + powerExp dynamic model, 1:only powerExp model, 2:only bezier model
+        "zoomAnimationSwitch":0,
+        // bezier model
+        "bezierCurve":"0.6:1.0:0.8:1.0",
+        "bezierAnimationFrameMin":8,
+        "bezierAnimationFrameMax":14,
+        // power-exponent model
+        "algoReserveMargin":0.85,
+        "powerExpAnimationFrameMin":8,
+        "powerExpAnimationFrameMax":14
+    },
+    "monocularSettings":{
+        "enableMonocularZoom":true,
+        "zoomSlowDoneRatio":1.1
+    },
+    "enablePreviewFusion":0,
+    "isSatFollowFingersOpt":false
+}

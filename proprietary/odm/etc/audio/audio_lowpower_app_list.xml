@@ -1,0 +1,157 @@
+
+<packages>
+    <config>
+        <template type="lowPowerShortVideo" volume="0.562" power_save="0.562"/>
+        <template type="lowPowerLongVideo" volume="0.776" power_save="0.776"/>
+        <template type="lowPowerGame" volume="0.794" power_save="0.794"/>
+        <template type="lowPowerSva" volume="0.562" power_save="0.562"/>
+    </config>
+    <group type="lowPowerShortVideo">
+        <package name="com.duowan.kiwi"/>
+        <package name="com.ss.android.ugc.aweme"/>
+        <package name="com.ss.android.ugc.aweme.lite"/>
+        <package name="com.ss.android.ugc.live"/>
+        <package name="com.xingin.xhs"/>
+        <package name="com.smile.gifmaker"/>
+        <package name="com.kuaishou.nebula"/>
+        <package name="com.taobao.taobao"/>
+        <package name="com.xunmeng.pinduoduo"/>
+        <package name="com.jingdong.app.mall"/>
+        <package name="com.xiaomi.shop"/>
+        <package name="com.sankuai.meituan"/>
+        <package name="tv.danmaku.bili"/>
+        <package name="tv.danmaku.bilibilihd"/>
+
+        <package name="com.taobao.idlefish"/>
+        <package name="com.achievo.vipshop"/>
+        <package name="com.alibaba.wireless"/>
+        <package name="com.tmall.wireless"/>
+        <package name="com.taobao.live"/>
+        <package name="com.sankuai.meituan.takeoutnew"/>
+        <package name="com.android.browser"/>
+        <package name="com.tencent.mtt"/>
+
+        <package name="com.weico.international"/>
+        <package name="com.ss.android.article.news"/>
+        <package name="com.zhihu.android"/>
+        <package name="com.xs.fm"/>
+        <package name="com.ss.android.auto"/>
+        <package name="com.coolapk.market"/>
+        <package name="cn.xuexi.android"/>
+        <package name="com.tencent.qt.qtl"/>
+        <package name="com.hupu.games"/>
+        <package name="air.tv.douyu.android"/>
+
+        <package name="com.twitter.android"/>
+        <package name="com.ss.android.article.lite"/>
+        <package name="com.sup.android.superb"/>
+        <package name="cn.xiaochuankeji.tieba"/>
+        <package name="com.cubic.autohome"/>
+        <package name="com.tencent.news"/>
+        <package name="com.gotokeep.keep"/>
+        <package name="com.snapchat.android"/>
+        <package name="com.ss.android.ugc.trill"/>
+
+        <package name="com.zhiliaoapp.musically.go"/>
+        <package name="com.lemon.lv"/>
+        <package name="com.huahuo.hhspfilms"/>
+        <package name="com.starmoon.smfilms"/>
+        <package name="com.zhpphls.banma"/>
+        <package name="com.bilibili.comic"/>
+        <package name="in.mohalla.video"/>
+
+        <package name="com.hengxing.hxfilms"/>
+        <package name="com.google.android.youtube"/>
+    </group>
+    <group type="lowPowerLongVideo">
+        <package name="com.vanced.android.youtube"/>
+        <package name="com.youku.pad"/>
+        <package name="tv.hanju.lite"/>
+        <package name="com.sinyee.babybus.recommendapp"/>
+        <package name="com.zhongduomei.rrmj.society"/>
+        <package name="com.tencent.edu"/>
+        <package name="com.qiyi.video.child"/>
+        <package name="com.xiaohei.xiaoheiapps"/>
+        <package name="org.xinkb.blackboard.android"/>
+        <package name="com.yuantiku.tutor"/>
+        <package name="com.sinyee.babybus.world"/>
+        <package name="com.cmcc.cmvideo"/>
+        <package name="com.app.moontv"/>
+        <package name="com.bestv.app"/>
+        <package name="com.example.notes.kyjsb"/>
+        <package name="com.dianshijia.tvlive"/>
+        <package name="com.jp1.xg1"/>
+        <package name="com.kuaikan.comic"/>
+        <package name="com.videogo"/>
+        <package name="cn.cntvhd"/>
+        <package name="com.mxtech.videoplayer.ad"/>
+        <package name="com.bb.happykids"/>
+        <package name="com.xfp.kit"/>
+        <package name="com.sevenVideo.app.android"/>
+        <package name="com.miui.videoplayer"/>
+        <package name="com.qiyi.video.pad"/>
+        <package name="com.ss.android.article.video"/>
+        <package name="com.babycloud.hanju"/>
+        <package name="com.qiyi.video.lite"/>
+        <package name="com.baidu.video"/>
+        <package name="com.cctv.yangshipin.app.androidp"/>
+        <package name="cn.cntv"/>
+        <package name="com.digua.dgptfilms"/>
+        <package name="com.imgo.pad"/>
+        <package name="com.zuoyebang.airclass"/>
+        <package name="com.google.android.apps.youtube.kids"/>
+        <package name="com.tencent.qqlive"/>
+        <package name="com.youku.phone"/>
+        <package name="com.qiyi.video"/>
+        <package name="com.miui.mediaviewer"/>
+        <package name="com.hunantv.imgo.activity"/>
+        <package name="com.miui.video"/>
+        <package name="com.tencent.mm"/>
+
+        <package name="com.sw.battery1"/>
+        <package name="com.csd.newyunketang"/>
+        <package name="com.huli.hlfilms"/>
+        <package name="com.xs.video.bayi"/>
+        <package name="com.xingxingsp.xxspfilms"/>
+        <package name="com.kkzy.browser"/>
+        <package name="com.le123.ysdq"/>
+        <package name="com.baidu.haokan"/>
+        <package name="com.all.video"/>
+        <package name="com.abxsss.app"/>
+        <package name="com.bigsea.bsfilms"/>
+        <package name="com.lanhu.lhspfilms"/>
+        <package name="com.starrysky.ssfilms"/>
+        <package name="com.korean.tv"/>
+        <package name="com.phoenix.read"/>
+
+        <package name="com.viva.note"/>
+        <package name="com.example.pptv"/>
+        <package name="com.dahaishipin.haochen"/>
+        <package name="ffnb.jinri.yingshi"/>
+        <package name="com.kkk.kyyy"/>
+
+        <package name="com.huya.kiwi"/>
+        <package name="com.huya.android.pad"/>
+        <package name="com.douyu.rush"/>
+        <package name="com.xyhj.hanju"/>
+        <package name="com.yspad"/>
+        <package name="cn.ysp.app.pad"/>
+        <package name="com.taijutvdq.paa"/>
+        <package name="com.tencent.qqlivepad"/>
+        <package name="com.tencent.videolite.android"/>
+        <package name="com.zhongduomei.rrmj.society"/>
+        <package name="cn.lzm.koreatv"/>
+        <package name="cn.cntvhd"/>
+        <package name="com.baidu.video.pad"/>
+    </group>
+    <group type="lowPowerGame">
+        <package name="com.tencent.tmgp.sgame"/>
+        <package name="com.tencent.tmgp.speedmobile"/>
+    </group>
+    <group type="lowPowerSva">
+        <package name="com.autonavi.minimap"/>
+        <package name="com.baidu.BaiduMap"/>
+        <package name="com.tencent.map"/>
+        <package name="com.google.android.apps.maps"/>
+    </group>
+</packages>

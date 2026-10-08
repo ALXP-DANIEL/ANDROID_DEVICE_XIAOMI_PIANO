@@ -1,0 +1,66 @@
+{
+    "PipelineName": "SdkSnapshot",
+    "NodesList": {
+        "Node": [
+        {
+	        "NodeName": "com.xiaomi.plugin.virtual",
+	        "NodeInstance": "virtualInstanceSdk",
+	        "NodeProperty":[
+	        {
+	            "NodePropertyName":"NodeMask",
+	            "NodePropertyValue":512
+	        }
+	        ]
+        },
+        {
+	        "NodeName": "com.xiaomi.plugin.offlineyuvreprocess",
+	        "NodeInstance": "EcoYUVReprocessInstanceSdk",
+	        "NodeProperty":[
+                {
+                    "NodePropertyName":"NodeMask",
+                    "NodePropertyValue":4
+                }
+                ]
+        }
+        ]
+    },
+    "PortLinkages": {
+        "Link": [
+            {
+                "SrcPort": {
+                    "PortId": 0,
+                    "NodeInstance": "SourceBuffer0"
+                },
+                "DstPort": {
+                    "PortId": 0,
+                    "NodeInstance": "virtualInstanceSdk"
+                }
+            },
+            {
+                "SrcPort": {
+                    "PortId": 0,
+                    "NodeInstance": "virtualInstanceSdk",
+                    "PortFormat": "YUV420_NV12"
+                },
+                "DstPort": {
+                    "PortId": 0,
+                    "NodeInstance": "EcoYUVReprocessInstanceSdk",
+                    "PortFormat": "YUV420_NV12",
+                    "PortFollowType":2,
+                    "FollowPortId":0
+                }
+            },
+            {
+                "SrcPort": {
+                    "PortId": 0,
+                    "NodeInstance": "EcoYUVReprocessInstanceSdk",
+                    "PortFormat": "YUV420_NV12"
+                },
+                "DstPort": {
+                    "PortId": 0,
+                    "NodeInstance": "SinkBuffer0"
+                }
+            }
+        ]
+    }
+}

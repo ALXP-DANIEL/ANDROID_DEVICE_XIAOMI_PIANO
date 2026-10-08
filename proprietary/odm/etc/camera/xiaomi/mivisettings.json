@@ -1,0 +1,11 @@
+{
+    "offlinedebugmask" : 0,
+    "Soc" : "QCOM",
+    "SupportBinaryLog": false,
+    "OpenLIFO" : 1,
+    "WatermarkDown": true,
+    "SrNodeHaveTwoOutPort" : false,
+    "NightBokehConcurrencyProcess" : false,
+    "MialgoEnginePreviewThreadNum" : 6,
+    "MialgoEngineCaptureThreadNum" : 12
+}

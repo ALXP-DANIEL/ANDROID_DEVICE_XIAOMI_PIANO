@@ -1,0 +1,183 @@
+{
+    "ModeList": {
+        "Mode": [
+            {
+                // CameraUser::MIUI
+                "CameraUser": 0,
+                // 0x9000, StreamConfigModeAlgoDual
+                "VendorOpMode": 36864,
+                // 0x8002, StreamConfigModeBokeh
+                "MialgoOpMode": 32770,
+                "RoleIds": [64],
+                "Signature": "DualBokeh",
+                "BufferLimitCnt": 10,
+                "minZSLQLength": 9,
+                // Bokeh 12/1, HDRBokeh 12/3, SNBokeh 12/6
+                "VendorSnapshotBufferQueueSize": 38,
+                "FlushWaitTimeMs": [4000, 4000],
+                // 0001 0001 0001, 0x110, hdrBokeh/snBokeh/mihalMfnr
+                "FeatureMask" : 369,
+                "StreamConfig": [
+                    // raw10 stream of master
+                    {
+                        // BokehCamSig::masterRaw
+                        "bokehSig": 1,
+                        "ratio": 1.33,
+                        "isPhysicalStream": true,
+                        "isZSL": true,
+                        "format": 37,
+                        "usage": 3,
+                        "dataSpace": 146931712
+                    },
+                    // raw10 stream of slave
+                    {
+                        // BokehCamSig::slaveRaw
+                        "bokehSig": 3,
+                        "ratio": 1.33,
+                        "isPhysicalStream": true,
+                        "isZSL": true,
+                        "format": 37,
+                        "usage": 3,
+                        "dataSpace": 146931712
+                    }
+                ]
+            },
+            {
+                // CameraUser::MIUI
+                "CameraUser": 0,
+                // 0x9002, StreamConfigModeAlgoDualSAT
+                "VendorOpMode": 36866,
+                // 0x8001, StreamConfigModeSAT
+                "MialgoOpMode": 32769,
+                "RoleIds": [64],
+                "Signature": "Sat",
+                "BufferLimitCnt": 12,
+                "minZSLQLength": 9,
+                "VendorSnapshotBufferQueueSize": 38,
+                "FlushWaitTimeMs": [4000, 4000],
+                // vendorMfnr/burst/hdr/sr/hdrsr/rawhdr/sn/fakesat
+                // 0x2 0x4 0x10 0x20 0x40 0x80 0x100 0x200 0x10000
+                // 0001 0000 0001 1111 0110, 0x101F6
+                "FeatureMask" : 66037,
+                "StreamConfig": [
+                    // PreviewUp stream
+                    {
+                        "roleId": 64,
+                        "ratio": 0.0,
+                        "isPhysicalStream": false,
+                        "format": 35,
+                        "usage": 256,
+                        "stream_prop": 17, // PRIVATE_PREVIEW
+                        "dataSpace": 0
+                    },
+                    // raw10 stream of ultra wide
+                    {
+                        "roleId": 21,
+                        "ratio": 0.0,
+                        "isPhysicalStream": true,
+                        "isZSL": true,
+                        "format": 37,
+                        "usage": 3,
+                        "dataSpace": 146931712
+                    },
+                    // raw10 stream of wide
+                    {
+                        "roleId": 0,
+                        "ratio": 0.0,
+                        "isPhysicalStream": true,
+                        "isZSL": true,
+                        "format": 37,
+                        "usage": 3,
+                        "dataSpace": 146931712
+                    }
+                ]
+            },
+            {
+                // CameraUser::SDK
+                "CameraUser": 1,
+                // 0x0, ThirdApp
+                "VendorOpMode": 36866,
+                // 0xFF1A,StreamConfigModeThirdPartyJpegR
+                "MialgoOpMode": 65306,
+                "RoleIds": [64],
+                // Mihal Mfnr
+                // 0x1
+                "FeatureMask" : 1,
+                "Signature": "ThirdJpegR",
+                "BufferLimitCnt": 12,
+                "minZSLQLength": 9,
+                "VendorSnapshotBufferQueueSize": 42,
+                "FlushWaitTimeMs": [4000, 4000],
+                "StreamConfig": [
+                    // raw10 stream of ultra wide
+                    {
+                        "roleId": 21,
+                        "ratio": 0.0,
+                        "isPhysicalStream": true,
+                        "isZSL": true,
+                        "format": 37,
+                        "usage": 3,
+                        "dataSpace": 146931712
+                    },
+                    // raw14 stream of wide
+                    {
+                        "roleId": 0,
+                        "ratio": 0.0,
+                        "isPhysicalStream": true,
+                        "isZSL": true,
+                        "format": 37,
+                        "usage": 3,
+                        "dataSpace": 146931712
+                    },
+                    // cam1_NV12buffer
+                    {
+                        "roleId": 64,
+                        "ratio": 0.0,
+                        "isPhysicalStream": false,
+                        "format": 35,
+                        "usage": 256,
+                        "stream_prop": 17, // PRIVATE_PREVIEW
+                        "dataSpace": 0
+                   }
+                ]
+            },
+            {
+                // CameraUser::SDK
+                "CameraUser": 1,
+                // 0x0, ThirdApp
+                "VendorOpMode": 36865,
+                // 0xFF1B,StreamConfigModeThirdPartyJpegRFront
+                "MialgoOpMode": 65307,
+                "RoleIds": [1],
+                // UltraHDR/mihal mfnr
+                // 0x20000/0x1
+                "FeatureMask" : 131073,
+                "Signature": "ThirdJpegRFront",
+                "BufferLimitCnt": 6,
+                "minZSLQLength": 9,
+                "VendorSnapshotBufferQueueSize": 24,
+                "FlushWaitTimeMs": [4000, 4000],
+                "StreamConfig": [
+                    // PreviewUp stream
+                    {
+                        "ratio": 0.0,
+                        "isPhysicalStream": false,
+                        "format": 35,
+                        "usage": 256,
+                        "stream_prop": 17, // PRIVATE_PREVIEW
+                        "dataSpace": 0
+                    },
+                    // raw10 stream for front single camera
+                    {
+                        "ratio": 0.0,
+                        "isPhysicalStream": false,
+                        "isZSL": true,
+                        "format": 37,
+                        "usage": 3,
+                        "dataSpace": 146931712
+                    }
+                ]
+            }
+        ]
+    }
+}

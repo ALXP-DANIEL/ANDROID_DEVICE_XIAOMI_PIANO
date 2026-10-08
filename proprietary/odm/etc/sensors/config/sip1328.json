@@ -1,0 +1,28 @@
+{
+  "config":
+  {
+    "hw_platform": ["MTP", "Dragon", "Surf", "QRD"],
+    "soc_id": ["639"]
+  },
+  "sip1328":{
+    "owner": "sns_sip1328",
+    ".als":{
+      "owner": "sns_sip1328",
+      ".config":{
+        "owner": "sns_sip1328",
+        "is_dri":{ "type": "int", "ver": "0",
+          "data": "0"
+        },
+        "hw_id":{ "type": "int", "ver": "0",
+          "data": "0"
+        },
+        "res_idx":{ "type": "int", "ver": "0",
+          "data": "0"
+        },
+        "sync_stream":{ "type": "int", "ver": "0",
+          "data": "0"
+        }
+      }
+    }
+  }
+}

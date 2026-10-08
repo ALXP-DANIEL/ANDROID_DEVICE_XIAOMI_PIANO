@@ -1,0 +1,19 @@
+{
+    "UltraHdr": {
+        "histstepx": 3,
+        "histstepy": 3,
+        "brightRatio": 300,
+        "evAnchor1": -30,
+        "evTarget1": -16,
+        "evAnchor2": -18,
+        "evTarget2": -22,
+        "evTargetLuxTh": 180,
+        "normADRCKnee": 133,
+        "normADRCLux": 150,
+        "luxIdxAnc1": 300,
+        "luxIdxG1": 100,
+        "luxIdxAnc2": 380,
+        "luxIdxHG2": 60,
+        "luxIdxLG2": 66
+    }
+}

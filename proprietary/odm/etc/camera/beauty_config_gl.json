@@ -1,0 +1,518 @@
+/*  */{
+    "IdMap":{
+        "01":"skinSmooth",
+        "02":"whiten",
+        "03":"stereoPerception",
+        "04":"eyeBrowDye",
+        "05":"slimFace",
+        "06":"headNarrow",
+        "07":"hairPuffy",
+        "08":"enlargeEye",
+        "09":"nose",
+        "10":"noseTip",
+        "11":"temple",
+        "12":"cheekBone",
+        "13":"jaw",
+        "14":"chin",
+        "15":"lips",
+        "16":"hairline",
+        "17":"",
+        "18":"",
+        "19":"",
+        "20":"",
+        "1007":"makeup_qcy",
+        "1008":"makeup_myq",
+        "1009":"makeup_xqc",
+        "1010":"makeup_mll",
+        "1011":"makeup_bms",
+        "1012":"makeup_lts",
+        "1001":"makeup_danyan",
+        "1002":"makeup_xiazhi",
+        "1003":"makeup_yuanqi",
+        "1004":"makeup_ruanmei",
+        "1005":"makeup_qianjin",
+        "1006":"makeup_yanku"
+    },
+    "GLRegion": {
+    "FrontCapture":  {
+        "BeautyMode": 1,
+        "Options":[
+            {
+                "Id": 01,
+                "Val": 20
+            },
+            {
+                "Id": 02,
+                "Val": 0
+            },
+            {
+                "Id": 05,
+                "Val": 0
+            },
+            {
+                "Id": 08,
+                "Val": 0
+            }
+        ]
+    },
+    "FrontMakeupsCapture":{
+        "Options": [
+
+            {
+                "Id": 1007,
+                "Val": 80
+            },
+            {
+                "Id": 1008,
+                "Val": 80
+            },
+            {
+                "Id": 1009,
+                "Val": 80
+            },
+            {
+                "Id": 1010,
+                "Val": 80
+            },
+            {
+                "Id": 1011,
+                "Val": 80
+            },
+            {
+                "Id": 1012,
+                "Val": 80
+            },
+            {
+                "Id": 1001,
+                "Val": 80
+            },
+            {
+                "Id": 1002,
+                "Val": 80
+            },
+            {
+                "Id": 1003,
+                "Val": 80
+            },
+            {
+                "Id": 1004,
+                "Val": 80
+            },
+            {
+                "Id": 1005,
+                "Val": 80
+            },
+            {
+                "Id": 1006,
+                "Val": 80
+            }
+        ]
+    },
+    "FrontPortrait":{
+        "BeautyMode": 6,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 20
+            }
+        ]
+    },
+    "FrontRecordVideo": {
+        "BeautyMode": 7,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 20
+            }
+        ]
+    },
+    "FrontAIWatermark": {
+        "BeautyMode": 3,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            },
+            {
+                "Id": 05,
+                "Val": 0
+            },
+            {
+                "Id": 08,
+                "Val": 0
+            }
+        ]
+    },
+    "FrontSuperNight": {
+        "BeautyMode": 3,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 20
+            },
+            {
+                "Id": 02,
+                "Val": 0
+            },
+            {
+                "Id": 03,
+                "Val": 0
+            },
+            {
+                "Id": 04,
+                "Val": 0
+            },
+            {
+                "Id": 05,
+                "Val": 0
+            },
+            {
+                "Id": 06,
+                "Val": 0
+            },
+            {
+                "Id": 08,
+                "Val": 0
+            },
+            {
+                "Id": 09,
+                "Val": 0
+            },
+            {
+                "Id": 14,
+                "Val": 0
+            },
+            {
+                "Id": 15,
+                "Val": 0
+            },
+            {
+                "Id": 16,
+                "Val": 0
+            }
+        ]
+    },
+    "FrontShortVideo": {
+        "BeautyMode": 3,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            },
+            {
+                "Id": 05,
+                "Val": 0
+            },
+            {
+                "Id": 08,
+                "Val": 0
+            }
+        ]
+    },
+    "FrontVlog": {
+        "BeautyMode": 3,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+    },
+    "RearCapture": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+    },
+    "RearPortrait": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+    },
+    "RearRecordVideo": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 20
+            }
+        ]
+    },
+    "RearShortVideo": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+    },
+    "RearVlog": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+     }
+  },
+    "INRegion": {
+    "FrontCapture":  {
+        "BeautyMode": 1,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 40
+            },
+            {
+                "Id": 02,
+                "Val": 0
+            },
+            {
+                "Id": 05,
+                "Val": 40
+            },
+            {
+                "Id": 08,
+                "Val": 0
+            }
+        ]
+    },
+    "FrontMakeupsCapture":{
+        "Options": [
+
+            {
+                "Id": 1007,
+                "Val": 80
+            },
+            {
+                "Id": 1008,
+                "Val": 80
+            },
+            {
+                "Id": 1009,
+                "Val": 80
+            },
+            {
+                "Id": 1010,
+                "Val": 80
+            },
+            {
+                "Id": 1011,
+                "Val": 80
+            },
+            {
+                "Id": 1012,
+                "Val": 80
+            },
+            {
+                "Id": 1001,
+                "Val": 80
+            },
+            {
+                "Id": 1002,
+                "Val": 80
+            },
+            {
+                "Id": 1003,
+                "Val": 80
+            },
+            {
+                "Id": 1004,
+                "Val": 80
+            },
+            {
+                "Id": 1005,
+                "Val": 80
+            },
+            {
+                "Id": 1006,
+                "Val": 80
+            }
+        ]
+    },
+    "FrontPortrait":{
+        "BeautyMode": 6,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 40
+            }
+        ]
+    },
+    "FrontRecordVideo": {
+        "BeautyMode": 7,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 40
+            }
+        ]
+    },
+    "FrontAIWatermark": {
+        "BeautyMode": 3,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 30
+            },
+            {
+                "Id": 05,
+                "Val": 30
+            },
+            {
+                "Id": 08,
+                "Val": 20
+            }
+        ]
+    },
+    "FrontSuperNight": {
+        "BeautyMode": 3,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 30
+            },
+            {
+                "Id": 02,
+                "Val": 0
+            },
+            {
+                "Id": 03,
+                "Val": 0
+            },
+            {
+                "Id": 04,
+                "Val": 0
+            },
+            {
+                "Id": 05,
+                "Val": 30
+            },
+            {
+                "Id": 06,
+                "Val": 0
+            },
+            {
+                "Id": 08,
+                "Val": 20
+            },
+            {
+                "Id": 09,
+                "Val": 0
+            },
+            {
+                "Id": 14,
+                "Val": 0
+            },
+            {
+                "Id": 15,
+                "Val": 0
+            },
+            {
+                "Id": 16,
+                "Val": 0
+            }
+        ]
+    },
+    "FrontShortVideo": {
+        "BeautyMode": 3,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 30
+            },
+            {
+                "Id": 05,
+                "Val": 30
+            },
+            {
+                "Id": 06,
+                "Val": 0
+            },
+            {
+                "Id": 08,
+                "Val": 20
+            },
+            {
+                "Id": 09,
+                "Val": 0
+            },
+            {
+                "Id": 14,
+                "Val": 0
+            },
+            {
+                "Id": 15,
+                "Val": 0
+            },
+            {
+                "Id": 16,
+                "Val": 0
+            }
+        ]
+    },
+    "FrontVlog": {
+        "BeautyMode": 3,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+    },
+    "RearCapture": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+    },
+    "RearPortrait": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+    },
+    "RearRecordVideo": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 40
+            }
+        ]
+    },
+    "RearShortVideo": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+    },
+    "RearVlog": {
+        "BeautyMode": 4,
+        "Options": [
+            {
+                "Id": 01,
+                "Val": 0
+            }
+        ]
+     }
+  }
+ }

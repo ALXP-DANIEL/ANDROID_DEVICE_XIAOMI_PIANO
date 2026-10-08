@@ -1,0 +1,90 @@
+{
+    "PipelineName": "satburstsnapshot",
+    "NodesList": {
+      "Node": [
+        {
+            "NodeName": "com.xiaomi.plugin.offlineb2y",
+            "NodeInstance": "BayerRaw2YuvInstance0",
+            "NodeProperty":[
+            {
+               "NodePropertyName":"NodeMask",
+               "NodePropertyValue":126,
+               "NodeConcurrencyThreadLimit":"1,5"
+            },
+            {
+               "NodePropertyName": "InputFormatNegotiationNeeded",
+               "NodePropertyValue": true
+            },
+            {
+               "NodePropertyName": "NegotiationInputFormatInfo",
+               "NodePropertyValue": "CAM_COMBMODE_REAR_WIDE:RAW16"
+            }
+          ]
+        },
+        {
+            "NodeName": "com.xiaomi.plugin.ldc",
+            "NodeInstance": "LDCInstance0"
+        },
+        {
+            "NodeName": "com.xiaomi.plugin.offlinejpeg",
+            "NodeInstance": "BurstJpegInstance0",
+            "NodeProperty": [
+                {
+                    "NodePropertyName":"NodeMask",
+                    "NodePropertyValue":2,
+                    "NodeConcurrencyThreadLimit":"1,5"
+                }
+            ]
+        }
+      ]
+    },
+    "PortLinkages": {
+        "Link": [
+        {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "SourceBuffer"
+            },
+             "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "BayerRaw2YuvInstance0",
+                "PortFollowType":3,
+                "FollowPortId":0
+            }
+        },
+        {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "BayerRaw2YuvInstance0",
+                "PortFormat": "YUV420_NV12"
+            },
+            "DstPort": {
+                 "PortId": 0,
+                 "NodeInstance": "LDCInstance0"
+             }
+        },
+        {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "LDCInstance0"
+            },
+            "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "BurstJpegInstance0",
+                "PortFormat": "YUV420_NV12"
+            }
+        },
+        {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "BurstJpegInstance0",
+                "PortFormat": "BLOB"
+            },
+            "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "SinkBuffer"
+            }
+        }
+        ]
+    }
+}

@@ -1,0 +1,1390 @@
+{
+    "Description": "Xiaomi SmartAE config file",
+    "phone_code": "O11U",
+    "jsonVersion": "V1.0-20240710",
+    "MOTION_CAPTURE": {
+        "Description": "motion capture config",
+        
+		"WIDE": {
+			"snsc_debanding_luxidx": 450
+		},
+		"TELE": {
+			"snsc_debanding_luxidx": 350
+		}      
+
+
+    },
+    "CAMERA_CONFIG": {
+        "Description": "camera mode config",
+        "Normal": true,
+        "Bokeh": true,
+        "ManualJPG": true,
+        "ManualRAW": true,
+        "ManualUltraRAW": true,
+        "ManualJPG50M": true,
+        "ManualRAW50M": true,
+        "ManualUltraRAW50M": true,
+        "SuperNight": true,
+        "Fastshot": true,
+        "Supermoon": true,
+        "Documents": true,
+        "SuperMacro": true,
+        "Longexposure": true,
+        "50M": true
+    },
+    "SENSOR_CONFIG": {
+        "Description": "Sensor type config",
+        "calRealZoomRatioEnable": true,
+        "WIDE": {
+            "sensorName": "OV50E",
+            "sensorType": "wide",
+            "sensorZoomRatio": 1.0,
+            "sensorMode": {
+                "BinningNormalMode": true,
+                "BinningDXGMode": true,
+                "BinningDXG16Mode": true,
+                "BinningCMSMode": true,
+                "QuardBayerMode": true,
+                "BiningDOL2Mode": true,
+                "BiningDOL3Mode": true,
+                "HWRemosaicMode": true,
+                "InSensorZoomMode": true,
+                "SensorModeTypeMax": true
+            }
+        },
+        "UW": {
+            "sensorName": "KD1",
+            "sensorType": "ultra wide",
+            "sensorZoomRatio": 0.6,
+            "sensorMode": {
+                "BinningNormalMode": true,
+                "BinningDXGMode": true,
+                "BinningDXG16Mode": true,
+                "BinningCMSMode": true,
+                "QuardBayerMode": true,
+                "BiningDOL2Mode": true,
+                "BiningDOL3Mode": true,
+                "HWRemosaicMode": true,
+                "InSensorZoomMode": true,
+                "SensorModeTypeMax": true
+            }
+        },
+        "TELE": {
+            "sensorName": "JN5",
+            "sensorType": "tele",
+            "sensorZoomRatio": 2.6,
+            "sensorMode": {
+                "BinningNormalMode": true,
+                "BinningDXGMode": true,
+                "BinningDXG16Mode": true,
+                "BinningCMSMode": true,
+                "QuardBayerMode": true,
+                "BiningDOL2Mode": true,
+                "BiningDOL3Mode": true,
+                "HWRemosaicMode": true,
+                "InSensorZoomMode": true,
+                "SensorModeTypeMax": true
+            }
+        },
+        "ULTRATELE": {
+            "sensorName": "OV50H",
+            "sensorType": "ultra tele",
+            "sensorZoomRatio": 5.0,
+            "sensorMode": {
+                "BinningNormalMode": true,
+                "BinningDXGMode": true,
+                "BinningDXG16Mode": true,
+                "BinningCMSMode": true,
+                "QuardBayerMode": true,
+                "BiningDOL2Mode": true,
+                "BiningDOL3Mode": true,
+                "HWRemosaicMode": true,
+                "InSensorZoomMode": true,
+                "SensorModeTypeMax": true
+            }
+        }
+
+    },
+    "OUTPUT_CONFIG": {
+        "Description": "SmartAE output config",
+        "out_config_enable": false,
+        "evlist_num": 1,
+        "is_motionfix_Long": false,
+        "ev_meta": [
+            {
+                "Description": "EV[0]",
+                "ev_value": 1,
+                "adrc_enable": false,
+                "motion_exposure_type": 1,
+                "dst_capture_mode": 1,
+                "dst_sensor_mode": 1
+            },
+            {
+                "Description": "EV[1]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[2]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[3]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[4]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[5]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[6]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[7]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[8]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[9]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[10]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[11]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[12]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[13]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[14]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            }
+        ],
+        "algo_type": 1,
+        "algo_meta": {
+            "Description": "post processing config",
+            "is_white_plus": "null",
+            "is_black_sub": "null",
+            "EV_offset": "null",
+            "is_smartmotion": "null",
+            "banding_type": "null",
+            "is_bracket_exposure": "null",
+            "is_scene_bright": "null",
+            "bokeh_setting_type": "null"
+        },
+        "feature_mode": {
+            "Description": "feature config",
+            "ae_mode": {
+                "Description": "AE mode",
+                "exposure_adjust": "null",
+                "is_bracketing": "null",
+                "is_lls": "null"
+            },
+            "isp_mode": "null"
+        }
+
+
+    },
+    "HDR_TRIGGER": {
+        "Description": "HDR Trigger config",
+        "motion_hdr_luxindex": 260,
+        "no_motion_hdr_luxindex": 385,
+        "NON-MOTION": {
+            "WIDE": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "UW": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "TELE": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "FRONT": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "BOKEH": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "BOKEH2X": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "WIDE_LOW_VERSION": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            }
+        },
+
+        "MOTION": {
+            "WIDE": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "UW": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "TELE": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "FRONT": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "BOKEH": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "BOKEH2X": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            },
+            "WIDE_LOW_VERSION": {
+                "hdr_dead_dark_thres": 10,
+                "hdr_over_exp_thres": 230,
+                "hdr_dead_dark_ratio_thres": 0.09,
+                "hdr_over_exp_ratio_thres": 0.02,
+                "hdr_adrc_thres": 1.5,
+                "hdr_real_darkboost_thres": 1.5
+            }
+        }
+    },
+    "SE_TRIGGER": {
+        "Description": "SE Trigger config",
+
+        "NON-MOTION": {
+            "WIDE": {
+                "extreme_dark_lux_index_thres": 388,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "WIDE2X": {
+                "extreme_dark_lux_index_thres": 387,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "UW": {
+                "extreme_dark_lux_index_thres": 386,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "TELE": {
+                "extreme_dark_lux_index_thres": 385,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "BOKEH": {
+                "extreme_dark_lux_index_thres": 384,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "BOKEH2X": {
+                "extreme_dark_lux_index_thres": 383,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            }
+        },
+
+        "MOTION": {
+            "WIDE": {
+                "extreme_dark_lux_index_thres": 388,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "WIDE2X": {
+                "extreme_dark_lux_index_thres": 387,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "UW": {
+                "extreme_dark_lux_index_thres": 386,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "TELE": {
+                "extreme_dark_lux_index_thres": 385,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "BOKEH": {
+                "extreme_dark_lux_index_thres": 384,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            },
+            "BOKEH2X": {
+                "extreme_dark_lux_index_thres": 383,
+                "indoor_thres": 0,
+                "face_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ],
+                "nonface_check": [
+                    {
+                        "Description": "range 0",
+                        "lux_index_thres": 275,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 1",
+                        "lux_index_thres": 375,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    },
+                    {
+                        "Description": "range 2",
+                        "lux_index_thres": 475,
+                        "light_thres": 20,
+                        "dead_dark_thres": 10,
+                        "mid_tone_thres0": 80,
+                        "mid_tone_thres1": 200,
+                        "over_exp_thres": 254,
+                        "dark_ratio_thres": 0.18,
+                        "middle_ratio_thres": 0.6,
+                        "bright_ratio_thres": 0.08
+                    }
+                ]
+            }
+        }
+    },
+    "ELL_TRIGGER": {
+        "Description": "ELL Trigger config",
+
+        "WIDE": {
+            "lux_index_thres": 530
+        },
+        "UW": {
+            "lux_index_thres": 510
+        },
+        "TELE": {
+            "lux_index_thres": 500
+        },
+        "ULTRATELE": {
+            "lux_index_thres": 510
+        }
+
+    },
+    "DAYLIGHT_TRIGGER": {
+        "daylight_thres": 260
+    },
+
+
+    "SE_CHECKER": {
+        "Description": "SE CHECKER config",
+        "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0 ]
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
