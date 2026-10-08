@@ -30,6 +30,7 @@ softdep sched_penalty post: msm_performance
 softdep dwc3_msm pre: phy-generic phy-msm-snps-hs phy-msm-ssusb-qmp eud
 softdep pinctrl_msm pre: qcom-pdc
 softdep qcom_scmi_vendor pre: qcom_cpucp
+softdep fault_report pre: miev
 softdep qcom_scmi_client pre: qcom_scmi_vendor
 softdep sched_walt pre: socinfo
 softdep memlat pre: qcom_scmi_client

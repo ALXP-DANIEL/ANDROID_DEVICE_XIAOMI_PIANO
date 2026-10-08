@@ -43,6 +43,9 @@ alias of:N*T*Cqcom,sdxkova-pcie-pdcC* pcie_pdc
 alias platform:q2spi_geni q2spi_geni
 alias of:N*T*Cqcom,q2spi-msm-geni q2spi_geni
 alias of:N*T*Cqcom,q2spi-msm-geniC* q2spi_geni
+alias platform:pwm-fan mca_pwm_fan
+alias of:N*T*Cxm,xm-pwm-fan mca_pwm_fan
+alias of:N*T*Cxm,xm-pwm-fanC* mca_pwm_fan
 alias of:N*T*Cqcom,adsp-notify q6_notifier_dlkm
 alias of:N*T*Cqcom,adsp-notifyC* q6_notifier_dlkm
 alias of:N*T*Cqcom,pm8941-pwrkey pm8941_pwrkey
@@ -612,11 +615,8 @@ alias of:N*T*Cqcom,sun-cvp msm_eva
 alias of:N*T*Cqcom,sun-cvpC* msm_eva
 alias of:N*T*Cqcom,tuna-cvp msm_eva
 alias of:N*T*Cqcom,tuna-cvpC* msm_eva
-alias rtnl-link-miwill miwill
 alias of:N*T*Cqcom,usb-snps-eusb2-phy phy_msm_snps_eusb2
 alias of:N*T*Cqcom,usb-snps-eusb2-phyC* phy_msm_snps_eusb2
-alias ftun ftun
-alias tcp-ulp-ftun ftun
 alias rtnl-link-miicmpfilter miicmpfilter
 alias st54spi_gpio stm_st54se_gpio
 alias of:N*T*Cst,st54spi_gpio stm_st54se_gpio
@@ -884,12 +884,6 @@ alias of:N*T*Cqcom,sun-asoc-snd machine_dlkm
 alias of:N*T*Cqcom,sun-asoc-sndC* machine_dlkm
 alias of:N*T*Cqcom,sun-asoc-snd-stub machine_dlkm
 alias of:N*T*Cqcom,sun-asoc-snd-stubC* machine_dlkm
-alias of:N*T*Csc8581 sc8581
-alias of:N*T*Csc8581C* sc8581
-alias of:N*T*Csc8585_master sc8581
-alias of:N*T*Csc8585_masterC* sc8581
-alias of:N*T*Csc8585_slave sc8581
-alias of:N*T*Csc8585_slaveC* sc8581
 alias of:N*T*Cqcom,msm-hdcp msm_drm
 alias of:N*T*Cqcom,msm-hdcpC* msm_drm
 alias of:N*T*Cqcom,mdp4 msm_drm
@@ -1006,6 +1000,12 @@ alias of:N*T*Cqcom,rpmh-stats-v4 qcom_stats
 alias of:N*T*Cqcom,rpmh-stats-v4C* qcom_stats
 alias of:N*T*Cqcom,sdm845-rpmh-stats qcom_stats
 alias of:N*T*Cqcom,sdm845-rpmh-statsC* qcom_stats
+alias of:N*T*Csc8581 sc8581_sy6541
+alias of:N*T*Csc8581C* sc8581_sy6541
+alias of:N*T*Csc8585_master sc8581_sy6541
+alias of:N*T*Csc8585_masterC* sc8581_sy6541
+alias of:N*T*Csc8585_slave sc8581_sy6541
+alias of:N*T*Csc8585_slaveC* sc8581_sy6541
 alias of:N*T*Cqcom,cnss cnss2
 alias of:N*T*Cqcom,cnssC* cnss2
 alias of:N*T*Cqcom,cnss-qca6290 cnss2

@@ -15,6 +15,7 @@ softdep cifs sha512
 softdep cifs aead2
 softdep cifs ccm
 softdep cifs gcm
+softdep tfa98xx_dlkm pre: sia91xx_dlkm
 softdep msm_video pre: subsys-pil-tz msm-mmrm
 softdep mpam pre: qcom_scmi_client
 softdep lpass_bt_swr_dlkm pre: bt_fm_swr
@@ -33,6 +34,7 @@ softdep dwc3_msm pre: phy-generic phy-msm-snps-hs phy-msm-ssusb-qmp eud
 softdep machine_dlkm pre: btfmcodec
 softdep ipam pre: subsys-pil-tz
 softdep ipam pre: qcom-arm-smmu-mod
+softdep fault_report pre: miev
 softdep fs19xx_dlkm pre: sia91xx_dlkm
 softdep memlat pre: qcom_scmi_client
 softdep spss_utils pre: qcom_spss

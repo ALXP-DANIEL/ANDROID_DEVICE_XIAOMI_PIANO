@@ -1,8 +1,16 @@
 gh_arm_drv.ko
+plat_common.ko
+perf_actuator.ko
+rtg.ko
+vip_sched.ko
+xr_qi.ko
+xr_qs.ko
+mi_game.ko
 sched-walt.ko
 sched-penalty.ko
 qcom_ipc_logging.ko
 zsmalloc.ko
+dynamic_readahead.ko
 cpq.ko
 qcom-pdc.ko
 phy-qcom-ufs.ko
@@ -124,7 +132,9 @@ mi_ubt.ko
 printk_enhance.ko
 kshrink_slabd.ko
 lz4asm.ko
+mi_wq_dynamic_priority.ko
 io_monitor.ko
+node_cache.ko
 binder_gki.ko
 millet_core.ko
 millet_pkg.ko
@@ -132,10 +142,7 @@ millet_hs.ko
 millet_binder.ko
 millet_sig.ko
 millet_oem_cgroup.ko
-mi_schedule.ko
-metis.ko
 mist.ko
-speed_touch.ko
 rt_mod.ko
 qrtr.ko
 qrtr-gunyah.ko

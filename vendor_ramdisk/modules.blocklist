@@ -60,3 +60,4 @@ blocklist vsock
 blocklist vsock_diag
 blocklist xc4000
 blocklist xc5000
+blocklist dump_binder

@@ -92,6 +92,9 @@ alias of:N*T*Cqcom,tsens-v1 qcom_tsens
 alias of:N*T*Cqcom,tsens-v1C* qcom_tsens
 alias of:N*T*Cqcom,tsens-v2 qcom_tsens
 alias of:N*T*Cqcom,tsens-v2C* qcom_tsens
+alias platform:pwm-fan mca_pwm_fan
+alias of:N*T*Cxm,xm-pwm-fan mca_pwm_fan
+alias of:N*T*Cxm,xm-pwm-fanC* mca_pwm_fan
 alias of:N*T*Cqcom,pdc qcom_pdc
 alias of:N*T*Cqcom,pdcC* qcom_pdc
 alias of:N*T*Cqcom,pm8941-pwrkey pm8941_pwrkey
@@ -790,12 +793,6 @@ alias of:N*T*Cqcom,ravelin-qfprom nvmem_qfprom
 alias of:N*T*Cqcom,ravelin-qfpromC* nvmem_qfprom
 alias of:N*T*Cqcom,parrot-qfprom nvmem_qfprom
 alias of:N*T*Cqcom,parrot-qfpromC* nvmem_qfprom
-alias of:N*T*Csc8581 sc8581
-alias of:N*T*Csc8581C* sc8581
-alias of:N*T*Csc8585_master sc8581
-alias of:N*T*Csc8585_masterC* sc8581
-alias of:N*T*Csc8585_slave sc8581
-alias of:N*T*Csc8585_slaveC* sc8581
 alias of:N*T*Cqcom,msm-hdcp msm_drm
 alias of:N*T*Cqcom,msm-hdcpC* msm_drm
 alias of:N*T*Cqcom,mdp4 msm_drm
@@ -1014,6 +1011,12 @@ alias of:N*T*Cqcom,rpmh-stats-v4 qcom_stats
 alias of:N*T*Cqcom,rpmh-stats-v4C* qcom_stats
 alias of:N*T*Cqcom,sdm845-rpmh-stats qcom_stats
 alias of:N*T*Cqcom,sdm845-rpmh-statsC* qcom_stats
+alias of:N*T*Csc8581 sc8581_sy6541
+alias of:N*T*Csc8581C* sc8581_sy6541
+alias of:N*T*Csc8585_master sc8581_sy6541
+alias of:N*T*Csc8585_masterC* sc8581_sy6541
+alias of:N*T*Csc8585_slave sc8581_sy6541
+alias of:N*T*Csc8585_slaveC* sc8581_sy6541
 alias of:N*T*Cqcom,ipcc qcom_ipcc
 alias of:N*T*Cqcom,ipccC* qcom_ipcc
 alias of:N*T*Cqcom,sc7180-llcc llcc_qcom
