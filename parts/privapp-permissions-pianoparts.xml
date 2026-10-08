@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<permissions>
+    <privapp-permissions package="org.lineageos.pianoparts">
+        <permission name="android.permission.DEVICE_POWER" />
+        <permission name="android.permission.DISABLE_INPUT_DEVICE" />
+        <permission name="android.permission.TABLET_MODE" />
+        <permission name="android.permission.INTERNAL_SYSTEM_WINDOW" />
+        <permission name="android.permission.OVERRIDE_COMPAT_CHANGE_CONFIG" />
+        <permission name="android.permission.WRITE_SECURE_SETTINGS" />
+        <permission name="android.permission.MANAGE_NOTIFICATIONS" />
+    </privapp-permissions>
+</permissions>
