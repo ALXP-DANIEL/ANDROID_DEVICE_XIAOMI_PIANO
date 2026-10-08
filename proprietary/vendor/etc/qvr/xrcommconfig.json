@@ -1,0 +1,145 @@
+{
+    "xrcomm": {
+        "services_available": "xrcommsession, networking, discovery, trafficshaper, dpqa",
+        "services": {
+            "xrcommsession" : {
+                "needNotifications": true,
+                "launchAtStart": true,
+                "enabled": true,
+                "deviceType": "host",
+                "linkconfig": {
+                    "wlanXRLatencyMode": 2,
+                    "wlanNormalLatencyMode": 1,
+                    "wlanEnableTsf": true,
+                    "wlanTsfSyncInterval": 3000,
+                    "wlanSetRatemask": "0x003FC0FF",
+                    "wlanOriginalRatemask": "0xFFFFFFFF",
+                    "disableRRA": false,
+                    "wpaifPath": "/data/vendor/wifi/hostapd/ctrl/",
+                    "wlanUnitTestTargetNode": "/sys/class/net"
+                }
+            },
+            "timer": {
+                "needNotifications": true,
+                "launchAtStart": false,
+                "enabled": true
+            },
+            "networking": {
+                "needNotifications": true,
+                "launchAtStart": false,
+                "enabled": true,
+                "usesplice": true,
+                "enableKPI": false,
+                "send": {
+                    "singlethread": false
+                },
+                "recv": {
+                    "usethread": false,
+                    "singlethread": true
+                },
+                "lapb" : {
+                    "enableLAPB": true,
+                    "defaultToS": 160,
+                    "specialToS": 176,
+                    "audioLatency": 25,
+                    "videoLatency": 25,
+                    "LAPBSignalPorts" : "7000, 7002, 7004, 7005",
+                    "otherLAPBEnabledPorts" : "6000"
+                },
+                "trafficshaping" : {
+                    "enabled" : true,
+                    "portGroups": "audiovideo",
+                    "audiovideo" : {
+                        "ports"             : "6000, 7000, 7002, 7004, 7005",
+                        "clusterType"       : "SP_START",
+                        "enableOverlooking" : true,
+                        "enableClustering"  : true,
+                        "waitTimeout"       : 25000
+                    },
+                    "defaultGroup" : {
+                        "clusterType"       : "TX_START",
+                        "enableOverlooking" : true,
+                        "enableClustering"  : false,
+                        "waitTimeout"       : 22222
+                    }
+                }
+            },
+            "trafficshaper": {
+                "needNotifications": true,
+                "launchAtStart": true,
+                "enabled": true,
+                "latencyToleranceMs": 2,
+                "RtxFrequencyHz": 45,
+                "twtServicePeriod": 8000,
+                "SyncToSPOffset": 500,
+                "SignalValidityTime":8000,
+                "ClusteringTimeout": 0,
+                "RSyncOffset": 0,
+                "startDelayCycles": 135,
+                "scheduleUpdateInterval": 16,
+                "StdevThreshold": 1400,
+                "poseJustInTime": true,
+                "notificationGroups": ["RENDER_START","AUDIO_START","SP_START|TX_START|RGB_CAM_START|TRACKING_CAM_START"],
+                "notificationGroupsConfig": {
+                    "RENDER_START" : {
+                        "enabled": true,
+                        "positiveOffsets": [""],
+                        "negativeOffsets": ["QUANTMAX-EncodeTime0|EncodeTime1|EncodeTime2|EncodeTime3", "QUANTMAX-RenderTime0|RenderTime1|RenderTime2|RenderTime3"]
+                    },
+                    "AUDIO_START" : {
+                        "enabled": true,
+                        "positiveOffsets": [""],
+                        "negativeOffsets": ["QUANTMAX-AudioTime"]
+                    },
+                    "SP_START|TX_START|RGB_CAM_START|TRACKING_CAM_START" : {
+                        "enabled": true,
+                        "positiveOffsets": [""],
+                        "negativeOffsets": [""]
+                    }
+                }
+            },
+            "dpqa": {
+                "needNotifications": true,
+                "launchAtStart": false,
+                "enabled": true,
+                "statsforeveryframe": true,
+                "totalFramesForStats":30,
+                "statsSkipTimeMs": 5000,
+                "totalFramesForIQR": 120,
+                "outlierDetectionEnabled": true,
+                "syncStatsWithRemote": true,
+                "remoteStatsEnabled": true,
+                "syncDeviceStatsWithRemote": false,
+                "linkStatReadIntervalMs": 5000,
+                "powerStatReadIntervalMs": 1000
+            },
+            "discovery": {
+                "needNotifications": true,
+                "launchAtStart": false,
+                "enabled": true,
+                "deviceName" : "Pakala",
+                "deviceMode": "host_smart",
+                "interfaceName": "wlan2,ap_br_wlan2,usb0",
+                "deviceDiscoveryPort": 15562,
+                "heartbeatPort": 15560,
+                "heartbeatInterval": 400,
+                "heartbeatProbes": 3,
+                "discoveryCountsMax" : 20
+            },
+            "discovery2": {
+                "needNotifications": true,
+                "launchAtStart": false,
+                "enabled": false
+            }
+        },
+        "log": {
+            "level": 67
+        },
+        "connection": {
+            "controlChannelPort": 10001,
+            "dataChannelRxPortHost" : 10011,
+            "dataChannelRxPortHMD" : 10012,
+            "useNetworkService" : false
+        }
+    }
+}

@@ -1,0 +1,1134 @@
+<KEY_DEF versionMajor="0x0" versionMinor="0x0" versionBranch="0x0" versionSubBranch="0x0">
+  <PLATFORMS/>
+  <KEY_LIST>
+    <KEY name="StreamRX" id="0xa1000000" enumValue="STREAMRX" enumName="Key_Values_StreamRX" description="Type of Rx Stream">
+      <VALUE val="0xa1000001" name="PCM_Deep_Buffer" enumValue="PCM_DEEP_BUFFER"/>
+      <VALUE val="0xa1000002" name="Ultrasound_Playback" enumValue="ULTRASOUND_PLAYBACK" description="Ultrasound_Stream_Rx, this is for legacy upd to define the#[
+        #] subgraph as stream"/>
+      <VALUE val="0xa1000003" name="PCM_Rx_Loopback" enumValue="PCM_RX_LOOPBACK"/>
+      <VALUE val="0xa1000004" name="Sensor_Renderer" enumValue="SENSOR_RENDERER" description="Sensor_Renderer, this is added for new audio sensor renderer#[
+        #] usecase"/>
+      <VALUE val="0xa1000005" name="Voip_Rx" enumValue="VOIP_RX_PLAYBACK"/>
+      <VALUE val="0xa100000a" name="Compress_Offload_Playback" enumValue="COMPRESSED_OFFLOAD_PLAYBACK"/>
+      <VALUE val="0xa100000c" name="HFP_Rx_Playback" enumValue="HFP_RX_PLAYBACK"/>
+      <VALUE val="0xa100000d" name="HFP_Tx_Playback" enumValue="HFP_TX_PLAYBACK"/>
+      <VALUE val="0xa100000e" name="PCM_LL_Playback" enumValue="PCM_LL_PLAYBACK"/>
+      <VALUE val="0xa100000f" name="PCM_Offload" enumValue="PCM_OFFLOAD_PLAYBACK"/>
+      <VALUE val="0xa1000010" name="Voice_Call_Rx" enumValue="VOICE_CALL_RX"/>
+      <VALUE val="0xa1000011" name="PCM_ULL_Playback" enumValue="PCM_ULL_PLAYBACK"/>
+      <VALUE val="0xa1000012" name="PCM_Proxy_Playback" enumValue="PCM_PROXY_PLAYBACK"/>
+      <VALUE val="0xa1000013" name="Incall_Music" enumValue="INCALL_MUSIC"/>
+      <VALUE val="0xa1000014" name="Generic_Playback" enumValue="GENERIC_PLAYBACK"/>
+      <VALUE val="0xa1000015" name="Haptics_Playback" enumValue="HAPTICS_PLAYBACK"/>
+      <VALUE val="0xa1000016" name="Voice_Call_Rx_HPCM_Playback" enumValue="VOICE_CALL_RX_HPCM_PLAYBACK"/>
+      <VALUE val="0xa1000017" name="VOICE_CALL_Tx_HPCM_Playback" enumValue="VOICE_CALL_TX_HPCM_PLAYBACK"/>
+      <VALUE val="0xa1000018" name="Spatial_Audio_Playback" enumValue="SPATIAL_AUDIO_PLAYBACK"/>
+      <VALUE val="0xa1000019" name="RAW_Playback" enumValue="RAW_PLAYBACK"/>
+      <VALUE val="0xa100001a" name="Incall_Music_Plus" enumValue="INCALL_MUSIC_PLUS"/>
+      <VALUE val="0xa100001b" name="Incall_Music_Compress_Uplink" enumValue="INCALL_MUSIC_COMPRESS_UPLINK"/>
+      <VALUE val="0xa100001c" name="Incall_Music_Compress_Downlink" enumValue="INCALL_MUSIC_COMPRESS_DOWNLINK"/>
+    </KEY>
+    <KEY name="DeviceRX" id="0xa2000000" enumValue="DEVICERX" enumName="Key_Values_DeviceRX" description="Rx Device">
+      <VALUE val="0xa2000001" name="Speaker" enumValue="SPEAKER"/>
+      <VALUE val="0xa2000002" name="Headphones" enumValue="HEADPHONES"/>
+      <VALUE val="0xa2000003" name="BT_Rx" enumValue="BT_RX"/>
+      <VALUE val="0xa2000004" name="Handset" enumValue="HANDSET"/>
+      <VALUE val="0xa2000005" name="USB_Rx" enumValue="USB_RX"/>
+      <VALUE val="0xa2000006" name="HDMI_Rx" enumValue="HDMI_RX"/>
+      <VALUE val="0xa2000007" name="Proxy_Rx" enumValue="PROXY_RX"/>
+      <VALUE val="0xa2000008" name="Proxy_Rx_Voice" enumValue="PROXY_RX_VOICE"/>
+      <VALUE val="0xa2000009" name="Haptics_Device" enumValue="HAPTICS_DEVICE"/>
+      <VALUE val="0xa200000a" name="ULTRASOUND_RX" enumValue="ULTRASOUND_RX"/>
+      <VALUE val="0xa200000b" name="ULTRASOUND_RX_DEDICATED" enumValue="ULTRASOUND_RX_DEDICATED"/>
+      <VALUE val="0xa200000c" name="Dummy_Rx" enumValue="DUMMY_RX"/>
+      <VALUE val="0xa200000d" name="Speaker_TDM" enumValue="SPEAKER_TDM" description="Subgraph for TDM backend for speaker"/>
+      <VALUE val="0xa200000e" name="Speaker_I2S" enumValue="SPEAKER_I2S" description="Subgraph for I2S backend for speaker"/>
+      <VALUE val="0xa2000100" name="TIANTONG_RX" enumValue="TIANTONG_RX"/>
+      <VALUE val="0xa2000101" name="Speaker_FCT" enumValue="SPEAKER_FCT"/>
+    </KEY>
+    <KEY name="DeviceTX" id="0xa3000000" enumValue="DEVICETX" enumName="Key_Values_DeviceTX" description="Tx Device">
+      <VALUE val="0xa3000001" name="Speaker_Mic" enumValue="SPEAKER_MIC"/>
+      <VALUE val="0xa3000002" name="BT_Tx" enumValue="BT_TX"/>
+      <VALUE val="0xa3000003" name="Headphone_Mic" enumValue="HEADPHONE_MIC"/>
+      <VALUE val="0xa3000004" name="Handset_Mic" enumValue="HANDSETMIC"/>
+      <VALUE val="0xa3000005" name="USB_Tx" enumValue="USB_TX"/>
+      <VALUE val="0xa3000006" name="VoiceActivation_Mic" enumValue="HANDSETMIC_VA"/>
+      <VALUE val="0xa3000007" name="VoiceActivation_Headset_Mic" enumValue="HEADSETMIC_VA"/>
+      <VALUE val="0xa3000008" name="Proxy_Tx" enumValue="PROXY_TX"/>
+      <VALUE val="0xa3000009" name="VI_TX" enumValue="VI_TX"/>
+      <VALUE val="0xa300000a" name="FM_TX" enumValue="FM_TX"/>
+      <VALUE val="0xa300000b" name="Ultrasound_TX" enumValue="ULTRASOUND_TX"/>
+      <VALUE val="0xa300000c" name="Haptics_VI_Tx" enumValue="HAPTICS_VI_TX"/>
+      <VALUE val="0xa300000d" name="EchoReference_TX" enumValue="ECHO_REF_TX"/>
+      <VALUE val="0xa300000e" name="CPS_TX" enumValue="CPS_TX"/>
+      <VALUE val="0xa300000f" name="CPS2_TX" enumValue="CPS2_TX"/>
+      <VALUE val="0xa3000010" name="Dummy_Tx" enumValue="DUMMY_TX"/>
+      <VALUE val="0xa3000011" name="Speakermic_TDM" enumValue="SPEAKERMIC_TDM" description="Speaker mic device for TDM Backend."/>
+      <VALUE val="0xa3000012" name="Speakermic_I2S" enumValue="SPEAKERMIC_I2S" description="Speaker mic device for I2S Backend."/>
+      <VALUE val="0xa3000100" name="TIANTONG_TX" enumValue="TIANTONG_TX"/>
+    </KEY>
+    <KEY name="Volume" id="0xa4000000" enumValue="VOLUME" enumName="Key_Values_Volume" description="Volume">
+      <VALUE val="0x0" name="Level_0" enumValue="LEVEL_0"/>
+      <VALUE val="0x1" name="Level_1" enumValue="LEVEL_1"/>
+      <VALUE val="0x2" name="Level_2" enumValue="LEVEL_2"/>
+      <VALUE val="0x3" name="Level_3" enumValue="LEVEL_3"/>
+      <VALUE val="0x4" name="Level_4" enumValue="LEVEL_4"/>
+      <VALUE val="0x5" name="Level_5" enumValue="LEVEL_5"/>
+      <VALUE val="0x6" name="Level_6" enumValue="LEVEL_6"/>
+      <VALUE val="0x7" name="Level_7" enumValue="LEVEL_7"/>
+      <VALUE val="0x8" name="Level_8" enumValue="LEVEL_8"/>
+      <VALUE val="0x9" name="Level_9" enumValue="LEVEL_9"/>
+      <VALUE val="0xa" name="Level_10" enumValue="LEVEL_10"/>
+      <VALUE val="0xb" name="Level_11" enumValue="LEVEL_11"/>
+      <VALUE val="0xc" name="Level_12" enumValue="LEVEL_12"/>
+      <VALUE val="0xd" name="Level_13" enumValue="LEVEL_13"/>
+      <VALUE val="0xe" name="Level_14" enumValue="LEVEL_14"/>
+      <VALUE val="0xf" name="Level_15" enumValue="LEVEL_15"/>
+    </KEY>
+    <KEY name="SamplingRate" id="0xa5000000" enumValue="SAMPLINGRATE" enumName="Key_Values_SamplingRate" sampleRate="true" description="Sampling Rate">
+      <VALUE val="0x1f40" name="SR_8K" enumValue="SAMPLINGRATE_8K" sampleRate="0x1f40"/>
+      <VALUE val="0x3e80" name="SR_16K" enumValue="SAMPLINGRATE_16K" sampleRate="0x3e80"/>
+      <VALUE val="0x5622" name="SR_22K" enumValue="SAMPLINGRATE_22K" sampleRate="0x5622"/>
+      <VALUE val="0x5dc0" name="SR_24K" enumValue="SAMPLINGRATE_24K" sampleRate="0x5dc0"/>
+      <VALUE val="0x7d00" name="SR_32K" enumValue="SAMPLINGRATE_32K" sampleRate="0x7d00"/>
+      <VALUE val="0xac44" name="SR_44.1K" enumValue="SAMPLINGRATE_44K" sampleRate="0xac44"/>
+      <VALUE val="0xbb80" name="SR_48K" enumValue="SAMPLINGRATE_48K" sampleRate="0xbb80"/>
+      <VALUE val="0x17700" name="SR_96K" enumValue="SAMPLINGRATE_96K" sampleRate="0x17700"/>
+      <VALUE val="0x2ee00" name="SR_192K" enumValue="SAMPLINGRATE_192K" sampleRate="0x2ee00"/>
+      <VALUE val="0x56220" name="SR_352.8K" enumValue="SAMPLINGRATE_352K" sampleRate="0x56220"/>
+      <VALUE val="0x5dc00" name="SR_384K" enumValue="SAMPLINGRATE_384K" sampleRate="0x5dc00"/>
+    </KEY>
+    <KEY name="BitWidth" id="0xa6000000" enumValue="BITWIDTH" enumName="Key_Values_BitWidth" description="Bit Width">
+      <VALUE val="0x10" name="BW_16" enumValue="BITWIDTH_16"/>
+      <VALUE val="0x18" name="BW_24" enumValue="BITWIDTH_24"/>
+      <VALUE val="0x20" name="BW_32" enumValue="BITWIDTH_32"/>
+    </KEY>
+    <KEY name="Pause" id="0xa7000000" enumValue="PAUSE" enumName="Key_Values_Pause" description="Pause">
+      <VALUE val="0x0" name="Off" enumValue="OFF"/>
+      <VALUE val="0x1" name="On" enumValue="ON"/>
+    </KEY>
+    <KEY name="Mute" id="0xa8000000" enumValue="MUTE" enumName="Key_Values_Mute" description="Mute">
+      <VALUE val="0x0" name="Off" enumValue="MUTE_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="MUTE_ON"/>
+    </KEY>
+    <KEY name="Channels" id="0xa9000000" enumValue="CHANNELS" enumName="Key_Values_Channels" description="Channels">
+      <VALUE val="0x1" name="CHS_1" enumValue="CHANNELS_1"/>
+      <VALUE val="0x2" name="CHS_2" enumValue="CHANNELS_2"/>
+      <VALUE val="0x3" name="CHS_3" enumValue="CHANNELS_3"/>
+      <VALUE val="0x4" name="CHS_4" enumValue="CHANNELS_4"/>
+      <VALUE val="0x5" name="CHS_5" enumValue="CHANNELS_5"/>
+      <VALUE val="0x6" name="CHS_6" enumValue="CHANNELS_5_1"/>
+      <VALUE val="0x6" name="CHS_6" enumValue="CHANNELS_6"/>
+      <VALUE val="0x7" name="CHS_7" enumValue="CHANNELS_7"/>
+      <VALUE val="0x8" name="CHS_8" enumValue="CHANNELS_8"/>
+    </KEY>
+    <KEY name="ECNS" id="0xaa000000" enumValue="ECNS" enumName="Key_Values_ECNS" description="ECNS">
+      <VALUE val="0x0" name="ECNS_Off" enumValue="ECNS_OFF"/>
+      <VALUE val="0x1" name="ECNS_On" enumValue="ECNS_ON"/>
+      <VALUE val="0x2" name="EC_On" enumValue="EC_ON"/>
+      <VALUE val="0x3" name="NS_On" enumValue="NS_ON"/>
+    </KEY>
+    <KEY name="Instance" id="0xab000000" enumValue="INSTANCE" enumName="Key_Values_Instance" description="Stream Instance Id">
+      <VALUE val="0x1" name="Instance_1" enumValue="INSTANCE_1"/>
+      <VALUE val="0x2" name="Instance_2" enumValue="INSTANCE_2"/>
+      <VALUE val="0x3" name="Instance_3" enumValue="INSTANCE_3"/>
+      <VALUE val="0x4" name="Instance_4" enumValue="INSTANCE_4"/>
+      <VALUE val="0x5" name="Instance_5" enumValue="INSTANCE_5"/>
+      <VALUE val="0x6" name="Instance_6" enumValue="INSTANCE_6"/>
+      <VALUE val="0x7" name="Instance_7" enumValue="INSTANCE_7"/>
+      <VALUE val="0x8" name="Instance_8" enumValue="INSTANCE_8"/>
+    </KEY>
+    <KEY name="DevicePP_Rx" id="0xac000000" enumValue="DEVICEPP_RX" enumName="Key_Values_DevicePP_Rx" description="Rx Device Post/Pre Processing Chain">
+      <VALUE val="0xac000001" name="DevicePP_Rx_Default" enumValue="DEVICEPP_RX_DEFAULT" description="Default PP"/>
+      <VALUE val="0xac000002" name="Audio_MBDRC" enumValue="DEVICEPP_RX_AUDIO_MBDRC" description="Audio Rx MBDRC PP"/>
+      <VALUE val="0xac000003" name="Voip_MBDRC" enumValue="DEVICEPP_RX_VOIP_MBDRC" description="Voip Rx MBDRC"/>
+      <VALUE val="0xac000004" name="HFP_Sink" enumValue="DEVICEPP_RX_HFPSINK" description="HFP Sink"/>
+      <VALUE val="0xac000005" name="DevicePP_RX_Voice_Default" enumValue="DEVICEPP_RX_VOICE_DEFAULT" description="Voice call default"/>
+      <VALUE val="0xac000006" name="DevicePP_RX_Ultrasound_Gen" enumValue="DEVICEPP_RX_ULTRASOUND_GENERATOR" description="Ultrasound GEN"/>
+      <VALUE val="0xac000007" name="DevicePP_RX_Voice_RVE" enumValue="DEVICEPP_RX_VOICE_RVE" description="Voice call RVE"/>
+      <VALUE val="0xac000008" name="DEVICEPP_RX_HPCM" enumValue="DEVICEPP_RX_HPCM" description="HPCM RX"/>
+      <VALUE val="0xac000009" name="DEVICEPP_RX_VOICE_Fluence_NN_NS" enumValue="DEVICEPP_RX_VOICE_Fluence_NN_NS" description="Voice Rx Fluence_NN_NS"/>
+      <VALUE val="0xac00000a" name="DEVICEPP_RX_VOIP_Fluence_NN_NS" enumValue="DEVICEPP_RX_VOIP_Fluence_NN_NS" description="VoIP Rx Fluence_NN_NS"/>
+      <VALUE val="0xac00000b" name="Audio_MSPP" enumValue="DEVICEPP_RX_AUDIO_MSPP" description="Audio Rx MSPP PP"/>
+      <VALUE val="0xac00000c" name="Device_PP_RX_BtSink" enumValue="DEVICEPP_RX_BTSINK" description="BT Sink Device PP RX"/>
+      <VALUE val="0xac00000d" name="Haptics_generator" enumValue="DEVICEPP_RX_HAPTICS_GENERATOR" description="Haptics_gen"/>
+      <VALUE val="0xac000100" name="Audio_MIPLAY" enumValue="DEVICEPP_RX_AUDIO_MIPLAY"/>
+      <VALUE val="0xac000200" name="DevicePP_RX_Game" enumValue="DEVICEPP_RX_GAME"/>
+      <VALUE val="0xac000300" name="DevicePP_RX_Karaoke" enumValue="DEVICEPP_RX_KARAOKE"/>
+      <VALUE val="0xac000400" name="TianTongTX_RX_PP" enumValue="DEVICEPP_RX_TIANTONG_TX"/>
+      <VALUE val="0xac000500" name="TianTongRX_RX_PP" enumValue="DEVICEPP_RX_TIANTONG_RX"/>
+      <VALUE val="0xac000600" name="DevicePP_RX_SatelliteCall" enumValue="DEVICEPP_RX_SATELLITECALL"/>
+      <VALUE val="0xac000800" name="DEVICEPP_RX_VOICE_PHONE_FOLD" enumValue="DEVICEPP_RX_VOICE_PHONE_FOLD"/>
+      <VALUE val="0xac000900" name="DevicePP_Rx_Upmix" enumValue="DEVICEPP_RX_UPMIX"/>
+      <VALUE val="0xac000a00" name="Audio_Capi_Load" enumValue="AUDIO_CAPI_LOAD"/>
+      <VALUE val="0xac000b00" name="Audio_MIPLAY_3CH" enumValue="DEVICEPP_RX_Audio_MIPLAY_3CH"/>
+    </KEY>
+    <KEY name="DevicePP_Tx" id="0xad000000" enumValue="DEVICEPP_TX" enumName="Key_Values_DevicePP_Tx" description="Tx Device Post/Pre Processing Chain">
+      <VALUE val="0xad000001" name="Fluence_FFECNS" enumValue="DEVICEPP_TX_FLUENCE_FFECNS" description="Used in NLPI use-cases for VUI, ACD, SENSOR_PCM_DATA and#[
+        #] ASR"/>
+      <VALUE val="0xad000002" name="Audio_Fluence_SMECNS" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_SMECNS" description="Single Mic ECNS"/>
+      <VALUE val="0xad000003" name="Audio_Fluence_Endfire" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_ENDFIRE" description="EndFire_ECNS - Typically used for dual mic#[
+        #] capture scenarios"/>
+      <VALUE val="0xad000004" name="Audio_Fluence_Pro" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_PRO" description="Audio Multi MIC scenarios ; at least 3 or more#[
+        #] Micss"/>
+      <VALUE val="0xad000005" name="Voip_Fluence_Pro" enumValue="DEVICEPP_TX_VOIP_FLUENCE_PRO" description="Voip Multi MIC scenarios ; at least 3 or more Micss"/>
+      <VALUE val="0xad000006" name="HFP_Sink_Fluence_SMECNS" enumValue="DEVICEPP_TX_HFP_SINK_FLUENCE_SMECNS" description="HFP Sink Single Mic ECNS"/>
+      <VALUE val="0xad000007" name="Voip_Fluence_SMECNS" enumValue="DEVICEPP_TX_VOIP_FLUENCE_SMECNS" description="Voip SMECNS scenarios ;1 mic"/>
+      <VALUE val="0xad000008" name="Voice_Fluence_SMECNS" enumValue="DEVICEPP_TX_VOICE_FLUENCE_SMECNS" description="Single Mic ECNS in voice call"/>
+      <VALUE val="0xad000009" name="Voice_Fluence_Endfire" enumValue="DEVICEPP_TX_VOICE_FLUENCE_ENDFIRE" description="EndFire_ECNS - Typically used for dual mic#[
+        #] capture scenarios in voice call"/>
+      <VALUE val="0xad00000a" name="Voice_Fluence_Pro" enumValue="DEVICEPP_TX_VOICE_FLUENCE_PRO" description="Multi MIC scenarios ; at least 3 or more Micss in a#[
+        #] voice call"/>
+      <VALUE val="0xad00000b" name="Fluence_FFNS" enumValue="DEVICEPP_TX_FLUENCE_FFNS" description="Used in LPI use-cases for VUI, SENSOR_PCM_DATA"/>
+      <VALUE val="0xad00000c" name="RAW_LPI" enumValue="DEVICEPP_TX_RAW_LPI" description="Used in LPI use-cases for 3rd party wakeup module in VUI and#[
+        #] SENSOR_PCM_DATA"/>
+      <VALUE val="0xad00000d" name="Voip_Fluence_Endfire" enumValue="DEVICEPP_TX_VOIP_FLUENCE_ENDFIRE" description="Voip Endfire scenarios ;2 mic"/>
+      <VALUE val="0xad00000e" name="RAW_NLPI" enumValue="DEVICEPP_TX_RAW_NLPI" description="Used in NLPI use-cases for 3rd party wakeup module"/>
+      <VALUE val="0xad00000f" name="Voice_Fluence_NN" enumValue="DEVICEPP_TX_VOICE_FLUENCE_NN" description="Fluence NN in voice call ; single and dual mic"/>
+      <VALUE val="0xad000010" name="Voip_Fluence_NN" enumValue="DEVICEPP_TX_VOIP_FLUENCE_NN" description="Fluence NN in Voip call ; single and dual mic"/>
+      <VALUE val="0xad000011" name="Ultrasound_Engine" enumValue="DEVICEPP_TX_ULTRASOUND_DETECTOR" description="Used in Ultrasound Engine use-cases"/>
+      <VALUE val="0xad000012" name="Fluence_FFEC" enumValue="DEVICEPP_TX_FLUENCE_FFEC" description="Used in NLPI use-cases for SENSOR_PCM_DATA"/>
+      <VALUE val="0xad000013" name="Voice_Fluence_Endfire_RVE" enumValue="DEVICEPP_TX_VOICE_FLUENCE_ENDFIRE_RVE" description="EndFire_ECNS - Typically used for#[
+        #] dual mic capture scenarios in voice call"/>
+      <VALUE val="0xad000014" name="DEVICEPP_TX_HPCM" enumValue="DEVICEPP_TX_HPCM" description="HPCM TX"/>
+      <VALUE val="0xad000015" name="HFP_Sink_Fluence_ENDFIRE" enumValue="DEVICEPP_TX_HFP_SINK_FLUENCE_ENDFIRE" description="EndFire_ECNS - Typically used for#[
+        #] dual mic capture scenarios in BT HFP client voice call"/>
+      <VALUE val="0xad000016" name="Audio_Fluence_NN" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_NN" description="Fluence NN in Audio Record ; single and dual mic"/>
+      <VALUE val="0xad000017" name="Voice_Recognition" enumValue="DEVICEPP_TX_VOICE_RECOGNITION" description="Voice_Recognition - Specifically used for voice#[
+        #] recognition"/>
+      <VALUE val="0xad000018" name="HFP_Sink_Fluence_NN_SM" enumValue="DEVICEPP_TX_HFP_SINK_FLUENCE_NN_SM" description="Single Mic fluence NN in HFP Sink"/>
+      <VALUE val="0xad000019" name="AAD" enumValue="DEVICEPP_TX_AAD" description="Used in LPI use-cases for ACD"/>
+      <VALUE val="0xad00001a" name="Fluence_FFNS_AAD" enumValue="DEVICEPP_TX_FLUENCE_FFNS_AAD" description="Used in LPI use-cases for VUI, SENSOR_PCM_DATA"/>
+      <VALUE val="0xad00001b" name="RAW_LPI_AAD" enumValue="DEVICEPP_TX_RAW_LPI_AAD" description="Used in LPI use-cases for 3rd party wakeup module in VUI,#[
+        #] SENSOR_PCM_DATA and ASR"/>
+      <VALUE val="0xad00001c" name="Voice_Fluence_NN_DM" enumValue="DEVICEPP_TX_VOICE_FLUENCE_NN_DM" description="Dual Mic fluence NN in voice call"/>
+      <VALUE val="0xad00001d" name="HFP_Sink_Fluence_NN_DM" enumValue="DEVICEPP_TX_HFP_SINK_FLUENCE_NN_DM" description="Dual Mic fluence NN in HFP Sink"/>
+      <VALUE val="0xad00001e" name="Audio_Fluence_NN_DM" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_NN_DM" description="Dual Mic fluence NN in Audio Record"/>
+      <VALUE val="0xad00001f" name="Voice_Fluence_Endfire_FNN" enumValue="DEVICEPP_TX_VOICE_FLUENCE_ENDFIRE_FNN_NS" description="Endfire_FNN in voice call"/>
+      <VALUE val="0xad000020" name="Voice_Fluence_Pro_FNN" enumValue="DEVICEPP_TX_VOICE_FLUENCE_PRO_FNN_NS" description="Pro_FNN in voice call"/>
+      <VALUE val="0xad000021" name="Voip_Fluence_Endfire_FNN" enumValue="DEVICEPP_TX_VOIP_FLUENCE_ENDFIRE_FNN_NS" description="Endfire_FNN in voip call"/>
+      <VALUE val="0xad000022" name="Voip_Fluence_Pro_FNN" enumValue="DEVICEPP_TX_VOIP_FLUENCE_PRO_FNN_NS" description="Pro_FNN in voip call"/>
+      <VALUE val="0xad000023" name="Audio_Record_Enqore" enumValue="DEVICEPP_TX_AUDIO_RECORD_ENQORE" description="Enqore Audio Record"/>
+      <VALUE val="0xad000024" name="Voice_Fluence_NN_RVE" enumValue="DEVICEPP_TX_VOICE_FLUENCE_NN_RVE" description="Fluence NN in voice call ; single and dual#[
+        #] mic"/>
+      <VALUE val="0xad000025" name="CUSTOM_ECNS" enumValue="DEVICEPP_TX_CUSTOM_ECNS" description="Used in NLPI use-cases for VUI with custom config"/>
+      <VALUE val="0xad000026" name="CUSTOM_NS" enumValue="DEVICEPP_TX_CUSTOM_NS" description="Used in LPI use-cases for VUI with custom config"/>
+      <VALUE val="0xad000027" name="Audio_Fluence_SMECNS_EXT_EC" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_SMECNS_EXT_EC" description="Single Mic ECNS EXT_EC"/>
+      <VALUE val="0xad000028" name="Audio_Fluence_Endfire_EXT_EC" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_ENDFIRE_EXT_EC" description="EndFire_ECNS EXT_EC -#[
+        #] Typically used for dual mic capture scenarios"/>
+      <VALUE val="0xad000029" name="Audio_Fluence_Pro_EXT_EC" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_PRO_EXT_EC" description="Audio Multi MIC EXT_EC scenarios ; at#[
+        #] least 3 or more Micss"/>
+      <VALUE val="0xad00002a" name="Voip_Fluence_SMECNS_EXT_EC" enumValue="DEVICEPP_TX_VOIP_FLUENCE_SMECNS_EXT_EC" description="Voip SMECNS EXT_EC scenarios ;1#[
+        #] mic"/>
+      <VALUE val="0xad00002b" name="Voip_Fluence_Endfire_EXT_EC" enumValue="DEVICEPP_TX_VOIP_FLUENCE_ENDFIRE_EXT_EC" description="Voip Endfire EXT_EC scenarios#[
+        #] ;2 mic"/>
+      <VALUE val="0xad00002c" name="Voip_Fluence_Pro_EXT_EC" enumValue="DEVICEPP_TX_VOIP_FLUENCE_PRO_EXT_EC" description="Voip Multi MIC EXT_EC scenarios ; at#[
+        #] least 3 or more Micss"/>
+      <VALUE val="0xad00002d" name="Voice_Fluence_SMECNS_EXT_EC" enumValue="DEVICEPP_TX_VOICE_FLUENCE_SMECNS_EXT_EC" description="Single Mic ECNS EXT_EC in voice#[
+        #] call"/>
+      <VALUE val="0xad00002e" name="Voice_Fluence_Endfire_EXT_EC" enumValue="DEVICEPP_TX_VOICE_FLUENCE_ENDFIRE_EXT_EC" description="EndFire_ECNS EXT_EC -#[
+        #] Typically used for dual mic capture scenarios in voice call"/>
+      <VALUE val="0xad00002f" name="Voice_Fluence_Pro_EXT_EC" enumValue="DEVICEPP_TX_VOICE_FLUENCE_PRO_EXT_EC" description="Multi MIC EXT_EC scenarios ; at least#[
+        #] 3 or more Micss in a voice call"/>
+      <VALUE val="0xad000030" name="Record_Echo_Ref_Mux" enumValue="DEVICEPP_TX_EC_REF" description="Mux Capture data and Ec Ref"/>
+      <VALUE val="0xad000032" name="Audio_Fluence_FFECNS" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_FFECNS" description="Fluence FFECNS record use case."/>
+      <VALUE val="0xad000100" name="Karaoke_Tx_PP" enumValue="DEVICEPP_TX_KARAOKE"/>
+      <VALUE val="0xad000200" name="Recording_DualADC" enumValue="DEVICEPP_TX_RECORDING_DUALADC"/>
+      <VALUE val="0xad000300" name="RECORDING_VA_ENROLL" enumValue="DEVICEPP_TX_RECORDING_VA_ENROLL"/>
+      <VALUE val="0xad000400" name="RECORDING_ASR" enumValue="DEVICEPP_TX_RECORDING_ASR"/>
+      <VALUE val="0xad000500" name="DEVICEPP_TX_GAME" enumValue="DEVICEPP_TX_GAME"/>
+      <VALUE val="0xad000600" name="DEVICEPP_TX_VOICE_WIRED_HEADPHONE" enumValue="DEVICEPP_TX_VOICE_WIRED_HEADPHONE"/>
+      <VALUE val="0xad000700" name="DEVICEPP_TX_VOIP_WIRED_HEADPHONE" enumValue="DEVICEPP_TX_VOIP_WIRED_HEADPHONE"/>
+      <VALUE val="0xad000800" name="VOIP_REMOTE_RECORD_SINGLE" enumValue="DEVICEPP_TX_VOIP_REMOTE_RECORD_SINGLE"/>
+      <VALUE val="0xad000900" name="VOIP_REMOTE_RECORD_MULTI" enumValue="DEVICEPP_TX_VOIP_REMOTE_RECORD_MULTI"/>
+      <VALUE val="0xad000a00" name="VOIP_REMOTE_RECORD_SURROUND" enumValue="DEVICEPP_TX_VOIP_REMOTE_RECORD_SURROUND"/>
+      <VALUE val="0xad000b00" name="TianTongTX_TX_PP" enumValue="DEVICEPP_TX_TIANTONG_TX"/>
+      <VALUE val="0xad000c00" name="TianTongRX_TX_PP" enumValue="DEVICEPP_TX_TIANTONG_RX"/>
+      <VALUE val="0xad000d00" name="Record_Customized" enumValue="DEVICEPP_TX_RECORD_CUSTOMIZED"/>
+      <VALUE val="0xac000e00" name="DevicePP_TX_SatelliteCall" enumValue="DEVICEPP_TX_SATELLITECALL"/>
+      <VALUE val="0xad001000" name="Voice_Fluence_Endfire_Phone_Fold" enumValue="DEVICEPP_TX_VOICE_FLUENCE_ENDFIRE_PHONE_FOLD"/>
+      <VALUE val="0xad001100" name="DevicePP_TX_VPNR" enumValue="DEVICEPP_TX_VPNR"/>
+      <VALUE val="0xad001200" name="Recording_DualMIC" enumValue="DEVICEPP_TX_RECORDING_DUALMIC"/>
+      <VALUE val="0xad001300" name="VOICE_SURROUND" enumValue="DEVICEPP_TX_VOICE_SURROUND"/>
+      <VALUE val="0xad001400" name="CUSTOM_ECNS_RAW" enumValue="DEVICEPP_TX_CUSTOM_ECNS_RAW" description="Used in NLPI use-cases for VUI with custom config"/>
+      <VALUE val="0xad001500" name="CUSTOM_NS_RAW" enumValue="DEVICEPP_TX_CUSTOM_NS_RAW" description="Used in LPI use-cases for VUI with custom config"/>
+      <VALUE val="0xad001600" name="Recording_No_NS" enumValue="DEVICEPP_TX_RECORDING_NO_NS" description="For some recording devices, do not use NS"/>
+      <VALUE val="0xad001700" name="Recording_FacCIT" enumValue="DEVICEPP_TX_RECORDING_FacCIT" description="Used in factory cit recording"/>
+      <VALUE val="0xad001800" name="VOICE_SURROUND_PHONE_FOLD" enumValue="DEVICEPP_TX_VOICE_SURROUND_PHONE_FOLD"/>
+    </KEY>
+    <KEY name="MediaFmtID" id="0xae000000" enumValue="MEDIA_FMT_ID" enumName="Key_Values_MediaFmtID" description="MediaFmtID">
+      <VALUE val="0xae000001" name="PCM" enumValue="MEDIA_FMT_PCM" description="PCM Media format"/>
+      <VALUE val="0xae000002" name="AAC" enumValue="MEDIA_FMT_AAC" description="AAC Media format"/>
+      <VALUE val="0xae000003" name="ALAC" enumValue="MEDIA_FMT_ALAC" description="ALAC Media format"/>
+      <VALUE val="0xae000004" name="APE" enumValue="MEDIA_FMT_APE" description="APE Media format"/>
+      <VALUE val="0xae000005" name="WMAPRO" enumValue="MEDIA_FMT_WMAPRO" description="WMAPRO Media format"/>
+      <VALUE val="0xae000006" name="WMASTD" enumValue="MEDIA_FMT_WMASTD" description="WMASTD Media format"/>
+      <VALUE val="0xae000007" name="FLAC" enumValue="MEDIA_FMT_FLAC" description="FLAC Media format"/>
+      <VALUE val="0xae000008" name="VORBIS" enumValue="MEDIA_FMT_VORBIS" description="VORBIS Media format"/>
+      <VALUE val="0xae000009" name="MP3" enumValue="MEDIA_FMT_MP3" description="MP3 Media format"/>
+      <VALUE val="0xae00000a" name="AMRWBPLUS" enumValue="MEDIA_FMT_AMRWBPLUS" description="AMRWBPLUS Media format"/>
+      <VALUE val="0xae00000b" name="AMRWB" enumValue="MEDIA_FMT_AMRWB" description="AMRWB Media format"/>
+      <VALUE val="0xae00000c" name="AMRNB" enumValue="MEDIA_FMT_AMRNB" description="AMRNB Media format"/>
+      <VALUE val="0xae00000d" name="EVRC" enumValue="MEDIA_FMT_EVRC" description="EVRC Media format"/>
+      <VALUE val="0xae00000e" name="G711" enumValue="MEDIA_FMT_G711" description="G711 Media format"/>
+      <VALUE val="0xae00000f" name="QCELP" enumValue="MEDIA_FMT_QCELP" description="QCELP Media format"/>
+      <VALUE val="0xae000010" name="OPUS" enumValue="MEDIA_FMT_OPUS" description="OPUS Media format"/>
+    </KEY>
+    <KEY name="StreamPP_RX" id="0xaf000000" enumValue="STREAMPP_RX" enumName="Key_Values_StreamPP_RX" description="Rx Stream Post/Pre Processing Chain">
+      <VALUE val="0xaf000001" name="StreamPP_Rx_Default" enumValue="STREAMPP_RX_DEFAULT" description="Default PP Playback"/>
+    </KEY>
+    <KEY name="StreamPP_TX" id="0xb0000000" enumValue="STREAMPP_TX" enumName="Key_Values_StreamPP_TX" description="Tx Stream Post/Pre Processing Chain">
+      <VALUE val="0xb0000001" name="StreamPP_Tx_Default" enumValue="STREAMPP_TX_DEFAULT" description="Default PP Capture"/>
+    </KEY>
+    <KEY name="StreamTX" id="0xb1000000" enumValue="STREAMTX" enumName="Key_Values_StreamTX" description="Type of Tx Stream">
+      <VALUE val="0xb1000001" name="PCM_Record" enumValue="PCM_RECORD"/>
+      <VALUE val="0xb1000002" name="PCM_Tx_Loopback" enumValue="PCM_TX_LOOPBACK"/>
+      <VALUE val="0xb1000003" name="Voice_UI" enumValue="VOICE_UI"/>
+      <VALUE val="0xb1000004" name="Voip_Tx" enumValue="VOIP_TX_RECORD"/>
+      <VALUE val="0xb1000005" name="HFP_Rx_Capture" enumValue="HFP_RX_CAPTURE"/>
+      <VALUE val="0xb1000006" name="HFP_Tx_Capture" enumValue="HFP_TX_CAPTURE"/>
+      <VALUE val="0xb1000007" name="Voice_Call_Tx" enumValue="VOICE_CALL_TX"/>
+      <VALUE val="0xb1000008" name="DeepBuffer_Record" enumValue="DEEPBUFFER_RECORD"/>
+      <VALUE val="0xb1000009" name="RAW_Record" enumValue="RAW_RECORD"/>
+      <VALUE val="0xb100000a" name="PCM_ULL_Record" enumValue="PCM_ULL_RECORD"/>
+      <VALUE val="0xb100000b" name="PCM_Proxy_Record" enumValue="PCM_PROXY_RECORD"/>
+      <VALUE val="0xb100000c" name="Incall_Record" enumValue="INCALL_RECORD"/>
+      <VALUE val="0xb100000d" name="ACD" enumValue="ACD"/>
+      <VALUE val="0xb100000e" name="SENSOR_PCM_DATA" enumValue="SENSOR_PCM_DATA"/>
+      <VALUE val="0xb100000f" name="VOICE_CALL_Rx_HPCM_Record" enumValue="VOICE_CALL_RX_HPCM_RECORD"/>
+      <VALUE val="0xb1000010" name="Voice_Call_Tx_HPCM_Record" enumValue="VOICE_CALL_TX_HPCM_RECORD"/>
+      <VALUE val="0xb1000011" name="Voice_Recognition_Record" enumValue="VOICE_RECOGNITION_RECORD"/>
+      <VALUE val="0xb1000012" name="COMPRESS_CAPTURE" enumValue="COMPRESS_CAPTURE"/>
+      <VALUE val="0xb1000013" name="Ultrasound_Capture" enumValue="ULTRASOUND_CAPTURE" description="This is added to change the legacy ultrasound TX subgraph to#[
+        #] stream type."/>
+      <VALUE val="0xb1000014" name="ASR" enumValue="ASR"/>
+    </KEY>
+    <KEY name="Equalizer" id="0xb2000000" enumValue="EQUALIZER_SWITCH" enumName="Key_Values_Equalizer" description="Equalizer_Switch">
+      <VALUE val="0x0" name="Off" enumValue="EQUALIZER_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="EQUALIZER_ON"/>
+    </KEY>
+    <KEY name="VSID" id="0xb3000000" enumValue="VSID" enumName="Key_Values_VSID" description="VSID">
+      <VALUE val="0xb3000001" name="VSID_Default" enumValue="VSID_DEFAULT" description="VSID default"/>
+      <VALUE val="0xb3000002" name="VSID_Voice1" enumValue="VSID_VOICE1" description="VSID 0x11C05000"/>
+      <VALUE val="0xb3000003" name="VSID_Voice2" enumValue="VSID_VOICE2" description="VSID 0x11DC5000"/>
+      <VALUE val="0xb3000004" name="VSID_Voice1_LB" enumValue="VSID_VOICE1_LB" description="VSID 0x12006000"/>
+      <VALUE val="0xb3000005" name="VSID_Voice2_LB" enumValue="VSID_VOICE2_LB" description="VSID 0x121C6000"/>
+    </KEY>
+    <KEY name="BtProfile" id="0xb4000000" enumValue="BT_PROFILE" enumName="Key_Values_BtProfile" description="BTProfile">
+      <VALUE val="0xb4000001" name="SCO" enumValue="SCO"/>
+      <VALUE val="0xb4000002" name="A2DP" enumValue="A2DP"/>
+      <VALUE val="0xb4000003" name="BLE" enumValue="BLE"/>
+    </KEY>
+    <KEY name="BtFormat" id="0xb5000000" enumValue="BT_FORMAT" enumName="Key_Values_BtFormat" description="BTFormat">
+      <VALUE val="0xb5000001" name="GENERIC" enumValue="GENERIC"/>
+      <VALUE val="0xb5000002" name="LDAC" enumValue="LDAC"/>
+      <VALUE val="0xb5000003" name="APTX_ADAPTIVE" enumValue="APTX_ADAPTIVE"/>
+      <VALUE val="0xb5000004" name="SWB" enumValue="SWB"/>
+      <VALUE val="0xb5000005" name="LC3" enumValue="LC3"/>
+      <VALUE val="0xb5000006" name="AAC_ABR" enumValue="AAC_ABR"/>
+      <VALUE val="0xb5000007" name="APTX_AD_QLEA" enumValue="APTX_AD_QLEA"/>
+      <VALUE val="0xb5000008" name="APTX_AD_R4" enumValue="APTX_AD_R4"/>
+      <VALUE val="0xb5000009" name="MIHC" enumValue="MIHC"/>
+      <VALUE val="0xb5000100" name="LHDC" enumValue="LHDC"/>
+    </KEY>
+    <KEY name="PBE_Switch" id="0xb6000000" enumValue="PBE_SWITCH" enumName="Key_Values_PBE_Switch" description="PBE_Switch">
+      <VALUE val="0x0" name="Off" enumValue="PBE_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="PBE_ON"/>
+    </KEY>
+    <KEY name="BASS_BOOST_Switch" id="0xb7000000" enumValue="BASS_BOOST_SWITCH" enumName="Key_Values_BASS_BOOST_Switch" description="Bass_Boost_Switch">
+      <VALUE val="0x0" name="Off" enumValue="BASS_BOOST_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="BASS_BOOST_ON"/>
+    </KEY>
+    <KEY name="Reverb_Switch" id="0xb8000000" enumValue="REVERB_SWITCH" enumName="Key_Values_Reverb_Switch" description="Reverb_Switch">
+      <VALUE val="0x0" name="Off" enumValue="REVERB_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="REVERB_ON"/>
+    </KEY>
+    <KEY name="Virtualizer_Switch" id="0xb9000000" enumValue="VIRTUALIZER_SWITCH" enumName="Key_Values_Virtualizer_Switch" description="Virtualizer_Switch">
+      <VALUE val="0x0" name="Off" enumValue="VIRTUALIZER_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="VIRTUALIZER_ON"/>
+    </KEY>
+    <KEY name="SW_Sidetone" id="0xba000000" enumValue="SW_SIDETONE" enumName="Key_Values_SW_Sidetone" description="SW_SIDETONE">
+      <VALUE val="0xba000001" name="SW_Sidetone" enumValue="SW_SIDETONE_ON"/>
+    </KEY>
+    <KEY name="Stream_SlowTalk" id="0xbb000000" enumValue="TAG_KEY_SLOW_TALK" enumName="Key_Values_Stream_SlowTalk" description="Stream_SlowTalk">
+      <VALUE val="0x0" name="Off" enumValue="TAG_VALUE_SLOW_TALK_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="TAG_VALUE_SLOW_TALK_ON"/>
+    </KEY>
+    <KEY name="Stream_Config" id="0xbc000000" enumValue="STREAM_CONFIG" enumName="Key_Values_Stream_Config" description="StreamConfig">
+      <VALUE val="0xbc000001" name="SVA" enumValue="STREAM_CFG_VUI_SVA"/>
+      <VALUE val="0xbc000002" name="Hotword" enumValue="STREAM_CFG_VUI_HW"/>
+      <VALUE val="0xbc000003" name="SVA5_PDK" enumValue="STREAM_CFG_VUI_SVA5"/>
+      <VALUE val="0xbc000004" name="CUSTOM" enumValue="STREAM_CFG_VUI_CUSTOM"/>
+      <VALUE val="0xbc000005" name="SVA_GMM_mmap_based" enumValue="STREAM_CFG_VUI_GMM"/>
+      <VALUE val="0xbc000006" name="SVA_PDK6" enumValue="STREAM_CFG_VUI_PDK"/>
+      <VALUE val="0xbc000007" name="ACD_QC" enumValue="STREAM_CFG_ACD_QC"/>
+      <VALUE val="0xbc000008" name="MMA" enumValue="STREAM_CFG_VUI_MMA" description="stream config key value for VoiceUI MMA (multi modal detection) usecase"/>
+      <VALUE val="0xbc000009" name="ASR_QC" enumValue="STREAM_CFG_ASR_QC"/>
+      <VALUE val="0xbc00000a" name="ASR_Custom" enumValue="STREAM_CFG_ASR_CUSTOM"/>
+    </KEY>
+    <KEY name="Stream_MuxDemux" id="0xbd000000" enumValue="TAG_KEY_MUX_DEMUX_CONFIG" enumName="Key_Values_Stream_MuxDemux" description="Stream_MuxDemux">
+      <VALUE val="0x1" name="UL_Mono" enumValue="TAG_VALUE_MUX_DEMUX_CONFIG_UPLINK"/>
+      <VALUE val="0x2" name="DL_Mono" enumValue="TAG_VALUE_MUX_DEMUX_CONFIG_DOWNLINK"/>
+      <VALUE val="0x3" name="UL_DL_Mono" enumValue="TAG_VALUE_MUX_DEMUX_CONFIG_UPLINK_DOWNLINK_MONO"/>
+      <VALUE val="0x4" name="UL_DL_Stereo" enumValue="TAG_VALUE_MUX_DEMUX_CONFIG_UPLINK_DOWNLINK_STEREO"/>
+      <VALUE val="0x5" name="UL_DL_3channel" enumValue="TAG_VALUE_MUX_DEMUX_CONFIG_UPLINK_DOWNLINK_3CHANNEL"/>
+    </KEY>
+    <KEY name="SP_Profile" id="0x2d0000" enumValue="SPK_PRO_PROFILE" enumName="Key_SpkrProtProfile" description="SpkrProtProfile">
+      <VALUE val="0x0" name="Normal" enumValue="NORMAL"/>
+      <VALUE val="0x1" name="Voice" enumValue="VOICE"/>
+      <VALUE val="0x2" name="Bypass" enumValue="BYPASS"/>
+      <VALUE val="0x3" name="Cinema" enumValue="CINEMA"/>
+      <VALUE val="0x4" name="Clib" enumValue="CLIB"/>
+    </KEY>
+    <KEY name="SP_Dev_Map" id="0xbe000000" enumValue="SPK_PRO_DEV_MAP" enumName="Key_Values_SP_Dev_Map" description="SpkrProtDevMap">
+      <VALUE val="0x0" name="Disable_SP" enumValue="SP_DISABLED"/>
+      <VALUE val="0x1" name="Right_Mono" enumValue="RIGHT_MONO"/>
+      <VALUE val="0x2" name="Left_Mono" enumValue="LEFT_MONO"/>
+      <VALUE val="0x3" name="Left_Right" enumValue="LEFT_RIGHT"/>
+      <VALUE val="0x4" name="Left_Mono_with_disable_2sp" enumValue="RIGHT_MONO_WITH_DISABLED_2SP"/>
+      <VALUE val="0x5" name="Left_Right_with_disable_2sp" enumValue="LEFT_RIGHT_WITH_DISABLED_2SP"/>
+    </KEY>
+    <KEY name="SP_VI_Map" id="0xbf000000" enumValue="SPK_PRO_VI_MAP" enumName="Key_Values_SP_VI_Map" description="SpkrProtVIMap">
+      <VALUE val="0x0" name="RightSpeaker" enumValue="RIGHT_SPKR"/>
+      <VALUE val="0x1" name="LeftSpeaker" enumValue="LEFT_SPKR"/>
+      <VALUE val="0x2" name="StereoSpeaker" enumValue="STEREO_SPKR"/>
+      <VALUE val="0x3" name="RightSpeaker_with_disable_2sp" enumValue="RIGHT_SPKR_WITH_DISABLED_2SP"/>
+      <VALUE val="0x4" name="StereoSpeaker_with_disable_2sp" enumValue="STEREO_SPKR_WITH_DISABLED_2SP"/>
+    </KEY>
+    <KEY name="RAS_Switch" id="0xd0000000" enumValue="RAS_SWITCH" enumName="Key_Values_RAS_Switch" description="RAS_Switch">
+      <VALUE val="0x0" name="Off" enumValue="RAS_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="RAS_ON"/>
+    </KEY>
+    <KEY name="ProxyTxType" id="0xd1000000" enumValue="PROXY_TX_TYPE" enumName="Key_Values_ProxyTxType" description="ProxyTxType">
+      <VALUE val="0xd1000001" name="PROXY_TX_DEFAULT" enumValue="PROXY_TX_DEFAULT"/>
+      <VALUE val="0xd1000002" name="PROXY_TX_WFD" enumValue="PROXY_TX_WFD"/>
+      <VALUE val="0xd1000003" name="PROXY_TX_VOICE_RX" enumValue="PROXY_TX_VOICE_RX"/>
+    </KEY>
+    <KEY name="MISOUND_SPK_FX_Module_Switch" id="0x10000" enumValue="MISOUND_SPK_FX_MODULE_SWITCH" enumName="Key_Values_MisoundSpkFxModuleSwitch"
+      description="MisoundSpkFxModuleSwitch">
+      <VALUE val="0x0" name="Off" enumValue="MISOUND_SPK_FX_MODULE_SWITCH_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="MISOUND_SPK_FX_MODULE_SWITCH_ON"/>
+    </KEY>
+    <KEY name="MISOUND_SPK_FX_Switch" id="0x20000" enumValue="MISOUND_SPK_FX_SWITCH" enumName="Key_Values_MisoundSpkFxSwitch" description="MisoundSpkFxSwitch">
+      <VALUE val="0x0" name="Off" enumValue="MISOUND_SPK_FX_SWITCH_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="MISOUND_SPK_FX_SWITCH_ON"/>
+    </KEY>
+    <KEY name="MISOUND_SPK_Mode" id="0x30000" enumValue="MISOUND_SPK_MODE" enumName="Key_Values_MisoundSpkMode" description="MisoundSpkMode">
+      <VALUE val="0x0" name="AUTO" enumValue="MISOUND_SPK_MODE_AUTO"/>
+      <VALUE val="0x1" name="MUSIC" enumValue="MISOUND_SPK_MODE_MUSIC"/>
+      <VALUE val="0x2" name="VIDEO" enumValue="MISOUND_SPK_MODE_VIDEO"/>
+      <VALUE val="0x3" name="VOICE" enumValue="MISOUND_SPK_MODE_VOICE"/>
+    </KEY>
+    <KEY name="MISOUND_SPK_ROTATION" id="0x40000" enumValue="MISOUND_SPK_ROTATION" enumName="Key_Values_MisoundSpkRotation" description="MisoundSpkRotation">
+      <VALUE val="0x0" name="Off" enumValue="MISOUND_SPK_ROTATION_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="MISOUND_SPK_ROTATION_ON"/>
+    </KEY>
+    <KEY name="MISOUND_SPK_STEREO_ENHANCE_MODE" id="0x50000" enumValue="MISOUND_SPK_STEREO_ENHANCE_MODE" enumName="Key_Values_MisoundSpkStereoEnhanceMode"
+      description="MisoundSpkStereoEnhanceMode">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_SPK_STEREO_ENHANCE_MODE_0"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_SPK_STEREO_ENHANCE_MODE_1"/>
+      <VALUE val="0x2" name="0x2" enumValue="MISOUND_SPK_STEREO_ENHANCE_MODE_2"/>
+      <VALUE val="0x3" name="0x3" enumValue="MISOUND_SPK_STEREO_ENHANCE_MODE_3"/>
+    </KEY>
+    <KEY name="MISOUND_SPK_VOCAL_ENHANCE_MODE" id="0x60000" enumValue="MISOUND_SPK_VOCAL_ENHANCE_MODE" enumName="Key_Values_MisoundSpkVocalEnhanceMode"
+      description="MisoundSpkVocalEnhanceMode">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_SPK_VOCAL_ENHANCE_MODE_0"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_SPK_VOCAL_ENHANCE_MODE_1"/>
+      <VALUE val="0x2" name="0x2" enumValue="MISOUND_SPK_VOCAL_ENHANCE_MODE_2"/>
+      <VALUE val="0x3" name="0x3" enumValue="MISOUND_SPK_VOCAL_ENHANCE_MODE_3"/>
+    </KEY>
+    <KEY name="MISOUND_SPK_SYSTEM_SOUND" id="0x70000" enumValue="MISOUND_SPK_SYSTEM_SOUND" enumName="Key_Values_MisoundSpkSystemSound"
+      description="MisoundSpkSystemSound">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_SPK_SYSTEM_SOUND_OFF"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_SPK_SYSTEM_SOUND_ON"/>
+    </KEY>
+    <KEY name="MISOUND_SPK_VOLUME_CHANGE_MODE" id="0x80000" enumValue="MISOUND_SPK_VOLUME_CHANGE_MODE" enumName="Key_Values_MisoundSpkVolumeChangeMode"
+      description="MisoundSpkVolumeChangeMode">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_0"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_1"/>
+      <VALUE val="0x2" name="0x2" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_2"/>
+      <VALUE val="0x3" name="0x3" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_3"/>
+      <VALUE val="0x4" name="0x4" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_4"/>
+      <VALUE val="0x5" name="0x5" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_5"/>
+      <VALUE val="0x6" name="0x6" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_6"/>
+      <VALUE val="0x7" name="0x7" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_7"/>
+      <VALUE val="0x8" name="0x8" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_8"/>
+      <VALUE val="0x9" name="0x9" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_9"/>
+      <VALUE val="0xa" name="0xa" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_10"/>
+      <VALUE val="0xb" name="0xb" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_11"/>
+      <VALUE val="0xc" name="0xc" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_12"/>
+      <VALUE val="0xd" name="0xd" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_13"/>
+      <VALUE val="0xe" name="0xe" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_14"/>
+      <VALUE val="0xf" name="0xf" enumValue="MISOUND_SPK_VOLUME_CHANGE_LEVEL_15"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_MODULE_SWITCH" id="0x90000" enumValue="MISOUND_HPH_MODULE_SWITCH" enumName="Key_Values_MisoundHphModuleSwitch"
+      description="MisoundHphModuleSwitch">
+      <VALUE val="0x0" name="Off" enumValue="MISOUND_HPH_MODULE_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="MISOUND_HPH_MODULE_ON"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_SWITCH" id="0xa0000" enumValue="MISOUND_HPH_SWITCH" enumName="Key_Values_MisoundHphFxSwitch" description="MisoundHphSwitch">
+      <VALUE val="0x0" name="Off" enumValue="MISOUND_HPH_SWITCH_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="MISOUND_HPH_SWITCH_ON"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_EQ_ENABLE" id="0xb0000" enumValue="MISOUND_HPH_EQ_ENABLE" enumName="Key_Values_MisoundHphEQEnable" description="MisoundHphEQEnable">
+      <VALUE val="0x0" name="Off" enumValue="MISOUND_HPH_EQ_ENABLE_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="MISOUND_HPH_EQ_ENABLE_ON"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_MUSICMODE_ENABLE" id="0xc0000" enumValue="MISOUND_HPH_MUSICMODE_ENABLE" enumName="Key_Values_MisoundHphEnableModeEnable"
+      description="MisoundHphMusicModeEnable">
+      <VALUE val="0x0" name="Off" enumValue="MISOUND_HPH_MUSICMODE_ENABLE_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="MISOUND_HPH_MUSICMODE_ENABLE_ON"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_MODE_TYPE" id="0xd0000" enumValue="MISOUND_HPH_MODE_TYPE" enumName="Key_Values_MisoundHphModeType" description="MisoundHphModeType">
+      <VALUE val="0x1" name="Music" enumValue="MISOUND_HPH_MODE_TYPE_MUSIC"/>
+      <VALUE val="0x2" name="Movie" enumValue="MISOUND_HPH_MODE_TYPE_MOVIE"/>
+      <VALUE val="0x3" name="Voice" enumValue="MISOUND_HPH_MODE_TYPE_VOICE"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_STEREO_ENHANCE" id="0xe0000" enumValue="MISOUND_HPH_STEREO_ENHANCE" enumName="Key_Values_MisoundHphStereoEnhance"
+      description="MisoundHphStereoEnhance">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_HPH_STEREO_ENHANCE_MODE_0"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_HPH_STEREO_ENHANCE_MODE_1"/>
+      <VALUE val="0x2" name="0x2" enumValue="MISOUND_HPH_STEREO_ENHANCE_MODE_2"/>
+      <VALUE val="0x3" name="0x3" enumValue="MISOUND_HPH_STEREO_ENHANCE_MODE_3"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_VOCAL_ENHANCE" id="0xf0000" enumValue="MISOUND_HPH_VOCAL_ENHANCE" enumName="Key_Values_MisoundHphVocalEnhance"
+      description="MisoundHphVocalEnhance">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_HPH_VOCAL_ENHANCE_MODE_0"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_HPH_VOCAL_ENHANCE_MODE_1"/>
+      <VALUE val="0x2" name="0x2" enumValue="MISOUND_HPH_VOCAL_ENHANCE_MODE_2"/>
+      <VALUE val="0x3" name="0x3" enumValue="MISOUND_HPH_VOCAL_ENHANCE_MODE_3"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_EARCOMP_AGEMODE" id="0x100000" enumValue="MISOUND_HPH_EARCOMP_AGEMODE" enumName="Key_Values_MisoundHphEarCompAgeMode"
+      description="MisoundHphEarCompAgeMode">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_HPH_EARCOMP_AGEMODE_0"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_HPH_EARCOMP_AGEMODE_1"/>
+      <VALUE val="0x2" name="0x2" enumValue="MISOUND_HPH_EARCOMP_AGEMODE_2"/>
+      <VALUE val="0x3" name="0x3" enumValue="MISOUND_HPH_EARCOMP_AGEMODE_3"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_EARCOMP_ENABLE" id="0x110000" enumValue="MISOUND_HPH_EARCOMP_ENABLE" enumName="Key_Values_MisoundHphEarCompEnable"
+      description="MisoundHphEarCompEnable">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_HPH_EARCOMP_ENABLE_OFF"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_HPH_EARCOMP_ENABLE_ON"/>
+    </KEY>
+    <KEY name="MISOUND_KARAOKE_REVERB_TYPE" id="0x120000" enumValue="MISOUND_KARAOKE_REVERB_TYPE" enumName="Key_Values_MisoundKaraokeReverbType"
+      description="MisoundKaraokeReverbType">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_KARAOKE_REVERB_TYPE_DISABLE"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_KARAOKE_REVERB_TYPE_KTV"/>
+      <VALUE val="0x2" name="0x2" enumValue="MISOUND_KARAOKE_REVERB_TYPE_THEATER"/>
+      <VALUE val="0x3" name="0x3" enumValue="MISOUND_KARAOKE_REVERB_TYPE_CONCERT"/>
+      <VALUE val="0x4" name="0x4" enumValue="MISOUND_KARAOKE_REVERB_TYPE_RECORD"/>
+    </KEY>
+    <KEY name="MISOUND_KARAOKE_EQ_TYPE" id="0x130000" enumValue="MISOUND_KARAOKE_EQ_TYPE" enumName="Key_Values_MisoundKaraokeEQType"
+      description="MisoundKaraokeEQType">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_KARAOKE_EQ_TYPE_DISABLE"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_KARAOKE_EQ_TYPE_STANDARD"/>
+      <VALUE val="0x2" name="0x2" enumValue="MISOUND_KARAOKE_EQ_TYPE_CRISP"/>
+      <VALUE val="0x3" name="0x3" enumValue="MISOUND_KARAOKE_EQ_TYPE_THICK"/>
+      <VALUE val="0x4" name="0x4" enumValue="MISOUND_KARAOKE_EQ_TYPE_BRIGHT"/>
+    </KEY>
+    <KEY name="MISOUND_SPATIAL_MODULE_ENABLE" id="0x150000" enumValue="MISOUND_SPATIAL_MODULE_ENABLE" enumName="Key_Values_MisoundSpatialModuleEnable"
+      description="MisoundSpatialModuleEnable">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_SPATIAL_MODULE_ON"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_SPATIAL_MODULE_OFF"/>
+    </KEY>
+    <KEY name="MISOUND_SPATIAL_HEADTRACK_ENABLE" id="0x160000" enumValue="MISOUND_SPATIAL_HEADTRACK_ENABLE" enumName="Key_Values_MisoundSpatialHeadtrackEnable"
+      description="MisoundSpatialHeadtrackEnable">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_SPATIAL_HEADTRACK_ON"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_SPATIAL_HEADTRACK_OFF"/>
+    </KEY>
+    <KEY name="MISOUND_SPATIAL_SURROUND_ENABLE" id="0x170000" enumValue="MISOUND_SPATIAL_SURROUND_ENABLE" enumName="Key_Values_MisoundSpatialSurroundEnable"
+      description="MisoundSpatialSurroundEnable">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_SPATIAL_SURROUND_ON"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_SPATIAL_SURROUND_OFF"/>
+    </KEY>
+    <KEY name="MISOUND_LRSWITCH_MODULE_ENABLE" id="0x180000" enumValue="MISOUND_LRSWITCH_MODULE_ENABLE" enumName="Key_Values_MisoundLrswitchModuleEnable"
+      description="MisoundLrswitchModuleEnable">
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_LRSWITCH_MOUDLE_ENABLE_ON"/>
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_LRSWITCH_MOUDLE_ENABLE_OFF"/>
+    </KEY>
+    <KEY name="MISOUND_LRSWITCH_FX_MODE" id="0x190000" enumValue="MISOUND_LRSWITCH_FX_MODE" enumName="Key_Values_MisoundLrswitchFxMode"
+      description="MisoundLrswitchFxMode">
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_LRSWITCH_FX_MODE_ON"/>
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_LRSWITCH_FX_MODE_OFF"/>
+    </KEY>
+    <KEY name="MISOUND_SPK_LL_ENABLE" id="0x1a0000" enumValue="MISOUND_SPK_LL_ENABLE" enumName="Key_Values_Misoundllenable" description="Misoundspeakerllenable">
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_SPK_LL_ENABLE_ON"/>
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_SPK_LL_ENABLE_OFF"/>
+    </KEY>
+    <KEY name="MISOUND_FX_DMX_MODULE_SWITCH" id="0x2b0000" enumValue="MISOUND_FX_DMX_MODULE_SWITCH" enumName="Key_Values_Misoundfxdmxmoduleswitch"
+      description="Misoundfxdmxmoduleswitch">
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_FX_DMX_MODULE_SWITCH_ON"/>
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_FX_DMX_MODULE_SWITCH_OFF"/>
+    </KEY>
+    <KEY name="MISOUND_HPH_CANALCALIB_ENABLE" id="0x260000" enumValue="MISOUND_HPH_CANALCALIB_ENABLE" enumName="Key_Values_MisoundPhpCanalCalibEnable"
+      description="MisoundhphCanalCalibEnable">
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_HPH_CANALCALIB_ENABLE_ON"/>
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_HPH_CANALCALIB_ENABLE_OFF"/>
+    </KEY>
+    <KEY name="SUPER_VOICE_VOLUME" id="0x250000" enumValue="SUPER_VOICE_VOLUME" enumName="Key_Values_SuperVoiceVolume" description="SuperVoiceVolume">
+      <VALUE val="0x1" name="ON" enumValue="SUPER_VOICE_ON"/>
+      <VALUE val="0x0" name="OFF" enumValue="SUPER_VOICE_OFF"/>
+    </KEY>
+    <KEY name="TAG_KEY_MISOUND_UPDATE" id="0x1b0000" enumValue="TAG_KEY_MISOUND_UPDATE" enumName="Key_Values_Misound_Update" description="MisoundUpdate">
+      <VALUE val="0x0" name="MISOUND_NOUPDATE" enumValue="misound_noupdate"/>
+      <VALUE val="0x1" name="MISOUND_UPDATE" enumValue="misound_update"/>
+    </KEY>
+    <KEY name="MISOUND_KARAOKE_SWITCH" id="0x140000" enumValue="MISOUND_KARAOKE_SWITCH" enumName="Key_Values_MisoundKaraokeSwitch"
+      description="MisoundKaraokeSwitch">
+      <VALUE val="0x0" name="0x0" enumValue="MISOUND_KARAOKE_SWITCH_OFF"/>
+      <VALUE val="0x1" name="0x1" enumValue="MISOUND_KARAOKE_SWITCH_ON"/>
+    </KEY>
+    <KEY name="Gain" id="0xd2000000" enumValue="GAIN" enumName="Key_Values_Gain" description="Gain">
+      <VALUE val="0x0" name="Gain_0" enumValue="GAIN_0"/>
+      <VALUE val="0x1" name="Gain_1" enumValue="GAIN_1"/>
+      <VALUE val="0x2" name="Gain_2" enumValue="GAIN_2"/>
+      <VALUE val="0x3" name="Gain_3" enumValue="GAIN_3"/>
+      <VALUE val="0x4" name="Gain_4" enumValue="GAIN_4"/>
+      <VALUE val="0x5" name="Gain_5" enumValue="GAIN_5"/>
+      <VALUE val="0x6" name="Gain_6" enumValue="GAIN_6"/>
+      <VALUE val="0x7" name="Gain_7" enumValue="GAIN_7"/>
+      <VALUE val="0x8" name="Gain_8" enumValue="GAIN_8"/>
+      <VALUE val="0x9" name="Gain_9" enumValue="GAIN_9"/>
+      <VALUE val="0xa" name="Gain_10" enumValue="GAIN_10"/>
+      <VALUE val="0xb" name="Gain_11" enumValue="GAIN_11"/>
+      <VALUE val="0xc" name="Gain_12" enumValue="GAIN_12"/>
+      <VALUE val="0xd" name="Gain_13" enumValue="GAIN_13"/>
+      <VALUE val="0xe" name="Gain_14" enumValue="GAIN_14"/>
+      <VALUE val="0xf" name="Gain_15" enumValue="GAIN_15"/>
+    </KEY>
+    <KEY name="Stream" id="0xd3000000" enumValue="STREAM" enumName="Key_Values_Stream" description="Stream">
+      <VALUE val="0xd2000001" name="NT_DECODE" enumValue="NT_DECODE"/>
+      <VALUE val="0xd2000002" name="NT_ENCODE" enumValue="NT_ENCODE"/>
+    </KEY>
+    <KEY name="StreamChannels" id="0xd4000000" enumValue="STREAM_CHANNELS" enumName="Key_Values_StreamChannels" description="StreamChannels">
+      <VALUE val="0x1" name="STREAM_CHS_1" enumValue="STREAM_CHANNELS_1"/>
+      <VALUE val="0x2" name="STREAM_CHS_2" enumValue="STREAM_CHANNELS_2"/>
+    </KEY>
+    <KEY name="Input_Current_Limiter" id="0xd5000000" enumValue="ICL" enumName="Key_Values_Input_Current_Limiter" description="Icl">
+      <VALUE val="0x0" name="Off" enumValue="ICL_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="ICL_ON"/>
+    </KEY>
+    <KEY name="Asphere" id="0xd6000000" enumValue="ASPHERE_SWITCH" enumName="Key_Values_Asphere" description="Asphere_Switch">
+      <VALUE val="0x0" name="Off" enumValue="ASPHERE_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="ASPHERE_ON"/>
+    </KEY>
+    <KEY name="DeviceTX_EXT" id="0xd7000000" enumValue="DEVICETX_EXT" enumName="Key_Values_DeviceTX_EXT" description="Ext Tx Device">
+      <VALUE val="0xd7000001" name="Ext_EC_Tx" enumValue="EXT_EC_TX"/>
+    </KEY>
+    <KEY name="DataLogging" id="0xd8000000" enumValue="LOGGING" enumName="Key_Values_DataLogging" description="DataLogging">
+      <VALUE val="0x0" name="Off" enumValue="LOGGING_OFF"/>
+      <VALUE val="0x1" name="On" enumValue="LOGGING_ON"/>
+    </KEY>
+    <KEY name="Dtmf" id="0xde000000" enumValue="TAG_KEY_DTMF_SWITCH" enumName="Key_Values_Dtmf" description="DTMF_SWITCH">
+      <VALUE val="0x0" name="TAG_VALUE_MODULE_DISABLE" enumValue="TAG_VALUE_MODULE_DISABLE"/>
+      <VALUE val="0x1" name="TAG_VALUE_MODULE_ENABLE" enumValue="TAG_VALUE_MODULE_ENABLE"/>
+    </KEY>
+    <KEY name="Dtmf_Gen_KeyTone" id="0xdf000000" enumValue="TAG_KEY_DTMF_GEN_TONE" enumName="Key_Values_Dtmf_Gen_KeyTone" description="DTMF_GEN_TONE">
+      <VALUE val="0x1" name="DTMF_GEN_1" enumValue="DTMF_GEN_1"/>
+      <VALUE val="0x2" name="DTMF_GEN_2" enumValue="DTMF_GEN_2"/>
+      <VALUE val="0x3" name="DTMF_GEN_3" enumValue="DTMF_GEN_3"/>
+      <VALUE val="0x4" name="DTMF_GEN_4" enumValue="DTMF_GEN_4"/>
+      <VALUE val="0x5" name="DTMF_GEN_5" enumValue="DTMF_GEN_5"/>
+      <VALUE val="0x6" name="DTMF_GEN_6" enumValue="DTMF_GEN_6"/>
+      <VALUE val="0x7" name="DTMF_GEN_7" enumValue="DTMF_GEN_7"/>
+      <VALUE val="0x8" name="DTMF_GEN_8" enumValue="DTMF_GEN_8"/>
+      <VALUE val="0x9" name="DTMF_GEN_9" enumValue="DTMF_GEN_9"/>
+      <VALUE val="0xa" name="DTMF_GEN_10" enumValue="DTMF_GEN_10"/>
+      <VALUE val="0xb" name="DTMF_GEN_11" enumValue="DTMF_GEN_11"/>
+      <VALUE val="0xc" name="DTMF_GEN_12" enumValue="DTMF_GEN_12"/>
+      <VALUE val="0xd" name="DTMF_GEN_13" enumValue="DTMF_GEN_13"/>
+      <VALUE val="0xe" name="DTMF_GEN_14" enumValue="DTMF_GEN_14"/>
+      <VALUE val="0xf" name="DTMF_GEN_15" enumValue="DTMF_GEN_15"/>
+      <VALUE val="0x10" name="DTMF_GEN_16" enumValue="DTMF_GEN_16"/>
+    </KEY>
+    <KEY name="SlotMask" id="0xe0000000" enumValue="TAG_KEY_SLOT_MASK" enumName="Key_Values_SlotMask" description="SlotMask">
+      <VALUE val="0x1" name="MASK_1_16" enumValue="SLOT_MASK_1_16"/>
+      <VALUE val="0x2" name="MASK_2_16" enumValue="SLOT_MASK_2_16"/>
+      <VALUE val="0x3" name="MASK_3_16" enumValue="SLOT_MASK_3_16"/>
+      <VALUE val="0x4" name="MASK_4_16" enumValue="SLOT_MASK_4_16"/>
+      <VALUE val="0x5" name="MASK_5_16" enumValue="SLOT_MASK_5_16"/>
+      <VALUE val="0x6" name="MASK_6_16" enumValue="SLOT_MASK_6_16"/>
+      <VALUE val="0x7" name="MASK_7_16" enumValue="SLOT_MASK_7_16"/>
+      <VALUE val="0x40000001" name="MASK_1_24" enumValue="SLOT_MASK_1_24"/>
+      <VALUE val="0x40000002" name="MASK_2_24" enumValue="SLOT_MASK_2_24"/>
+      <VALUE val="0x40000003" name="MASK_3_24" enumValue="SLOT_MASK_3_24"/>
+      <VALUE val="0x40000004" name="MASK_4_24" enumValue="SLOT_MASK_4_24"/>
+      <VALUE val="0x40000005" name="MASK_5_24" enumValue="SLOT_MASK_5_24"/>
+      <VALUE val="0x40000006" name="MASK_6_24" enumValue="SLOT_MASK_6_24"/>
+      <VALUE val="0x40000007" name="MASK_7_24" enumValue="SLOT_MASK_7_24"/>
+      <VALUE val="0x80000001" name="MASK_1_32" enumValue="SLOT_MASK_1_32"/>
+      <VALUE val="0x80000002" name="MASK_2_32" enumValue="SLOT_MASK_2_32"/>
+      <VALUE val="0x80000003" name="MASK_3_32" enumValue="SLOT_MASK_3_32"/>
+      <VALUE val="0x80000004" name="MASK_4_32" enumValue="SLOT_MASK_4_32"/>
+      <VALUE val="0x80000005" name="MASK_5_32" enumValue="SLOT_MASK_5_32"/>
+      <VALUE val="0x80000006" name="MASK_6_32" enumValue="SLOT_MASK_6_32"/>
+      <VALUE val="0x80000007" name="MASK_7_32" enumValue="SLOT_MASK_7_32"/>
+    </KEY>
+    <KEY name="DutyCycle" id="0xe1000000" enumValue="TAG_KEY_DUTY_CYCLE" enumName="Key_Values_DutyCycle" description="DutyCycle">
+      <VALUE val="0x0" name="disable" enumValue="DISABLE"/>
+      <VALUE val="0x1" name="enable" enumValue="ENABLE"/>
+    </KEY>
+    <KEY name="Orientation" id="0xe2000000" enumValue="TAG_KEY_ORIENTATION" enumName="Key_Values_Orientation" description="Device Orientation">
+      <VALUE val="0x0" name="Orientation_0" enumValue="ORIENTATION_0"/>
+      <VALUE val="0x1" name="Orientation_90" enumValue="ORIENTATION_90"/>
+      <VALUE val="0x2" name="Orientation_180" enumValue="ORIENTATION_180"/>
+      <VALUE val="0x3" name="Orientation_270" enumValue="ORIENTATION_270"/>
+    </KEY>
+    <KEY name="SP_CPS_Map" id="0xe3000000" enumValue="SPK_PRO_CPS_MAP" enumName="Key_Values_SP_CPS_Map" description="SpkrProtCPSMap">
+      <VALUE val="0x0" name="RightSpeaker" enumValue="R_SPKR"/>
+      <VALUE val="0x1" name="LeftSpeaker" enumValue="L_SPKR"/>
+      <VALUE val="0x2" name="StereoSpeaker" enumValue="ST_SPKR"/>
+    </KEY>
+    <KEY name="HAPTICS_VI_Map" id="0xe4000000" enumValue="HAPTICS_PRO_VI_MAP" enumName="Key_Values_HAPTICS_VI_Map" description="hapticsVIMap">
+      <VALUE val="0x0" name="Disable_Haptics_vi" enumValue="HAPTICS_VI_DISABLE"/>
+      <VALUE val="0x1" name="Haptics_vi_right_mono" enumValue="HAPTICS_VI_RIGHT_MONO"/>
+      <VALUE val="0x2" name="Haptics_vi_left_mono" enumValue="HAPTICS_VI_LEFT_MONO"/>
+      <VALUE val="0x3" name="Haptics_vi_left_right" enumValue="HAPTICS_VI_LEFT_RIGHT"/>
+    </KEY>
+    <KEY name="Phone_Fold_State" id="0x280000" enumValue="TAG_KEY_PHONE_FOLD_STATE" enumName="Key_Values_Phone_Fold_State" description="PhoneFoldState">
+      <VALUE val="0x0" name="Phone_Fold_Off" enumValue="PHONE_FOLD_STATE_OFF"/>
+      <VALUE val="0x1" name="Phone_Fold_On" enumValue="PHONE_FOLD_STATE_ON"/>
+    </KEY>
+    <KEY name="HAPTICS_Dev_Map" id="0xe5000000" enumValue="HAPTICS_PRO_DEV_MAP" enumName="Key_Values_HAPTICS_Dev_Map" description="hapticsDevMap">
+      <VALUE val="0x0" name="Disable_Haptics" enumValue="HAPTICS_DISABLE"/>
+      <VALUE val="0x1" name="Haptics_right_mono" enumValue="HAPTICS_RIGHT_MONO"/>
+      <VALUE val="0x2" name="Haptics_left_mono" enumValue="HAPTICS_LEFT_MONO"/>
+      <VALUE val="0x3" name="Haptics_left_right" enumValue="HAPTICS_LEFT_RIGHT"/>
+    </KEY>
+    <KEY name="USB_Vendor_Id" id="0xe6000000" enumValue="USB_VENDOR_ID" enumName="Key_Values_USB_Vendor_Id" description="Usb_Vendor_Id">
+      <VALUE val="0x0" name="USB_PROD_0" enumValue="USB_PROD_0"/>
+      <VALUE val="0x1" name="USB_PROD_1" enumValue="USB_PROD_1"/>
+      <VALUE val="0x2" name="USB_PROD_2" enumValue="USB_PROD_2"/>
+      <VALUE val="0x3" name="USB_PROD_3" enumValue="USB_PROD_3"/>
+      <VALUE val="0x4" name="USB_PROD_4" enumValue="USB_PROD_4"/>
+      <VALUE val="0x5" name="USB_PROD_5" enumValue="USB_PROD_5"/>
+      <VALUE val="0x6" name="USB_PROD_6" enumValue="USB_PROD_6"/>
+      <VALUE val="0x7" name="USB_PROD_7" enumValue="USB_PROD_7"/>
+    </KEY>
+    <KEY name="UltrasoundGain" id="0xe7000000" enumValue="TAG_KEY_ULTRASOUND_GAIN" enumName="Key_Values_UltrasoundGain" description="UltrasoundGain">
+      <VALUE val="0x0" name="Mute" enumValue="GAIN_MUTE"/>
+      <VALUE val="0x1" name="Low" enumValue="GAIN_LOW"/>
+      <VALUE val="0x2" name="High" enumValue="GAIN_HIGH"/>
+    </KEY>
+    <KEY name="VOICE_VOIP_HOLDER_SWITCH" id="0x290000" enumValue="TAG_KEY_VOICE_VOIP_HOLDER_SWITCH" enumName="Key_CSS_Switch" description="Key_Css_Switch">
+      <VALUE val="0x0" name="Switch_Holder_Off" enumValue="SWITCH_HOLDER_OFF"/>
+      <VALUE val="0x1" name="Switch_Holder_On" enumValue="SWITCH_HOLDER_ON"/>
+    </KEY>
+    <KEY name="MICALL_Module_Switch" id="0x2e0000" enumValue="TAG_KEY_MICALL_MODULE_SWITCH" enumName="Key_Values_Mi_Call_Switch" description="Mi_Call_Switch">
+      <VALUE val="0x0" name="Switch_Off" enumValue="SWITCH_OFF"/>
+      <VALUE val="0x1" name="Switch_On" enumValue="SWITCH_ON"/>
+    </KEY>
+    <KEY name="ProxyRxType" id="0xe7010000" enumValue="PROXY_RX_TYPE" enumName="Key_Values_ProxyRxType" description="Key for proxy record type">
+      <VALUE val="0xe7010001" name="PROXY_RX_DEFAULT" enumValue="PROXY_RX_DEFAULT" description="Key used to identify unique default device RX subgraph proxy#[
+        #] record usecase"/>
+      <VALUE val="0xe7010002" name="PROXY_RX_WFD" enumValue="PROXY_RX_WFD" description="Key used to identify unique WiFi display device RX subgraph proxy record#[
+        #] usecase."/>
+    </KEY>
+  </KEY_LIST>
+  <GRAPH_KEY enumName="Graph_Keys" description="Graph Keys">
+    <KEY id="0xa1000000" name="StreamRX" enumValue="gk_StreamRX"/>
+    <KEY id="0xa2000000" name="DeviceRX" enumValue="gk_DeviceRX"/>
+    <KEY id="0xa3000000" name="DeviceTX" enumValue="gk_DeviceTX"/>
+    <KEY id="0xab000000" name="Instance" enumValue="gk_Instance"/>
+    <KEY id="0xac000000" name="DevicePP_Rx" enumValue="gk_DevicePP_Rx"/>
+    <KEY id="0xad000000" name="DevicePP_Tx" enumValue="gk_DevicePP_Tx"/>
+    <KEY id="0xaf000000" name="StreamPP_RX" enumValue="gk_StreamPP_RX"/>
+    <KEY id="0xb0000000" name="StreamPP_TX" enumValue="gk_StreamPP_TX"/>
+    <KEY id="0xb1000000" name="StreamTX" enumValue="gk_StreamTX"/>
+    <KEY id="0xb3000000" name="VSID" enumValue="gk_VSID"/>
+    <KEY id="0xb4000000" name="BtProfile" enumValue="gk_BtProfile"/>
+    <KEY id="0xb5000000" name="BtFormat" enumValue="gk_BtFormat"/>
+    <KEY id="0xba000000" name="SW_Sidetone" enumValue="gk_SW_Sidetone"/>
+    <KEY id="0xbc000000" name="Stream_Config" enumValue="gk_Stream_Config"/>
+    <KEY id="0xd1000000" name="ProxyTxType" enumValue="gk_ProxyTxType"/>
+    <KEY id="0xd3000000" name="Stream" enumValue="gk_Stream"/>
+    <KEY id="0xd7000000" name="DeviceTX_EXT" enumValue="gk_DeviceTX_EXT"/>
+    <KEY id="0xe7010000" name="ProxyRxType" enumValue="gk_ProxyRxType"/>
+  </GRAPH_KEY>
+  <CAL_KEY enumName="Cal_Keys" description="Calibration Keys">
+    <KEY id="0xa4000000" name="Volume" enumValue="ck_Volume"/>
+    <KEY id="0xa9000000" name="Channels" enumValue="ck_Channels"/>
+    <KEY id="0xbe000000" name="SP_Dev_Map" enumValue="ck_SP_Dev_Map"/>
+    <KEY id="0xbf000000" name="SP_VI_Map" enumValue="ck_SP_VI_Map"/>
+    <KEY id="0xd0000000" name="RAS_Switch" enumValue="ck_RAS_Switch"/>
+    <KEY id="0xd2000000" name="Gain" enumValue="ck_Gain"/>
+    <KEY id="0xd4000000" name="StreamChannels" enumValue="ck_StreamChannels"/>
+    <KEY id="0xe3000000" name="SP_CPS_Map" enumValue="ck_SP_CPS_Map"/>
+    <KEY id="0xe4000000" name="HAPTICS_VI_Map" enumValue="ck_HAPTICS_VI_Map"/>
+    <KEY id="0xe5000000" name="HAPTICS_Dev_Map" enumValue="ck_HAPTICS_Dev_Map"/>
+    <KEY id="0xe6000000" name="USB_Vendor_Id" enumValue="ck_USB_Vendor_Id"/>
+    <KEY id="0x2d0000" name="SP_Profile" enumValue="ck_sp_profile"/>
+  </CAL_KEY>
+  <MODULE_TAGS enumName="Tag_Definitions">
+    <TAG id="0xc0000001" name="sh_ep" enumValue="SHMEM_ENDPOINT"/>
+    <TAG id="0xc0000002" name="stream_input_media_format" enumValue="STREAM_INPUT_MEDIA_FORMAT"/>
+    <TAG id="0xc0000003" name="stream_output_media_format" enumValue="STREAM_OUTPUT_MEDIA_FORMAT"/>
+    <TAG id="0xc0000004" name="device_hw_ep_rx" enumValue="DEVICE_HW_ENDPOINT_RX"/>
+    <TAG id="0xc0000005" name="device_hw_ep_tx" enumValue="DEVICE_HW_ENDPOINT_TX"/>
+    <TAG id="0xc0000006" name="stream_pause" enumValue="TAG_PAUSE"/>
+    <TAG id="0xc0000007" name="stream_mute" enumValue="TAG_MUTE"/>
+    <TAG id="0xc0000008" name="device_sva" enumValue="DEVICE_SVA"/>
+    <TAG id="0xc0000009" name="device_adam" enumValue="DEVICE_ADAM"/>
+    <TAG id="0xc000000a" name="device_ecns" enumValue="TAG_ECNS"/>
+    <TAG id="0xc000000b" name="stream_mfc" enumValue="TAG_STREAM_MFC"/>
+    <TAG id="0xc000000c" name="device_mfc" enumValue="DEVICE_MFC"/>
+    <TAG id="0xc000000d" name="stream_volume" enumValue="TAG_STREAM_VOLUME"/>
+    <TAG id="0xc000000e" name="stream_pcm_decoder" enumValue="STREAM_PCM_DECODER"/>
+    <TAG id="0xc000000f" name="stream_pcm_encoder" enumValue="STREAM_PCM_ENCODER"/>
+    <TAG id="0xc0000010" name="stream_pcm_converter" enumValue="STREAM_PCM_CONVERTER"/>
+    <TAG id="0xc0000011" name="device_pp_mfc" enumValue="TAG_DEVICE_PP_MFC"/>
+    <TAG id="0xc0000012" name="stream_placeholder_decoder" enumValue="TAG_STREAM_PLACEHOLDER_DECODER"/>
+    <TAG id="0xc0000013" name="stream_spr" enumValue="STREAM_SPR"/>
+    <TAG id="0xc0000014" name="stream_equalizer" enumValue="TAG_STREAM_EQUALIZER"/>
+    <TAG id="0xc0000015" name="stream_virtualizer" enumValue="TAG_STREAM_VIRTUALIZER"/>
+    <TAG id="0xc0000016" name="stream_reverb" enumValue="TAG_STREAM_REVERB"/>
+    <TAG id="0xc0000017" name="stream_pbe" enumValue="TAG_STREAM_PBE"/>
+    <TAG id="0xc0000018" name="stream_bass_bost" enumValue="TAG_STREAM_BASS_BOOST"/>
+    <TAG id="0xc0000019" name="pspd_mfc" enumValue="PER_STREAM_PER_DEVICE_MFC"/>
+    <TAG id="0xc0000020" name="bt_encoder" enumValue="BT_PLACEHOLDER_ENCODER"/>
+    <TAG id="0xc0000021" name="cop_packetizer_v0" enumValue="COP_PACKETIZER_V0"/>
+    <TAG id="0xc0000022" name="rate_adapter_module" enumValue="RAT_RENDER"/>
+    <TAG id="0xc0000023" name="bt_pcm_converter" enumValue="BT_PCM_CONVERTER"/>
+    <TAG id="0xc0000024" name="bt_decoder" enumValue="BT_PLACEHOLDER_DECODER"/>
+    <TAG id="0xc0000025" name="stream_slowtalk" enumValue="TAG_STREAM_SLOW_TALK"/>
+    <TAG id="0xc0000026" name="module_channels" enumValue="TAG_MODULE_CHANNELS"/>
+    <TAG id="0xc0000027" name="stream_muxdemux" enumValue="TAG_STREAM_MUX_DEMUX"/>
+    <TAG id="0xc0000028" name="module_vi" enumValue="MODULE_VI"/>
+    <TAG id="0xc0000029" name="module_sp" enumValue="MODULE_SP"/>
+    <TAG id="0xc000002a" name="module_gapless" enumValue="MODULE_GAPLESS"/>
+    <TAG id="0xc000002b" name="device_pp_mbdrc" enumValue="TAG_DEVICE_PP_MBDRC"/>
+    <TAG id="0xc000002c" name="wr_sh_ep" enumValue="WR_SHMEM_ENDPOINT"/>
+    <TAG id="0xc000002d" name="stream_placeholder_encoder" enumValue="TAG_STREAM_PLACEHOLDER_ENCODER"/>
+    <TAG id="0xc000002e" name="rd_sh_ep" enumValue="RD_SHMEM_ENDPOINT"/>
+    <TAG id="0xc000002f" name="cop_packetizer_v2" enumValue="COP_PACKETIZER_V2"/>
+    <TAG id="0xc0000030" name="cop_depacketizer_v2" enumValue="COP_DEPACKETIZER_V2"/>
+    <TAG id="0xc0000031" name="context_detection_engine" enumValue="CONTEXT_DETECTION_ENGINE"/>
+    <TAG id="0xc0000032" name="ultrasound_detection_module" enumValue="ULTRASOUND_DETECTION_MODULE"/>
+    <TAG id="0xc0000033" name="device_al" enumValue="TAG_DEVICE_AL"/>
+    <TAG id="0xc0000034" name="audio_sphere" enumValue="TAG_ASPHERE"/>
+    <TAG id="0xc0000035" name="device_mute" enumValue="TAG_DEV_MUTE"/>
+    <TAG id="0xc0000036" name="data_logging" enumValue="TAG_DATA_LOGGING"/>
+    <TAG id="0xc0000037" name="dtmf_generator" enumValue="DTMF_GENERATOR"/>
+    <TAG id="0xc0000038" name="dtmf_detector" enumValue="DTMF_DETECTOR"/>
+    <TAG id="0xc0000039" name="mfc_speaker_swap" enumValue="TAG_MFC_SPEAKER_SWAP"/>
+    <TAG id="0xc000003a" name="device_pop_suppressor" enumValue="DEVICE_POP_SUPPRESSOR"/>
+    <TAG id="0xc000003b" name="devicepp_ec_mfc" enumValue="TAG_DEVICEPP_EC_MFC"/>
+    <TAG id="0xc000003c" name="duty_cycle" enumValue="TAG_DUTY_CYCLE"/>
+    <TAG id="0xc000003d" name="device_pp_msiir" enumValue="DEVICE_PP_MSIIR"/>
+    <TAG id="0xc000003e" name="module_haptics_vi" enumValue="MODULE_HAPTICS_VI"/>
+    <TAG id="0xc000003f" name="module_haptics_gen" enumValue="MODULE_HAPTICS_GEN"/>
+    <TAG id="0xc0000040" name="device_mux" enumValue="TAG_DEVICE_MUX"/>
+    <TAG id="0xc0000041" name="devicepp_mute" enumValue="TAG_DEVPP_MUTE"/>
+    <TAG id="0xc0000042" name="orientation" enumValue="TAG_ORIENTATION"/>
+    <TAG id="0xc0000043" name="module_mspp" enumValue="TAG_MODULE_MSPP"/>
+    <TAG id="0xc0000044" name="module_cps" enumValue="TAG_MODULE_CPS"/>
+    <TAG id="0xc0000045" name="congestion_buffer_module" enumValue="MODULE_CONGESTION_BUFFER"/>
+    <TAG id="0xc0000046" name="jitter_buffer_module" enumValue="MODULE_JITTER_BUFFER"/>
+    <TAG id="0xc0000047" name="module_vi2" enumValue="MODULE_VI2"/>
+    <TAG id="0xc0000048" name="module_sp2" enumValue="MODULE_SP2"/>
+    <TAG id="0xc0000049" name="module_cps2" enumValue="TAG_MODULE_CPS2"/>
+    <TAG id="0xc000004a" name="mfc_sidetone" enumValue="TAG_MFC_SIDETONE"/>
+    <TAG id="0xc000004b" name="module_tsm" enumValue="TAG_MODULE_TSM"/>
+    <TAG id="0xc000004c" name="ultrasound_gain" enumValue="TAG_ULTRASOUND_GAIN"/>
+    <TAG id="0xc000004d" name="ams_sw_rd_ep_1" enumValue="TAG_AMS_SW_RD_EP_1" description="tagged module can be used as shared memory endpoint in AMS"/>
+    <TAG id="0xc000004e" name="ams_sw_rd_ep_2" enumValue="TAG_AMS_SW_RD_EP_2" description="tagged module can be used as shared memory endpoint in AMS"/>
+    <TAG id="0xc000004f" name="ams_sw_rd_ep_3" enumValue="TAG_AMS_SW_RD_EP_3" description="tagged module can be used as shared memory endpoint in AMS"/>
+    <TAG id="0xc0000050" name="ams_sw_rd_ep_4" enumValue="TAG_AMS_SW_RD_EP_4" description="tagged module can be used as shared memory endpoint in AMS"/>
+    <TAG id="0xc0000051" name="tone_renderer_module" enumValue="TAG_TONE_RENDERER_MODULE" description="this tag is used to identify the new module - ToneRenderer#[
+      #] so miid can be queried from HLOS"/>
+    <TAG id="0xc0000057" name="module_asr" enumValue="TAG_MODULE_ASR" description="Tag to be used to identify the MIID of ASR module"/>
+    <TAG id="0xc000001" name="misound spk fx module switch" enumValue="TAG_MISOUND_SPK_FX_MODULE_SWITCH"/>
+    <TAG id="0xc000002" name="misound spk fx switch" enumValue="TAG_MISOUND_SPK_FX_SWITCH"/>
+    <TAG id="0xc000003" name="misound spk mode" enumValue="TAG_MISOUND_SPK_MODE"/>
+    <TAG id="0xc000004" name="misound spk rotation" enumValue="TAG_MISOUND_SPK_ROTATION"/>
+    <TAG id="0xc000005" name="misound spk stereo enhance mode" enumValue="TAG_MISOUND_SPK_STEREO_ENHANCE_MODE"/>
+    <TAG id="0xc000006" name="misound spk vocal enhance mode" enumValue="TAG_MISOUND_SPK_VOCAL_ENHANCE_MODE"/>
+    <TAG id="0xc000007" name="misound spk system sound" enumValue="TAG_MISOUND_SPK_SYSTEM_SOUND"/>
+    <TAG id="0xc000008" name="misound_spk volume change mode" enumValue="TAG_MISOUND_SPK_VOLUME_CHANGE_MODE"/>
+    <TAG id="0xc000009" name="misound_hph module switch" enumValue="TAG_MISOUND_HPH_MODULE_SWITCH"/>
+    <TAG id="0xc00000a" name="misound switch" enumValue="TAG_MISOUND_HPH_SWITCH"/>
+    <TAG id="0xc00000b" name="misound_hph eq enable" enumValue="TAG_MISOUND_HPH_EQ_ENABLE"/>
+    <TAG id="0xc00000c" name="misound_hph music mode enable" enumValue="TAG_MISOUND_HPH_MUSICMODE_ENABLE"/>
+    <TAG id="0xc00000d" name="misound_hph mode type" enumValue="TAG_MISOUND_HPH_MODE_TYPE"/>
+    <TAG id="0xc00000e" name="misound_hph stereo enhance" enumValue="TAG_MISOUND_HPH_STEREO_ENHANCE"/>
+    <TAG id="0xc00000f" name="misound_hph vocal enhance" enumValue="TAG_MISOUND_HPH_VOCAL_ENHANCE"/>
+    <TAG id="0xc000010" name="misound_hph earcomp agemode" enumValue="TAG_MISOUND_HPH_EARCOMP_AGEMODE"/>
+    <TAG id="0xc000011" name="misound_hph earcomp enable" enumValue="TAG_MISOUND_HPH_EARCOMP_ENABLE"/>
+    <TAG id="0xc000012" name="misound karaoke reverb type" enumValue="TAG_MISOUND_KARAOKE_REVERB_TYPE"/>
+    <TAG id="0xc000013" name="misound karaoke eq type" enumValue="TAG_MISOUND_KARAOKE_EQ_TYPE"/>
+    <TAG id="0xc000014" name="misound_lrswitch module enable" enumValue="TAG_MISOUND_LRSWITCH_MODULE_ENABLE"/>
+    <TAG id="0xc000015" name="misound_lrswitch fx mode" enumValue="TAG_MISOUND_LRSWITCH_FX_MODE"/>
+    <TAG id="0xc000017" name="misound_karaoke switch" enumValue="TAG_MISOUND_KARAOKE_SWITCH"/>
+    <TAG id="0xc000018" name="misound spatial module enable" enumValue="TAG_MISOUND_SPATIAL_MODULE_ENABLE"/>
+    <TAG id="0xc000019" name="misound spatial headtrack enable" enumValue="TAG_MISOUND_SPATIAL_HEADTRACK_ENABLE"/>
+    <TAG id="0xc00002a" name="misound spatial surround enable" enumValue="TAG_MISOUND_SPATIAL_SURROUND_ENABLE"/>
+    <TAG id="0xc00002b" name="misound_binupdate" enumValue="TAG_MISOUND_BINUPDATE"/>
+    <TAG id="0xc00002c" name="device fold state" enumValue="TAG_DEVICE_FOLD_STATE"/>
+    <TAG id="0xc00002d" name="misound hph filteridx" enumValue="TAG_MISOUND_HPH_FILTERIDX"/>
+    <TAG id="0xc00002e" name="misound_hph_eq_bandgains" enumValue="TAG_MISOUND_HPH_EQ_BANDGAINS"/>
+    <TAG id="0xc00002f" name="misound_hph_earcomp_bandgains_l" enumValue="TAG_MISOUND_HPH_EARCOMP_BANDGAINS_L"/>
+    <TAG id="0xc000030" name="misound_hph_earcomp_bandgains_r" enumValue="TAG_MISOUND_HPH_EARCOMP_BANDGAINS_R"/>
+    <TAG id="0xc000031" name="misound_karaoke_vocal_reserved1" enumValue="MISOUND_KARAOKE_VOCAL_RESERVED1"/>
+    <TAG id="0xc000032" name="camera_gain" enumValue="CAMERA_GAIN"/>
+    <TAG id="0xc000033" name="dolby_effect_param_tag" enumValue="DAP_MODULE_TAG"/>
+    <TAG id="0xc000034" name="misound_hph_sdid enable" enumValue="TAG_MISOUND_HPH_SOUNDID_ENABLE"/>
+    <TAG id="0xc000035" name="misound_hph_sdid_bandgains" enumValue="TAG_MISOUND_HPH_SOUNDID_BANDGAINS"/>
+    <TAG id="0xc000036" name="spatial surround enable" enumValue="TAG_SPATIAL_SURROUND_ENABLE"/>
+    <TAG id="0xc000037" name="misound_hph_canal_calib enable" enumValue="TAG_MISOUND_HPH_CANALCALIB_ENABLE"/>
+    <TAG id="0xc000038" name="misound_hph_canal_calib" enumValue="TAG_MISOUND_HPH_CANAL_CALIB_COEFF"/>
+    <TAG id="0xc000039" name="flunece rx switch" enumValue="TAG_FLUENCE_RX_SWITCH"/>
+    <TAG id="0xc000040" name="holder_switch" enumValue="TAG_VOICE_VOIP_HOLDER_SWITCH"/>
+    <TAG id="0xc000041" name="TAG_MISOUND_FX_DMX_MODULE_SWITCH" enumValue="TAG_MISOUND_FX_DMX_MODULE_SWITCH"/>
+    <TAG id="0xc000042" name="LHDC_config" enumValue="TAG_LHDC_BITWIDTH"/>
+    <TAG id="0xc000043" name="LHDC_config_dpp" enumValue="TAG_LHDC_BITWIDTH_DPP"/>
+    <TAG id="0xc000044" name="micall_module_switch" enumValue="TAG_MICALL_MODULE_SWITCH"/>
+    <TAG id="0xc000340" name="miec_speaker_direction" enumValue="MIEC_SPK_ROTATION"/>
+    <TAG id="0xc0000004" name="device_hw_ep_rx" enumValue="DEVICE_HW_ENDPOINT_RX" enumName="Tag_Keys_DEVICE_HW_ENDPOINT_RX" description="Hw EP Rx">
+      <KEY id="0xa9000000" name="Channels" enumValue="tk1_device_hw_ep_rx"/>
+    </TAG>
+    <TAG id="0xc0000005" name="device_hw_ep_tx" enumValue="DEVICE_HW_ENDPOINT_TX" enumName="Tag_Keys_DEVICE_HW_ENDPOINT_TX" description="Hw EP Tx">
+      <KEY id="0xa9000000" name="Channels" enumValue="tk1_device_hw_ep_tx"/>
+    </TAG>
+    <TAG id="0xc0000006" name="stream_pause" enumValue="TAG_PAUSE" enumName="Tag_Keys_TAG_PAUSE" description="Stream Pause">
+      <KEY id="0xa7000000" name="Pause" enumValue="tk1_stream_pause"/>
+    </TAG>
+    <TAG id="0xc0000007" name="stream_mute" enumValue="TAG_MUTE" enumName="Tag_Keys_TAG_MUTE" description="Stream Mute">
+      <KEY id="0xa8000000" name="Mute" enumValue="tk1_stream_mute"/>
+    </TAG>
+    <TAG id="0xc000000a" name="device_ecns" enumValue="TAG_ECNS" enumName="Tag_Keys_TAG_ECNS" description="Ecns On/Off">
+      <KEY id="0xaa000000" name="ECNS" enumValue="tk1_device_ecns"/>
+    </TAG>
+    <TAG id="0xc000000b" name="stream_mfc" enumValue="TAG_STREAM_MFC" enumName="Tag_Keys_TAG_STREAM_MFC" description="Stream MFC">
+      <KEY id="0xa5000000" name="SamplingRate" enumValue="tk1_stream_mfc"/>
+      <KEY id="0xa6000000" name="BitWidth" enumValue="tk2_stream_mfc"/>
+      <KEY id="0xa9000000" name="Channels" enumValue="tk3_stream_mfc"/>
+    </TAG>
+    <TAG id="0xc000000d" name="stream_volume" enumValue="TAG_STREAM_VOLUME" enumName="Tag_Keys_TAG_STREAM_VOLUME" description="Stream Volume">
+      <KEY id="0xa4000000" name="Volume" enumValue="tk1_stream_volume"/>
+    </TAG>
+    <TAG id="0xc0000011" name="device_pp_mfc" enumValue="TAG_DEVICE_PP_MFC" enumName="Tag_Keys_TAG_DEVICE_PP_MFC" description="Device PP MFC">
+      <KEY id="0xa5000000" name="SamplingRate" enumValue="tk1_device_pp_mfc"/>
+      <KEY id="0xa6000000" name="BitWidth" enumValue="tk2_device_pp_mfc"/>
+      <KEY id="0xa9000000" name="Channels" enumValue="tk3_device_pp_mfc"/>
+    </TAG>
+    <TAG id="0xc0000012" name="stream_placeholder_decoder" enumValue="TAG_STREAM_PLACEHOLDER_DECODER" enumName="Tag_Keys_TAG_STREAM_PLACEHOLDER_DECODER"
+      description="Placeholder Decoder">
+      <KEY id="0xae000000" name="MediaFmtID" enumValue="tk1_stream_placeholder_decoder"/>
+    </TAG>
+    <TAG id="0xc0000014" name="stream_equalizer" enumValue="TAG_STREAM_EQUALIZER" enumName="Tag_Keys_TAG_STREAM_EQUALIZER" description="Stream Equalizer">
+      <KEY id="0xb2000000" name="Equalizer" enumValue="tk1_stream_equalizer"/>
+    </TAG>
+    <TAG id="0xc0000015" name="stream_virtualizer" enumValue="TAG_STREAM_VIRTUALIZER" enumName="Tag_Keys_TAG_STREAM_VIRTUALIZER" description="Stream Virtualizer">
+      <KEY id="0xb9000000" name="Virtualizer_Switch" enumValue="tk1_stream_virtualizer"/>
+    </TAG>
+    <TAG id="0xc0000016" name="stream_reverb" enumValue="TAG_STREAM_REVERB" enumName="Tag_Keys_TAG_STREAM_REVERB" description="Stream Reverb">
+      <KEY id="0xb8000000" name="Reverb_Switch" enumValue="tk1_stream_reverb"/>
+    </TAG>
+    <TAG id="0xc0000017" name="stream_pbe" enumValue="TAG_STREAM_PBE" enumName="Tag_Keys_TAG_STREAM_PBE" description="Stream PBE">
+      <KEY id="0xb6000000" name="PBE_Switch" enumValue="tk1_stream_pbe"/>
+    </TAG>
+    <TAG id="0xc0000018" name="stream_bass_bost" enumValue="TAG_STREAM_BASS_BOOST" enumName="Tag_Keys_TAG_STREAM_BASS_BOOST" description="Stream Bass Boost">
+      <KEY id="0xb7000000" name="BASS_BOOST_Switch" enumValue="tk1_stream_bass_bost"/>
+    </TAG>
+    <TAG id="0xc0000019" name="pspd_mfc" enumValue="PER_STREAM_PER_DEVICE_MFC" enumName="Tag_Keys_PER_STREAM_PER_DEVICE_MFC" description="Per Stream Per Device#[
+      #] MFC">
+      <KEY id="0xa5000000" name="SamplingRate" enumValue="tk1_pspd_mfc"/>
+      <KEY id="0xa6000000" name="BitWidth" enumValue="tk2_pspd_mfc"/>
+      <KEY id="0xa9000000" name="Channels" enumValue="tk3_pspd_mfc"/>
+    </TAG>
+    <TAG id="0xc0000025" name="stream_slowtalk" enumValue="TAG_STREAM_SLOW_TALK" enumName="Tag_Keys_TAG_STREAM_SLOW_TALK" description="Slow Talk">
+      <KEY id="0xbb000000" name="Stream_SlowTalk" enumValue="tk1_stream_slowtalk"/>
+    </TAG>
+    <TAG id="0xc0000026" name="module_channels" enumValue="TAG_MODULE_CHANNELS" enumName="Tag_Keys_TAG_MODULE_CHANNELS" description="Module Channels">
+      <KEY id="0xa9000000" name="Channels" enumValue="tk1_module_channels"/>
+    </TAG>
+    <TAG id="0xc0000027" name="stream_muxdemux" enumValue="TAG_STREAM_MUX_DEMUX" enumName="Tag_Keys_TAG_STREAM_MUX_DEMUX" description="Mux Demux">
+      <KEY id="0xbd000000" name="Stream_MuxDemux" enumValue="tk1_stream_muxdemux"/>
+    </TAG>
+    <TAG id="0xc000002b" name="device_pp_mbdrc" enumValue="TAG_DEVICE_PP_MBDRC" enumName="Tag_Keys_TAG_DEVICE_PP_MBDRC" description="Device PP Mbdrc">
+      <KEY id="0xd2000000" name="Gain" enumValue="tk1_device_pp_mbdrc"/>
+    </TAG>
+    <TAG id="0xc000002d" name="stream_placeholder_encoder" enumValue="TAG_STREAM_PLACEHOLDER_ENCODER" enumName="Tag_Keys_TAG_STREAM_PLACEHOLDER_ENCODER"
+      description="Placeholder Encoder">
+      <KEY id="0xae000000" name="MediaFmtID" enumValue="tk1_stream_placeholder_encoder"/>
+    </TAG>
+    <TAG id="0xc0000033" name="device_al" enumValue="TAG_DEVICE_AL" enumName="Tag_Keys_TAG_DEVICE_AL" description="Device AL">
+      <KEY id="0xd5000000" name="Input_Current_Limiter" enumValue="tk1_device_al"/>
+    </TAG>
+    <TAG id="0xc0000034" name="audio_sphere" enumValue="TAG_ASPHERE" enumName="Tag_Keys_TAG_ASPHERE" description="Sphere">
+      <KEY id="0xd6000000" name="Asphere" enumValue="tk1_audio_sphere"/>
+    </TAG>
+    <TAG id="0xc0000035" name="device_mute" enumValue="TAG_DEV_MUTE" enumName="Tag_Keys_TAG_DEV_MUTE" description="Device Mute">
+      <KEY id="0xa8000000" name="Mute" enumValue="tk1_device_mute"/>
+    </TAG>
+    <TAG id="0xc0000036" name="data_logging" enumValue="TAG_DATA_LOGGING" enumName="Tag_Keys_TAG_DATA_LOGGING" description="Data Logging">
+      <KEY id="0xd8000000" name="DataLogging" enumValue="tk1_data_logging"/>
+    </TAG>
+    <TAG id="0xc0000037" name="dtmf_generator" enumValue="DTMF_GENERATOR" enumName="Tag_Keys_DTMF_GENERATOR" description="DTMF GENERATOR">
+      <KEY id="0xdf000000" name="Dtmf_Gen_KeyTone" enumValue="tk1_dtmf_generator"/>
+    </TAG>
+    <TAG id="0xc0000038" name="dtmf_detector" enumValue="DTMF_DETECTOR" enumName="Tag_Keys_DTMF_DETECTOR" description="DTMF DETECTOR">
+      <KEY id="0xde000000" name="Dtmf" enumValue="tk1_dtmf_detector"/>
+    </TAG>
+    <TAG id="0xc0000039" name="mfc_speaker_swap" enumValue="TAG_MFC_SPEAKER_SWAP" enumName="Tag_Keys_TAG_MFC_SPEAKER_SWAP" description="MFC Speaker Swap">
+      <KEY id="0xa5000000" name="SamplingRate" enumValue="tk1_mfc_speaker_swap"/>
+      <KEY id="0xa6000000" name="BitWidth" enumValue="tk2_mfc_speaker_swap"/>
+      <KEY id="0xa9000000" name="Channels" enumValue="tk3_mfc_speaker_swap"/>
+    </TAG>
+    <TAG id="0xc000003b" name="devicepp_ec_mfc" enumValue="TAG_DEVICEPP_EC_MFC" enumName="Tag_Keys_TAG_DEVICEPP_EC_MFC" description="Devicepp EC MFC">
+      <KEY id="0xa5000000" name="SamplingRate" enumValue="tk1_devicepp_ec_mfc"/>
+    </TAG>
+    <TAG id="0xc000003c" name="duty_cycle" enumValue="TAG_DUTY_CYCLE" enumName="Tag_Keys_TAG_DUTY_CYCLE" description="UPD duty cycle set">
+      <KEY id="0xe1000000" name="DutyCycle" enumValue="tk1_duty_cycle"/>
+    </TAG>
+    <TAG id="0xc0000040" name="device_mux" enumValue="TAG_DEVICE_MUX" enumName="Tag_Keys_TAG_DEVICE_MUX" description="Channel slot mask">
+      <KEY id="0xe0000000" name="SlotMask" enumValue="tk1_device_mux"/>
+    </TAG>
+    <TAG id="0xc0000041" name="devicepp_mute" enumValue="TAG_DEVPP_MUTE" enumName="Tag_Keys_TAG_DEVPP_MUTE" description="DevicePP Mute">
+      <KEY id="0xa8000000" name="Mute" enumValue="tk1_devicepp_mute"/>
+    </TAG>
+    <TAG id="0xc0000042" name="orientation" enumValue="TAG_ORIENTATION" enumName="Tag_Keys_TAG_ORIENTATION" description="orientation">
+      <KEY id="0xe2000000" name="Orientation" enumValue="tk1_orientation"/>
+    </TAG>
+    <TAG id="0xc000001" name="misound spk  module switch" enumValue="TAG_MISOUND_SPK_FX_MODULE_SWITCH" enumName="Tag_Keys_MISOUND_SPK_FX_MODULE_SWITCH"
+      description="misound spk module switch">
+      <KEY id="0x10000" name="MISOUND_SPK_FX_Module_Switch" enumValue="tk1_misound_spk_fx_module_switch"/>
+    </TAG>
+    <TAG id="0xc000041" name="misound fx dmx module switch" enumValue="TAG_MISOUND_FX_DMX_MODULE_SWITCH" enumName="Tag_Keys_MISOUND_FX_DMX_MODULE_SWITCH"
+      description="misound fx dmx module switch">
+      <KEY id="0x2b0000" name="MISOUND_FX_DMX_MODULE_SWITCH" enumValue="tk1_misound_fx_dmx_module_switch"/>
+    </TAG>
+    <TAG id="0xc000002" name="misound spk switch" enumValue="TAG_MISOUND_SPK_FX_SWITCH" enumName="Tag_Keys_MISOUND_SPK_FX_SWITCH" description="misound spk#[
+      #] switch">
+      <KEY id="0x20000" name="MISOUND_SPK_FX_Switch" enumValue="tk1_misound_spk_fx_switch"/>
+    </TAG>
+    <TAG id="0xc000003" name="misound spk mode" enumValue="TAG_MISOUND_SPK_MODE" enumName="Tag_Keys_MISOUND_SPK_MODE" description="misound spk mode">
+      <KEY id="0x30000" name="MISOUND_SPK_Mode" enumValue="tk1_misound_spk_mode"/>
+    </TAG>
+    <TAG id="0xc000004" name="misound spk rotation" enumValue="TAG_MISOUND_SPK_ROTATION" enumName="Tag_Keys_MISOUND_SPK_ROTATION" description="misound spk#[
+      #] rotation">
+      <KEY id="0x40000" name="MISOUND_SPK_ROTATION" enumValue="tk1_misound_spk_rotation"/>
+    </TAG>
+    <TAG id="0xc000005" name="misound spk stereo enhance mode" enumValue="TAG_MISOUND_SPK_STEREO_ENHANCE_MODE" enumName="Tag_Keys_MISOUND_SPK_STEREO_ENHANCE"
+      description="misound spk stereo enhance mode">
+      <KEY id="0x50000" name="MISOUND_SPK_STEREO_ENHANCE_MODE" enumValue="tk1_misound_spk_stereo_enhance_mode"/>
+    </TAG>
+    <TAG id="0xc000006" name="misound spk vocal enhance mode" enumValue="TAG_MISOUND_SPK_VOCAL_ENHANCE_MODE" enumName="Tag_Keys_MISOUND_SPK_VOCAL_ENHANCE"
+      description="misound spk vocal enhance mode">
+      <KEY id="0x60000" name="MISOUND_SPK_VOCAL_ENHANCE_MODE" enumValue="tk1_misound_spk_vocal_enhance_mode"/>
+    </TAG>
+    <TAG id="0xc000007" name="misound spk system sound" enumValue="TAG_MISOUND_SPK_SYSTEM_SOUND" enumName="Tag_Keys_MISOUND_SPK_SYSTEM_SOUND"
+      description="misound spk system sound">
+      <KEY id="0x70000" name="MISOUND_SPK_SYSTEM_SOUND" enumValue="tk1_misound_spk_system_sound_mode"/>
+    </TAG>
+    <TAG id="0xc000008" name="misound spk system sound" enumValue="TAG_MISOUND_SPK_VOLUME_CHANGE_MODE" enumName="Tag_Keys_MISOUND_SPK_VOLUME_CHANGE_MODE"
+      description="misound spk volume change">
+      <KEY id="0x80000" name="MISOUND_SPK_VOLUME_CHANGE_MODE" enumValue="tk1_misound_spk_volume_change_mode"/>
+    </TAG>
+    <TAG id="0xc000009" name="misound hph module switch" enumValue="TAG_MISOUND_HPH_MODULE_SWITCH" enumName="Tag_Keys_MISOUND_HPH_MODULE_SWITCH"
+      description="misound hph module switch">
+      <KEY id="0x90000" name="MISOUND_HPH_MODULE_SWITCH" enumValue="tk1_misound_hph_module_switch"/>
+    </TAG>
+    <TAG id="0xc00000a" name="misound hph switch" enumValue="TAG_MISOUND_HPH_SWITCH" enumName="Tag_Keys_MISOUND_HPH_SWITCH" description="misound hph switch">
+      <KEY id="0xa0000" name="MISOUND_HPH_SWITCH" enumValue="tk1_misound_hph_switch"/>
+    </TAG>
+    <TAG id="0xc00000b" name="misound hph filteridx" enumValue="TAG_MISOUND_HPH_EQ_ENABLE" enumName="Tag_Keys_MISOUND_HPH_EQ_ENABLE" description="misound hph eq#[
+      #] enable">
+      <KEY id="0xb0000" name="MISOUND_HPH_EQ_ENABLE" enumValue="tk1_misound_hph_eq_enable"/>
+    </TAG>
+    <TAG id="0xc00000c" name="misound hph music mode enable" enumValue="TAG_MISOUND_HPH_MUSICMODE_ENABLE" enumName="Tag_Keys_MISOUND_HPH_MUSICMODE_ENABLE"
+      description="misound hph musicmode enable">
+      <KEY id="0xc0000" name="MISOUND_HPH_MUSICMODE_ENABLE" enumValue="tk1_misound_hph_musicmode_enable"/>
+    </TAG>
+    <TAG id="0xc00000d" name="misound hph mode type" enumValue="TAG_MISOUND_HPH_MODE_TYPE" enumName="Tag_Keys_MISOUND_HPH_MODE_TYPE" description="misound hph#[
+      #] mode type">
+      <KEY id="0xd0000" name="MISOUND_HPH_MODE_TYPE" enumValue="tk1_misound_hph_mode_type"/>
+    </TAG>
+    <TAG id="0xc00000e" name="misound hph stereo enhance" enumValue="TAG_MISOUND_HPH_STEREO_ENHANCE" enumName="Tag_Keys_MISOUND_HPH_STEREO_ENHANCE"
+      description="misound hph stereo enhance">
+      <KEY id="0xe0000" name="MISOUND_HPH_STEREO_ENHANCE" enumValue="tk1_misound_hph_stereo_enhance"/>
+    </TAG>
+    <TAG id="0xc00000f" name="misound hph vocal enhance" enumValue="TAG_MISOUND_HPH_VOCAL_ENHANCE" enumName="Tag_Keys_MISOUND_HPH_VOCAL_ENHANCE"
+      description="misound hph vocal enhance">
+      <KEY id="0xf0000" name="MISOUND_HPH_VOCAL_ENHANCE" enumValue="tk1_misound_hph_vocal_enhance"/>
+    </TAG>
+    <TAG id="0xc000010" name="misound hph earcomp agemode" enumValue="TAG_MISOUND_HPH_EARCOMP_AGEMODE" enumName="Tag_Keys_MISOUND_HPH_EARCOMP_AGEMODE"
+      description="misound hph earcomp agemode">
+      <KEY id="0x100000" name="MISOUND_HPH_EARCOMP_AGEMODE" enumValue="tk1_misound_hph_earcomp_agemode"/>
+    </TAG>
+    <TAG id="0xc000011" name="misound hph earcomp enable" enumValue="TAG_MISOUND_HPH_EARCOMP_ENABLE" enumName="Tag_Keys_MISOUND_HPH_EARCOMP_ENABLE"
+      description="misound hph earcomp agemode">
+      <KEY id="0x110000" name="MISOUND_HPH_EARCOMP_ENABLE" enumValue="tk1_misound_hph_earcomp_enable"/>
+    </TAG>
+    <TAG id="0xc000012" name="misound karaoke reverb type" enumValue="TAG_MISOUND_KARAOKE_REVERB_TYPE" enumName="Tag_Keys_MISOUND_KARAOKE_REVERB_TYPE"
+      description="misound karaoke reverb type">
+      <KEY id="0x120000" name="MISOUND_KARAOKE_REVERB_TYPE" enumValue="tk1_misound_karaoke_reverb_type"/>
+    </TAG>
+    <TAG id="0xc000013" name="misound karaoke eq type" enumValue="TAG_MISOUND_KARAOKE_EQ_TYPE" enumName="Tag_Keys_MISOUND_KARAOKE_EQ_TYPE" description="misound#[
+      #] karaoke eq type">
+      <KEY id="0x130000" name="MISOUND_KARAOKE_EQ_TYPE" enumValue="tk1_misound_karaoke_eq_type"/>
+    </TAG>
+    <TAG id="0xc000014" name="misound lrswitch module enable" enumValue="TAG_MISOUND_LRSWITCH_MODULE_ENABLE" enumName="Tag_Keys_MISOUND_LRSWITCH_MODULE_ENABLE"
+      description="misound lrswitch module enable">
+      <KEY id="0x180000" name="MISOUND_LRSWITCH_MODULE_ENABLE" enumValue="tk1_misound_lrswitch_module_enable"/>
+    </TAG>
+    <TAG id="0xc000015" name="misound lrswitch fx mode" enumValue="TAG_MISOUND_LRSWITCH_FX_MODE" enumName="Tag_Keys_MISOUND_LRSWITCH_FX_MODE"
+      description="misound lrswitch fx mode">
+      <KEY id="0x190000" name="MISOUND_LRSWITCH_FX_MODE" enumValue="tk1_misound_lrswitch_fx_mode"/>
+    </TAG>
+    <TAG id="0xc000017" name="misound karaoke switch" enumValue="TAG_MISOUND_KARAOKE_SWITCH" enumName="Tag_Keys_MISOUND_KARAOKE_SWITCH" description="misound#[
+      #] karaoke switch">
+      <KEY id="0x140000" name="MISOUND_KARAOKE_SWITCH" enumValue="tk1_misound_karaoke_switch"/>
+    </TAG>
+    <TAG id="0xc000018" name="misound spatial module enable" enumValue="TAG_MISOUND_SPATIAL_MODULE_ENABLE" enumName="Tag_Keys_MISOUND_SPATIAL_MODULE_ENABLE"
+      description="misound spatial module enable">
+      <KEY id="0x150000" name="MISOUND_SPATIAL_MODULE_ENABLE" enumValue="tk1_misound_spatial_module_enable"/>
+    </TAG>
+    <TAG id="0xc000019" name="misound spatial headtrack enable" enumValue="TAG_MISOUND_SPATIAL_HEADTRACK_ENABLE"
+      enumName="Tag_Keys_MISOUND_SPATIAL_HEADTRACK_ENABLE" description="misound spatial headtrack enable">
+      <KEY id="0x160000" name="MISOUND_SPATIAL_HEADTRACK_ENABLE" enumValue="tk1_misound_spatial_headtrack_enable"/>
+    </TAG>
+    <TAG id="0xc00002a" name="misound spatial surround enable" enumValue="TAG_MISOUND_SPATIAL_SURROUND_ENABLE"
+      enumName="Tag_Keys_MISOUND_SPATIAL_SURROUND_ENABLE" description="misound spatial surround enable">
+      <KEY id="0x170000" name="MISOUND_SPATIAL_SURROUND_ENABLE" enumValue="tk1_misound_spatial_surround_enable"/>
+    </TAG>
+    <TAG id="0xc00002b" name="misound_update" enumValue="TAG_MISOUND_BINUPDATE" enumName="Tag_Keys_MISOUND_BINUPDATE" description="Device misound update">
+      <KEY id="0x1b0000" name="TAG_KEY_MISOUND_UPDATE" enumValue="tk1_misound_update"/>
+    </TAG>
+    <TAG id="0xc00002c" name="fold_state" enumValue="TAG_DEVICE_FOLD_STATE" enumName="Tag_Keys_DEVICE_FOLD_STATE" description="Device fold state">
+      <KEY id="0x1d0000" name="TAG_KEY_FOLD_STATE" enumValue="tk1_fold_state"/>
+    </TAG>
+    <TAG id="0xc000401" name="phone_fold_state" enumName="TAG_PHONE_FOLD_STATE_Keys" description="phone fold state">
+      <KEY id="0x280000" name="Phone_Fold_State" enumValue="tk1_phone_fold_state"/>
+    </TAG>
+    <TAG id="0xc000039" name="fluence_rx_switch" enumValue="TAG_FLUENCE_RX_SWITCH" enumName="Tag_Keys_FLUENCE_RX_SWITCH" description="Fluence Rx Switch">
+      <KEY id="0x2a0000" name="FLUENCE_RX_SWITCH" enumValue="tk1_fluence_rx_switch"/>
+    </TAG>
+    <TAG id="0xc000040" name="holder_switch" enumValue="TAG_VOICE_VOIP_HOLDER_SWITCH" enumName="Tag_Keys_VOICE_VOIP_HOLDER_SWITCH" description="holder switch">
+      <KEY id="0x290000" name="VOICE_VOIP_HOLDER_SWITCH" enumValue="tk1_voice_voip_holder_switch"/>
+    </TAG>
+    <TAG id="0xc000044" name="micall_switch" enumValue="TAG_MICALL_MODULE_SWITCH" enumName="Tag_Keys_MICALL_MODULE_SWITCH" description="micall switch">
+      <KEY id="0x2e0000" name="MICALL_Module_Switch" enumValue="tk1_micall_module_switch"/>
+    </TAG>
+    <TAG id="0xc000034" name="misound_hph_sdid_enable" enumValue="TAG_MISOUND_HPH_SOUNDID_ENABLE" enumName="Tag_Keys_MISOUND_HPH_SOUNDID_ENABLE"
+      description="misound_hph_sdid_enable">
+      <KEY id="0x220000" name="MISOUND_HPH_SOUNDID_ENABLE" enumValue="tk1_misound_hph_soundid_enable"/>
+    </TAG>
+    <TAG id="0xc000037" name="misound hph canalcalib enable" enumValue="TAG_MISOUND_HPH_CANALCALIB_ENABLE" enumName="Tag_Keys_MISOUND_HPH_CANALCALIB_ENABLE"
+      description="misound hph canalcalib enable">
+      <KEY id="0x260000" name="MISOUND_HPH_CANALCALIB_ENABLE" enumValue="tk1_misound_hph_canalcalib_enable"/>
+    </TAG>
+    <TAG id="0xc000004a" name="mfc_sidetone" enumValue="TAG_MFC_SIDETONE" enumName="Tag_Keys_TAG_MFC_SIDETONE" description="SIDETONE MFC">
+      <KEY id="0xa5000000" name="SamplingRate" enumValue="tk1_mfc_sidetone"/>
+      <KEY id="0xa6000000" name="BitWidth" enumValue="tk2_mfc_sidetone"/>
+      <KEY id="0xa9000000" name="Channels" enumValue="tk3_mfc_sidetone"/>
+    </TAG>
+    <TAG id="0xc000004c" name="ultrasound_gain" enumValue="TAG_ULTRASOUND_GAIN" enumName="Tag_Keys_TAG_ULTRASOUND_GAIN" description="Ultrasound Signal gain for#[
+      #] different configuration">
+      <KEY id="0xe7000000" name="UltrasoundGain" enumValue="tk1_ultrasound_gain"/>
+    </TAG>
+    <TAG id="0xc000042" name="LHDC_config" enumName="TAG_LHDC_BITWIDTH_Keys" description="LHDC pcm formart config">
+      <KEY id="0xa6000000" name="BitWidth" enumValue="tk1_lhdc_bitWidth"/>
+    </TAG>
+  </MODULE_TAGS>
+</KEY_DEF>
