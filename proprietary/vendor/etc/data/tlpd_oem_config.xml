@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TLPD OEM configuration
+     Copyright (c) 2022-2023 Qualcomm Technologies, Inc.
+     All Rights Reserved.
+     Confidential and Proprietary - Qualcomm Technologies, Inc. -->
+
+<list name="tlpd_oem_cfg">
+  <!-- Path to the TLPD log file -->
+  <data name="file_path" type="string"> /data/vendor/tlpd/tlpd_sys_log </data>
+</list>
