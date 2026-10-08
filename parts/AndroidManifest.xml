@@ -126,6 +126,40 @@
                        android:resource="@string/color_scheme_summary" />
         </activity>
 
+        <!-- Takes Lineage charging control's place in Settings > Battery. -->
+        <activity
+            android:name=".BatteryProtectionActivity"
+            android:exported="true"
+            android:label="@string/battery_protection_title"
+            android:theme="@style/Theme.SubSettingsBase.Expressive">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data android:name="com.android.settings.category"
+                       android:value="com.android.settings.category.ia.battery" />
+            <meta-data android:name="com.android.settings.summary"
+                       android:resource="@string/battery_protection_summary" />
+        </activity>
+
+        <!-- Stock HyperOS lists reading mode in Settings > Display too. -->
+        <activity
+            android:name=".ReadingModeActivity"
+            android:exported="true"
+            android:label="@string/reading_mode_title"
+            android:theme="@style/Theme.SubSettingsBase.Expressive">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data android:name="com.android.settings.category"
+                       android:value="com.android.settings.category.ia.display" />
+            <meta-data android:name="com.android.settings.group_key"
+                       android:value="category_key_color" />
+            <meta-data android:name="com.android.settings.order"
+                       android:value="-9" />
+            <meta-data android:name="com.android.settings.summary"
+                       android:resource="@string/reading_mode_summary" />
+        </activity>
+
         <activity
             android:name=".XiaomiSettingsActivity"
             android:label="@string/xiaomi_settings_title"

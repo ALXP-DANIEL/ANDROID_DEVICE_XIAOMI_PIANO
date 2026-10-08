@@ -26,7 +26,7 @@ import com.android.internal.compat.IPlatformCompat;
 import org.lineageos.pianoparts.keyboard.PadKeyboardManager;
 import org.lineageos.pianoparts.stylus.StylusController;
 
-import java.util.Set;
+import java.util.Set;  import lineageos.providers.LineageSettings;
 
 import vendor.xiaomi.hw.touchfeature.ITouchFeature;
 
@@ -65,6 +65,7 @@ public class PianoPartsApp extends Application {
     private static final String KEY_SUNLIGHT_MODE = "sunlight_mode";
 
     private DisplayManager mDisplayManager;
+    private ReadingModeController mReadingModeController;
     private SunlightModeController mSunlightModeController;
     private ITouchFeature mTouchFeature;
     private int mRotation = -1;
@@ -97,6 +98,14 @@ public class PianoPartsApp extends Application {
             setDisplayFeature(FEATURE_TRUE_TONE, 1);
         }
         allowCameraLandscape();
+        BatteryProtection.apply(this);
+        // Like stock, keep the charging light on when full. Only set once,
+        // so the Battery light setting stays the user's choice.
+        if (LineageSettings.System.getString(getContentResolver(),
+                LineageSettings.System.BATTERY_LIGHT_FULL_CHARGE_DISABLED) == null) {
+            LineageSettings.System.putInt(getContentResolver(),
+                    LineageSettings.System.BATTERY_LIGHT_FULL_CHARGE_DISABLED, 0);
+        }
         new PenBatteryNotifier(this);
         new VolumeBoostNotifier(this);
         new TouchpadFlickManager(this).start();
@@ -104,6 +113,7 @@ public class PianoPartsApp extends Application {
         new StylusAppModeController(new Handler(Looper.getMainLooper()),
                 this::setTouchMode).start();
         PadKeyboardManager.get(this).start();
+        mReadingModeController = new ReadingModeController(this);
         mSunlightModeController = new SunlightModeController(this);
         mSunlightModeController.setEnabled(isSunlightMode());
     }
@@ -182,6 +192,10 @@ public class PianoPartsApp extends Application {
         setDisplayFeature(effect, getColorLevel());
         // Like stock, also set the level on the colour temperature feature.
         setDisplayFeature(FEATURE_COLOR_TEMP, getColorLevel());
+    }
+
+    ReadingModeController getReadingModeController() {
+        return mReadingModeController;
     }
 
     boolean isSunlightMode() {
