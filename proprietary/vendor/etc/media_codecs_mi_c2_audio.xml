@@ -8,10 +8,10 @@
             <Limit name="bitrate" range="1-21000000" />
             <Attribute name="software-codec" />
         </MediaCodec>
-        <MediaCodec name="c2.mi.aivc.decoder" type="audio/aivc">
-            <Alias name="OMX.mi.aivc.decoder" />
+        <MediaCodec name="c2.mi.aihc.decoder" type="audio/aihc">
+            <Alias name="OMX.mi.aihc.decoder" />
             <Limit name="channel-count" max="1" />
-            <Limit name="sample-rate" ranges="1-8000" />
+            <Limit name="sample-rate" ranges="1-16000" />
             <Limit name="bitrate" range="1-21000000" />
             <Attribute name="software-codec" />
         </MediaCodec>
@@ -24,10 +24,10 @@
             <Limit name="bitrate" range="1-21000000" />
             <Attribute name="software-codec" />
         </MediaCodec>
-        <MediaCodec name="c2.mi.aivc.encoder" type="audio/aivc">
-            <Alias name="OMX.mi.aivc.encoder" />
+        <MediaCodec name="c2.mi.aihc.encoder" type="audio/aihc">
+            <Alias name="OMX.mi.aihc.encoder" />
             <Limit name="channel-count" max="1" />
-            <Limit name="sample-rate" ranges="1-8000" />
+            <Limit name="sample-rate" ranges="1-16000" />
             <Limit name="bitrate" range="1-21000000" />
             <Attribute name="software-codec" />
         </MediaCodec>

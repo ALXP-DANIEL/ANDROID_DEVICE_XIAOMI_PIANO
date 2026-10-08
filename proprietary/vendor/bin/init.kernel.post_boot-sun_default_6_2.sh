@@ -44,6 +44,18 @@ sched_rt_period_ms=`expr $sched_rt_runtime_ms + 100`
 sched_rt_period_us=`expr $sched_rt_period_ms \* 1000`
 echo $sched_rt_period_us > /proc/sys/kernel/sched_rt_period_us
 echo 880000 > /proc/sys/kernel/sched_rt_runtime_us
+#Configure cgroup parameters:
+project=`getprop ro.product.device`
+case "$project" in
+    "dada"|"bixi"|"haotian")
+    echo 4196 > /dev/cpuctl/foreground/cpu.shares
+    echo 768 > /dev/cpuctl/background/cpu.shares
+    ;;
+    "xuanyuan")
+    echo 4096 > /dev/cpuctl/foreground/cpu.shares
+    echo 512 > /dev/cpuctl/background/cpu.shares
+    ;;
+esac
 
 if [ -d /proc/sys/walt ]; then
 	# configure maximum frequency when CPUs are partially halted

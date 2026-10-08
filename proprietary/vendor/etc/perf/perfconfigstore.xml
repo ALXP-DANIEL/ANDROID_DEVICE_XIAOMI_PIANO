@@ -121,7 +121,7 @@ ________________________________________________________________________________
                 <Prop Name="ro.vendor.perf.qape.max_boost_count" Value="3" />
                 <Prop Name="ro.vendor.perf.qape.max_pipeline_number" Value="3" />
                 <Prop Name="vendor.perf.bgt.enable" Value="true" />
-                <Prop Name="ro.vendor.perf.sagt" Value="true" Target="sun"/>
+                <Prop Name="ro.vendor.perf.sagt" Value="false" Target="sun"/>
                 <Prop Name="ro.vendor.perf.semiautopipeline" Value="true" Target="sun"/>
                 <Prop Name="ro.vendor.perf.semiautopipeline" Value="false" Target="tuna,kera"/>
                 <Prop Name="ro.vendor.perf.autopipeline" Value="true" Target="sun"/>

@@ -1,3 +1,4 @@
+libAIHDIcon.so
 libqti-perfd-client.so
 libadsprpc.so
 libcdsprpc.so
@@ -9,5 +10,6 @@ libmialgo_utils.so
 libxmi_slow_motion_mein.so
 libmialgo_ai_vision.so
 libmiocr.so
+libmiphone_capture_bokeh.so
 libanc_single_bokeh.so
-libSEGModel.so
+libmi266.so

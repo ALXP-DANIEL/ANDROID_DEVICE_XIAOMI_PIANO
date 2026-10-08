@@ -1,5 +1,7 @@
-# Copyright (c) 2023 Qualcomm Technologies, Inc.
-# All Rights Reserved.
+#MIUI ADD: Modem_DecoupledQcom
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# All rights reserved.
+#END Modem_DecoupledQcom
 # Confidential and Proprietary - Qualcomm Technologies, Inc.
 #
 on boot
@@ -23,6 +25,10 @@ on post-fs-data
 service vendor.nicmd /system/vendor/bin/nicmd
     user root
     class main
+#MIUI ADD: Modem_DecoupledQcom
+    user root
+    group root
+#END Modem_DecoupledQcom
 
 on property:persist.vendor.data.shs_ko_load=1
     exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -a -d /vendor/lib/modules rmnet_shs

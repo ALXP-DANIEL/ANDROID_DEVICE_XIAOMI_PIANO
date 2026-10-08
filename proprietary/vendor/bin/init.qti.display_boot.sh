@@ -272,4 +272,8 @@ case "$device" in
     "piano")
     setprop vendor.display.enable_inline_writeback 0
     ;;
+    "annibale")
+    setprop vendor.display.enable_inline_writeback 0
+    setprop vendor.display.enable_spec_fence 0
+    ;;
 esac

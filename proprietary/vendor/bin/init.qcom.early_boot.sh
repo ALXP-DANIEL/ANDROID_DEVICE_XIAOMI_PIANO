@@ -91,6 +91,9 @@ function set_density_by_fb() {
             "luming")
             setprop vendor.display.lcd_density 520
             ;;
+            "warsaw")
+            setprop vendor.display.lcd_density 520
+            ;;
             "yupei")
             setprop vendor.display.lcd_density 440
             ;;
@@ -135,6 +138,9 @@ function set_density_by_fb() {
             setprop vendor.display.lcd_density 520
             ;;
             "luming")
+            setprop vendor.display.lcd_density 520
+            ;;
+            "warsaw")
             setprop vendor.display.lcd_density 520
             ;;
             "yupei")

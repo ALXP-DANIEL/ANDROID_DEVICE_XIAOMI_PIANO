@@ -182,7 +182,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/ozonotify-1.0-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/ozonotify-1.0-service.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/poweropt-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/poweropt-service.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/qdcmss.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/qdcmss.rc \
-    vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/qesdk-manager.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/qesdk-manager.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/qguard.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/qguard.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/qmipriod.debug.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/qmipriod.debug.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/qmipriod.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/qmipriod.rc \
@@ -195,7 +194,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/tlpd.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/tlpd.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/trusteduilistener.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/trusteduilistener.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.dolby.media.c2-default-service-dax.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.dolby.media.c2-default-service-dax.rc \
-    vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qsap.qapeservice.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qsap.qapeservice.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qti.adsprpc-guestos-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qti.adsprpc-guestos-service.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qti.cdsprpc-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qti.cdsprpc-service.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qti.diag_userdebug.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qti.diag_userdebug.rc \
@@ -214,7 +212,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qti.media.c2audio@1.0-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qti.media.c2audio@1.0-service.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qti.qspmhal-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qti.qspmhal-service.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qti.rmt_storage.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qti.rmt_storage.rc \
-    vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qti.sla.service@2.0-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qti.sla.service@2.0-service.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qti.syshealthmon-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qti.syshealthmon-service.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.qti.tftp.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qti.tftp.rc \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/init/vendor.sensors.qti.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.sensors.qti.rc \
@@ -317,9 +314,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/seccomp_policy/gnss@2.0-qsap-location.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/gnss@2.0-qsap-location.policy \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/seccomp_policy/gnss@2.0-xtra-daemon.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/gnss@2.0-xtra-daemon.policy \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/seccomp_policy/gnss@2.0-xtwifi-client.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/gnss@2.0-xtwifi-client.policy \
-    vendor/xiaomi/sm8750-common/proprietary/vendor/etc/seccomp_policy/qesdk.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/qesdk.policy \
-    vendor/xiaomi/sm8750-common/proprietary/vendor/etc/seccomp_policy/qesdksec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/qesdksec.policy \
-    vendor/xiaomi/sm8750-common/proprietary/vendor/etc/seccomp_policy/qsap_qapeservice.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/qsap_qapeservice.policy \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/seccomp_policy/qsap_voiceui.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/qsap_voiceui.policy \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/seccomp_policy/qspm.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/qspm.policy \
     vendor/xiaomi/sm8750-common/proprietary/vendor/etc/seccomp_policy/qti-systemd.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/qti-systemd.policy \
@@ -457,10 +451,10 @@ PRODUCT_PACKAGES += \
     libTrustedUIAIDL \
     libVoiceSdk \
     libWlanServiceJni \
-    lib_AIVC_decoder \
-    lib_AIVC_encoder \
     lib_bt_lhdc \
     lib_bt_mihc \
+    lib_decoder_aihc \
+    lib_encoder_aihc \
     lib_lvacfs \
     libadm \
     libadreno_app_profiles \
@@ -518,8 +512,8 @@ PRODUCT_PACKAGES += \
     libcneapiclient \
     libcneoplookup \
     libcodec2_soft_ac4dec \
-    libcodec2_soft_aivc_dec \
-    libcodec2_soft_aivc_enc \
+    libcodec2_soft_aihc_dec \
+    libcodec2_soft_aihc_enc \
     libcodec2_soft_ddpdec \
     libcodec2_soft_mihc_dec \
     libcodec2_soft_mihc_enc \
@@ -1057,7 +1051,7 @@ PRODUCT_PACKAGES += \
     vendor.xiaomi.hardware.misys.common-V3-ndk \
     vendor.xiaomi.hardware.misys.core-V1-ndk \
     vendor.xiaomi.hardware.mlipay-V1-ndk \
-    vendor.xiaomi.hardware.videoservice-V7-ndk \
+    vendor.xiaomi.hardware.videoservice-V11-ndk \
     vendor.xiaomi.hw.touchfeature-V1-ndk \
     vendor.xiaomi.sensor.citsensorservice-V1-ndk \
     android.hardware.bluetooth.audio-impl-vendor \
@@ -1110,7 +1104,6 @@ PRODUCT_PACKAGES += \
     media_c2_mi.xml \
     ozonotify-1.0.xml \
     qasr_vintf.xml \
-    qesdk-manager.xml \
     snapdragon_services.xml \
     vendor.dolby.media.c2-default-service-dax.xml \
     vendor.qti.diag.hal.service.xml \
@@ -1184,7 +1177,6 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.trustedui-aidl-service-qti \
     vendor.qti.media.c2@1.0-service \
     vendor.qti.media.c2audio@1.0-service \
-    vendor.qti.sla.service@2.0-service \
     vendor.xiaomi.hardware.displayfeature_aidl-service \
     vendor.xiaomi.hardware.micharge-service \
     vendor.xiaomi.hardware.misys.core-service \
@@ -1225,13 +1217,11 @@ PRODUCT_PACKAGES += \
     ppd \
     qcc-vendor \
     qdcmss \
-    qesdk-manager \
     qguard \
     qlm-service \
     qrtr-cfg \
     qrtr-lookup \
     qrtr-ns \
-    qsap_qapeservice \
     qseecomd \
     qti \
     qtigetprop \

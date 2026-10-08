@@ -1873,6 +1873,12 @@
                 <!-- DEVICEPP_TX - DEVICEPP_TX_Audio_Fluence_No_Algorithm -->
                 <graph_kv key="0xAD000000" value="0xAD001900"/>
             </keys_and_values>
+            <keys_and_values StreamType="PAL_STREAM_DEEP_BUFFER,PAL_STREAM_LOW_LATENCY" CustomConfig="cts-route">
+                <!-- DEVICETX - USB_TX -->
+                <graph_kv key="0xA3000000" value="0xA3000005"/>
+                <!-- DEVICEPP_TX - DEVICEPP_TX_RECORDING_NO_NS -->
+                <graph_kv key="0xAD000000" value="0xAD001600"/>
+            </keys_and_values>
         </devicepp>
          <!-- IN USB device DevicePPs -->
          <devicepp id="PAL_DEVICE_IN_USB_DEVICE">
@@ -1936,11 +1942,15 @@
                  <!-- DEVICEPP_TX - DEVICEPP_TX_AUDIO_FLUENCE_ENDFIRE -->
                  <graph_kv key="0xAD000000" value="0xAD000003"/>
              </keys_and_values>
-            <keys_and_values StreamType="PAL_STREAM_RAW,PAL_STREAM_ULTRA_LOW_LATENCY,PAL_STREAM_LOW_LATENCY" CustomConfig="cts-route">
+            <keys_and_values StreamType="PAL_STREAM_RAW,PAL_STREAM_LOW_LATENCY" CustomConfig="cts-route">
                 <!-- DEVICETX - USB_TX -->
                 <graph_kv key="0xA3000000" value="0xA3000005"/>
                 <!-- DEVICEPP_TX - DEVICEPP_TX_Audio_Fluence_No_Algorithm   -->
                 <graph_kv key="0xAD000000" value="0xAD001900"/>
+            </keys_and_values>
+            <keys_and_values StreamType="PAL_STREAM_ULTRA_LOW_LATENCY" CustomConfig="cts-route">
+                <!-- DEVICETX - USB_TX -->
+                <graph_kv key="0xA3000000" value="0xA3000005"/>
             </keys_and_values>
          </devicepp>
         <!-- IN Handset_VA_MIC DevicePPs -->

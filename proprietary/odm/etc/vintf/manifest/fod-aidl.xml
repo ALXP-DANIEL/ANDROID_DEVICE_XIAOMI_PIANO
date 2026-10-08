@@ -8,10 +8,6 @@
         <fqname>IQfpExtendedFingerprint/default</fqname>
     </hal>
     <hal format="aidl">
-        <name>vendor.xiaomi.hardware.dtool1</name>
-        <fqname>IDtool/default</fqname>
-    </hal>
-    <hal format="aidl">
         <name>vendor.xiaomi.hardware.fingerprintextension</name>
         <fqname>IXiaomiFingerprint/default</fqname>
     </hal>

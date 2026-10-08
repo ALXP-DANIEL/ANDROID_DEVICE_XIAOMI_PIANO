@@ -503,6 +503,26 @@
             <Limit name="performance-point-16384x8192" value="3" />
             <Limit name="performance-point-1920x1080" value="6" />
         </MediaCodec>
+        <MediaCodec name="c2.qti.dv.encoder" type="video/dolby-vision">
+            <Limit name="size" min="96x96" max="8192x8192" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Limit name="blocks-per-second" min="36" max="3916800" />
+            <Limit name="block-count" range="36-138240" />
+            <Limit name="bitrate" range="1-160000000" />
+            <Limit name="frame-rate" range="1-480" />
+            <Limit name="complexity" range="0-100"  default="100" />
+            <Limit name="concurrent-instances" max="16" />
+            <Feature name="bitrate-modes" value="VBR,CBR" />
+            <Feature name="intra-refresh" />
+            <Feature name="encoding-statistics" />
+            <Feature name="video-minimum-quality" />
+            <Feature name="can-swap-width-height" required="true" />
+            <Limit name="performance-point-1920x1080" value="480" />
+            <Limit name="performance-point-1920x1080" value="240" />
+            <Limit name="performance-point-3840x2160" value="120" />
+            <Limit name="performance-point-7680x4320" value="30" />
+        </MediaCodec>
     </Encoders>
     <Include href="media_codecs_google_c2.xml" />
 </MediaCodecs>

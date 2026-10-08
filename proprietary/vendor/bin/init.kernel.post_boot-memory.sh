@@ -106,7 +106,9 @@ function configure_thp()
 	## Goal is to allow all allocations to use THP whilst minimizing allocaiton delays
 	# Allow all eligibe page faults to use THP
 	ProductName=`getprop ro.product.product.name`
-	if [ "$ProductName" == "haotian" ] || [ "$ProductName" == "dada" ] || [ "$ProductName" == "miro" ] || [ "$ProductName" == "bixi" ] || [ "$ProductName" == "onyx" ] || [ "$ProductName" == "luming" ]; then
+	if [ "$ProductName" == "haotian" ] || [ "$ProductName" == "dada" ] || [ "$ProductName" == "miro" ] || [ "$ProductName" == "bixi" ] ; then
+		echo never > /sys/kernel/mm/transparent_hugepage/enabled
+	elif [[ "$ProductName" == *onyx* || "$ProductName" == *luming* ]]; then
 		echo never > /sys/kernel/mm/transparent_hugepage/enabled
 	else
 		echo always > /sys/kernel/mm/transparent_hugepage/enabled
@@ -154,8 +156,14 @@ function configure_min_free_kbytes()
 		MinFreeKbytes=4096
 	fi
 
-	if [ "$ProductName" == "bixi" ] || [ "$ProductName" == "onyx" ] || [ "$ProductName" == "luming" ]; then
+	if ["$ProductName" == "bixi"]; then
 		WatermarkScale=43
+		echo $WatermarkScale > /proc/sys/vm/watermark_scale_factor
+	elif [[ "$ProductName" == *onyx* || "$ProductName" == *luming* ]]; then
+		WatermarkScale=43
+		echo $WatermarkScale > /proc/sys/vm/watermark_scale_factor
+	elif ["$ProductName" == "xuanyuan"]; then
+		WatermarkScale=45
 		echo $WatermarkScale > /proc/sys/vm/watermark_scale_factor
 	fi
 
@@ -177,8 +185,10 @@ function configure_memory_parameters() {
 	configure_min_free_kbytes
 
         # Extm
-        ProductName=`getprop ro.product.product.name`
-	if [ "$ProductName" == "bixi" ] || [ "$ProductName" == "onyx" ] || [ "$ProductName" == "luming" ]; then
+    	ProductName=`getprop ro.product.product.name`
+	if [ "$ProductName" == "bixi" ]; then
+		echo 150 > /proc/sys/vm/swappiness
+	elif [[ "$ProductName" == *onyx* || "$ProductName" == *luming* ]]; then
 		echo 150 > /proc/sys/vm/swappiness
 	else
 		echo 100 > /proc/sys/vm/swappiness

@@ -169,6 +169,7 @@
       <VALUE val="0xad000002" name="Audio_Fluence_SMECNS" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_SMECNS" description="Single Mic ECNS"/>
       <VALUE val="0xad000003" name="Audio_Fluence_Endfire" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_ENDFIRE" description="EndFire_ECNS - Typically used for dual mic#[
         #] capture scenarios"/>
+      <VALUE val="0xad001a00" name="Audio_Fluence_Endfire_CTS" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_ENDFIRE_CTS" description="FOR CTS"/>
       <VALUE val="0xad000004" name="Audio_Fluence_Pro" enumValue="DEVICEPP_TX_AUDIO_FLUENCE_PRO" description="Audio Multi MIC scenarios ; at least 3 or more#[
         #] Micss"/>
       <VALUE val="0xad000005" name="Voip_Fluence_Pro" enumValue="DEVICEPP_TX_VOIP_FLUENCE_PRO" description="Voip Multi MIC scenarios ; at least 3 or more Micss"/>

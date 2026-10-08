@@ -123,6 +123,7 @@
             "libqc2vppfilter.so",
             "libqcodec2_imgtxrfilter.so",
             "libqcodec2_dolbydecoderfilter.so",
+            "libqcodec2_dolbyenhancementfilter.so",
             "libqcodec2_srfilter.so",
             // "libqcodec2_psfilter.so",
             "libqcodec2_rffilter.so"
@@ -153,8 +154,8 @@
         //
         "OptionalCodecs": [
             "c2.qti.dv.decoder",
-            "c2.qti.dv.decoder.secure"
-            // "c2.qti.dv.encoder"
+            "c2.qti.dv.decoder.secure",
+            "c2.qti.dv.encoder"
         ]
     }
 }
