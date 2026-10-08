@@ -1,0 +1,167 @@
+diff --git a/data.cpp b/data.cpp
+index 9f85e92..ee97ad2 100644
+--- a/data.cpp
++++ b/data.cpp
+@@ -19,6 +19,11 @@
+ #include <pthread.h>
+ #include <time.h>
+ #include <string>
++#include <android-base/file.h>
++#include <sys/stat.h>
++#include <sys/mount.h>
++#include <android-base/strings.h>
++#include <android-base/properties.h>
+ #include <sstream>
+ #include <cctype>
+ #include <filesystem>
+@@ -374,6 +379,114 @@ int DataManager::ShowProgress(float Portion, const float Seconds)
+ 	return 0;
+ }
+ 
++// Android's own time zone, read from the installed system's persistent
++// properties.
++//
++// TWRP keeps its settings, including the time zone, in TW_PERSIST_DIR. Where
++// that cannot be written - piano mounts persist read-only, because it holds
++// calibration data recovery must never modify - no settings file ever exists,
++// and every boot fell back to the built-in default of US Central time. The
++// installed system already knows the user's zone, and bionic resolves an Olson
++// name such as "Asia/Kuala_Lumpur" through the recovery's tzdata, so that
++// zone is used instead. Nothing is written.
++//
++// persistent_properties is a PersistentProperties protobuf: repeated records
++// (field 1) of { string name = 1; string value = 2; }. It lives in the
++// device-encrypted part of /data, so it is readable once the metadata layer is
++// decrypted, before any credential is entered. Returns an empty string if the
++// file or the property is absent, or if the value does not look like a zone
++// name.
++static std::string Android_Time_Zone()
++{
++	std::string data;
++	if (!android::base::ReadFileToString("/data/property/persistent_properties", &data))
++		return "";
++
++	static const std::string kName = "persist.sys.timezone";
++	size_t pos = 0;
++	while ((pos = data.find(kName, pos)) != std::string::npos) {
++		size_t v = pos + kName.size();
++		pos = v;
++		// The name must be the whole string field, not a prefix of a longer
++		// name such as persist.sys.timezone_confidence.
++		if (pos < kName.size() + 1 || (unsigned char)data[pos - kName.size() - 1] != kName.size())
++			continue;
++		// Next comes field 2, length-delimited: tag 0x12, then a one-byte
++		// length (zone names are far shorter than 128 bytes).
++		if (v + 2 > data.size() || data[v] != 0x12)
++			continue;
++		size_t len = (unsigned char)data[v + 1];
++		if (len == 0 || len >= 128 || v + 2 + len > data.size())
++			continue;
++		std::string tz = data.substr(v + 2, len);
++		for (char c : tz) {
++			if (!isalnum((unsigned char)c) && c != '/' && c != '_' && c != '-' && c != '+')
++				return "";
++		}
++		return tz;
++	}
++	return "";
++}
++
++// The ROM's default time zone, for when the user never chose one.
++//
++// A zone the user picks is saved in persistent_properties, but a fresh install
++// that has only ever used the default has nothing there: the default is a
++// plain build property. Android loads build.prop files in partition order and,
++// persist.sys.timezone not being read-only, a later one overrides an earlier
++// one, so they are searched latest first. odm and vendor are already mounted
++// read-only by the stock-runtime setup; the others are mounted read-only here
++// just long enough to read one line.
++static std::string Rom_Default_Time_Zone()
++{
++	struct Source { const char *part; const char *prop; };
++	static const Source kSources[] = {
++		{ "product",    "etc/build.prop" },
++		{ nullptr,      "/piano/odm-stock/etc/build.prop" },
++		{ nullptr,      "/piano/vendor-stock/build.prop" },
++		{ "system_ext", "etc/build.prop" },
++		{ "system",     "system/build.prop" },
++	};
++	static const std::string kKey = "persist.sys.timezone=";
++	std::string slot = android::base::GetProperty("ro.boot.slot_suffix", "");
++
++	for (const Source &src : kSources) {
++		std::string file = src.prop;
++		std::string mnt;
++		if (src.part) {
++			std::string dev = "/dev/block/mapper/" + std::string(src.part) + slot;
++			mnt = "/tmp/tz_" + std::string(src.part);
++			if (!TWFunc::Path_Exists(dev))
++				continue;
++			mkdir(mnt.c_str(), 0755);
++			if (mount(dev.c_str(), mnt.c_str(), "erofs", MS_RDONLY, nullptr) != 0) {
++				rmdir(mnt.c_str());
++				continue;
++			}
++			file = mnt + "/" + src.prop;
++		}
++
++		std::string tz;
++		std::string data;
++		if (android::base::ReadFileToString(file, &data)) {
++			for (const std::string &line : android::base::Split(data, "\n")) {
++				if (line.compare(0, kKey.size(), kKey) == 0) {
++					tz = android::base::Trim(line.substr(kKey.size()));
++					break;
++				}
++			}
++		}
++
++		if (src.part) {
++			umount(mnt.c_str());
++			rmdir(mnt.c_str());
++		}
++		if (!tz.empty())
++			return tz;
++	}
++	return "";
++}
++
+ void DataManager::update_tz_environment_variables(void)
+ {
+ 	string TZ = GetStrValue(TW_TIME_ZONE_VAR);
+@@ -996,6 +1109,35 @@ void DataManager::ReadSettingsFile(void)
+ 	Output_Version();
+ 	PartitionManager.Mount_All_Storage();
+ 	update_tz_environment_variables();
++
++	// Follow the installed system's time zone unless the saved settings could
++	// actually hold the user's latest choice. On piano the settings file is on
++	// read-only persist: an old one survives from before persist was made
++	// read-only, carrying the US Central default, and nothing chosen in the UI
++	// can ever replace it - so every boot came back to the wrong zone. An
++	// unwritable file is treated as stale. A zone chosen in the UI still takes
++	// over for the session, because that path calls
++	// update_tz_environment_variables() again with the chosen value.
++	if (!TWFunc::Path_Exists(settings_file) || access(settings_file, W_OK) != 0) {
++		std::string android_tz = Android_Time_Zone();
++		const char *origin = "the user's choice";
++		if (android_tz.empty()) {
++			android_tz = Rom_Default_Time_Zone();
++			origin = "the ROM default";
++		}
++		for (char c : android_tz) {
++			if (!isalnum((unsigned char)c) && c != '/' && c != '_' && c != '-' && c != '+') {
++				android_tz.clear();
++				break;
++			}
++		}
++		if (!android_tz.empty()) {
++			LOGINFO("Settings cannot be saved; using the system time zone '%s' (%s)\n",
++				android_tz.c_str(), origin);
++			setenv("TZ", android_tz.c_str(), 1);
++			tzset();
++		}
++	}
+ 	TWFunc::Set_Brightness(GetStrValue("tw_brightness"));
+ }
+ 

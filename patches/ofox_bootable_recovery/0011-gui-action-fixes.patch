@@ -1,0 +1,74 @@
+GUI action fixes:
+- A Magisk zip queued after an A/B ROM/OTA in the same queue is installed to
+  the NEW slot: the new slot's init_boot is patched with Magisk's own
+  boot_patch.sh (device script /system/bin/fox_magisk_other_slot.sh), like the
+  Magisk app's "install to inactive slot". Running the zip itself patched the
+  old slot's boot image (or failed with "Cannot mount /system").
+- Wait up to 2 s for a finishing action thread instead of dropping the new
+  action. operation_end() clears tw_busy just before the thread exits, so a
+  twrp CLI command arriving in that gap was dropped ("Another threaded action
+  is already running"), the client never got its answer, and every later CLI
+  command stopped working until recovery was restarted.
+
+diff --git a/gui/action.cpp b/gui/action.cpp
+--- a/gui/action.cpp	2026-09-28 18:32:07.574361174 +0000
++++ b/gui/action.cpp	2026-09-28 18:32:07.577259064 +0000
+@@ -157,6 +157,15 @@
+ void ActionThread::threadActions(GUIAction * act)
+ {
+   pthread_mutex_lock(&m_act_lock);
++  // operation_end() clears tw_busy just before the action thread exits, so a
++  // command-line command can arrive while the previous action is finishing.
++  // Dropping it here leaves the twrp client waiting forever and stops all
++  // later commands. Give a finishing action up to 2 s before giving up.
++  for (int i = 0; m_thread_running && i < 40; i++) {
++      pthread_mutex_unlock(&m_act_lock);
++      usleep(50000);
++      pthread_mutex_lock(&m_act_lock);
++  }
+   if (m_thread_running)
+     {
+       pthread_mutex_unlock(&m_act_lock);
+@@ -1501,6 +1510,7 @@
+ int GUIAction::flash(std::string arg)
+ {
+   int i, ret_val = 0, wipe_cache = 0;
++  bool ab_rom_installed = false;
+ 
+   // We're going to jump to this page first, like a loading page
+   gui_changePage(arg);
+@@ -1528,6 +1538,26 @@
+ 		}
+ 	}
+ 
++#ifdef AB_OTA_UPDATER
++      // An A/B ROM or OTA earlier in this queue went to the other slot, and
++      // recovery still runs in the old one. The Magisk zip would patch the old
++      // slot's boot image (or fail to mount the old system), so patch the new
++      // slot's init_boot directly instead, like the Magisk app's "install to
++      // inactive slot". Falls back to asking the user if that fails.
++      if (ab_rom_installed && zip_path == DataManager::GetStrValue("fox_magisk_path") + "/" + FOX_MAGISK_ZIP_INSTALLER) {
++	  const std::string helper = "/system/bin/fox_magisk_other_slot.sh";
++	  std::string result;
++	  gui_print("\nInstalling Magisk to the new slot...\n");
++	  if (TWFunc::Path_Exists(helper) && TWFunc::Exec_Cmd("sh " + helper + " '" + zip_path + "'", result) == 0) {
++	      gui_print("%s\n", result.c_str());
++	  } else {
++	      LOGINFO("%s: %s\n", helper.c_str(), result.c_str());
++	      gui_print_color("warning", "Could not install Magisk to the new slot. Reboot OrangeFox, then flash Magisk.\n");
++	  }
++	  continue;
++      }
++#endif
++
+       DataManager::SetValue("tw_filename", zip_path);
+       DataManager::SetValue("tw_file", zip_filename);
+       DataManager::SetValue(TW_ZIP_INDEX, (i + 1));
+@@ -1551,6 +1581,7 @@
+       if (Fox_Zip_Installer_Code != 0) // we have just installed a ROM - ideally, the user should reboot the recovery
+        {
+           Fox_Post_Zip_Install(INSTALL_SUCCESS);
++          ab_rom_installed = true;
+        }
+ 
+        usleep(250000);

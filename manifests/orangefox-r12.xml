@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- OrangeFox R12 (fox_16.0) from the official GitLab. The complete
+       OrangeFox 16 manifest is not public, so these projects replace the
+       older copies from the base manifest.
+       system/vold is NOT replaced: OrangeFox's fox_16.0 vold (Aug 2025) fails
+       the Weaver synthetic-password unwrap on piano; TWRP's vold works.
+       system/core (libsnapshot) and system/update_engine also stay on TWRP's
+       versions: an Android 17 (HyperOS 4) OTA written with OrangeFox's
+       Dec 2025 versions bootlooped at first stage; TWRP's booted. -->
+  <remote name="ofox-gitlab" fetch="https://gitlab.com/OrangeFox/" />
+  <remove-project name="android_bootable_recovery" />
+  <remove-project name="android_build" />
+  <remove-project name="android_build_soong" />
+  <remove-project name="android_external_icu" />
+  <remove-project name="android_external_json-c" />
+  <remove-project name="android_external_libchrome" />
+  <remove-project name="android_external_libfuse" />
+  <remove-project name="android_external_libuv" />
+  <remove-project name="android_external_libwebsockets" />
+  <remove-project name="android_external_libxml2" />
+  <remove-project name="android_external_rclone" />
+  <remove-project name="platform/external/rust/android-crates-io" />
+  <remove-project name="android_se_omapi" />
+  <remove-project name="android_external_sqlite" />
+  <remove-project name="android_external_ttyd" />
+  <remove-project name="platform/external/wpa_supplicant_8" />
+  <remove-project name="android_external_zstd" />
+  <remove-project name="android_frameworks_hardware_interfaces" />
+  <remove-project name="android_hardware_interfaces" />
+  <remove-project name="android_packages_modules_Connectivity" />
+  <remove-project name="android_system_extras" />
+  <remove-project name="android_system_libhidl" />
+  <remove-project name="android_system_security" />
+  <remove-project name="android_system_sepolicy" />
+  <remove-project name="android_vendor_twrp" />
+  <project path="bootable/recovery" name="bootable/Recovery" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="build/make" name="build/make" remote="ofox-gitlab" revision="fox_16.0">
+    <linkfile src="CleanSpec.mk" dest="build/CleanSpec.mk" />
+    <linkfile src="buildspec.mk.default" dest="build/buildspec.mk.default" />
+    <linkfile src="core" dest="build/core" />
+    <linkfile src="envsetup.sh" dest="build/envsetup.sh" />
+    <linkfile src="target" dest="build/target" />
+    <linkfile src="tools" dest="build/tools" />
+  </project>
+  <project path="build/soong" name="build/soong" remote="ofox-gitlab" revision="fox_16.0">
+    <linkfile src="root.bp" dest="Android.bp" />
+    <linkfile src="bootstrap.bash" dest="bootstrap.bash" />
+  </project>
+  <project path="external/icu" name="external/icu" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/json-c" name="external/json-c" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/libchrome" name="external/libchrome" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/libfuse" name="external/libfuse" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/libuv" name="external/libuv" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/libwebsockets" name="external/libwebsockets" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/libxml2" name="external/libxml2" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/rclone" name="external/rclone" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/rust/android-crates-io" name="external/android-crates-io" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/se_omapi" name="external/se_omapi" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/sqlite" name="external/sqlite" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/ttyd" name="external/ttyd" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/wpa_supplicant_8" name="external/wpa_supplicant_8" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/zstd" name="external/zstd" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="frameworks/hardware/interfaces" name="frameworks/hardware/interfaces" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="hardware/interfaces" name="hardware/interfaces" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="packages/modules/Connectivity" name="packages/modules/Connectivity" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="system/extras" name="system/extras" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="system/libhidl" name="system/libhidl" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="system/security" name="system/security" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="system/sepolicy" name="system/sepolicy" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="vendor/twrp" name="vendor/twrp" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/libvterm" name="external/libvterm" remote="ofox-gitlab" revision="fox_16.0" />
+  <project path="external/dnsmasq" name="external/dnsmasq" remote="ofox-gitlab" revision="fox_16.0" />
+  <!-- TWRP-Test system/core (libsnapshot), as in the TWRP build whose
+       HyperOS 4 OTA booted. -->
+  <remove-project name="android_system_core" />
+  <project path="system/core" name="android_system_core" remote="TWRP-A16" revision="twrp-16.0" />
+</manifest>
