@@ -1,0 +1,380 @@
+{
+    "Description": "Xiaomi SmartAE config file - Arbitrator",
+    "phone_code": "O1",
+    "jsonVersion": "SE-V2.0-20241202",
+
+    "SE_EV_CAL": {
+        "Description": "SE CHECKER config",
+        "BOKEH": {
+            "CLASSIC": {
+                "UW": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 3.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -36, -37, -39 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -42 ]
+
+                },
+                "WIDE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -36, -37, -39 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                },
+                "TELE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -35, -36, -36 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                },
+                "ULTRATELE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -35, -36, -39 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                }
+            },
+            "VIBRANT": {
+                "UW": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 3.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -36, -39, -42 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -42 ]
+
+                },
+                "WIDE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -36, -39, -42 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                },
+                "TELE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -35, -36, -39 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                },
+                "ULTRATELE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -36, -39, -42, -45 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                }
+            }
+        },
+        "NORMAL": {
+            "CLASSIC": {
+                "UW": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 3.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -36, -37, -39 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -42 ]
+
+                },
+                "WIDE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -36, -37, -39 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                },
+                "TELE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -35, -36, -36 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                },
+                "ULTRATELE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST":   [ -30, -31, -32, -33, -34, -35, -36, -39 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                }
+            },
+            "VIBRANT": {
+                "UW": {
+                        "face_overexposed_luma": 239,
+                        "face_overexposed_ratio1": 0.02,
+                        "face_overexposed_ratio2": 0.04,
+                        "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 3.0 ],
+                        "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                        "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                        "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                        "EVNN_LIST": [ -30, -31, -32, -33, -34, -36, -39, -42 ],
+                        "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                        "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -42 ]
+
+                },
+                "WIDE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -36, -39, -42 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                },
+                "TELE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST": [ -30, -31, -32, -33, -34, -35, -36, -39 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                },
+                "ULTRATELE": {
+                    "face_overexposed_luma": 239,
+                    "face_overexposed_ratio1": 0.02,
+                    "face_overexposed_ratio2": 0.04,
+                    "ADRC_GAIN_NODE": [ 1.1, 1.25, 1.4, 1.6, 1.8, 2.0, 4.0 ],
+                    "EVN_LIST": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVN_FACE_OVEREXP": [ -12, -12, -12, -12, -12, -12, -12, -12 ],
+                    "EVNN_LIST":  [ -30, -31, -32, -33, -36, -39, -42, -45 ],
+                    "EVNN_FACE": [ -33, -34, -35, -36, -37, -38, -39, -42 ],
+                    "EVNN_FACE_OVEREXP": [ -33, -34, -35, -36, -37, -38, -39, -39 ]
+                }
+            }
+        }
+
+       
+    },
+
+    "AlgoType_SE": {
+        "CHECKER": {
+            "UW": {
+                "Description": "EV list",
+                "counts": 3,
+                "ev_index": [ 0, 1, 2 ],
+                "CONDITIONS": [
+                    {
+                        "condition": "camera_mode",
+                        "operator": "=",
+                        "value": [ 3, 3, 3 ]
+                    },
+                    {
+                        "condition": "sensor_mode",
+                        "operator": "=",
+                        "value": [ -1, 1, 1 ]
+                    },
+                    {
+                        "condition": "ai_info",
+                        "operator": "=",
+                        "value": [ 512, -1, -1 ]
+                    },
+                    {
+                        "condition": "is_face",
+                        "operator": "=",
+                        "value": [ 0, -1, -1 ]
+                    },
+					{
+						"condition": "luxindex",
+                        "operator": "<",
+                        "value": [ -1, 500, -1 ]
+					},
+					{
+						"condition": "luxindex",
+                        "operator": ">=",
+                        "value": [ -1, -1, 500 ]
+					}
+                ]
+
+            },
+            "WIDE": {
+                "Description": "EV list",
+                "counts": 5,
+                "ev_index": [ 0, 3, 4, 3, 3 ],
+                "CONDITIONS": [
+                    {
+                        "condition": "camera_mode",
+                        "operator": "=",
+                        "value": [ 3, 1, 1, 1, 2 ]
+                    },
+                    {
+                        "condition": "sensor_mode",
+                        "operator": "=",
+                        "value": [ -1, 1, 32768, 32768, 32769 ]
+                    },
+                    {
+                        "condition": "ai_info",
+                        "operator": "=",
+                        "value": [ 512, -1, -1, -1, -1 ]
+                    },
+                    {
+                        "condition": "is_face",
+                        "operator": "=",
+                        "value": [ 0, -1, -1, -1, -1 ]
+                    },
+                    {
+                        "condition": "luxindex",
+                        "operator": "<=",
+                        "value": [ -1, -1, 385, -1, -1 ]
+                    },
+                    {
+                        "condition": "luxindex",
+                        "operator": ">",
+                        "value": [ -1, -1, -1, 385, -1 ]
+                    },
+                    {
+                        "condition": "realzoom",
+                        "operator": ">=",
+                        "value": [ -1, -1, -1, -1, -1 ]
+                    },
+                    {
+                        "condition": "realzoom",
+                        "operator": "<",
+                        "value": [ -1, -1, -1, -1, -1 ]
+                    }
+                ]
+            }
+
+        },
+        "LIST": [
+			{
+                "Description": "V_0:binning + 6*ev-",
+                "frames": 6,
+                "ev_value": [ -1, -1, -1, -1, -1, -1 ],
+                "capture_mode": [ 1, 1, 1, 1, 1, 1 ],
+                "adrc_on": [ 0, 0, 0, 0, 0, 0 ],
+                "sensor_mode": [ 0, 0, 0, 0, 0, 0 ],
+                "motion_exp_type": [ 1, 1, 1, 1, 1, 1 ],
+                "min_exp_check": false,
+                "change_to_index": null
+            },
+            {
+                "Description": "V_1 :binning + ev-- ev- ev0 ev-- 5*ev0",
+                "frames": 9,
+                "ev_value": [ -2, -1, 0, -2, 0, 0, 0, 0, 0 ],
+                "capture_mode": [ 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+                "adrc_on": [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                "sensor_mode": [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                "motion_exp_type": [ 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+                "min_exp_check": false,
+                "change_to_index": null
+            },
+			{
+                "Description": "V_2 :binning + ev0 ev0 ev-- ev- ev0 ev-- 7*ev0",
+                "frames": 13,
+                "ev_value": [ -2, -1, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                "capture_mode": [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+                "adrc_on": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                "sensor_mode": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                "motion_exp_type": [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+                "min_exp_check": false,
+                "change_to_index": null
+            },
+            {
+                "Description": "V_3: binning + 2ev0 ev-- ev- ev0 ev-- ev0",
+                "frames": 7,
+                "ev_value": [ 0, 0, -2, -1, 0, -2, 0 ],
+                "capture_mode": [ 1, 1, 1, 1, 1, 1, 1 ],
+                "adrc_on": [ 0, 0, 0, 0, 0, 0, 0 ],
+                "sensor_mode": [ 0, 0, 0, 0, 0, 0, 0 ],
+                "motion_exp_type": [ 1, 1, 1, 1, 1, 1, 1 ],
+                "min_exp_check": false,
+                "change_to_index": null
+            },
+            {
+                "Description": "V_4: iszquad + 2ev0 ev-- ev- ev0 ev-- ev0",
+                "frames": 7,
+                "ev_value": [ 0, 0, -2, -1, 0, -2, 0 ],
+                "capture_mode": [ 1, 1, 1, 1, 1, 1, 1 ],
+                "adrc_on": [ 0, 0, 0, 0, 0, 0, 0 ],
+                "sensor_mode": [ 15, 15, 15, 15, 15, 15, 15 ],
+                "motion_exp_type": [ 1, 1, 1, 1, 1, 1, 1 ],
+                "min_exp_check": false,
+                "change_to_index": null
+            }
+        ]
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+}

@@ -1,0 +1,65 @@
+{
+    "configs": [
+        {
+            "name": "videocall_list",
+            "config": [
+                "com.android.incallui.InCallActivity",
+                "com.tencent.mm.plugin.voip.ui.VideoActivity",
+                "com.tencent.av.ui.AVActivity",
+                "com.immomo.molive.gui.activities.live.base.LiveActivity",
+                "com.tencent.wemeet.sdk.meeting.inmeeting.InMeetingActivity",
+                "com.ss.android.vc.meeting.module.preview.facade.MeetingPreviewActivity",
+                "com.alibaba.android.teleconf.mozi.activity.TeleVideoConfActivity",
+                "com.tencent.wemeet.sdk.meeting.inmeeting.InMeetingActivity",
+                "com.bytedance.android.xr.fusion.XrAvCallActivity",
+                "com.tencent.weishi.module.multi.PublisherMultiPageActivity",
+                "com.bytedance.mira.stub.p0.StubSingleTaskActivity1",
+                "com.bilibili.bilibililive.ui.room.BlinkRoomActivityV2",
+                "com.tencent.mm.plugin.multitalk.ui.MultiTalkMainUI",
+                "com.xingin.capa.v2.feature.entrance.view.activity.entrance.CapaEntranceActivity2",
+                "com.taobao.fleamarket.call.ui.FishRtcCallActivity",
+                "com.yy.mobile.plugin.pluginmobilelive.MobileLiveActivity",
+                "com.yxcorp.gifshow.message.rtc.activity.RtcCallActivity",
+                "com.dy.live.activity.RecorderCameraPortraitActivity",
+                "com.dy.liveV2.living.RecorderCameraActivityV2Portrait",
+                "com.tencent.mm.plugin.finder.feed.ui.FinderLiveAnchorAffinityUI",
+                "com.tencent.mm.plugin.finder.feed.ui.FinderLiveAnchorWithoutAffinityUI",
+                "com.kuaishou.live.anchor.basic.activity.LivePushActivity",
+                "com.ss.android.ugc.aweme.live.LiveBroadcastActivity",
+                "com.duowan.liveroom.LiveRoomActivity",
+                "com.xingin.alpha.emcee.AlphaEmceeActivity",
+                "com.ss.android.vc.meeting.module.multi.ByteRTCMeetingActivityAffinity"
+            ]
+        },
+        {
+            "name": "highresolutionblob_list",
+            "config": [
+                "com.tencent.ttpic.module.camera.CameraActivity",
+                "com.linecorp.b612.android.activity.ActivityCamera",
+                "com.wudaokou.hippo.media.camera.CameraActivity",
+                "com.lemon.faceu.business.mainpage.MainActivity",
+                "com.mt.mtxx.camera.view.CameraActivity",
+                "com.light.beauty.publisher.PublisherActivity",
+                "com.taobao.taopai.business.record.fragment.SocialRecordVideoActivity_Module_FullScreen",
+                "com.alipay.mobile.beehive.capture.activity.CaptureActivity",
+                "com.taobao.android.litecreator.modules.record.LCRecordActivity",
+                "com.jd.lib.unification.video.recorder.VideoRecorderActivity",
+                "com.baidu.homework.common.camera.NewCameraManyQuestionsActivity",
+                "com.jd.lib.scan.lib.zxing.client.android.CaptureActivity",
+                "com.whatsapp.camera.CameraActivity",
+                "com.instagram.mainactivity.MainActivity",
+                "com.snap.mushroom.MainActivity",
+                "com.meitu.myxj.selfie.merge.activity.SelfieCameraActivity",
+                "com.instagram.modal.TransparentModalActivity",
+                "org.telegram.ui.LaunchActivity",
+                "com.weico.international.camera.CameraSendActivity",
+                "com.instagram.mainactivity.LauncherActivity",
+                "com.twitter.camera.controller.root.CameraActivity",
+                "com.facebook.inspiration.composer.activity.InspirationComposerActivity",
+                "com.facebook.messaging.montage.composer.MontageComposerActivity",
+                "com.tencent.wework.msg.controller.CustomCameraActivity",
+                "com.instagram.mainactivity.InstagramMainActivity"
+            ]
+        }
+    ]
+}

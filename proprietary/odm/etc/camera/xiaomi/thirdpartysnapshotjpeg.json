@@ -1,0 +1,83 @@
+{
+    "PipelineName": "ThirdPartySnapshotJpeg",
+    "NodesList": {
+      "Node": [
+        {
+            "NodeName": "com.xiaomi.plugin.offlinejpeg",
+            "NodeInstance": "JpegInstance",
+            "NodeProperty":[
+              {
+                   "NodePropertyName":"NodeMask",
+                   "NodePropertyValue":4,
+                   "__comment__":"SCALE_MODE"
+              }
+            ]
+        },
+        {
+            "NodeName": "com.xiaomi.plugin.pixman",
+            "NodeInstance": "RemoteSnapshotInstance",
+            "NodeProperty": [
+              {
+                   "NodePropertyName": "pluginMode",
+                   "NodePropertyValue": 1,
+                   "__comment__": "STREAM_USE_CASE_STILL_CAPTURE"
+              }
+            ]
+        },
+        {
+            "NodeName": "com.xiaomi.plugin.memcpy",
+            "NodeInstance": "xxxInstance"
+        }
+        ]
+    },
+    "PortLinkages": {
+        "Link": [
+        {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "SourceBuffer"
+            },
+            "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "xxxInstance",
+                "PortFormat": "YUV420_NV12"
+            }
+        },
+        {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "xxxInstance",
+                "PortFormat": "YUV420_NV12"
+            },
+            "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "JpegInstance",
+                "PortFormat": "YUV420_NV12"
+            }
+        },
+        {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "JpegInstance",
+                "PortFormat": "BLOB"
+            },
+            "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "RemoteSnapshotInstance",
+                "PortFormat": "BLOB"
+            }
+        },
+        {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "RemoteSnapshotInstance",
+                "PortFormat": "BLOB"
+            },
+            "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "SinkBuffer0"
+            }
+        }
+        ]
+      }
+  }

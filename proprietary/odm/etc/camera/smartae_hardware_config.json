@@ -1,0 +1,164 @@
+{
+    "Description": "Xiaomi SmartAE config file",
+    "phone_code": "O1",
+    "jsonVersion": "0a118b26",
+
+    "CAMERA_CONFIG": {
+        "Description": "camera mode config",
+        "DISABLE_ALGO": {
+            "NORMAL": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "BOKEH": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+				"AlgoType_HDRSR",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "ManualJPG": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "ManualRAW": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "ManualUltraRAW": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "ManualJPG50M": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "ManualRAW50M": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "ManualUltraRAW50M": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "SuperNight": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "Fastshot": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "Supermoon": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "Documents": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ],
+            "SuperMacro": [
+                "AlgoType_SNSC_HDR",
+                "AlgoType_HDR_F",
+                "AlgoType_SN_F",
+                "AlgoType_HDR_LL",
+                "AlgoType_SRSE"
+            ]
+
+        }
+    },
+    "SENSOR_CONFIG": {
+        "Description": "Sensor type config",
+        "calRealZoomRatioEnable": true,
+        "WIDE": {
+            "sensorName": "IMX822",
+            "sensorType": "wide",
+            "sensorZoomRatio": 1.0,            
+            "SensorProperty": [
+                {
+                    "sensor_mode": "BinningNormal",
+                    "minShutter": 11042,
+                    "minShutter_check": false
+                },
+                {
+                    "sensor_mode": "BiningDOL2",
+                    "minShutter": 80771,
+                    "minShutter_check": false
+                },
+                {
+                    "sensor_mode": "HWRemosaic",
+                    "minShutter": 29551,
+                    "minShutter_check": false
+                },
+                {
+                    "sensor_mode": "ISZQUAD",
+                    "minShutter": 29551,
+                    "minShutter_check": false
+                }
+            ]
+        },
+        "UW": {
+            "sensorName": "SC820CS",
+            "sensorType": "ultra wide",
+            "sensorZoomRatio": 0.6,
+            "SensorProperty": [
+                {
+                    "sensor_mode": "BinningNormal",
+                    "minShutter": 11042,
+                    "minShutter_check": false
+                }
+            ]
+        },
+        "EXTRA_ZOOM": {
+            "ISZQUAD": 2.0
+        }
+
+    },    
+    "ZOOM_CONFIG": {
+        "sr_start_zoom": 1.1
+    }
+
+}
+
+
+
+
+
+
+
+
+

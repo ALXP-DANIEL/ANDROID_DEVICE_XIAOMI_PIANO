@@ -1,0 +1,955 @@
+{
+    "project_overlap_config_fn": "proj_overlap_config.json",
+    "device_ex_info_fn": "device_ex_info.json",
+    "earth_core_config": {
+        "sub_models": [
+            "/vendor/lib64/com.xiaomi.camhal.submodel.camxfrag.so",
+            "/vendor/lib64/com.xiaomi.camhal.submodel.chifrag.so"
+        ],
+        "ext_models": [
+            "/vendor/lib64/com.xiaomi.camhal.extmodel.ec_executor.so",
+            "/vendor/lib64/com.xiaomi.camhal.extmodel.intent_aware_sys.so",
+            "/vendor/lib64/com.xiaomi.camhal.extmodel.ec_diag_sys.so",
+            "/vendor/lib64/com.xiaomi.camhal.extmodel.catch_log_sys.so"
+        ],
+        "ec_exec_plugins": [
+        ],
+        "ec_script_plugins": [
+        ],
+        "extend_infos": []
+    },
+    "ec_info_collector_config": {
+        "enable_flag": 1,
+        "interval_for_dump": 180,
+        "timespan_for_guaranteed_dump": 1,
+        "record_threshold_for_dump": 100
+    },
+
+    "CAMX__SENSOR_IMAGE_SIZES": [
+        {
+            "width" : 8192,
+            "height" : 6144,
+            "note" : ""
+        },
+        {
+            "width" : 8160,
+            "height" : 6144,
+            "note" : ""
+        },
+        {
+            "width" : 6528,
+            "height" : 4896,
+            "note" : ""
+        },
+        {
+            "width" : 4096,
+            "height" : 3072,
+            "note" : "4:3  Wide"
+        },
+        {
+            "width" : 4080,
+            "height" : 3072,
+            "note" : "TELE2x & Ultra active size for factory"
+        },
+        {
+            "width" : 4096,
+            "height" : 2304,
+            "note" : "16:9 Wide"
+        },
+        {
+            "width" : 3264,
+            "height" : 2448,
+            "note" : "4:3 Front OV32C"
+        },
+        {
+            "width" : 4000,
+            "height" : 3000,
+            "note" : "4:3 Ultra OV13B"
+        },
+        {
+            "width" : 3648,
+            "height" : 2736,
+            "note" : "4:3 TELE2x"
+        }
+    ],
+    "CAMX__STANDARD_IMAGE_SIZES": [
+        {
+            "width" : 3072,
+            "height" : 3072,
+            "note" : "1:1 Wide & Front & TELE2x & Ultra"
+        },
+        {
+            "width" : 4096,
+            "height" : 2160,
+            "note" : "DC4K Video"
+        },
+        {
+            "width" : 4096,
+            "height" : 1844,
+            "note" : "full screen 20:9 wide"
+        },
+        {
+            "width" : 4080,
+            "height" : 3060,
+            "note" : "2x Bokeh 4:3 Strict 4:3 size"
+        },
+        {
+            "width" : 4080,
+            "height" : 2296,
+            "note" : "16:9 ultra Tele2x"
+        },
+        {
+            "width" : 4080,
+            "height" : 1836,
+            "note" : "16:9 ultra Tele2x"
+        },
+        {
+            "width" : 3840,
+            "height" : 2160,
+            "note" : "4k  video"
+        },
+        {
+            "width" : 2880,
+            "height" : 2160,
+            "note" : "4k 4:3"
+        },
+        {
+            "width" : 2448,
+            "height" : 2448,
+            "note" : "1:1 Front"
+        },
+        {
+            "width" : 3200,
+            "height" : 1800,
+            "note" : "16:9 Front"
+        },
+        {
+            "width" : 3200,
+            "height" : 1440,
+            "note" : "2k 20:9"
+        },
+        {
+            "width" : 2560,
+            "height" : 1440,
+            "note" : "QHD"
+        },
+        {
+            "width" : 1920,
+            "height" : 1440,
+            "note" : "4:3 preview"
+        },
+        {
+            "width" : 2400,
+            "height" : 1080,
+            "note" : ""
+        },
+        {
+            "width" : 1920,
+            "height" : 1080,
+            "note" : "16:9 preview"
+        },
+        {
+            "width" : 1600,
+            "height" : 1200,
+            "note" : "UXGA"
+        },
+        {
+            "width" : 1440,
+            "height" : 1080,
+            "note" : "Wide HD"
+        },
+        {
+            "width" : 1280,
+            "height" : 960,
+            "note" : "SXGA"
+        },
+        {
+            "width" : 1600,
+            "height" : 720,
+            "note" : "720p 20:9"
+        },
+        {
+            "width" : 1280,
+            "height" : 720,
+            "note" : "720p"
+        },
+        {
+            "width" : 960,
+            "height" : 720,
+            "note" : "720p 4:3"
+        },
+        {
+            "width" : 800,
+            "height" : 600,
+            "note" : "SVGA"
+        },
+        {
+            "width" : 720,
+            "height" : 480,
+            "note" : "480p"
+        },
+        {
+            "width" : 640,
+            "height" : 480,
+            "note" : "VGA"
+        },
+        {
+            "width" : 352,
+            "height" : 288,
+            "note" : "VGA"
+        },
+        {
+            "width" : 320,
+            "height" : 240,
+            "note" : "QVGA"
+        },
+        {
+            "width" : 176,
+            "height" : 144,
+            "note" : "QCIF"
+        }
+    ],
+    "CAMX__XIAOMI_CUSTOM_SUPPORTED_IMAGE_SIZES": [
+        {
+            "width" : 8160,
+            "height" : 6144,
+            "note" : "SWRemosaic  4:3  ultra Tele2x"
+        },
+        {
+            "width" : 4096,
+            "height" : 1844,
+            "note" : "full screen 20:9 wide"
+        },
+        {
+            "width" : 4080,
+            "height" : 3060,
+            "note" : "2x Bokeh 4:3 Strict 4:3 size"
+        },
+        {
+            "width" : 4080,
+            "height" : 2296,
+            "note" : "16:9 ultra Tele2x"
+        },
+        {
+            "width" : 4080,
+            "height" : 1836,
+            "note" : "full screen 20:9 ultra Tele2x"
+        },
+        {
+            "width" : 4064,
+            "height" : 3048,
+            "note" : "4:3 TELE2x & Ultra"
+        },
+        {
+            "width" : 4000,
+            "height" : 3000,
+            "note" : ""
+        },
+        {
+            "width" : 4000,
+            "height" : 1800,
+            "note" : "full screen 20:9 wide ultra Tele2x"
+        },
+        {
+            "width" : 3200,
+            "height" : 1440,
+            "note" : "full screen 20:9 Front"
+        },
+        {
+            "width" : 3968,
+            "height" : 2232,
+            "note" : "binning     16:9 ultra Tele2x"
+        },
+        {
+            "width" : 3040,
+            "height" : 2280,
+            "note" : "1x Bokeh 4:3 ultra cropsize"
+        },
+        {
+            "width" : 3040,
+            "height" : 1712,
+            "note" : "1x Bokeh 16:9"
+        },
+        {
+            "width" : 3040,
+            "height" : 1368,
+            "note" : "1x Bokeh fullsize"
+        },
+        {
+            "width" : 2592,
+            "height" : 1944,
+            "note" : "2x Bokeh 4:3 wide cropszie"
+        },
+        {
+            "width" : 2592,
+            "height" : 1460,
+            "note" : "2x Bokeh 16:9 cropszie"
+        },
+        {
+            "width" : 2592,
+            "height" : 1168,
+            "note" : "2x Bokeh fullsize cropszie"
+        },
+        {
+            "width" : 1080,
+            "height" : 1080,
+            "note" : "1:1 preview"
+        },
+        {
+            "width" : 680,
+            "height" : 306,
+            "note" : "full screen map size"
+        },
+        {
+            "width" : 544,
+            "height" : 306,
+            "note" : "16:9 screen map size"
+        },
+        {
+            "width" : 408,
+            "height" : 306,
+            "note" : "4:3 screen map size"
+        },
+        {
+            "width" : 306,
+            "height" : 306,
+            "note" : "1:1 screen map size"
+        }
+    ],
+    "CAMX__XIAOMI_REAR_QCFA_IMAGE_SIZES": [
+        {
+            "width" : 8192,
+            "height" : 6144,
+            "note" : "IMX800 HWRemosaic 4:3  Wide"
+        },
+        {
+            "width" : 8160,
+            "height" : 6144,
+            "note" : "IMX800 HWRemosaic 4:3  Wide"
+        },
+        {
+            "width" : 8192,
+            "height" : 4608,
+            "note" : "IMX800 HWRemosaic 16:9 Wide"
+        },
+        {
+            "width" : 7680,
+            "height" : 4320,
+            "note" : "8k UHD"
+        },
+        {
+            "width" : 6144,
+            "height" : 8192,
+            "note" : "IMX800 HWRemosaic 4:3  Wide heif"
+        },
+        {
+            "width" : 6144,
+            "height" : 8160,
+            "note" : "IMX800 HWRemosaic 4:3  Wide heif"
+        },
+        {
+            "width" : 3072,
+            "height" : 4096,
+            "note" : "4:3  Wide heif"
+        },
+        {
+            "width" : 3072,
+            "height" : 4080,
+            "note" : "TELE2x active size for factory heif"
+        },
+        {
+            "width" : 2304,
+            "height" : 4096,
+            "note" : "16:9 Wide heif"
+        },
+        {
+            "width" : 2296,
+            "height" : 4080,
+            "note" : "16:9 ultra Tele2x heif"
+        },
+        {
+            "width" : 1844,
+            "height" : 4096,
+            "note" : "full screen 20:9 wide heif"
+        },
+        {
+            "width" : 1836,
+            "height" : 4080,
+            "note" : "full screen 20:9 ultra Tele2x heif"
+        }
+    ],
+    "CAMX__XIAOMI_FRONT_QCFA_IMAGE_SIZES": [
+        {
+            "width" : 6528,
+            "height" : 4896,
+            "note" : "OV32C SWRemosaic 4:3  Front"
+        },
+        {
+            "width" : 6528,
+            "height" : 3672,
+            "note" : "OV32C SWRemosaic 16:9 Front"
+        },
+        {
+            "width" : 4896,
+            "height" : 4896,
+            "note" : "OV32C SWRemosaic 1:1 Front"
+        },
+        {
+            "width" : 6400,
+            "height" : 2880,
+            "note" : "OV32C SWRemosaic 20:9 Front"
+        },
+        {
+            "width" : 4896,
+            "height" : 6528,
+            "note" : "OV32C SWRemosaic 4:3  Front heif"
+        },
+        {
+            "width" : 3672,
+            "height" : 6528,
+            "note" : "OV32C SWRemosaic 16:9 Front heif"
+        },
+        {
+            "width" : 2880,
+            "height" : 6400,
+            "note" : "OV32C SWRemosaic 20:9 Front heif"
+        }
+    ],
+    "CAMX__XIAOMI_REAR_QCFA_LIMIT_IMAGE_SIZES": [
+        {
+            "width" : 7680,
+            "height" : 4320,
+            "note" : "8k UHD"
+        }
+    ],
+    "CAMX__XIAOMI_FRONT_QCFA_LIMIT_IMAGE_SIZES": [
+        {
+            "width" : 6528,
+            "height" : 4896,
+            "note" : "OV32C SWRemosaic 4:3  Front"
+        },
+        {
+            "width" : 6528,
+            "height" : 3672,
+            "note" : "OV32C SWRemosaic 16:9 Front"
+        },
+        {
+            "width" : 6400,
+            "height" : 2880,
+            "note" : "OV32C SWRemosaic 20:9 Front"
+        }
+    ],
+    "CAMX__XIAOMI_SUPER_RESOLUTION_IMAGE_SIZES": [
+        {
+            "width" : 8192,
+            "height" : 6144,
+            "note" : "IMX707 HWRemosaic 4:3 Wide"
+        },
+        {
+            "width" : 8160,
+            "height" : 6144,
+            "note" : "IMX707 HWRemosaic 4:3  Wide"
+        },
+        {
+            "width" : 1440,
+            "height" : 1080,
+            "note" : "4:3 Preview"
+        }
+    ],
+    "CAMX__XIAOMI_RAW_IMAGE_SIZES": [
+        {
+            "width" : 4096,
+            "height" : 3072,
+            "note" : "wide"
+        },
+        {
+            "width" : 4080,
+            "height" : 3072,
+            "note" : "ultra & tele2x"
+        }
+    ],
+    "CAMX__XIAOMI_CUSTOM_SUPPORTED_THUMBNAIL_SIZES": [
+        {
+            "width" : 0,
+            "height" : 0,
+            "note" : ""
+        },
+        {
+            "width" : 200,
+            "height" : 90,
+            "note" : ""
+        },
+        {
+            "width" : 234,
+            "height" : 108,
+            "note" : ""
+        },
+        {
+            "width" : 240,
+            "height" : 240,
+            "note" : ""
+        },
+        {
+            "width" : 256,
+            "height" : 144,
+            "note" : ""
+        },
+        {
+            "width" : 320,
+            "height" : 240,
+            "note" : ""
+        }
+    ],
+    "CAMX__XIAOMI_REAR_HDR_BINNING_IMAGE_SIZES": [
+        {
+            "width" : 0,
+            "height" : 0,
+            "note" : "placeholder,invalid size"
+        }
+    ],
+    "CAMX__XIAOMI_VIDEO_SIZE_CUSTOM_SIZES": [
+        {
+            "width" : 7680,
+            "height" : 4320,
+            "maxFPS" : 30,
+            "isSensorOutput" : 1,
+            "note" : "8K, maxFps 30, not sensorOutput"
+        },
+        {
+            "width" : 3840,
+            "height" : 2160,
+            "maxFPS" : 24,
+            "isSensorOutput" : 0,
+            "note" : "4K, maxFps 24, not sensorOutput"
+        }
+    ],
+
+    "CAMX__APC_SCENE_ARRAY": [
+        {
+            "Scene" : "ManualScene",
+            "Priority" : 300
+        },
+        {
+            "Scene" : "LockScene",
+            "Priority" : 200
+        },
+        {
+            "Scene" : "LuxLimitScene",
+            "Priority" : 100
+        },
+        {
+            "Scene" : "MultiFaceScene",
+            "Priority" : 30
+        },
+        {
+            "Scene" : "NearPlaneScene",
+            "Priority" : 20
+        },
+        {
+            "Scene" : "ISZScene",
+            "Priority" : 150
+        },
+        {
+            "Scene" : "DefaultScene",
+            "Priority" : 1
+        },
+        {
+            "Scene" : "DebugScene",
+            "Priority" : 400
+        },
+        {
+            "Scene" : "HighLightScene",
+            "Priority" : 10
+        }
+    ],
+    "CAMX__APC_LuxLimit_DetectPara": {
+        "scene": "LuxLimitScene",
+        "DarkSceneLux": 280,
+        "LuxLmtIn50M": 120,
+        "FnInLowLight": 1.42,
+        "ExitInterValEntry": 10,
+        "TriggerStaCnt": 5
+    },
+    "CAMX__APC_HighLight_DetectPara": {
+        "scene": "HighLightScene",
+        "HighLightLmt": 120,
+        "HighLightExitVal": 140,
+        "FnInHighLight": 2.0
+    },
+    "CAMX__APC_MultiFace_DetectPara": {
+        "scene": "MultiFaceScene",
+        "FaceCntMinLmt": 2,
+        "FaceCntMaxLmt": 5,
+        "FdFaceRoiRoll": 0,
+        "FdFaceRoiPose": 45,
+        "FdFaceRoiPitch": 45,
+        "FdFaceRoiWidth": 130,
+        "FdFaceRoiHight": 130,
+        "FdMaxFaceRoiWidth": 150,
+        "FdMaxFaceRoiHight": 150,
+        "StableGyroLimitX": 0.04,
+        "StableGyroLimitY": 0.04,
+        "StableGyroLimitZ": 0.1,
+        "MultiFaceTriggerStableCnt": 5,
+        "MultiFaceUnTriggerStableCnt": 150,
+        "FaceDistance": 300,
+        "SmallFn": 4.0,
+        "LargeFn": 2.8
+    },
+    "CAMX__APC_NearPlane_DetectPara": {
+        "scene": "NearPlaneScene",
+        "StableGyroLimitx": 0.04,
+        "StableGyroLimitY": 0.04,
+        "StableGyroLimitZ": 0.1,
+        "NearPlaneTriggerStableCnt": 5,
+        "NearPlaneUnTriggerStableCnt": 30,
+        "FocusDistCMLmt": 200,
+        "ModeDocLuxLmt": 0,
+        "TriggerDistance": 50,
+        "TofDisConfidence": 0,
+        "TriggerFn": 2.8
+    },
+    "CHI__BOKEH_APERTURE_ABILITY": [
+        {
+            "mode" : -1,
+            "numBokehAperture" : 0,
+            "defaultBokehAperture" : 0,
+            "availableBokehAperture" : [],
+            "note" : "just set invalid default valus here. Please see shennong proj_overlap_config.json"
+        }
+    ],
+    "CAMX__MAX_SR_SCALING": 2.0,
+    "CAMX__FRONT_MAX_SR_SCALING": 2.0,
+    "CAMX__TELE_MAX_SR_SCALING": 2.0,
+    "CHI__FEATURES_SYNC_CREATE_LIST": [
+        "RealTimeMCX",
+        "MultiCameraReprocessRealtime",
+        "FeatureMux",
+        "AnchorSync",
+        "Bayer2Yuv",
+        "JPEG",
+        "SWRemosaic"
+    ],
+    "CHI__BOKEH_DESIRED_CROP_SETTING": [
+        {
+            "modeInBokehTab": "Full or Bust or 35mm or 50mm or 75mm or 90mm",
+            "sensorCombination": "T-W or W-UW",
+            "masterSensorCapHint": "BIN or HWR",
+            "slaveSensorCapHint": "BIN or HWR",
+            "masterSensorOut": [4080, 3072],
+            "masterDesiredCrop": [4080, 3060],
+            "slaveSensorOut": [4096, 3072],
+            "slaveDesiredCrop": [2240, 1680],
+            "note" : "just set a example default valus here. Please see shennong proj_overlap_config.json"
+        }
+    ],
+    "CHI__NEED_SKIP_USELESS_FEATURE": 0,
+    "CHI__BOKEH_LEGACY_SNAPSHOT_STREAMS_SETTING": [
+        {
+            "bokehRole": 61,
+            "masterCamIndex": 1,
+            "slaveCamIndex": 0,
+            "masterYuvSize": [4096, 3072, 4096, 2304, 4096, 1844],
+            "slaveYuvSize": [4080, 3060, 4080, 2296, 4080, 1836],
+            "masterRawSize": [4096, 3072, 4096, 3072, 4096, 3072],
+            "slaveRawSize": [4080, 3072, 4080, 3072, 4080, 3072],
+            "masterRemosaicYuvSize": [4096, 3072, 4096, 2304, 4096, 1844],
+            "slaveRemosaicYuvSize": [4080, 3060, 4080, 2296, 4080, 1836],
+            "masterRemosaicRawSize": [4096, 3072, 4096, 3072, 4096, 3072],
+            "slaveRemosaicRawSize": [4080, 3072, 4080, 3072, 4080, 3072],
+            "pictureSize": [4096, 3072, 4096, 2304, 4096, 1844],
+            "note" : "default for bust base, you must set this for your project. see see shennong proj_overlap_config.json"
+        },
+        {
+            "bokehRole": 63,
+            "masterCamIndex": 1,
+            "slaveCamIndex": 0,
+            "masterYuvSize": [4096, 3072, 4096, 2304, 4096, 1844],
+            "slaveYuvSize": [4080, 3060, 4080, 2296, 4080, 1836],
+            "masterRawSize": [4096, 3072, 4096, 3072, 4096, 3072],
+            "slaveRawSize": [4080, 3072, 4080, 3072, 4080, 3072],
+            "masterRemosaicYuvSize": [4096, 3072, 4096, 2304, 4096, 1844],
+            "slaveRemosaicYuvSize": [4080, 3060, 4080, 2296, 4080, 1836],
+            "masterRemosaicRawSize": [4096, 3072, 4096, 3072, 4096, 3072],
+            "slaveRemosaicRawSize": [4080, 3072, 4080, 3072, 4080, 3072],
+            "pictureSize": [4096, 3072, 4096, 2304, 4096, 1844],
+            "note" : "default for bust base, you must set this for your project. see see shennong proj_overlap_config.json"
+        }
+    ],
+    "CHI__FEATURE_IN_OPMODE": [],
+    "CAMX__ENABLE_MEMCHECK": 1,
+    "CHI__THIRDPARTY_FEATURE_BY_ACTIVITY": [
+        {
+            "activity_value": "",
+            "Feature_List": []
+        }
+    ],
+    "CAMX__ENABLE_HW_LDC": 0,
+    "CAMX__SENSOR_SECONDARY_SUPPLIER": {
+        "roleId": 0,
+        "vendorId": 0,
+        "reserved": ""
+    },
+    "CHI__ELL_FULL_FOCUS_SECTION_ENABLE": 0,
+    "CHI__SN_ALGO_SUPPORT_EV": {
+        "evNum": 0,
+        "evList": []
+    },
+
+    "CAMX__APC_LockScene_DetectPara": {
+        "scene": "LockScene",
+        "zoomOutLmt": 2.0,
+        "zoomUpLmt": 1.0,
+        "zoomDownLmt": 2.9,
+        "adrcgainLmt": 6.0
+    },
+    "CAMX__APC_DefaultScene_DetectPara": {
+        "scene": "DefaultScene",
+        "defaultFn": 1.42,
+        "defaultFnIn50M": 2.0
+    },
+    "CAMX__TELE_50MUPSCALE": 0,
+    "CAMX__IOPREFETCH_EXT_MULTI_VALUES": [
+        {
+            "scene": "",
+            "file_list": []
+        }
+    ],
+    "CAMX__IOPREFETCH_THRESHOLD": 0,
+    "CHI__BOKEH_ZOOM_ROLE_MAP": [
+        {
+            "modeInBokeh": 0,
+            "bokehZoomRatioVaule": 1.0,
+            "bokehRole": 63,
+            "note" : "Full Portrait bokeh"
+        },
+        {
+            "modeInBokeh": 1,
+            "bokehZoomRatioVaule": 2.83,
+            "bokehRole": 61,
+            "note" : "Bust Portrait bokeh"
+        }
+    ],
+    "CHI__FRONT_BOKEH_ZOOM_ROLE_MAP": [
+        {
+            "modeInBokeh": 6,
+            "bokehZoomRatioVaule": 1.0,
+            "bokehRole": 1,
+            "note" : "Portrait 1x"
+        }
+    ],
+    "CAMX__APC_ManualScene_DetectPara": {
+        "scene": "Manualscene",
+        "defaultFnInFixMode": 0
+    },
+    "CAMX__RUNIN_ACTUATOR_PARAM": {
+        "positionBiasLimit": 80,
+        "waitingTimeMs": 50,
+        "intervalTimeMs": 50,
+        "singlePointMaxRetryCnt": 5,
+        "oneLoopMaxRetryCnt": 15,
+        "totalMaxRetryCnt": 60,
+        "failRetryCnt": 0
+    },
+    "CAMX__RUNIN_OIS_PARAM": {
+        "positionBiasLimit": 80,
+        "waitingTimeMs": 50,
+        "intervalTimeMs": 50,
+        "singlePointMaxRetryCnt": 5,
+        "oneLoopMaxRetryCnt": 30,
+        "totalMaxRetryCnt": 150,
+        "failRetryCnt": 0
+    },
+    "CAMX__RUNIN_APERTURE_PARAM": {
+        "positionBiasLimit": 120,
+        "waitingTimeMs": 100,
+        "intervalTimeMs": 150,
+        "singlePointMaxRetryCnt": 5,
+        "oneLoopMaxRetryCnt": 10,
+        "totalMaxRetryCnt": 100,
+        "failRetryCnt": 0
+    },
+    "CAMX__APC_ShortDisDarkScene_DetectPara": {
+        "scene": "ShortDisDarkScene",
+        "LuxLimit": 260,
+        "DisLimit": 30,
+        "TriggerStabCnt": 30,
+        "UnTriggerStaCnt": 130,
+        "FnInShrotDisDark": 2.0
+    },
+    "CAMX__APC_MinExpHDRScene_DetectPara": {
+        "scene": "MinExpHDRScene",
+        "zoomratio": 1.4,
+        "TriggerStabCnt": 30,
+        "UnTriggerStaCnt": 90,
+        "FnMinExpHDR": 2.8
+    },
+    "CHI__BOKEH_SQUARE_SIZE_SUPPORT": [
+        {
+            "bokehRole" : 1,
+            "supportSquareSize" : 0
+        },
+        {
+            "bokehRole" : 61,
+            "supportSquareSize" : 0
+        },
+        {
+            "bokehRole" : 63,
+            "supportSquareSize" : 0
+        }
+    ],
+    "CAMX__SHORTEN_PORTRAIT_EXP_PARAM": [
+        {
+            "roleId" : 0,
+            "minExpTimeUnderbanding" : 2500000,
+            "maxGain" : 512,
+            "luxIndexThres" : 350,
+            "velocityIn" : 15,
+            "reserve" : ""
+        },
+        {
+            "roleId" : 20,
+            "minExpTimeUnderbanding" : 3333333,
+            "maxGain" : 512,
+            "luxIndexThres" : 280,
+            "velocityIn" : 15,
+            "reserve" : ""
+        },
+        {
+            "roleId" : 21,
+            "minExpTimeUnderbanding" : 3333333,
+            "maxGain" : 256,
+            "luxIndexThres" : 280,
+            "velocityIn" : 15,
+            "reserve" : ""
+        },
+        {
+            "roleId" : 23,
+            "minExpTimeUnderbanding" : 3333333,
+            "maxGain" : 512,
+            "luxIndexThres" : 280,
+            "velocityIn" : 15,
+            "reserve" : ""
+        }
+    ],
+    "CAMX__SHORTEN_PORTRAIT_EXP_THRES_PARAM": {
+        "faceNum": 4,
+        "zoomRatio": 5,
+        "maxExpTime": 0,
+        "forceShorten": 0,
+        "reserve": ""
+    },
+    "CHI__OISVERIFY_PARAM": [
+        {
+            "roleId" : 0,
+            "isDebugMode" : 0,
+            "isDumpImage" : 1,
+            "dropFrameNum" : 120,
+            "oisTestFreq" : 4,
+            "targetFps" : 60
+        },
+        {
+            "roleId" : 20,
+            "isDebugMode" : 0,
+            "isDumpImage" : 1,
+            "dropFrameNum" : 120,
+            "oisTestFreq" : 4,
+            "targetFps" : 60
+        },
+        {
+            "roleId" : 23,
+            "isDebugMode" : 0,
+            "isDumpImage" : 1,
+            "dropFrameNum" : 120,
+            "oisTestFreq" : 4,
+            "targetFps" : 60
+        }
+    ],
+    "CHI__OISCALIBRATE_PARAM": [
+        {
+            "roleId" : 0,
+            "calibSingleAxis" : 0,
+            "oisSpec" : 18.0,
+            "oisCalibGainStep" : 0.05,
+            "oisCalibGainLimit" : 0.2,
+            "waitFrameCnt" : 10
+        },
+        {
+            "roleId" : 20,
+            "calibSingleAxis" : 0,
+            "oisSpec" : 18.0,
+            "oisCalibGainStep" : 0.05,
+            "oisCalibGainLimit" : 0.2,
+            "waitFrameCnt" : 10
+        },
+        {
+            "roleId" : 23,
+            "calibSingleAxis" : 0,
+            "oisSpec" : 18.0,
+            "oisCalibGainStep" : 0.05,
+            "oisCalibGainLimit" : 0.2,
+            "waitFrameCnt" : 10
+        }
+    ],
+    "CAMX__JPEGR_STREAM_CONFIG_SIZES_3Party_FRONT": [
+        {
+            "width" : 3264,
+            "height" : 2448
+        },
+        {
+            "width" : 3264,
+            "height" : 1836
+        },
+        {
+            "width" : 3200,
+            "height" : 1440
+        },
+        {
+            "width" : 1920,
+            "height" : 1080
+        }
+    ],
+    "CAMX__JPEGR_STREAM_CONFIG_SIZES_3Party_REAR": [
+        {
+            "width" : 4096,
+            "height" : 3072
+        },
+        {
+            "width" : 4096,
+            "height" : 2304
+        },
+        {
+            "width" : 4096,
+            "height" : 1844
+        },
+        {
+            "width" : 1920,
+            "height" : 1080
+        }
+    ],
+    "CAMX__MI_PDOFFSETCALI_PARAM": [
+        {
+            "cameraRoleId" : 0,
+            "isMirror" : 0,
+            "isFlip" : 0
+        },
+        {
+            "cameraRoleId" : 20,
+            "isMirror" : 0,
+            "isFlip" : 0
+        },
+        {
+            "cameraRoleId" : 21,
+            "isMirror" : 0,
+            "isFlip" : 0
+        },
+        {
+            "cameraRoleId" : 23,
+            "isMirror" : 1,
+            "isFlip" : 0
+        }
+    ],
+    "CHI__GET_VIDEO_MAX_ZOOM": [
+    ],
+    "__OVERLAP_NEW_CONFIG_INSERT_POINT__":0
+}

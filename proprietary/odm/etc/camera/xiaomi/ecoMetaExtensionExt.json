@@ -1,0 +1,215 @@
+/*
+说明：
+    ecoMetaExtension.json 的附加文件，不同项目需要不同配置的，放在这里，相同Signature同版本的选项会合并
+*/
+[
+    {
+        "Signature":"SATZoomRange",//set satZoomRatioRange static meta by sdk
+        "Source":{
+            "CameraRoleId": 60 // RoleIdRearSat
+        },
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt" : "Characteristics",
+                    "Name": "com.xiaomi.algo.satZoomRatioRange",//miui disuse this tag but sdk use
+                    "Value": ["0.6","10.0"],//0.6:ultra min zoom ratio,10.0:tele max zoom ratio
+                    "Size": 2,
+                    "Type" : "Float"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"FuncBokeh1xUpgraded",
+        "Source":{
+            "SdkOpMode": "0xff12", // StreamConfigModeEcoEngineBokeh1X
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.ecoengine.bokehVersion",
+                    "Value": ["", "0"]
+                }
+            ]
+        },
+        "Target":{
+            "Prop": [
+                {
+                    "Name": "persist.vendor.camera.ecoengine.bokehVersion",
+                    "Value": "1"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"FuncBokeh2xUpgraded",
+        "Source":{
+            "SdkOpMode": "0xff15", // StreamConfigModeEcoEngineBokeh2X
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.ecoengine.bokehVersion",
+                    "Value": ["", "0"]
+                }
+            ]
+        },
+        "Target":{
+            "Prop": [
+                {
+                    "Name": "persist.vendor.camera.ecoengine.bokehVersion",
+                    "Value": "1"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"FuncBokehFront",
+        "Source":{
+            "SdkOpMode": "0xff12", // StreamConfigModeEcoEngineBokeh1X
+            "CameraRoleId": 1 //RoleIdFront
+        },
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Config","Preview","Capture"],
+                    "Name": "android.control.zoomRatio",
+                    "Value": "1.25",
+                    "Type" : "Float"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"FuncBokehRear",
+        "Source":{
+            "SdkOpMode": "0xff12", // StreamConfigModeEcoEngineBokeh1X
+            "CameraRoleId": [60, 64] //RoleIdRear
+        },
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Config","Preview","Capture"],
+                    "Name": "android.control.zoomRatio",
+                    "Value": "1.00",
+                    "Type" : "Float"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"FuncBokehRear2X",
+        "Source":{
+            "SdkOpMode": "0xff15", // StreamConfigModeEcoEngineBokeh2X
+            "CameraRoleId": [60, 64] //RoleIdRear
+        },
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Config","Preview","Capture"],
+                    "Name": "android.control.zoomRatio",
+                    "Value": "2.40",
+                    "Type" : "Float"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"SmartAeUpgraded",
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.ecoengine.smartAeVersion",
+                    "Value": ["", "0"]
+                }
+            ]
+        },
+        "Target":{
+            "Prop": [
+                {
+                    "Name": "persist.vendor.camera.ecoengine.smartAeVersion",
+                    "Value": "1"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"MiviThirdJpegr",
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.sdk.third.jpegr.enable",
+                    "Value": ["", "0"]
+                }
+            ]
+        },
+        "Target":{
+            "Prop": [
+                {
+                    "Name": "persist.vendor.camera.sdk.third.jpegr.enable",
+                    "Value": "1"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"NightLDC",
+        "Source":{
+            "SdkOpMode": "0xff0c", // StreamConfigModeEcoEngineBokeh2X
+            "CameraRoleId": [64] //RoleIdRear
+        },
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Config","Preview","Capture"],
+                    "Name": "xiaomi.distortion.ultraWideDistortionLevel",
+                    "Value": "1",
+                    "Type" : "Bool"
+                },
+                {
+                    "CamOpt":["Config","Preview","Capture"],
+                    "Name": "xiaomi.distortion.ultraWideDistortionEnable",
+                    "Value": "1",
+                    "Type" : "Bool"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"AutoLDC",
+        "Parents":["ExtensionAuto"],
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Config","Preview","Capture"],
+                    "Name": "xiaomi.distortion.ultraWideDistortionLevel",
+                    "Value": "1",
+                    "Type" : "Bool"
+                },
+                {
+                    "CamOpt":["Config","Preview","Capture"],
+                    "Name": "xiaomi.distortion.ultraWideDistortionEnable",
+                    "Value": "1",
+                    "Type" : "Bool"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"SdkRearVideoEISV3",
+        "Source":{
+            "SdkOpMode": "0xff16",
+            "CameraRoleId": [60]
+        },
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Config","Preview"],
+                    "Name": "android.control.videoStabilizationMode",
+                    "Value": "1"
+                }
+            ]
+        }
+    }
+]

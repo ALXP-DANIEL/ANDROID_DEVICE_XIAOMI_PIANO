@@ -1,0 +1,112 @@
+{
+    "prefGestureEffectApps": [
+        {
+            "pkgName": "com.tencent.mm",
+            "activityName": "com.tencent.mm.plugin.multitalk.ui.MultiTalkMainUI"
+        },
+        {
+            "pkgName": "com.tencent.mm",
+            "activityName": "com.tencent.mm.plugin.voip.ui.VideoActivity"
+        },
+        {
+            "pkgName": "com.tencent.mm",
+            "activityName": "com.tencent.mm.ui.LauncherUI",
+            "visible": "2"
+        },
+        {
+            "pkgName": "com.tencent.mm",
+            "activityName": "com.tencent.mm.ui.chatting.ChattingUI",
+            "visible": "2"
+        },
+        {
+            "pkgName": "com.tencent.mobileqq",
+            "activityName": "com.tencent.av.ui.AVActivity"
+        },
+        {
+            "pkgName": "com.alibaba.android.rimet",
+            "activityName": "com.alibaba.android.teleconf.mozi.activity.TeleVideoConfActivity"
+        },
+        {
+            "pkgName": "com.tencent.wemeet.app",
+            "activityName": "com.tencent.wemeet.sdk.meeting.inmeeting.InMeetingActivity"
+        },
+        {
+            "pkgName": "com.ss.android.lark",
+            "activityName": "com.ss.android.vc.meeting.module.multi.ByteRTCMeetingActivityInstance"
+        },
+        {
+            "pkgName": "com.ss.android.lark",
+            "activityName": "com.ss.android.vc.meeting.module.preview.facade.MeetingPreviewActivity"
+        },
+        {
+            "pkgName": "com.tencent.wework",
+            "activityName": "com.tencent.wework.meeting.ilink.flutter.ILinkMeetingActivity"
+        },
+        {
+            "pkgName": "com.tencent.wework",
+            "activityName": "com.tencent.wemeet.sdk.meeting.inmeeting.InMeetingActivity"
+        },
+        {
+            "pkgName": "com.ss.android.lark.kami",
+            "activityName": "com.ss.android.vc.meeting.module.multi.ByteRTCMeetingActivity"
+        },
+        {
+            "pkgName": "com.ss.android.lark.kami",
+            "activityName": "com.ss.android.vc.meeting.module.preview.facade.MeetingPreviewActivity",
+            "visible": "2"
+        },
+        {
+            "pkgName": "com.ss.android.lark.kami",
+            "activityName": "com.ss.android.vc.meeting.module.multi.ByteRTCMeetingActivityInstance"
+        },
+        {
+            "pkgName": "com.microsoft.teams",
+            "activityName": "com.microsoft.skype.teams.views.activities.InCallActivity"
+        },
+        {
+            "pkgName": "com.whatsapp",
+            "activityName": "com.whatsapp.voipcalling.VoipActivityV2"
+        },
+        {
+            "pkgName": "com.google.android.apps.tachyon",
+            "activityName": "com.google.android.libraries.communications.conference.ui.callui.SingleCallActivity"
+        },
+        {
+            "pkgName": "com.google.android.apps.tachyon",
+            "activityName": "com.google.android.apps.tachyon.call.oneonone.ui.OneOnOneCallActivity"
+        },
+        {
+            "pkgName": "com.google.android.apps.tachyon",
+            "activityName": "com.google.android.libraries.communications.conference.ui.greenroom.GreenroomActivity"
+        },
+        {
+            "pkgName": "us.zoom.videomeetings",
+            "activityName": "com.zipow.videobox.conference.ui.ZmFoldableConfActivity"
+        },
+        {
+            "pkgName": "com.cisco.wx2.android",
+            "activityName": "com.webex.teams.ui.calls.incall.InCallActivity"
+        },
+        {
+            "pkgName": "com.cisco.wx2.android",
+            "activityName": "com.webex.teams.ui.calls.interstitial.MeetingInterstitialActivity"
+        },
+        {
+            "pkgName": "jp.naver.line.android",
+            "activityName": "com.linecorp.voip2.service.VoIPServiceActivity"
+        },
+        {
+            "pkgName": "com.facebook.orca",
+            "activityName": "com.facebook.rtc.activities.InCallActivity"
+        },
+        {
+            "pkgName": "com.facebook.orca",
+            "activityName": "com.facebook.messaging.rtc.incall.activity.InCallActivity",
+            "visible": "2"
+        },
+        {
+            "pkgName": "com.whatsapp.w4b",
+            "activityName": "com.whatsapp.voipcalling.VoipActivityV2"
+        }
+    ]
+}

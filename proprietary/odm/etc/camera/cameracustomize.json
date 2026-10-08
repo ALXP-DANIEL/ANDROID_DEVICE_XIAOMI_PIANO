@@ -1,0 +1,328 @@
+/*
+注释:
+    配置说明:
+        目前三方定制化框架支持两个功能：第一种：应用客制化，第二种：功能开/关客制化
+    应用客制化（CUSTOMIZABLE_APK）:
+        ApkFunctionType:客制化功能名，如：扫一扫白名单
+        Mode:0代表应用包名客制化，1代表activity客制化
+        ApkTable:使用此客制化功能的包名/activity名列表
+    功能客制化（FEATURE_SWITCH）:
+        FeatureType:功能名，如：此项目open相机时是否关闭NFC，避免硬件上的干扰
+        State:功能开关状态，0代表关，1代表开
+*/
+{
+    "CUSTOMIZABLE_APK":[
+        {
+            "ApkFunctionType":"None",
+            "Mode": 0,
+            "ApkTable" :[""]
+        },
+        {
+            "ApkFunctionType":"ScanWhitelist",
+            "Mode": 1,
+            "ApkTable" :["org.qiyi.pluginlibrary.component.InstrActivityProxy1",
+                         "com.qingqikeji.blackhorse.BlackHorseActivity",
+                         "com.didi.sdk.app.MainActivity",
+                         "com.bitauto.carmodel.view.activity.IdentifyCarActivity"]
+        },
+        {
+            "ApkFunctionType":"ScanBlacklist",
+            "Mode": 0,
+            "ApkTable" :["com.lixiangdong.textscanner",
+                         "com.baidu.wenku",
+                         "com.jingdong.app.mall",
+                         "cn.sto.sxz.core.app"]
+        },
+        {
+            "ApkFunctionType":"MiuiCamera",
+            "Mode": 0,
+            "ApkTable" :["com.android.camera"]
+        },
+        {
+            "ApkFunctionType":"isVolteVideo",
+            "Mode": 0,
+            "ApkTable" :["org.codeaurora.ims"]
+        },
+        {
+            "ApkFunctionType":"forceFDEnabled",
+            "Mode": 0,
+            "ApkTable" :["com.tencent.mm",
+                         "com.tencent.mobileqq"]
+        },
+        {
+            "ApkFunctionType":"VideoOptimization",
+            "Mode": 0,
+            "ApkTable" :["com.tencent.mm",
+                         "com.tencent.mobileqq",
+                         "org.codeaurora.ims"]
+        },
+        {
+            "ApkFunctionType":"AutoTrigger",
+            "Mode": 0,
+            "ApkTable" :["com.shizhuang.duapp",
+                         "com.huodao.hdphone",
+                         "com.jf.lkrj",
+                         "com.baidu.haokan",
+                         "com.ximalaya.ting.android",
+                         "com.ss.android.lark",
+                         "com.ss.android.lark.kami",
+                         "com.baidu.tieba",
+                         "com.mg.ec",
+                         "jp.naver.line.android",
+                         "com.tencent.wework",
+                         "com.happyteam.dubbingshow",
+                         "com.mi.health"]
+        },
+        {
+            "ApkFunctionType":"FixReconfigFlash",
+            "Mode": 0,
+            "ApkTable" :["com.qingqikeji.blackhorse.passenger"]
+        },
+        {
+            "ApkFunctionType":"ForVideoCallReduceFPS",
+            "Mode": 0,
+            "ApkTable" :["com.tencent.mm",
+                         "com.tencent.mobileqq"]
+        },
+        {
+            "ApkFunctionType":"EnableVideoOut",
+            "Mode": 0,
+            "ApkTable" :["com.smile.gifmaker",
+                         "com.kwai.m2u",
+                         "jp.naver.line.android"]
+        },
+        {
+            "ApkFunctionType":"FactoryRunin",
+            "Mode": 0,
+            "ApkTable" :["None"]
+        },
+        {
+            "ApkFunctionType":"ReconfigCaptureScene",
+            "Mode": 0,
+            "ApkTable" :["com.tencent.wework",
+                         "com.youdao.translator"]
+        },
+        {
+            "ApkFunctionType":"Froce3rdEISEnable",
+            "Mode": 1,
+            "ApkTable" :["com.ss.android.ugc.aweme.shortvideo.ui.VideoRecordNewActivity",
+                         "com.ss.android.ugc.aweme.live.LiveBroadcastActivity",
+                         "com.kuaishou.live.anchor.basic.activity.LivePushActivity",
+                         "com.yxcorp.gifshow.camera.record.CameraActivity"]
+        },
+        {
+            "ApkFunctionType":"Whitelist",
+            "Mode": 0,
+            "ApkTable" :["com.zhihu.android",
+                         "air.tv.douyu.android",
+                         "com.duowan.kiwi",
+                         "com.lemon.faceu",
+                         "com.campmobile.snowcamera",
+                         "com.mt.mtxx.mtxx",
+                         "cn.soulapp.android"]
+        },
+        {
+            "ApkFunctionType":"DisableScanZoomControl",
+            "Mode": 0,
+            "ApkTable" :["com.xiaomi.scanner"]
+        },
+        {
+            "ApkFunctionType":"ForVideoLiveReduceFPS",
+            "Mode": 1,
+            "ApkTable" :["com.dy.liveV2.living.RecorderCameraActivityV2Portrait",
+                         "com.duowan.liveroom.LiveRoomActivity",
+                         "com.instagram.modal.ModalActivity",
+                         "com.facebook.inspiration.activity.InspirationCameraActivity",
+                         "com.twitter.camera.controller.root.CameraActivity",
+                         "sg.bigo.live.LiveVideoOwnerActivity",
+                         "tv.twitch.android.broadcast.activity.BroadcastActivity"]
+        },
+        {
+            "ApkFunctionType":"ForThirdAppReduceFPS",
+            "Mode": 0,
+            "ApkTable" :["com.tencent.mobileqq",
+                         "com.tencent.mm",
+                        "com.sina.weibo",
+                        "com.xingin.xhs",
+                        "com.xiaomi.shop"]
+        },
+        {
+            "ApkFunctionType":"ThirdBT709Enable",
+            "Mode": 1,
+            "ApkTable" :["com.tencent.mm.plugin.recordvideo.activity.MMRecordUI"]
+        },
+        {
+            "ApkFunctionType":"ThirdDXGEnable",
+            "Mode": 0,
+            "ApkTable" :["com.xiaomi.cameratest"]
+        },
+        {
+            "ApkFunctionType":"MinishEV",
+            "Mode": 0,
+            "ApkTable" :["com.sankuai.meituan"]
+        },
+        {
+            "ApkFunctionType":"FactoryTest",
+            "Mode": 0,
+            "ApkTable" :["None"]
+        },
+        {
+            "ApkFunctionType":"ThirdDXGDisable",
+            "Mode": 1,
+            "ApkTable" :["com.ss.android.ugc.aweme.live.LiveBroadcastActivity",
+                         "com.xingin.alpha.emcee.AlphaEmceeActivity",
+                         "com.instagram.rtc.activity.RtcCallActivity",
+                         "com.tencent.mm.plugin.recordvideo.activity.MMRecordUI"]
+        },
+        {
+            "ApkFunctionType":"GLVideoOptimization",
+            "Mode": 1,
+            "ApkTable" :["com.whatsapp.voipcalling.VoipActivityV2"]
+        },
+        {
+            "ApkFunctionType":"FaceUnlock",
+            "Mode": 0,
+            "ApkTable" :["com.miui.face"]
+        },
+        {
+            "ApkFunctionType":"EnableVideocallBeauty",
+            "Mode": 0,
+            "ApkTable" :["com.tencent.mm"]
+        },
+        {
+            "ApkFunctionType":"Enable3PartEarlyPCR",
+            "Mode": 0,
+            "ApkTable" :["com.tencent.mm",
+                         "com.eg.android.AlipayGphone",
+                         "com.tencent.mobileqq",
+                         "com.sankuai.meituan",
+                         "com.miui.face",
+                         "com.ss.android.ugc.aweme",
+                         "tv.danmaku.bili",
+                         "com.lyy.beauty",
+                         "com.sdu.didi.psnger",
+                         "com.xiaomi.cameratest"
+                        ]
+        },
+        {
+            "ApkFunctionType":"DisableGpuRotation",
+            "Mode": 0,
+            "ApkTable" :["None"]
+        },
+        {
+            "ApkFunctionType":"IsFixTrdZooming",
+            "Mode": 1,
+            "ApkTable" :["com.tencent.mm.plugin.recordvideo.activity.MMRecordUI",
+                         "com.tencent.mm.plugin.scanner.ui.BaseScanUI",
+                         "com.ai.marki.camera2.biz.MainActivity",
+                         "com.tencent.aelight.camera.aebase.QIMCameraCaptureActivity",
+                         "com.alipay.mobile.beehive.capture.activity.CaptureActivity",
+                         "com.ss.android.ugc.aweme.qrcode.ecom.ScanCommodityActivity",
+                         "com.light.beauty.publisher.PublisherCameraActivity"]
+        },
+        {
+            "ApkFunctionType":"HighFpsForLowLight",
+            "Mode": 0,
+            "ApkTable" :["com.lemon.faceu",
+                         "com.xingin.xhs",
+                         "com.tencent.ttpic",
+                         "com.meiyan.meiyancamera",
+                         "com.campmobile.snowcamera",
+                         "com.meitu.meipaimv",
+                         "com.mt.mtxx.mtxx",
+                         "com.gorgeous.lite",
+                         "com.benqu.wuta",
+                         "com.sdu.didi.psnger",
+                         "com.jingyao.easybike",
+                         "com.qingqikeji.blackhorse.passenger",
+                         "com.ss.android.ugc.aweme",
+                         "com.smile.gifmaker",
+                         "com.tencent.weishi",
+                         "com.ss.android.article.video",
+                         "com.baidu.haokan",
+                         "tv.danmaku.bili",
+                         "com.ximalaya.ting.android",
+                         "com.tencent.mobileqq",
+                         "com.tencent.mm",
+                         "com.tencent.wework",
+                         "com.sina.weibo",
+                         "com.xingin.xhs",
+                         "com.alibaba.android.rimet",
+                         "com.eg.android.AlipayGphone",
+                         "com.dianping.v1",
+                         "com.sankuai.meituan",
+                         "com.taobao.idlefish",
+                         "ctrip.android.view",
+                         "com.Qunar",
+                         "com.taobao.trip",
+                         "com.ss.android.article.news",
+                         "com.taobao.taobao",
+                         "com.jingdong.app.mall",
+                         "com.xunmeng.pinduoduo",
+                         "com.achievo.vipshop",
+                         "com.suning.mobile.ebuy",
+                         "com.zhihu.android",
+                         "com.baidu.tieba",
+                         "com.youdao.dict",
+                         "com.baidu.homework",
+                         "com.facebook.katana",
+                         "com.instagram.android",
+                         "com.whatsapp",
+                         "com.snapchat.android",
+                         "com.twitter.android",
+                         "com.zing.zalo",
+                         "jp.naver.line.android",
+                         "com.facebook.orca",
+                         "com.zhiliaoapp.musically",
+                         "com.ss.android.ugc.trill"
+                        ]
+        },
+        {
+            "ApkFunctionType":"ThirdAppForceMode169",
+            "Mode": 0,
+            "ApkTable" :["com.tencent.zebra"]
+        },
+        {
+            "ApkFunctionType":"ZoomScaling",
+            "Mode": 0,
+            "ApkTable" :["com.lemon.faceu"]
+        },
+        {
+            "ApkFunctionType":"TopAPP_601limited",
+            "Mode": 1,
+            "ApkTable" :["com.ss.android.ugc.aweme.live.LiveBroadcastActivity",
+                         "com.ss.android.ugc.aweme.shortvideo.ui.VideoRecordNewActivity",
+                         "com.tencent.mm.ui.chatting.ChattingUI",
+                         "com.tencent.mm.plugin.profile.ui.ContactInfoUI",
+                         "com.tencent.mm.ui.LauncherUI",
+                         "com.tencent.mm.plugin.voip.ui.VideoActivity",
+                         "com.tencent.av.ui.AVActivity"]
+        },
+        {
+            "ApkFunctionType":"TopAPP_601full",
+            "Mode": 1,
+            "ApkTable" :["com.kuaishou.live.anchor.basic.activity.LivePushActivity",
+                         "com.kuaishou.live.anchor.basic.activity.LivePushActivity"]
+        },
+        {
+            "ApkFunctionType":"IsBackGround3rdApp",
+            "Mode": 0,
+            "ApkTable" :[]
+         },
+        {
+            "ApkFunctionType":"ThirdAppSkipFpsMatch",
+            "Mode": 0,
+            "ApkTable" :["com.milink.service"]
+        }
+    ],
+    "FEATURE_SWITCH":[
+        {
+            "FeatureType":"DisableNFC",
+            "State": 0
+        },
+        {
+            "FeatureType":"FrontDisableNFC",
+            "State": 0
+        }
+    ]
+}

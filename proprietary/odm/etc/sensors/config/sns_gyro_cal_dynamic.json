@@ -1,0 +1,54 @@
+{
+  "config": {
+    "hw_platform": ["MTP", "Dragon", "Surf", "QRD", "HDK", "IDP", "IOT", "RCM"],
+    "soc_id": ["639"]
+  },
+  "sns_gyro_cal_dynamic_config": {
+    "owner": "sns_gyro_cal_dynamic",
+    ".poly_para": {
+      "owner": "sns_gyro_cal_dynamic",
+      "x_a": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "x_b": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "x_c": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "y_a": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "y_b": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "y_c": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "z_a": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "z_b": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "z_c": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "tmp_min": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "tmp_max": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "fac_x": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "fac_y": {"type": "flt","ver": "0",
+      "data": "0.0"
+      },
+      "fac_z": {"type": "flt","ver": "0",
+      "data": "0.0"
+      }
+    }
+  }
+}
