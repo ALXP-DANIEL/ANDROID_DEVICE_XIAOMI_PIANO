@@ -160,4 +160,20 @@
             <instance>default</instance>
         </interface>
     </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.miauthsecretd</name>
+        <version>1</version>
+        <interface>
+            <name>ICpaceService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.oldcredential</name>
+        <version>1</version>
+        <interface>
+            <name>IOldCredentialService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
 </compatibility-matrix>
