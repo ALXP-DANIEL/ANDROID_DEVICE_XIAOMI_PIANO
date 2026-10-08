@@ -1,0 +1,5 @@
+# Shared calibration directory for the FourSemi amplifiers.
+on fs
+    mkdir /mnt/vendor/persist/audio 0775 audioserver audio
+    chown audioserver audio /mnt/vendor/persist/audio
+    chmod 0775 /mnt/vendor/persist/audio
