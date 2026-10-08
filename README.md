@@ -11,7 +11,7 @@ Android device trees for the Xiaomi Pad 8 Pro (SM8750).
 | `vendor-17` | `vendor-16` | Device vendor files |
 | `vendor-common-17` | `vendor-common-16` | SM8750 common vendor files |
 | `kernel-17` | `kernel-16` | GKI kernel built from source, with the stock modules |
-| `miuicamera-16` | `miuicamera-16` | Shared MiuiCamera tree |
+| `miuicamera-17` | `miuicamera-16` | MiuiCamera matching each stock generation |
 | `twrp` | `twrp` | TWRP recovery (shared) |
 | `ofox` | `ofox` | OrangeFox recovery (shared) |
 
