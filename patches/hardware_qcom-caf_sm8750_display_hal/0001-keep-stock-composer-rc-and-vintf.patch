@@ -1,0 +1,35 @@
+diff --git a/composer/Android.bp b/composer/Android.bp
+index f6d5e3e5d6..5411829de4 100644
+--- a/composer/Android.bp
++++ b/composer/Android.bp
+@@ -101,30 +101,6 @@ cc_binary {
+ 
+     srcs: composer_srcs,
+ 
+-    required: [
+-        "vendor.qti.hardware.display.composer-service.rc",
+-        "vendor.qti.hardware.display.composer-service.xml",
+-    ],
+-
+-}
+-
+-prebuilt_etc {
+-    name: "vendor.qti.hardware.display.composer-service.rc",
+-    src: "vendor.qti.hardware.display.composer-service.rc",
+-    filename_from_src: true,
+-    sub_dir: "init",
+-    vendor: true,
+-}
+-
+-prebuilt_etc_xml {
+-    name: "vendor.qti.hardware.display.composer-service.xml",
+-    src: select(soong_config_variable("qtidisplay", "composer_version"), {
+-        "v3_3": "vendor.qti.hardware.display.composer-service3_v3.xml",
+-        default: "vendor.qti.hardware.display.composer-service3_v2.xml",
+-    }),
+-    filename_from_src: true,
+-    sub_dir: "vintf/manifest",
+-    vendor: true,
+ }
+ 
+ cc_fuzz {

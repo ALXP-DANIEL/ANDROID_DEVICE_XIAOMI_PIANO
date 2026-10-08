@@ -1,0 +1,11 @@
+diff --git a/hal/service/Android.bp b/hal/service/Android.bp
+--- a/hal/service/Android.bp
++++ b/hal/service/Android.bp
+@@ -2,7 +2,6 @@
+     name: "audiohalservice.qti",
+     vendor: true,
+     relative_install_path: "hw",
+-    init_rc: ["audiohalservice_qti.rc"],
+ 
+     cflags: [
+         "-Wall",
