@@ -20,7 +20,7 @@ lib_fixups = {**default_lib_fixups, ("libui", "libultrahdr", "libjpegencoder", "
 
 # V2 -> V3 frozen sensor API changes only add SensorType.MOISTURE_INTRUSION.
 # Source sensorservice V1 imports V3; keep selected clients on that same ABI.
-sensor_clients = ('odm/bin/hw/vendor.xiaomi.hw.touchfeature-service', 'odm/lib64/hw/displayfeature.default.so', 'odm/lib64/libadaptivehdr.so', 'odm/lib64/libcolortempmode.so', 'odm/lib64/libdither.so', 'odm/lib64/libflatmode.so', 'odm/lib64/libhistprocess.so', 'odm/lib64/libmiBrightness.so', 'odm/lib64/libmiSensorCtrl.so', 'odm/lib64/libpaperMode.so', 'odm/lib64/librhytheyecare.so', 'odm/lib64/libsdr2hdr.so', 'odm/lib64/libsre.so', 'odm/lib64/libtruetone.so', 'odm/lib64/libvideomode.so')
+sensor_clients = ('odm/bin/hw/vendor.xiaomi.hw.touchfeature-service', 'odm/lib64/hw/displayfeature.default.so', 'odm/lib64/libadaptivehdr.so', 'odm/lib64/libcolortempmode.so', 'odm/lib64/libdither.so', 'odm/lib64/libdynamicelvss.so', 'odm/lib64/libflatmode.so', 'odm/lib64/libhistprocess.so', 'odm/lib64/libmiBrightness.so', 'odm/lib64/libmiSensorCtrl.so', 'odm/lib64/libpaperMode.so', 'odm/lib64/librhytheyecare.so', 'odm/lib64/libsdr2hdr.so', 'odm/lib64/libsre.so', 'odm/lib64/libtruetone.so', 'odm/lib64/libvideomode.so')
 # These blobs were built against the Android 14 tinyxml2 ABI; the current
 # libtinyxml2 crashes them (e.g. DisplayFeature in ParamManager::getParam).
 tinyxml2_clients = tuple(
