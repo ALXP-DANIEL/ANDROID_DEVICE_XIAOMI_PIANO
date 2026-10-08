@@ -1,25 +1,15 @@
 multiCameraLogicalXMLFile=piano.xml
 
-# Camera Log
-logInfoMask=0
-logWarningMask=0
-logConfigMask=0
-logVerboseMask=0
-logCoreCfgMask=0
-logRequestMapping=FALSE
-systemLogEnable=TRUE
-enableAsciiLogging=0
-enableTxtLogging=0
-enableBinaryLogging=0
-enableXiaomiBinLogging=0
+enableTxtLogging=1
+offlineLogNumber=20
 offlineLoggerEnableBackupLog=FALSE
-enableCameraCoreDumpBinary=FALSE
-enableCameraCoreDumpText=FALSE
-chiLogWarningMask=0
-chiLogCoreCfgMask=0
-numConsecutiveRecovery=5
+logInfoMask=0x50000
+logVerboseMask=0x0
+logConfigMask=0x2
+CamxLogCoreCfg=0x80
+chiLogInfoMask=0x35BF
+chiLogWarningMask=0x1
 SDK_LOG_LEVEL=5
-enableSignal35Tombstone=FALSE
 
 # flicker sensor
 enableBackFlicker=TRUE

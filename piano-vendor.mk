@@ -106,12 +106,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/CFR_para_W_V01_SN.bin:$(TARGET_COPY_OUT_ODM)/etc/camera/CFR_para_W_V01_SN.bin \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/GpuKernelRepo.pb:$(TARGET_COPY_OUT_ODM)/etc/camera/GpuKernelRepo.pb \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/HIS_LensConf.json:$(TARGET_COPY_OUT_ODM)/etc/camera/HIS_LensConf.json \
-    vendor/xiaomi/piano/proprietary/odm/etc/camera/IntellFocus_class_all.dlc:$(TARGET_COPY_OUT_ODM)/etc/camera/IntellFocus_class_all.dlc \
-    vendor/xiaomi/piano/proprietary/odm/etc/camera/IntellFocus_class_human.dlc:$(TARGET_COPY_OUT_ODM)/etc/camera/IntellFocus_class_human.dlc \
-    vendor/xiaomi/piano/proprietary/odm/etc/camera/IntellFocus_detect_1st.dlc:$(TARGET_COPY_OUT_ODM)/etc/camera/IntellFocus_detect_1st.dlc \
-    vendor/xiaomi/piano/proprietary/odm/etc/camera/IntellFocus_saliency.dlc:$(TARGET_COPY_OUT_ODM)/etc/camera/IntellFocus_saliency.dlc \
-    vendor/xiaomi/piano/proprietary/odm/etc/camera/IntellFocus_track_backbone.dlc:$(TARGET_COPY_OUT_ODM)/etc/camera/IntellFocus_track_backbone.dlc \
-    vendor/xiaomi/piano/proprietary/odm/etc/camera/IntellFocus_track_head.dlc:$(TARGET_COPY_OUT_ODM)/etc/camera/IntellFocus_track_head.dlc \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/SensePR_scene_configs.json:$(TARGET_COPY_OUT_ODM)/etc/camera/SensePR_scene_configs.json \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/af_class_all.dlc:$(TARGET_COPY_OUT_ODM)/etc/camera/af_class_all.dlc \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/af_class_human.dlc:$(TARGET_COPY_OUT_ODM)/etc/camera/af_class_human.dlc \
@@ -143,7 +137,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/aivsModel_6B182012:$(TARGET_COPY_OUT_ODM)/etc/camera/aivsModel_6B182012 \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/aivsModel_977D5C75:$(TARGET_COPY_OUT_ODM)/etc/camera/aivsModel_977D5C75 \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/aivsModel_F01EC698:$(TARGET_COPY_OUT_ODM)/etc/camera/aivsModel_F01EC698 \
-    vendor/xiaomi/piano/proprietary/odm/etc/camera/alCFR_Segmodel.bin:$(TARGET_COPY_OUT_ODM)/etc/camera/alCFR_Segmodel.bin \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/arcsoft_dynamicEV_config.ini:$(TARGET_COPY_OUT_ODM)/etc/camera/arcsoft_dynamicEV_config.ini \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/arcsoft_turbohdr_dynamicEV_config.ini:$(TARGET_COPY_OUT_ODM)/etc/camera/arcsoft_turbohdr_dynamicEV_config.ini \
     vendor/xiaomi/piano/proprietary/odm/etc/camera/beauty_config_cn.json:$(TARGET_COPY_OUT_ODM)/etc/camera/beauty_config_cn.json \
@@ -769,8 +762,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/piano/proprietary/odm/firmware/piano_nova_csot_thp_config.ini:$(TARGET_COPY_OUT_ODM)/firmware/piano_nova_csot_thp_config.ini \
     vendor/xiaomi/piano/proprietary/odm/firmware/vpu30_2v.mbn:$(TARGET_COPY_OUT_ODM)/firmware/vpu30_2v.mbn \
     vendor/xiaomi/piano/proprietary/odm/firmware/vpu30_2v_unsigned.mbn:$(TARGET_COPY_OUT_ODM)/firmware/vpu30_2v_unsigned.mbn \
-    vendor/xiaomi/piano/proprietary/odm/firmware/vpu33_4v.mbn:$(TARGET_COPY_OUT_ODM)/firmware/vpu33_4v.mbn \
-    vendor/xiaomi/piano/proprietary/odm/firmware/vpu33_4v_unsigned.mbn:$(TARGET_COPY_OUT_ODM)/firmware/vpu33_4v_unsigned.mbn \
     vendor/xiaomi/piano/proprietary/odm/firmware/vpu35_4v.mbn:$(TARGET_COPY_OUT_ODM)/firmware/vpu35_4v.mbn \
     vendor/xiaomi/piano/proprietary/odm/firmware/vpu35_4v_unsigned.mbn:$(TARGET_COPY_OUT_ODM)/firmware/vpu35_4v_unsigned.mbn \
     vendor/xiaomi/piano/proprietary/odm/lib64/camera/aon_front_i_1.pb:$(TARGET_COPY_OUT_ODM)/lib64/camera/aon_front_i_1.pb \
@@ -805,14 +796,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/piano/proprietary/vendor/etc/display/formats.json:$(TARGET_COPY_OUT_VENDOR)/etc/display/formats.json \
     vendor/xiaomi/piano/proprietary/vendor/etc/display/graphics_alignments.json:$(TARGET_COPY_OUT_VENDOR)/etc/display/graphics_alignments.json \
     vendor/xiaomi/piano/proprietary/vendor/etc/display/pipe_config_DPU11__.xml:$(TARGET_COPY_OUT_VENDOR)/etc/display/pipe_config_DPU11__.xml \
-    vendor/xiaomi/piano/proprietary/vendor/etc/display/sm8750_sr_1x_y1280x720.dlc:$(TARGET_COPY_OUT_VENDOR)/etc/display/sm8750_sr_1x_y1280x720.dlc \
-    vendor/xiaomi/piano/proprietary/vendor/etc/display/sm8750_sr_1x_y720x1280.dlc:$(TARGET_COPY_OUT_VENDOR)/etc/display/sm8750_sr_1x_y720x1280.dlc \
-    vendor/xiaomi/piano/proprietary/vendor/etc/display/sm8750_sr_2x_y1280x720.dlc:$(TARGET_COPY_OUT_VENDOR)/etc/display/sm8750_sr_2x_y1280x720.dlc \
-    vendor/xiaomi/piano/proprietary/vendor/etc/display/sm8750_sr_2x_y544x960.dlc:$(TARGET_COPY_OUT_VENDOR)/etc/display/sm8750_sr_2x_y544x960.dlc \
-    vendor/xiaomi/piano/proprietary/vendor/etc/display/sm8750_sr_2x_y720x1280.dlc:$(TARGET_COPY_OUT_VENDOR)/etc/display/sm8750_sr_2x_y720x1280.dlc \
-    vendor/xiaomi/piano/proprietary/vendor/etc/display/sm8750_sr_2x_y960x544.dlc:$(TARGET_COPY_OUT_VENDOR)/etc/display/sm8750_sr_2x_y960x544.dlc \
-    vendor/xiaomi/piano/proprietary/vendor/etc/display/sm8750_sr_3x_y384x640.dlc:$(TARGET_COPY_OUT_VENDOR)/etc/display/sm8750_sr_3x_y384x640.dlc \
-    vendor/xiaomi/piano/proprietary/vendor/etc/display/sm8750_sr_3x_y640x384.dlc:$(TARGET_COPY_OUT_VENDOR)/etc/display/sm8750_sr_3x_y640x384.dlc \
     vendor/xiaomi/piano/proprietary/vendor/etc/display/thermallevel_to_fps.xml:$(TARGET_COPY_OUT_VENDOR)/etc/display/thermallevel_to_fps.xml \
     vendor/xiaomi/piano/proprietary/vendor/etc/display/ubwc_alignments.json:$(TARGET_COPY_OUT_VENDOR)/etc/display/ubwc_alignments.json \
     vendor/xiaomi/piano/proprietary/vendor/etc/display/video_alignments.json:$(TARGET_COPY_OUT_VENDOR)/etc/display/video_alignments.json \
@@ -826,7 +809,6 @@ PRODUCT_COPY_FILES += \
     vendor/xiaomi/piano/proprietary/vendor/etc/init/ddr_training.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/ddr_training.rc \
     vendor/xiaomi/piano/proprietary/vendor/etc/init/dlsc.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/dlsc.rc \
     vendor/xiaomi/piano/proprietary/vendor/etc/init/minetd.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/minetd.rc \
-    vendor/xiaomi/piano/proprietary/vendor/etc/init/qesdk-secmanager.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/qesdk-secmanager.rc \
     vendor/xiaomi/piano/proprietary/vendor/etc/init/qwesd.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/qwesd.rc \
     vendor/xiaomi/piano/proprietary/vendor/etc/init/vendor.qsap.location.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qsap.location.rc \
     vendor/xiaomi/piano/proprietary/vendor/etc/init/vendor.qsap.sensors.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.qsap.sensors.rc \
@@ -1134,7 +1116,6 @@ PRODUCT_PACKAGES += \
     libQnnHtpV79CalculatorStub \
     libQnnHtpV79Stub \
     libQnnSystem \
-    libSEGModel \
     libSNPE \
     libSNPESample \
     libXMFaceHeadBodyTrack \
@@ -1228,9 +1209,7 @@ PRODUCT_PACKAGES += \
     libopencv \
     libopencv3a \
     libopencv_core \
-    libopencv_core_se \
     libopencv_imgproc \
-    libopencv_imgproc_se \
     libopestriping \
     libpostprocinfo \
     libproj_qmot_tracker \
@@ -1278,6 +1257,7 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.fingerprint@1.0 \
     vendor.qti.hardware.minkipcbinder-V1-ndk \
     vendor.xiaomi.aidl.minet-V1-ndk \
+    vendor.xiaomi.aidl.miwill-V1-ndk \
     vendor.xiaomi.hardware.aidl.intentaware-V1-impl \
     vendor.xiaomi.hardware.aidl.intentaware-V1-ndk_platform \
     vendor.xiaomi.hardware.aidlbgservice-V1-impl \
@@ -1296,6 +1276,7 @@ PRODUCT_PACKAGES += \
     vendor.xiaomi.hardware.keyboardnanoapp_aidl-V1-ndk \
     vendor.xiaomi.hardware.mikeybag-V1-ndk \
     vendor.xiaomi.hardware.miperf2-V1-ndk \
+    vendor.xiaomi.hardware.oldcredential-V1-ndk \
     vendor.xiaomi.sensor.camera-V1-ndk \
     vendor_lib_rfsa_adsp_libCalculator_skel_so \
     vendor_lib_rfsa_adsp_libDspIOProxy_skel_so \
@@ -1329,7 +1310,6 @@ PRODUCT_PACKAGES += \
     com.mi.node.singlebokeh \
     com.mi.node.skinbeautifier \
     com.mi.node.videonight \
-    com.qti.node.intelligentfocus \
     com.qti.node.ldc \
     libchxlogicalcameratable \
     com.xiaomi.plugin.GestureEffects \
@@ -1337,7 +1317,6 @@ PRODUCT_PACKAGES += \
     com.xiaomi.plugin.arcskinbeautifier \
     com.xiaomi.plugin.arcskinbeautifierpreview \
     com.xiaomi.plugin.arcsoftsll \
-    com.xiaomi.plugin.depurple \
     com.xiaomi.plugin.filter \
     com.xiaomi.plugin.frontbokeh \
     com.xiaomi.plugin.frontbokehpreview \
@@ -1391,12 +1370,10 @@ PRODUCT_PACKAGES += \
     fingerprint.goodix \
     libAncHumanPreviewBokeh \
     libFaceCenterAlgo \
-    libIntelligentFocus \
     libMiDispDevManager \
     libMiEmojiEffect \
     libMiVideoFilter \
     libadaptivehdr \
-    libalCFR \
     libanc_edof_checker \
     libanc_single_bokeh \
     libanc_supervq \
@@ -1410,16 +1387,17 @@ PRODUCT_PACKAGES += \
     libarcsoft_super_night_detection \
     libarcsoft_super_night_raw \
     libarcsoft_turbo_hdr_detection \
-    libcamera_scene \
     libcameraheif \
     libclient2slpi.notifier \
     libcolortempmode \
     libdisplaycount \
     libdisplaylog \
     libdither \
+    libdynamicelvss \
     libeyecare \
     libflatmode \
     libfpsmonitor \
+    libframemasterintf \
     libgf_ca \
     libgf_hal \
     libgoodixhwfingerprint \
@@ -1435,13 +1413,13 @@ PRODUCT_PACKAGES += \
     libmiSensorCtrl \
     libmiXmlParser \
     libmi_dspp \
-    libmi_weaver \
     libmialgo_aio_seg \
     libmialgo_cls \
     libmialgo_sd \
     libmialgo_utils \
     libmieventnodewatch \
     libmiocr \
+    libmiweaver_empty \
     libmseccam \
     libpaperMode \
     libportrait_repair_qnn \
@@ -1458,11 +1436,12 @@ PRODUCT_PACKAGES += \
     libwa_widelens_undistort \
     libxmi_slow_motion_mein \
     vendor.xiaomi.hardware.aidl.midevauth-V1-ndk \
+    vendor.xiaomi.hardware.framemaster-V1-ndk \
+    vendor.xiaomi.hardware.miauthsecretd-V1-ndk \
     vendor.xiaomi.hardware.micrtk-V1-ndk_platform \
     vendor.xiaomi.hardware.mikeybag-impl \
     vendor.xiaomi.hardware.misauth-V1-ndk \
     vendor.xiaomi.hardware.misecmedia-V1-ndk \
-    vendor.xiaomi.hardware.mitrustedui-V2-ndk \
     vendor.xiaomi.hardware.mrm-V1-ndk \
     vendor.xiaomi.hardware.seccam-V1-ndk \
     odm_lib_rfsa_adsp_libmialgo_tracker_cdsp_skel_so \
@@ -1493,7 +1472,6 @@ PRODUCT_PACKAGES += \
     vendor.xiaomi.hardware.fbo-service \
     vendor.xiaomi.hardware.miperf2-service \
     minetd \
-    qesdk-secmanager \
     qsap_dcfd \
     qsap_sensors \
     android.hardware.weaver \

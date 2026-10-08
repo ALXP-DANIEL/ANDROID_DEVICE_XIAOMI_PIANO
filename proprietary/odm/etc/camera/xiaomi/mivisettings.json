@@ -1,7 +1,7 @@
 {
-    "offlinedebugmask" : 0,
+    "offlinedebugmask" : 1,
     "Soc" : "QCOM",
-    "SupportBinaryLog": false,
+    "SupportBinaryLog": true,
     "OpenLIFO" : 1,
     "WatermarkDown": true,
     "SrNodeHaveTwoOutPort" : false,

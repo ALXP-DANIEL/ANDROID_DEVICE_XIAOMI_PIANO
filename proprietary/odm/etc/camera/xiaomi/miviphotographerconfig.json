@@ -1,6 +1,6 @@
 {
     "QuickviewSupport": 1,
-    "MaxMFNRCount":[3,3],//MFNR并行任务
+    "MaxMFNRCount":[2,3],//MFNR并行任务
     "HighQualityQuickShotSupport":["0x343DFF7","0x343DFF7"],//[低端,高端]
     "QuickShotDelayTimeMask":"0x208022202222020",
     //上述mask含义详见：https://xiaomi.f.mioffice.cn/docx/doxk4Q8hPhEZxf39m0KwV1uiiDc
@@ -36,7 +36,7 @@
             "QuickShotConfig"://触发条件
             {
                 "MaxMIVICount":[1,3],//后处理任务数
-                "PSILimitB2Y":40.0,
+                "PSILimitB2Y":20.0,
                 "QuickShotTypeUpdate":
                 [
                     {
@@ -82,7 +82,7 @@
             "QuickShotConfig"://触发条件
             {
                 "ZoomRatio":[0.0,9.9],
-                "MaxMIVICount":[3,3],//后处理任务数
+                "MaxMIVICount":[2,3],//后处理任务数
                 "QuickShotTypeUpdate":
                 [
                     {
@@ -128,7 +128,7 @@
             "PhtType":[3],
             "QuickShotConfig"://触发条件
             {
-                "MaxMIVICount":[3,3],//后处理任务数
+                "MaxMIVICount":[2,3],//后处理任务数
                 "QuickShotTypeUpdate":
                 [
                     {
@@ -149,7 +149,7 @@
             "PhtType":[8],//vendor mfnr
             "QuickShotConfig"://触发条件
             {
-                "MaxMIVICount":[3,3],//后处理任务数
+                "MaxMIVICount":[2,3],//后处理任务数
                 "QuickShotTypeUpdate":
                 [
                    {
@@ -173,7 +173,7 @@
             "QuickShotConfig"://触发条件
             {
                 "MaxMIVICount":[1,3],//后处理任务数
-                "PSILimitB2Y":40.0,
+                "PSILimitB2Y":20.0,
                 "QuickShotTypeUpdate":
                 [
                     {
@@ -236,7 +236,7 @@
             "QuickShotConfig"://触发条件
             {
                 "MaxMIVICount":[1,3],//后处理任务数
-                "PSILimitB2Y":40.0,
+                "PSILimitB2Y":20.0,
                 "QuickShotTypeUpdate":
                 [
                     {
@@ -270,7 +270,7 @@
             "SupportAnchorQuickview":true,
             "QuickShotConfig"://触发条件
             {
-                "MaxMIVICount":[3,3],//后处理任务数
+                "MaxMIVICount":[2,3],//后处理任务数
                 "QuickShotTypeUpdate":
                 [
                    {
@@ -316,7 +316,7 @@
             "QuickShotConfig"://触发条件
             {
                 "MaxMIVICount":[1,3],//后处理任务数
-                "PSILimitB2Y":40.0,
+                "PSILimitB2Y":20.0,
                 "QuickShotTypeUpdate":
                 [
                     {

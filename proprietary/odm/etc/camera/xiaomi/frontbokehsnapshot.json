@@ -117,7 +117,7 @@
         "NodeInstance": "FilterInstance1"
       },
       {
-        "NodeName": "com.xiaomi.plugin.watermark",
+        "NodeName": "com.xiaomi.plugin.watermarkV2",
         "NodeInstance": "WatermarkInstance0",
         "NodeProperty":[
           {
@@ -343,29 +343,10 @@
         },
           "DstPort": {
             "PortId": 0,
-            "NodeInstance": "WatermarkInstance0"
+            "NodeInstance": "WatermarkInstance0",
+            "BufferType": "Gralloc"
         }
       },
-      {
-        "SrcPort": {
-            "PortId": 2,
-            "NodeInstance": "WatermarkInstance0"
-        },
-        "DstPort": {
-          "PortId": 3,
-          "NodeInstance": "jpegrAggrInstance"
-        }
-       },
-       {
-        "SrcPort": {
-            "PortId": 3,
-            "NodeInstance": "WatermarkInstance0"
-        },
-        "DstPort": {
-          "PortId": 4,
-          "NodeInstance": "jpegrAggrInstance"
-        }
-       },
       {
        "SrcPort": {
            "PortId": 1,
@@ -391,7 +372,8 @@
       {
          "SrcPort": {
              "PortId": 0,
-             "NodeInstance": "WatermarkInstance0"
+             "NodeInstance": "WatermarkInstance0",
+             "BufferType": "Gralloc"
          },
          "DstPort": {
            "PortId": 0,

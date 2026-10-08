@@ -215,7 +215,7 @@
                         "components": [
                             {
                                 "component_type" : "R",
-                                "offset_bits" : 0,
+                                "offset_bits" : 11,
                                 "size_bits" : 5
                             },
                             {
@@ -225,7 +225,7 @@
                             },
                             {
                                 "component_type" : "B",
-                                "offset_bits" : 11,
+                                "offset_bits" : 0,
                                 "size_bits" : 5
                             }
                         ],
