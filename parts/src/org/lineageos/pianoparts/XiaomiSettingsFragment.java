@@ -7,12 +7,10 @@ package org.lineageos.pianoparts;
 import android.os.Bundle;
 
 import androidx.preference.Preference;
-import androidx.preference.SwitchPreferenceCompat;
+import androidx.preference.TwoStatePreference;
 
+import com.android.settingslib.PrimarySwitchPreference;
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
-
-import lineageos.hardware.LineageHardwareManager;
-import lineageos.providers.LineageSettings;
 
 public class XiaomiSettingsFragment extends SettingsBasePreferenceFragment
         implements Preference.OnPreferenceChangeListener {
@@ -38,7 +36,8 @@ public class XiaomiSettingsFragment extends SettingsBasePreferenceFragment
     public void onResume() {
         super.onResume();
         // The Quick Settings tiles change the same state while this page is closed.
-        setChecked(KEY_READING_MODE, isReadingMode());
+        ((PrimarySwitchPreference) findPreference(KEY_READING_MODE)).setChecked(
+                mApp.getReadingModeController().isEnabled());
         setChecked(KEY_SUNLIGHT_MODE, mApp.isSunlightMode());
         setChecked(KEY_THERMAL_GAME, ThermalProfileTileService.isGameProfile());
         setChecked(KEY_BYPASS_CHARGING, BypassChargingTileService.isEnabled());
@@ -48,7 +47,7 @@ public class XiaomiSettingsFragment extends SettingsBasePreferenceFragment
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         boolean enabled = (Boolean) newValue;
         switch (preference.getKey()) {
-            case KEY_READING_MODE -> setReadingMode(enabled);
+            case KEY_READING_MODE -> mApp.getReadingModeController().setEnabled(enabled);
             case KEY_SUNLIGHT_MODE -> mApp.setSunlightMode(enabled);
             case KEY_THERMAL_GAME -> ThermalProfileTileService.setGameProfile(enabled);
             case KEY_BYPASS_CHARGING -> BypassChargingTileService.setEnabled(enabled);
@@ -56,22 +55,7 @@ public class XiaomiSettingsFragment extends SettingsBasePreferenceFragment
         return true;
     }
 
-    // The same state as Lineage's Reading mode tile and LiveDisplay page.
-    private boolean isReadingMode() {
-        return LineageSettings.System.getInt(requireContext().getContentResolver(),
-                LineageSettings.System.DISPLAY_READING_MODE, 0) != 0;
-    }
-
-    private void setReadingMode(boolean enabled) {
-        LineageSettings.System.putInt(requireContext().getContentResolver(),
-                LineageSettings.System.DISPLAY_READING_MODE, enabled ? 1 : 0);
-        LineageHardwareManager.getInstance(requireContext()).set(
-                LineageHardwareManager.FEATURE_READING_ENHANCEMENT, enabled);
-    }
-
-
-
     private void setChecked(String key, boolean checked) {
-        ((SwitchPreferenceCompat) findPreference(key)).setChecked(checked);
+        ((TwoStatePreference) findPreference(key)).setChecked(checked);
     }
 }

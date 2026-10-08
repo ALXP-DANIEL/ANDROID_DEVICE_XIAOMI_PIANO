@@ -78,8 +78,6 @@
     <string name="thermal_game_summary">Allow more heat for higher sustained performance</string>
     <string name="touch_game_mode_summary">Faster touch response with less edge rejection</string>
     <string name="bypass_charging_summary">While plugged in, power the tablet from the charger and rest the battery</string>
-    <string name="charging_control_title">Charging control</string>
-    <string name="charging_control_summary">Limit charge level or charge to full by a set time</string>
     <string name="keyboard_cover_title">Keyboard cover settings</string>
     <string name="keyboard_layout_title">Shortcuts, layout and pointer</string>
     <string name="keyboard_layout_summary">Keyboard shortcuts, layouts, pointer speed and scrolling</string>
@@ -114,4 +112,30 @@
     <!-- Same wording as the stock HyperOS notice. -->
     <string name="volume_boost_on">Volume boost is on. Your device may heat up and use more power.</string>
 
+    <string name="reading_mode_intro">Make the screen easier on the eyes, like paper</string>
+    <string name="reading_effect_title">Classic mode</string>
+    <string name="reading_level_title">Warmth</string>
+    <string name="reading_texture_title">Paper texture</string>
+    <string name="reading_colors_title">Paper colors</string>
+    <string name="reading_reset_title">Reset to default</string>
+    <string-array name="reading_colors_entries">
+        <item>Full colors</item>
+        <item>Light colors</item>
+        <item>Black and white</item>
+    </string-array>
+    <string-array name="reading_colors_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string name="battery_protection_title">Battery protection</string>
+    <string name="battery_protection_summary">Charge to 80% to slow battery aging</string>
+    <string name="battery_protection_intro">Charging to less than full keeps the battery healthy for longer</string>
+    <string name="battery_protection_mode_title">Protection mode</string>
+    <string name="battery_protection_normal">Normal charging</string>
+    <string name="battery_protection_normal_summary">Always charge to 100%</string>
+    <string name="battery_protection_always">Always protect</string>
+    <string name="battery_protection_always_summary">Stop charging at 80%</string>
+    <string name="battery_protection_smart">Smart protection</string>
+    <string name="battery_protection_smart_summary" formatted="false">Hold at 80%, then charge to 100% before you usually unplug</string>
 </resources>
