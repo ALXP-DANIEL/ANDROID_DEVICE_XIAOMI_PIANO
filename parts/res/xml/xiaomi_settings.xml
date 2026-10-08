@@ -54,6 +54,13 @@
             android:title="@string/bypass_charging_title"
             android:summary="@string/bypass_charging_summary"
             android:persistent="false" />
+
+        <Preference
+            android:key="charging_control"
+            android:title="@string/charging_control_title"
+            android:summary="@string/charging_control_summary">
+            <intent android:action="org.lineageos.lineageparts.CHARGING_CONTROL_SETTINGS" />
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/keyboard_settings_title">
