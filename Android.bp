@@ -1,0 +1,108 @@
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+soong_namespace {
+}
+
+// The APK is split in two parts to stay under GitHub's 100 MB file limit.
+genrule {
+    name: "MiuiCamera_apk",
+    srcs: [
+        "proprietary/product/priv-app/MiuiCamera/MiuiCamera.apk.part0",
+        "proprietary/product/priv-app/MiuiCamera/MiuiCamera.apk.part1",
+    ],
+    out: ["MiuiCamera.apk"],
+    cmd: "cat $(in) > $(out)",
+}
+
+android_app_import {
+    name: "MiuiCamera",
+    apk: ":MiuiCamera_apk",
+    certificate: "platform",
+    privileged: true,
+    product_specific: true,
+    dex_preopt: {
+        enabled: false,
+    },
+    overrides: ["Aperture", "Camera2", "Snap"],
+    required: [
+        "libcamera_algoup_jni.xiaomi",
+        "libcamera_mianode_jni.xiaomi",
+        "libmicampostproc_client",
+        "vendor.xiaomi.hardware.campostproc@1.0_system",
+        "privapp-permissions-miuicamera",
+        "miuicamera-hiddenapi-package-allowlist",
+        "public.libraries-xiaomi",
+    ],
+}
+
+cc_prebuilt_library_shared {
+    name: "libcamera_algoup_jni.xiaomi",
+    srcs: ["proprietary/system_ext/lib64/libcamera_algoup_jni.xiaomi.so"],
+    system_ext_specific: true,
+    compile_multilib: "64",
+    check_elf_files: false,
+    strip: {
+        none: true,
+    },
+}
+
+cc_prebuilt_library_shared {
+    name: "libcamera_mianode_jni.xiaomi",
+    srcs: ["proprietary/system_ext/lib64/libcamera_mianode_jni.xiaomi.so"],
+    system_ext_specific: true,
+    compile_multilib: "64",
+    check_elf_files: false,
+    strip: {
+        none: true,
+    },
+}
+
+cc_prebuilt_library_shared {
+    name: "libmicampostproc_client",
+    srcs: ["proprietary/system_ext/lib64/libmicampostproc_client.so"],
+    system_ext_specific: true,
+    compile_multilib: "64",
+    check_elf_files: false,
+    strip: {
+        none: true,
+    },
+}
+
+// The vendor partition ships its own copy of this library, so the system_ext
+// copy gets a different module name and keeps its original file name.
+cc_prebuilt_library_shared {
+    name: "vendor.xiaomi.hardware.campostproc@1.0_system",
+    stem: "vendor.xiaomi.hardware.campostproc@1.0",
+    srcs: ["proprietary/system_ext/lib64/vendor.xiaomi.hardware.campostproc@1.0.so"],
+    system_ext_specific: true,
+    compile_multilib: "64",
+    check_elf_files: false,
+    strip: {
+        none: true,
+    },
+}
+
+prebuilt_etc {
+    name: "privapp-permissions-miuicamera",
+    src: "configs/privapp-permissions-miuicamera.xml",
+    filename_from_src: true,
+    sub_dir: "permissions",
+    product_specific: true,
+}
+
+prebuilt_etc {
+    name: "miuicamera-hiddenapi-package-allowlist",
+    src: "configs/miuicamera-hiddenapi-package-allowlist.xml",
+    filename_from_src: true,
+    sub_dir: "sysconfig",
+    product_specific: true,
+}
+
+prebuilt_etc {
+    name: "public.libraries-xiaomi",
+    src: "configs/public.libraries-xiaomi.txt",
+    filename: "public.libraries-xiaomi.txt",
+    system_ext_specific: true,
+}
