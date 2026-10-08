@@ -377,7 +377,7 @@ PRODUCT_PACKAGES += \
     android.hardware.audio.core.sounddose-V2-ndk_xiaomi \
     android.hardware.biometrics.fingerprint-V5-ndk_xiaomi \
     android.hardware.sensors-V2-ndk_xiaomi \
-    android.media.audio.common.types-V6-ndk \
+    android.media.audio.common.types-V6-ndk_xiaomi \
     btaudio_offload_if \
     com.android.ozoaudio.notify-V1-ndk \
     com.fingerprints.extension3-V1-ndk \

@@ -28,7 +28,7 @@ cc_prebuilt_library_shared {
             ],
             shared_libs: [
                 "libbinder_ndk",
-                "android.media.audio.common.types-V6-ndk",
+                "android.media.audio.common.types-V6-ndk_xiaomi",
                 "libc++",
                 "libc",
                 "libm",
@@ -96,7 +96,7 @@ cc_prebuilt_library_shared {
 }
 
 cc_prebuilt_library_shared {
-    name: "android.media.audio.common.types-V6-ndk",
+    name: "android.media.audio.common.types-V6-ndk_xiaomi",
     owner: "xiaomi",
     strip: {
         none: true,
@@ -104,7 +104,7 @@ cc_prebuilt_library_shared {
     target: {
         android_arm64: {
             srcs: [
-                "proprietary/vendor/lib64/android.media.audio.common.types-V6-ndk.so",
+                "proprietary/vendor/lib64/android.media.audio.common.types-V6-ndk_xiaomi.so",
             ],
             shared_libs: [
                 "libbinder_ndk",
@@ -507,7 +507,7 @@ cc_prebuilt_library_shared {
                 "android.hardware.bluetooth.audio-impl-qti",
                 "android.hardware.bluetooth.audio-V4-ndk",
                 "android.hardware.audio.core-V2-ndk",
-                "android.media.audio.common.types-V6-ndk",
+                "android.media.audio.common.types-V6-ndk_xiaomi",
                 "libaudioutils",
                 "libaudioaidlcommon",
                 "libbinder_ndk",
@@ -3241,7 +3241,7 @@ cc_prebuilt_library_shared {
                 "proprietary/vendor/lib64/libaudio_aidl_conversion_common_ndk_xiaomi.so",
             ],
             shared_libs: [
-                "android.media.audio.common.types-V6-ndk",
+                "android.media.audio.common.types-V6-ndk_xiaomi",
                 "android.hardware.audio.common-V3-ndk",
                 "liblog",
                 "libstagefright_foundation",
