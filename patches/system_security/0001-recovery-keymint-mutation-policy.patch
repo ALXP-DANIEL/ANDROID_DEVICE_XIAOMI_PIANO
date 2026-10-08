@@ -1,0 +1,107 @@
+diff --git a/keystore2/src/security_level.rs b/keystore2/src/security_level.rs
+index 1bb7496..50b4f8c 100644
+--- a/keystore2/src/security_level.rs
++++ b/keystore2/src/security_level.rs
+@@ -905,6 +905,49 @@ impl KeystoreSecurityLevel {
+     where
+         F: Fn(&[u8]) -> Result<T, Error>,
+     {
++        // Recovery SP KeyMint protection
++        //
++        // The recovery SP decrypt uses a database-backed AES-GCM key
++        // with the exact post-PURPOSE parameter set below. For this
++        // diagnostic boundary, call the existing-key operation once.
++        // Never call upgradeKey() or a compatibility import path.
++        let piano_sp_one_shot =
++            key_id_guard.is_some()
++                && params.len() == 5
++                && params.iter().any(|p| p.tag == Tag::ALGORITHM)
++                && params.iter().any(|p| p.tag == Tag::BLOCK_MODE)
++                && params.iter().any(|p| p.tag == Tag::PADDING)
++                && params.iter().any(|p| p.tag == Tag::NONCE)
++                && params.iter().any(|p| p.tag == Tag::MAC_LENGTH);
++
++        if piano_sp_one_shot {
++            log::info!(
++                "Recovery SP operation uses existing key blob only"
++            );
++
++            return match f(key_blob) {
++                Err(Error::Km(ErrorCode::KEY_REQUIRES_UPGRADE)) => {
++                    log::error!(
++                        "Recovery SP key requires upgrade; refusing operation"
++                    );
++                    Err(Error::Km(ErrorCode::KEY_REQUIRES_UPGRADE))
++                        .context(ks_err!("automatic SP key upgrade blocked"))
++                }
++
++                Err(Error::Km(ErrorCode::INVALID_KEY_BLOB)) => {
++                    log::error!(
++                        "Recovery SP key blob is invalid; refusing compatibility fallback"
++                    );
++                    Err(Error::Km(ErrorCode::INVALID_KEY_BLOB))
++                        .context(ks_err!("SP key compatibility fallback blocked"))
++                }
++
++                r => r
++                    .map(|v| (v, None))
++                    .context(ks_err!("recovery SP KeyMint operation")),
++            };
++        }
++
+         let (v, upgraded_blob) = crate::utils::upgrade_keyblob_if_required_with(
+             &*self.keymint,
+             self.hw_info.versionNumber,
+diff --git a/keystore2/src/utils.rs b/keystore2/src/utils.rs
+index 35290df..d0e3ef6 100644
+--- a/keystore2/src/utils.rs
++++ b/keystore2/src/utils.rs
+@@ -356,7 +356,32 @@ where
+     KmOp: Fn(&[u8]) -> Result<T, Error>,
+     NewBlobHandler: FnOnce(&[u8]) -> Result<()>,
+ {
++    // Recovery KeyMint mutation protection
++    //
++    // Diagnostic recovery must never mutate/upgrade/import an existing
++    // stock KeyMint blob. If begin() says that the blob needs upgrading,
++    // return that error to the caller without invoking upgradeKey().
++    //
++    // INVALID_KEY_BLOB compatibility conversion/import is blocked below
++    // for the same reason.
++    const RECOVERY_BLOCK_KEY_MUTATION: bool = true;
++
+     match km_op(key_blob) {
++        // KEY_REQUIRES_UPGRADE is answered by calling upgradeKey() and using the
++        // result for this operation only.
++        //
++        // This is not a mutation of the stock key. upgradeKey() returns a new
++        // blob in memory and leaves the on-disk blob untouched; whether that
++        // blob is ever written back is decided by the caller's
++        // new_blob_handler, and KeyStorage.cpp deliberately never persists it
++        // ("the installed system cannot open a blob rebound to a newer OS
++        // version or patch level"). Blocking the upgrade here as well was
++        // redundant, and it broke metadata decrypt outright once an OTA moved
++        // the security patch level: KeyMint asks for an upgraded blob, we
++        // refuse to produce one, and /data never unlocks.
++        //
++        // INVALID_KEY_BLOB conversion/import stays blocked below: that one IS
++        // a real mutation/import of foreign key material.
+         Err(Error::Km(ErrorCode::KEY_REQUIRES_UPGRADE)) => upgrade_keyblob_and_perform_op(
+             km_dev,
+             key_blob,
+@@ -364,6 +389,15 @@ where
+             km_op,
+             new_blob_handler,
+         ),
++        Err(Error::Km(ErrorCode::INVALID_KEY_BLOB))
++            if RECOVERY_BLOCK_KEY_MUTATION =>
++        {
++            log::error!(
++                "KeyMint compatibility fallback blocked in recovery"
++            );
++            Err(Error::Km(ErrorCode::INVALID_KEY_BLOB))
++                .context(ks_err!("KeyMint compatibility fallback blocked"))
++        }
+         Err(Error::Km(ErrorCode::INVALID_KEY_BLOB))
+             if km_dev_version >= KeyMintDevice::KEY_MINT_V1 =>
+         {
