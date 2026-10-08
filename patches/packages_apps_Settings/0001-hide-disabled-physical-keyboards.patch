@@ -1,0 +1,47 @@
+--- a/src/com/android/settings/inputmethod/InputPeripheralsSettingsUtils.java	2026-10-05 10:06:14
++++ b/src/com/android/settings/inputmethod/InputPeripheralsSettingsUtils.java	2026-10-05 10:06:16
+@@ -64,7 +64,7 @@
+             if (device == null) {
+                 continue;
+             }
+-            if (device.isFullKeyboard() && !device.isVirtual()) {
++            if (device.isFullKeyboard() && !device.isVirtual() && device.isEnabled()) {
+                 return true;
+             }
+         }
+--- a/src/com/android/settings/inputmethod/MouseKeysMainPageFragment.java	2026-10-05 10:06:12
++++ b/src/com/android/settings/inputmethod/MouseKeysMainPageFragment.java	2026-10-05 10:06:16
+@@ -251,7 +251,8 @@
+         InputDevice inputDevice = null;
+         for (int deviceId : InputDevice.getDeviceIds()) {
+             final InputDevice device = InputDevice.getDevice(deviceId);
+-            if (device == null || device.isVirtual() || !device.isFullKeyboard()) {
++            if (device == null || device.isVirtual() || !device.isFullKeyboard()
++                    || !device.isEnabled()) {
+                 continue;
+             }
+             if (inputDevice == null) {
+--- a/src/com/android/settings/inputmethod/PhysicalKeyboardA11yPreferenceController.java	2026-10-05 10:06:16
++++ b/src/com/android/settings/inputmethod/PhysicalKeyboardA11yPreferenceController.java	2026-10-05 10:06:16
+@@ -38,7 +38,8 @@
+     private static boolean isAnyHardKeyboardsExist() {
+         for (int deviceId : InputDevice.getDeviceIds()) {
+             final InputDevice device = InputDevice.getDevice(deviceId);
+-            if (device != null && !device.isVirtual() && device.isFullKeyboard()) {
++            if (device != null && !device.isVirtual() && device.isFullKeyboard()
++                    && device.isEnabled()) {
+                 return true;
+             }
+         }
+--- a/src/com/android/settings/inputmethod/PhysicalKeyboardFragment.java	2026-10-05 10:06:15
++++ b/src/com/android/settings/inputmethod/PhysicalKeyboardFragment.java	2026-10-05 10:06:16
+@@ -460,7 +460,8 @@
+         }
+         for (int deviceId : InputDevice.getDeviceIds()) {
+             final InputDevice device = InputDevice.getDevice(deviceId);
+-            if (device == null || device.isVirtual() || !device.isFullKeyboard()) {
++            if (device == null || device.isVirtual() || !device.isFullKeyboard()
++                    || !device.isEnabled()) {
+                 continue;
+             }
+             keyboards.add(new HardKeyboardDeviceInfo(
