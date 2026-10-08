@@ -1,0 +1,18 @@
+# DPM
+persist.vendor.dpm.feature=11
+
+# Audio
+ro.audio.ihaladaptervendorextension_enabled=true
+
+# LE Audio offload support is exported from system_ext in the stock product.
+ro.bluetooth.leaudio_offload.supported=true
+bluetooth.leaudio.dual_bidirection_swb.supported=true
+persist.bluetooth.leaudio.notify.idle.during.call=true
+
+# Match the stock Qualcomm HFP wideband codec policy. The Bluetooth stack and
+# the stock PAL aptX plug-in negotiate the actual codec with each headset, so
+# unsupported peers continue to fall back to LC3/mSBC/CVSD.
+bluetooth.hfp.swb.supported=true
+bluetooth.hfp.codec_aptx_voice.enabled=true
+
+# Radio
