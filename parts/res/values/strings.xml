@@ -21,11 +21,10 @@
         <item>Restore standard color of screen content with color calibration</item>
     </string-array>
     <string name="color_temperature_title">Color temperature</string>
-    <string-array name="color_level_titles">
-        <item>Warm</item>
-        <item>Standard</item>
-        <item>Cool</item>
-    </string-array>
+    <string name="color_level_custom">Custom</string>
+    <string name="color_level_standard">Standard</string>
+    <string name="color_level_warm">Warm</string>
+    <string name="color_level_cool">Cool</string>
     <string name="color_more_title">More</string>
     <string name="livedisplay_title">LiveDisplay</string>
     <string name="livedisplay_summary">Night color temperature schedule</string>
@@ -81,6 +80,8 @@
     <string name="thermal_game_summary">Allow more heat for higher sustained performance</string>
     <string name="touch_game_mode_summary">Faster touch response with less edge rejection</string>
     <string name="bypass_charging_summary">While plugged in, power the tablet from the charger and rest the battery</string>
+    <string name="charging_control_title">Charging control</string>
+    <string name="charging_control_summary">Limit charge level or charge to full by a set time</string>
     <string name="keyboard_cover_title">Keyboard cover settings</string>
     <string name="keyboard_layout_title">Shortcuts, layout and pointer</string>
     <string name="keyboard_layout_summary">Keyboard shortcuts, layouts, pointer speed and scrolling</string>
