@@ -1,0 +1,10 @@
+# Xiaomi character devices that stock leaves without a usable label.
+
+# /dev/miev: Xiaomi event reporting, written by the camera, fingerprint and
+# Weaver HALs.
+type miev_device, dev_type;
+allow { hal_camera_default hal_fingerprint_default vendor_hal_weaver_default } miev_device:chr_file rw_file_perms;
+
+# /dev/io_monitor: read by the hypsys logging service.
+type io_monitor_device, dev_type;
+allow hal_hypsys_vendor io_monitor_device:chr_file rw_file_perms;

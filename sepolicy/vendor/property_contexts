@@ -1,0 +1,22 @@
+vendor.piano.persist.ready u:object_r:vendor_piano_persist_ready_prop:s0 exact bool
+
+# Ported from the Global 304 vendor and odm policy.
+vendor.video.scene.recognition          u:object_r:vendor_video_mi_prop:s0
+vendor.video.jpegopt.enable             u:object_r:vendor_video_mi_prop:s0
+vendor.video.voipcapture.forceon          u:object_r:vendor_video_mi_prop:s0
+persist.vendor.video.vpp.json.broken          u:object_r:vendor_video_mi_prop:s0
+ro.hardware.wlan.       u:object_r:vendor_wlan_chip_prop:s0
+vendor.ffu.is.valid     u:object_r:vendor_ffu_prop:s0
+vendor.ffu.is.start     u:object_r:vendor_ffu_prop:s0
+vendor.ddr_freq.is.valid     u:object_r:vendor_ddr_freq_prop:s0
+persist.vendor.memory.fbo2status        u:object_r:vendor_fbo_prop:s0
+persist.vendor.batteryantiaging     u:object_r:vendor_batteryantiaging_prop:s0
+ro.vendor.video.codecmanager.enable         u:object_r:vendor_video_mi_prop:s0
+ro.vendor.codec.resourcectl.enable          u:object_r:vendor_video_mi_prop:s0
+ro.vendor.video.freshmanager.enable         u:object_r:vendor_video_mi_prop:s0
+vendor.miwild.enabled u:object_r:vendor_miwild_prop:s0
+vendor.minetd.enabled u:object_r:vendor_minetd_prop:s0
+
+# mi_thermald
+vendor.sys.thermal.bcl.  u:object_r:vendor_thermal_normal_prop:s0
+ro.vendor.piano.body_color u:object_r:vendor_piano_body_color_prop:s0 exact string

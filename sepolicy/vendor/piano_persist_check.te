@@ -1,0 +1,7 @@
+type piano_persist_check, domain;
+type piano_persist_check_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(piano_persist_check)
+allow piano_persist_check vendor_shell_exec:file rx_file_perms;
+allow piano_persist_check vendor_toolbox_exec:file rx_file_perms;
+allow piano_persist_check proc_mounts:file r_file_perms;
+set_prop(piano_persist_check, vendor_piano_persist_ready_prop)
