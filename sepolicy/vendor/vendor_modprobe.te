@@ -1,0 +1,3 @@
+# Qualcomm's vendor module loader resolves module/block-device dependencies
+# through /dev/block. It only needs to inspect and traverse the directory.
+allow vendor_modprobe block_device:dir { getattr search };
