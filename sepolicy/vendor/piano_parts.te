@@ -1,0 +1,33 @@
+# PianoParts runs as system_app: it sends the screen rotation to TouchFeature
+# switches the mi_thermald profile and the DisplayFeature reading mode.
+hal_client_domain(system_app, hal_touchfeature_xiaomi)
+binder_call(system_app, hal_touchfeature_xiaomi_default)
+allow system_app sysfs_thermal:dir search;
+allow system_app sysfs_thermal:file rw_file_perms;
+hal_client_domain(system_app, vendor_hal_displayfeature_xiaomi)
+# Pen battery popup: read the charger's REVERSE_PEN_SOC uevents.
+allow system_app self:netlink_kobject_uevent_socket { create bind read setopt getopt };
+# Bypass charging tile: the smart_chg node.
+allow system_app vendor_sysfs_qcom_battery:dir search;
+allow system_app vendor_sysfs_qcom_battery:file rw_file_perms;
+# Keyboard cover: talk to the keyboard nanoapp HAL, which calls back with
+# replies, and follow the caps lock LED of the keyboard input device.
+allow system_app hal_keyboardnanoapp_service:service_manager find;
+binder_call(system_app, nanoapp_aidl)
+binder_call(nanoapp_aidl, system_app)
+allow system_app sysfs_leds:dir r_dir_perms;
+allow system_app sysfs:dir r_dir_perms;
+allow system_app sysfs:lnk_file read;
+# The keyboard cover's HID device (0006:15D9:00A3.xxxx) and its LEDs, labelled
+# so that reading them does not need access to all of sysfs.
+type vendor_sysfs_pogo_keyboard, sysfs_type, fs_type;
+allow system_app vendor_sysfs_pogo_keyboard:dir r_dir_perms;
+allow system_app vendor_sysfs_pogo_keyboard:file r_file_perms;
+allow system_app vendor_sysfs_pogo_keyboard:lnk_file read;
+# system_server reads the keyboard cover's input device (sysfs) as well.
+allow system_server vendor_sysfs_pogo_keyboard:dir r_dir_perms;
+allow system_server vendor_sysfs_pogo_keyboard:file r_file_perms;
+allow system_server vendor_sysfs_pogo_keyboard:lnk_file read;
+# Desktop mode tile: the same property the developer option writes (the
+# platform neverallow lets it be set on userdebug and eng builds only).
+userdebug_or_eng(`set_prop(system_app, persist_wm_debug_prop)')

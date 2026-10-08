@@ -1,0 +1,25 @@
+# Xiaomi OTrP agent (stock odm service), ported from the Global 304 policy.
+hal_attribute(otrpagent)
+
+type hal_otrpagent_default, domain;
+hal_server_domain(hal_otrpagent_default, hal_otrpagent)
+type hal_otrpagent_default_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(hal_otrpagent_default)
+
+type hal_otrpagent_service, hal_service_type, service_manager_type;
+add_service(hal_otrpagent_server, hal_otrpagent_service)
+binder_call(hal_otrpagent_client, hal_otrpagent_server)
+binder_call(hal_otrpagent_server, servicemanager)
+
+type otrp_data_file, file_type, data_file_type;
+
+allow hal_otrpagent_default { system_app platform_app untrusted_app_all hal_mtdservice_default }:fd use;
+allow hal_otrpagent_default init:unix_stream_socket connectto;
+allow hal_otrpagent_default { ion_device tee_device }:chr_file rw_file_perms;
+allow hal_otrpagent_default { vendor_dmabuf_qseecom_heap_device vendor_dmabuf_qseecom_ta_heap_device }:chr_file r_file_perms;
+r_dir_file(hal_otrpagent_default, firmware_file)
+allow hal_otrpagent_default mnt_vendor_file:dir create_dir_perms;
+allow hal_otrpagent_default ta_data_file:dir rw_dir_perms;
+allow hal_otrpagent_default ta_data_file:file rw_file_perms;
+allow tee otrp_data_file:dir create_dir_perms;
+allow tee otrp_data_file:file create_file_perms;

@@ -1,0 +1,9 @@
+# Reads the body colour code from persist; init then points
+# ro.config.wallpaper at the matching stock wallpaper.
+type piano_body_color, domain;
+type piano_body_color_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(piano_body_color)
+allow piano_body_color vendor_shell_exec:file rx_file_perms;
+allow piano_body_color vendor_toolbox_exec:file rx_file_perms;
+r_dir_file(piano_body_color, mnt_vendor_file)
+set_prop(piano_body_color, vendor_piano_body_color_prop)

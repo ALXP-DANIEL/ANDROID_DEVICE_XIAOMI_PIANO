@@ -1,0 +1,55 @@
+/vendor/bin/piano-persist-check\.sh u:object_r:piano_persist_check_exec:s0
+# Existing Qualcomm labels cover sda and sde; cover every other whole LUN too.
+/dev/block/sd[b-df-z] u:object_r:vendor_gpt_block_device:s0
+
+# Ported from the Global 304 vendor and odm policy.
+/(vendor|system/vendor)/bin/ffu                  		u:object_r:ffu_exec:s0
+/(vendor|system/vendor)/bin/minetd u:object_r:minetd_exec:s0
+/(vendor|system/vendor)/bin/ddr_freq                  		u:object_r:ddr_freq_exec:s0
+/(vendor|odm|system/vendor)/etc/charger(/.*)?       u:object_r:batteryantiaging_cfg_file:s0
+/(odm|vendor/odm|vendor|system/vendor)/bin/ntag_tool           u:object_r:vendor_ntagtool_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor.xiaomi.hardware.fbo-service     u:object_r:hal_fbo_default_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor.xiaomi.hardware.mimd2-service      u:object_r:hal_mimd_default_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor.xiaomi.aidl.minet@1.0-service u:object_r:hal_minetaidlservice_default_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor\.xiaomi\.aidl\.miwill\@1\.0-service u:object_r:hal_miwillservice_default_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor.xiaomi.hardware.miperf2-service     u:object_r:hal_miperf_default_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor.xiaomi.hardware.cld_aidl-service     u:object_r:hal_cld_default_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor\.xiaomi\.hardware\.videoservice-service      u:object_r:hal_videoservice_default_exec:s0
+/(odm|vendor/odm|system/vendor)/bin/vendor\.xiaomi\.hardware\.mikeybag-service     u:object_r:hal_mikeybag_default_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor.xiaomi.hardware.batteryantiaging-service     u:object_r:hal_batteryantiaging_default_exec:s0
+/(odm|system/odm|vendor|system/vendor)/bin/hw/vendor\.xiaomi\.hardware\.dtool1-service                 u:object_r:vendor_dtool_exec:s0
+/(odm|vendor/odm|vendor|system/vendor)/bin/hw/vendor\.xiaomi\.hardware\.keyboardnanoapp_aidl-service   u:object_r:nanoapp_aidl_exec:s0
+/data/vendor/ffu(/.*)?                                u:object_r:ffu_data_file:s0
+/data/vendor/miperf(/.*)?                           u:object_r:miperf_data_file:s0
+/data/vendor/ddr_freq(/.*)?                                u:object_r:ddr_freq_data_file:s0
+/data/vendor/batteryantiaging(/.*)?     u:object_r:batteryantiaging_cache_file:s0
+/sys/devices/platform/soc/1d84000.ufshc/ufseua(/.*)?    u:object_r:sysfs_memory:s0
+/sys/devices/platform/soc/1d84000.ufshc/ufssnapshot(/.*)?  u:object_r:sysfs_memory:s0
+/sys/devices/platform/soc/1d84000.ufshc/ufs_monitor(/.*)?  u:object_r:sysfs_memory:s0
+/sys/devices/platform/soc/112b0000.ufshci/ufseua(/.*)?  u:object_r:sysfs_memory:s0
+/sys/devices/platform/soc/16810000.ufshci/ufseua(/.*)?  u:object_r:sysfs_memory:s0
+/sys/devices/platform/soc/112b0000.ufshci/ufssnapshot(/.*)?  u:object_r:sysfs_memory:s0
+/sys/devices/platform/soc/16810000.ufshci/ufssnapshot(/.*)?  u:object_r:sysfs_memory:s0
+/dev/fm-ntag                                     u:object_r:ntag_device:s0
+/dev/nanodev0                                                                                      u:object_r:nano_device:s0
+/dev/nxp-ntag                                    u:object_r:ntag_device:s0
+/dev/socket/miwild u:object_r:miwild_socket:s0
+/dev/socket/minetd u:object_r:minetd_socket:s0
+/dev/block/by-name/ffu                             u:object_r:ffu_partition:s0
+/dev/block/by-name/mem                             u:object_r:mem_partition:s0
+/dev/block/by-name/gsort                                            u:object_r:gsort_block_device:s0
+/dev/block/by-name/bk_07                             u:object_r:ffu_partition:s0
+/sys/module/perf_helper/mimd/mimdtrigger                                        u:object_r:sysfs_mimdtrigger:s0
+/sys/devices/system/cpu/bus_dcvs/DDR/cur_freq       u:object_r:sysfs_memory:s0
+/(odm|vendor/odm)/bin/hw/android\.hardware\.weaver           u:object_r:vendor_hal_weaver_default_exec:s0
+/(odm|vendor/odm)/bin/hw/dvs-aidl-service                    u:object_r:dvs_aidl_default_exec:s0
+/(odm|vendor|vendor/odm)/bin/hw/vendor\.qti\.hardware\.lights\.service u:object_r:hal_light_default_exec:s0
+
+# Xiaomi character devices
+/dev/miev          u:object_r:miev_device:s0
+/dev/io_monitor    u:object_r:io_monitor_device:s0
+/dev/metis_link    u:object_r:migt_dev:s0
+/vendor/bin/piano-body-color\.sh u:object_r:piano_body_color_exec:s0
+/(odm|vendor/odm)/bin/vendor\.xiaomi\.hardware\.otrpagent@2\.0-service u:object_r:hal_otrpagent_default_exec:s0
+/data/vendor/otrp(/.*)?                                  u:object_r:otrp_data_file:s0
+/vendor/bin/hw/vendor\.lineage\.livedisplay-service\.piano u:object_r:hal_lineage_livedisplay_piano_exec:s0
