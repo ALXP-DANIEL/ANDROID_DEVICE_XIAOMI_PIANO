@@ -1,0 +1,98 @@
+name: UEFI Builder (piano)
+
+# Xiaomi Pad 8 Pro (piano) UEFI: the Mu-Silicium firmware, the boot menu
+# that runs before the kernel, and an ESP with the Visor boot manager. The
+# sources are on the uefi branch; see its README.
+#
+# Run it from the Actions tab. The wallpaper is picked here: a link, files
+# from tools/esp/wallpapers on the uefi branch, or none for Visor's own look.
+
+on:
+  workflow_dispatch:
+    inputs:
+      WALLPAPER_URL:
+        description: "Wallpaper image link (optional; becomes the default)"
+        required: false
+        default: ""
+      WALLPAPER:
+        description: "Wallpapers from tools/esp/wallpapers: all, none, or file names separated by spaces"
+        required: true
+        default: "all"
+      ACCENT:
+        description: "Colors taken from the wallpaper (off = fixed blue)"
+        type: choice
+        required: true
+        default: "tonal"
+        options: [tonal, neutral, content, fidelity, vibrant, expressive, monochrome, "off"]
+      REF:
+        description: "Branch to build"
+        required: true
+        default: "uefi"
+
+jobs:
+  build:
+    # arm64, like the Apple silicon hosts this is built on: Visor builds
+    # against the host's libc headers.
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.REF }}
+
+      - name: Set up Mu-Silicium
+        run: tools/setup-deps.sh
+
+      - name: Build the UEFI firmware
+        run: |
+          docker build -f docker/Dockerfile -t piano-uefi-build .
+          # The checkout belongs to the runner user, not the container's root.
+          docker run --rm -v "$PWD:/p" -w /p/deps/Mu-Silicium piano-uefi-build sh -c \
+            "git config --global --add safe.directory '*' && python3 build_uefi.py -d piano -r RELEASE"
+
+      - name: Build the boot menu
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -yq clang lld llvm imagemagick
+          make -C selector LLVM=/usr/bin LLD=/usr/bin
+
+      - name: Build the ESP
+        env:
+          WALLPAPER_URL: ${{ inputs.WALLPAPER_URL }}
+          WALLPAPER: ${{ inputs.WALLPAPER }}
+          ACCENT: ${{ inputs.ACCENT }}
+        run: |
+          set --
+          case $WALLPAPER in
+          all) for f in tools/esp/wallpapers/*; do
+                 case $f in *.md) ;; *) [ -f "$f" ] && set -- "$@" "$f" ;; esac
+               done ;;
+          none|"") ;;
+          *) for f in $WALLPAPER; do
+               [ -f "tools/esp/wallpapers/$f" ] || { echo "no tools/esp/wallpapers/$f"; exit 1; }
+               set -- "$@" "tools/esp/wallpapers/$f"
+             done ;;
+          esac
+          if [ -n "$WALLPAPER_URL" ]; then
+            mkdir -p /tmp/wallpaper
+            curl -fsSL -o /tmp/wallpaper/custom "$WALLPAPER_URL"
+            set -- /tmp/wallpaper/custom "$@"
+          fi
+          sudo chown -R "$USER" deps
+          tools/esp/make-esp.sh out/esp "$@"
+          conf=out/esp/EFI/visor/boot.conf
+          if [ "$ACCENT" = off ]; then
+            sed -i 's/^accent=.*/accent=0/' "$conf"
+          else
+            sed -i "s/^accent_variant=.*/accent_variant=$ACCENT/" "$conf"
+          fi
+          grep -E '^(theme|accent|accent_variant)=' "$conf"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: piano-uefi-${{ github.run_number }}
+          path: |
+            deps/Mu-Silicium/Mu-piano.img
+            out/selector.bin
+            out/esp

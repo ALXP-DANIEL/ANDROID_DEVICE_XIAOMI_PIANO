@@ -14,6 +14,7 @@ Android device trees for the Xiaomi Pad 8 Pro (SM8750).
 | `miuicamera-17` | `miuicamera-16` | MiuiCamera matching each stock generation |
 | `twrp` | `twrp` | TWRP recovery (shared) |
 | `ofox` | `ofox` | OrangeFox recovery (shared) |
+| `uefi` | `uefi` | UEFI firmware, boot menu and Visor (shared) |
 
 Android 16 branches only get fixes and monthly security updates. The shared
 branches are intended to be reused by compatible ROMs.
