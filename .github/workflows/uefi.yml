@@ -1,11 +1,12 @@
 name: UEFI Builder (piano)
 
-# Xiaomi Pad 8 Pro (piano) UEFI: the Mu-Silicium firmware, the boot menu
-# that runs before the kernel, and an ESP with the Visor boot manager. The
-# sources are on the uefi branch; see its README.
+# Xiaomi Pad 8 Pro (piano) UEFI: the Mu-Silicium firmware, the selector
+# that runs before the kernel, and an ESP with the Visor boot manager, as
+# recovery ZIPs that install it into any ROM's boot image. The sources are
+# on the uefi branch; see its README.
 #
-# Run it from the Actions tab. The wallpaper is picked here: a link, files
-# from tools/esp/wallpapers on the uefi branch, or none for Visor's own look.
+# Run it from the Actions tab. The look is picked here: a wallpaper link,
+# files from tools/esp/wallpapers on the uefi branch, or none for Visor's own.
 
 on:
   workflow_dispatch:
@@ -28,6 +29,14 @@ on:
         description: "Seconds before Visor starts the selected entry (-1 = wait, 0 = at once)"
         required: true
         default: "30"
+      DEFAULT:
+        description: "Entry selected when Visor opens (its title, e.g. Android or Arch Linux)"
+        required: true
+        default: "Android"
+      QUIET:
+        description: "Keep the chosen entry's icon on black while it starts, no boot log"
+        type: boolean
+        default: true
       REF:
         description: "Branch to build"
         required: true
@@ -55,7 +64,7 @@ jobs:
           docker run --rm -v "$PWD:/p" -w /p/deps/Mu-Silicium piano-uefi-build sh -c \
             "git config --global --add safe.directory '*' && python3 build_uefi.py -d piano -r RELEASE"
 
-      - name: Build the boot menu
+      - name: Build the selector
         run: |
           sudo apt-get update -q
           sudo apt-get install -yq clang lld llvm imagemagick
@@ -67,8 +76,11 @@ jobs:
           WALLPAPER: ${{ inputs.WALLPAPER }}
           ACCENT: ${{ inputs.ACCENT }}
           TIMEOUT: ${{ inputs.TIMEOUT }}
+          DEFAULT: ${{ inputs.DEFAULT }}
+          QUIET: ${{ inputs.QUIET }}
         run: |
           case $TIMEOUT in -1|[0-9]|[0-9][0-9]|[0-9][0-9][0-9]) ;; *) echo "bad TIMEOUT: $TIMEOUT"; exit 1 ;; esac
+          case $DEFAULT in *[!A-Za-z0-9\ ._-]*|"") echo "bad DEFAULT: $DEFAULT"; exit 1 ;; esac
           set --
           case $WALLPAPER in
           all) for f in tools/esp/wallpapers/*; do
@@ -94,11 +106,28 @@ jobs:
             sed -i "s/^accent_variant=.*/accent_variant=$ACCENT/" "$conf"
           fi
           sed -i "s/^timeout=.*/timeout=$TIMEOUT/" "$conf"
-          grep -E '^(timeout|theme|accent|accent_variant)=' "$conf"
+          sed -i "s/^default=.*/default=$DEFAULT/" "$conf"
+          sed -i "s/^quiet=.*/quiet=$([ "$QUIET" = true ] && echo 1 || echo 0)/" "$conf"
+          grep -E '^(timeout|default|quiet|theme|accent|accent_variant)=' "$conf"
 
+      - name: Build the recovery ZIPs
+        # The runner is arm64, so its own gcc builds the static injector.
+        run: |
+          sudo apt-get install -yq zip
+          CC=gcc tools/inject/make-zip.sh --esp out/esp deps/Mu-Silicium/Mu-piano.img \
+            out/piano-uefi-${{ github.run_number }}.zip
+
+      # Flash the ZIP in OrangeFox or TWRP; the -uninstall ZIP takes it out.
       - uses: actions/upload-artifact@v4
         with:
           name: piano-uefi-${{ github.run_number }}
+          path: |
+            out/piano-uefi-${{ github.run_number }}.zip
+            out/piano-uefi-${{ github.run_number }}-uninstall.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: piano-uefi-${{ github.run_number }}-parts
           path: |
             deps/Mu-Silicium/Mu-piano.img
             out/selector.bin
