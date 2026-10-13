@@ -24,6 +24,10 @@ on:
         required: true
         default: "tonal"
         options: [tonal, neutral, content, fidelity, vibrant, expressive, monochrome, "off"]
+      TIMEOUT:
+        description: "Seconds before Visor starts the selected entry (-1 = wait, 0 = at once)"
+        required: true
+        default: "30"
       REF:
         description: "Branch to build"
         required: true
@@ -62,7 +66,9 @@ jobs:
           WALLPAPER_URL: ${{ inputs.WALLPAPER_URL }}
           WALLPAPER: ${{ inputs.WALLPAPER }}
           ACCENT: ${{ inputs.ACCENT }}
+          TIMEOUT: ${{ inputs.TIMEOUT }}
         run: |
+          case $TIMEOUT in -1|[0-9]|[0-9][0-9]|[0-9][0-9][0-9]) ;; *) echo "bad TIMEOUT: $TIMEOUT"; exit 1 ;; esac
           set --
           case $WALLPAPER in
           all) for f in tools/esp/wallpapers/*; do
@@ -87,7 +93,8 @@ jobs:
           else
             sed -i "s/^accent_variant=.*/accent_variant=$ACCENT/" "$conf"
           fi
-          grep -E '^(theme|accent|accent_variant)=' "$conf"
+          sed -i "s/^timeout=.*/timeout=$TIMEOUT/" "$conf"
+          grep -E '^(timeout|theme|accent|accent_variant)=' "$conf"
 
       - uses: actions/upload-artifact@v4
         with:
