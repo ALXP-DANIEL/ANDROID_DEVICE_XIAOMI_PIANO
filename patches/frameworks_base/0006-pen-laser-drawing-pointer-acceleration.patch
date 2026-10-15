@@ -95,7 +95,7 @@
 +    /** Exact laser mouse device; -1 restores normal pointer acceleration. */
 +    void setPenLaserDrawingDevice(int deviceId);
 +
-     void setMousePointerAccelerationEnabled(int displayId, boolean enabled);
+     void setMouseScalingEnabled(int displayId, boolean enabled);
  
      void setMouseReverseVerticalScrollingEnabled(boolean enabled);
 @@ -415,6 +418,9 @@
@@ -105,7 +105,7 @@
 +        public native void setPenLaserDrawingDevice(int deviceId);
 +
 +        @Override
-         public native void setMousePointerAccelerationEnabled(int displayId, boolean enabled);
+         public native void setMouseScalingEnabled(int displayId, boolean enabled);
  
          @Override
 --- a/services/core/java/com/android/server/input/PianoPenLaserBridge.java
