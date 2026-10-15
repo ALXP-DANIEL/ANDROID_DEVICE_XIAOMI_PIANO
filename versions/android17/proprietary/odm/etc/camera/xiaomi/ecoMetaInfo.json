@@ -1,0 +1,636 @@
+/*
+注释:
+    配置说明:
+        meta类型:第一种：需要设置的meta，第二种：需要转换的meta,
+        meta操作阶段:config:配流，preview:预览，capture:拍照,
+    需要设置的meta:
+        MFNR_VENDOR:场景宏定义，定义在EcoJsonUtils.h中，COMMON代表不区分场景的meta:
+            Name:需要设置的meta字符串名称,
+            Value:需要设置的数值，字符串格式,多个数值用‘#’分割，如“24#24#42”代表3个数值
+            Type: 数值类型，Int:0,Long:1,Float:2,Double:3,String:4,Bool:5,Byte:6
+            Lens: meta长度
+    需要转换的meta:
+        MFNR_VENDOR:场景宏定义，定义在EcoJsonUtils.h中，COMMON代表不区分场景的meta:
+            Name:需要转换的meta字符串名称,
+            convertName:转换为对应的vendortag字符串名称,
+            Lens: meta长度,
+            Type: 数值类型，Int:0,Long:1,Float:2,Double:3,String:4,Bool:5,Byte:6
+*/
+{
+    "config":[
+        {"VID_SUPER_NIGHT":
+            [{
+                "Name":"android.control.videoStabilizationMode",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"android.control.aeTargetFpsRange",
+                "Value":"24#24",
+                "Type": 0,
+                "Lens": 2
+            },
+            {
+                "Name":"com.xiaomi.sessionparams.initAperture",
+                "Value":"1.42",
+                "Type": 2,
+                "Lens": 1
+            }]
+        },
+        {"VID_HDR":
+            [{
+                "Name":"org.codeaurora.qcamera3.sessionParameters.enableMFNR",
+                "Value":"1",
+                "Type": 0,
+                "Lens": 1
+            },
+	        {
+                "Name":"com.xiaomi.sessionparams.MiStreamUsecase",
+                "Value":"2",
+                "Type": 0,
+                "Lens": 1
+            },
+	        {
+                "Name":"com.xiaomi.sessionparams.EnableVideoHDR",
+                "Value":"1",
+                "Type": 0,
+                "Lens": 1
+            }]
+        },
+        {"VID_ANTI_SHAKE":
+            [{
+                "Name":"android.control.videoStabilizationMode",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"org.codeaurora.qcamera3.sessionParameters.EISMode",
+                "Value":"1",
+                "Type": 0,
+                "Lens": 1
+            }]
+        },
+        {"BOKEH_1X_REAR":
+            [{
+                "Name": "android.control.aeTargetFpsRange",
+                "Value": "12#24",
+                "Type": 0,
+                "Lens": 2
+            }]
+        },
+        {"BOKEH_2X_REAR":
+            [{
+                "Name": "android.control.aeTargetFpsRange",
+                "Value": "12#24",
+                "Type": 0,
+                "Lens": 2
+            }]
+        },
+        {"THIRD_JPEGR":
+            [{
+                "Name": "com.xiaomi.sessionparams.jpegrEnable",
+                "convertName":"com.xiaomi.camera.sdk.thirdJpegrEnabled",
+                "Lens": 1,
+                "Type": 6
+            }]
+        }
+    ],
+    "preview":[
+        {"COMMON":
+            [{
+                "Name":"com.xiaomi.algo.deviceOrientation",
+                "convertName":"xiaomi.device.orientation",
+                "Lens": 1,
+                "Type": 0
+            }]
+        },
+        {"VID_SUPER_NIGHT":
+            [{
+                "Name":"android.control.aeTargetFpsRange",
+                "Value":"24#24",
+                "Type": 0,
+                "Lens": 2
+            },
+            {
+                "Name":"com.xiaomi.lens.aperture",
+                "Value":"1.42",
+                "Type": 2,
+                "Lens": 1
+            },
+	        {
+                "Name":"com.xiaomi.lens.apertureMode",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"MFNR_VENDOR":
+            [{
+                "Name":"com.xiaomi.algo.mfnrEnable",
+                "convertName":"xiaomi.mfnr.enabled",
+                "Lens": 1,
+                "Type": 6
+            },
+            {
+                "Name":"com.xiaomi.customization.mfnr.frameNumber",
+                "Value":"5",
+                "Type": 0,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.mivi.supernight.mode",
+                "Value":"0",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"SUPER_NIGHT_REAR":
+            [{
+                "Name":"xiaomi.protraitrepair.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.mivi.supernight.mode",
+                "Value":"0",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"SUPER_NIGHT_FRONT":
+            [{
+                "Name":"com.xiaomi.algo.nightModeEnable",
+                "convertName":"xiaomi.supernight.enabled",
+                "Lens": 1,
+                "Type": 6
+            },
+            {
+                "Name":"xiaomi.protraitrepair.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"HDR_REAR":
+            [{
+                "Name":"com.xiaomi.algo.hdrMode",
+                "convertName":"xiaomi.hdr.enabled",
+                "Lens": 1,
+                "Type": 6
+            },
+            {
+                "Name":"xiaomi.protraitrepair.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrChecker.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrChecker.status",
+                "Value":"2",
+                "Type": 0,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrMode",
+                "Value":"2",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"HDR_FRONT":
+            [{
+                "Name":"com.xiaomi.algo.hdrMode",
+                "convertName":"xiaomi.hdr.enabled",
+                "Lens": 1,
+                "Type": 6
+            },
+            {
+                "Name":"xiaomi.protraitrepair.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrChecker.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrChecker.status",
+                "Value":"2",
+                "Type": 0,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrMode",
+                "Value":"2",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"BOKEH_1X_REAR":
+            [{
+                "Name": "android.control.aeTargetFpsRange",
+                "Value": "12#24",
+                "Type": 0,
+                "Lens": 2
+            },
+            {
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"BOKEH_2X_REAR":
+            [{
+                "Name": "android.control.aeTargetFpsRange",
+                "Value": "12#24",
+                "Type": 0,
+                "Lens": 2
+            },
+            {
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"BOKEH_FRONT":
+            [{
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"BEAUTY":
+            [{
+                "Name":"com.xiaomi.algo.beautySkinSmoothRatio",
+                "convertName":"xiaomi.beauty.skinSmoothRatio",
+                "Lens": 1,
+                "Type": 0
+            },
+            {
+                "Name":"com.xiaomi.algo.beautySlimFaceRatio",
+                "convertName":"xiaomi.beauty.slimFaceRatio",
+                "Lens": 1,
+                "Type": 0
+            }]
+        },
+        {"BEAUTY_REAR":
+            [{
+                "Name":"xiaomi.beauty.beautyMode",
+                "Value":"2",
+                "Type": 0,
+                "Lens": 1
+            }]
+        },
+        {"BEAUTY_FRONT":
+            [{
+                "Name":"xiaomi.beauty.beautyMode",
+                "Value":"1",
+                "Type": 0,
+                "Lens": 1
+            }]
+        },
+        {"DEPURPLE":
+            [{
+                "Name":"xiaomi.depurple.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"VID_BOKEH_REAR":
+            [{
+                "Name":"com.xiaomi.algo.videoBokehRearEnabled",
+                "convertName":"xiaomi.colorRetention.value",
+                "Lens": 1,
+                "Type": 0
+            },
+            {
+                "Name":"com.xiaomi.algo.videoBokehRearParam",
+                "convertName":"xiaomi.videoBokehParam.back",
+                "Lens": 1,
+                "Type": 0
+            }]
+        },
+        {"VID_BOKEH_FRONT":
+            [{
+                "Name":"com.xiaomi.algo.videoBokehFrontEnabled",
+                "convertName":"xiaomi.colorRetention.frontValue",
+                "Lens": 1,
+                "Type": 0
+            },
+            {
+                "Name":"com.xiaomi.algo.videoBokehFrontParam",
+                "convertName":"xiaomi.videoBokehParam.front",
+                "Lens": 1,
+                "Type": 2
+            }]
+        },
+        {"VID_ANTI_SHAKE":
+            [{
+                "Name":"android.control.videoStabilizationMode",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.app.module",
+                "Value":"162",
+                "Type": 0,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.satIsZooming.satIsZooming",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"VID_ANTI_SHAKE_V3":
+            [{
+                "Name":"android.control.videoStabilizationMode",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"com.xiaomi.algo.videoControl",
+                "convertName":"xiaomi.video.recordControl",
+                "Lens": 1,
+                "Type": 0
+            }]
+        },
+        {"VID_BEAUTY":
+            [{
+                "Name":"com.xiaomi.algo.beautySkinSmoothRatio",
+                "convertName":"xiaomi.beauty.skinSmoothRatio",
+                "Lens": 1,
+                "Type": 0
+            },
+            {
+                "Name":"com.xiaomi.algo.beautySlimFaceRatio",
+                "convertName":"xiaomi.beauty.slimFaceRatio",
+                "Lens": 1,
+                "Type": 0
+            },
+            {
+                "Name":"xiaomi.beauty.beautyMode",
+                "Value":"2",
+                "Type": 0,
+                "Lens": 1
+            }]
+        },
+        {"VID_HDR10":
+            [{
+                "Name":"com.xiaomi.algo.hdrVideoMode",
+                "convertName":"org.quic.camera2.streamconfigs.HDRVideoMode",
+                "Lens": 1,
+                "Type": 6
+            }]
+        },
+        {"THIRD_JPEGR":
+            [{
+                "Name": "com.xiaomi.sessionparams.jpegrEnable",
+                "convertName":"com.xiaomi.camera.sdk.thirdJpegrEnabled",
+                "Lens": 1,
+                "Type": 6
+            }]
+        }
+    ],
+    "capture":[
+        {"COMMON":
+            [{
+                "Name":"com.xiaomi.algo.deviceOrientation",
+                "convertName":"xiaomi.device.orientation",
+                "Lens": 1,
+                "Type": 0
+            },
+            {
+                "Name":"android.control.enableZsl",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"MFNR_VENDOR":
+            [{
+                "Name":"com.xiaomi.algo.mfnrEnable",
+                "convertName":"xiaomi.mfnr.enabled",
+                "Lens": 1,
+                "Type": 6
+            },
+            {
+                "Name":"com.xiaomi.customization.mfnr.frameNumber",
+                "Value":"5",
+                "Type": 0,
+                "Lens": 1
+            }]
+        },
+        {"SUPER_NIGHT_REAR":
+            [{
+                "Name":"xiaomi.protraitrepair.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.mivi.supernight.mode",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"SUPER_NIGHT_FRONT":
+            [{
+                "Name":"com.xiaomi.algo.nightModeEnable",
+                "convertName":"xiaomi.supernight.enabled",
+                "Lens": 1,
+                "Type": 6
+            },
+            {
+                "Name":"xiaomi.protraitrepair.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"HDR_REAR":
+            [{
+                "Name":"com.xiaomi.algo.hdrMode",
+                "convertName":"xiaomi.hdr.enabled",
+                "Lens": 1,
+                "Type": 6
+            },
+            {
+                "Name":"xiaomi.protraitrepair.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrChecker.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrChecker.status",
+                "Value":"2",
+                "Type": 0,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrMode",
+                "Value":"2",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"HDR_FRONT":
+            [{
+                "Name":"com.xiaomi.algo.hdrMode",
+                "convertName":"xiaomi.hdr.enabled",
+                "Lens": 1,
+                "Type": 6
+            },
+            {
+                "Name":"xiaomi.protraitrepair.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrChecker.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrChecker.status",
+                "Value":"2",
+                "Type": 0,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.hdr.hdrMode",
+                "Value":"2",
+                "Type": 6,
+                "Lens": 1
+            },
+            {
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"BOKEH_1X_REAR":
+            [{
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"BOKEH_2X_REAR":
+            [{
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"BOKEH_FRONT":
+            [{
+                "Name":"xiaomi.asd.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"BEAUTY":
+            [{
+                "Name":"com.xiaomi.algo.beautySkinSmoothRatio",
+                "convertName":"xiaomi.beauty.skinSmoothRatio",
+                "Lens": 1,
+                "Type": 0
+            },
+            {
+                "Name":"com.xiaomi.algo.beautySlimFaceRatio",
+                "convertName":"xiaomi.beauty.slimFaceRatio",
+                "Lens": 1,
+                "Type": 0
+            }]
+        },
+        {"BEAUTY_REAR":
+            [{
+                "Name":"xiaomi.beauty.beautyMode",
+                "Value":"2",
+                "Type": 0,
+                "Lens": 1
+            }]
+        },
+        {"BEAUTY_FRONT":
+            [{
+                "Name":"xiaomi.beauty.beautyMode",
+                "Value":"1",
+                "Type": 0,
+                "Lens": 1
+            }]
+        },
+        {"DEPURPLE":
+            [{
+                "Name":"xiaomi.depurple.enabled",
+                "Value":"1",
+                "Type": 6,
+                "Lens": 1
+            }]
+        },
+        {"THIRD_JPEGR":
+            [{
+                "Name": "com.xiaomi.sessionparams.jpegrEnable",
+                "convertName":"com.xiaomi.camera.sdk.thirdJpegrEnabled",
+                "Lens": 1,
+                "Type": 6
+            }]
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+[
+    {
+        "TrdCloudType":"Froce3rdEISEnable",
+        "Mode": 1,
+        "ApkTable" :["com.ss.android.ugc.aweme.shortvideo.ui.VideoRecordNewActivity",
+                     "com.ss.android.ugc.aweme.live.LiveBroadcastActivity",
+                     "com.kuaishou.live.anchor.basic.activity.LivePushActivity",
+                     "com.yxcorp.gifshow.camera.record.CameraActivity"]
+    }
+]

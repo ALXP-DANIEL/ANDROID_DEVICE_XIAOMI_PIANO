@@ -1,0 +1,462 @@
+{
+    "QuickviewSupport": 1,
+    "MaxMFNRCount":[3,3],//MFNR并行任务
+    "HighQualityQuickShotSupport":["0x343DFF7","0x343DFF7"],//[低端,高端]
+    "QuickShotDelayTimeMask":"0x208022202222020",
+    //上述mask含义详见：https://xiaomi.f.mioffice.cn/docx/doxk4Q8hPhEZxf39m0KwV1uiiDc
+    "DevCondition":{ //触发资源应急
+        "PSIStressNum":30,
+        "PhtType":"0x26",//[1,2,5] 10 0110    Photographer_HDR = 1, Photographer_SR = 2, Photographer_HDRSR = 5,
+        "PSI":0//psi触发转B2Y
+    },
+    "SpecialPerf":[
+        {
+            "PerfIndic":0,
+            "SupportType":[9],
+            "ShutterIndex":[0]
+        },
+        {
+            "PerfIndic":1,//关键字 0 S2S  \  1 S2G
+            "SupportType":[3],//夜景
+            "ShutterIndex":[0]  //0：第一帧   1：最后一帧
+        }
+    ],
+    "PhotographerInfoMap":[
+        {
+            //原模式：SIMPLE
+            "PhtType":[0],
+            "SupportAnchorQuickview":true,
+            "MihalDefaultAnchorOffset":0
+        },
+        {
+            //MIVIFull 0001 \MFNRFull 0010 \mihalmfnrfull 0100\quickshot 1000
+            //原模式：hdr
+            "PhtType":[1],
+            "SupportAnchorQuickview":false,
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[1,3],//后处理任务数
+                "PSILimitB2Y":40.0,
+                "QuickShotTypeUpdate":
+                [
+                    {
+                        "NewType":[0],//切B2Y
+                        "NewFrames":[1],
+                        "Condition"://条件
+                        {
+                            "DevVersion":0,//0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x400",// highmemoryPressure
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    },
+                    {
+                        "NewType":[8,9],//切MFNR (vendor/mihal)
+                        "NewFrames":[1,5],// (vendor  1 ,mihal 5)根据是否上移决定
+                        "Condition"://条件
+                        {
+                            "DevVersion":2,//0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x09",// MIVIFull 触发 （0001）
+                            "ConditionCam":0 //0rear 1front 2无限制
+                        }
+                    },
+                    {
+                        "NewType":[8,9],//切MFNR (vendor/mihal)
+                        "NewFrames":[1,5],// (vendor  1 ,mihal 5)根据是否上移决定
+                        "Condition"://条件
+                        {
+                            "DevVersion":2,//0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x09",// QuickClick || MIVIFull 触发 （1001）
+                            "ConditionCam":1 //0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            //原模式：sr
+            "PhtType":[2],
+            "SupportAnchorQuickview":true,
+            "QuickShotConfig"://触发条件
+            {
+                "ZoomRatio":[0.0,9.9],
+                "MaxMIVICount":[3,3],//后处理任务数
+                "QuickShotTypeUpdate":
+                [
+                    {
+                        "NewType":[8,9],//切MFNR (vendor/mihal)
+                        "NewFrames":[1,5],// (vendor  1 ,mihal 5)根据是否上移决定
+                        "Condition"://条件
+                        {
+                            "DevVersion":2, //0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x09",// QuickClick || MIVIFull 触发 （1001）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            //原模式：hdrsr
+            "PhtType":[5],
+            "SupportAnchorQuickview":false,
+            "QuickShotConfig"://触发条件
+            {
+                "ZoomRatio":[0.0,9.9],
+                "MaxMIVICount":[2,2],//后处理任务数
+                "QuickShotTypeUpdate":
+                [
+                   {
+                        "NewType":[8,9],//切MFNR (vendor/mihal)
+                        "NewFrames":[1,5],// (vendor  1 ,mihal 5)根据是否上移决定
+                        "Condition"://条件
+                        {
+                            "DevVersion":2, //0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x09",// MIVIFull || QuickClick 触发 （1001）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+			}
+        },
+	    {
+            //原模式：sn
+            "PhtType":[3],
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[3,3],//后处理任务数
+                "QuickShotTypeUpdate":
+                [
+                    {
+                        "NewType":[8,9],//根据是否 上移决定
+                        "NewFrames":[1,5],
+                        "Condition":
+                        {
+                            "DevVersion":2,
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x08", // QuickClick （1000）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+			}
+        },
+        {
+            "PhtType":[8],//vendor mfnr
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[3,3],//后处理任务数
+                "QuickShotTypeUpdate":
+                [
+                   {
+                        "NewType":[0],//根据是否 上移决定
+                        "NewFrames":[1],
+                        "Condition":
+                        {
+                            "DevVersion":2,
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x02", // VendorMfnrFull 触发 （0010）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "PhtType":[9],//mihal mfnr
+            "SupportAnchorQuickview":true,
+            "SupportAttachPreview":true,
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[1,3],//后处理任务数
+                "PSILimitB2Y":40.0,
+                "QuickShotTypeUpdate":
+                [
+                    {
+                        "NewType":[0],//切B2Y
+                        "NewFrames":[1],
+                        "Condition":
+                        {
+                            "DevVersion":2, //0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x400",// MihalMFNRFull （0100）&& highmemoryPressure
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    },
+                    {
+                        "NewType":[9],//不切
+                        "NewFrames":[5],//设置为5帧
+                        "Condition":
+                        {
+                            "DevVersion":2, //0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x08",// AppQuickSnapshot （1000）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            //原模式：bokeh hdr
+            "PhtType":[12],
+            "SupportAnchorQuickview":false,
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[2,2],//后处理任务数
+                "QuickShotTypeUpdate":
+                [
+                    {
+                        "NewType":[43],//切bokeh ainr
+                        "NewFrames":[6],
+                        "Condition":
+                        {
+                            "DevVersion":2,
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x09",// QuickClick || MIVIFull 触发 （1001）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            //原模式：bokeh mihal mfnr
+            "PhtType":[16],
+            "SupportAnchorQuickview":true
+        },
+        {
+            //原模式：single bokeh mihal mfnr
+            "PhtType":[18],
+            "SupportAnchorQuickview":true,
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[1,3],//后处理任务数
+                "PSILimitB2Y":40.0,
+                "QuickShotTypeUpdate":
+                [
+                    {
+                        "NewType":[0],//切B2Y
+                        "NewFrames":[1],//设置为1帧
+                        "Condition":
+                        {
+                            "DevVersion":2, //0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x400",// highmemoryPressure （100 0000 0000）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    },
+                    {
+                        "NewType":[18],//不切
+                        "NewFrames":[3],
+                        "Condition":
+                        {
+                            "DevVersion":2,
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x09",// QuickClick || MIVIFull 触发 （1001）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            //原模式：ainr
+            "PhtType":[22],
+            "SupportAnchorQuickview":true,
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[3,3],//后处理任务数
+                "QuickShotTypeUpdate":
+                [
+                   {
+                        "NewType":[8,9],//根据是否 上移决定
+                        "NewFrames":[1,5],
+                        "Condition":
+                        {
+                            "DevVersion":2,
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x08", // QuickClick （1000）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            //原模式：hd upscale
+            "PhtType":[24],
+            "SupportAnchorQuickview":true,
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[-1,-1],//后处理任务数，超清没有用到这个条件
+                "QuickShotTypeUpdate":
+                [
+                    {
+                        "NewType":[24],//不切
+                        "NewFrames":[5],//设置为5帧
+                        "Condition":
+                        {
+                            "DevVersion":2, //0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x08",// QuickClick （1000）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            //原模式：single bokeh hdr
+            "PhtType":[34],
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[1,3],//后处理任务数
+                "PSILimitB2Y":40.0,
+                "QuickShotTypeUpdate":
+                [
+                    {
+                        "NewType":[0],//切B2Y
+                        "NewFrames":[1],//设置为1帧
+                        "Condition":
+                        {
+                            "DevVersion":2, //0低端 1高端  2无限制
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x400",// highmemoryPressure （100 0000 0000）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    },
+                    {
+                        "NewType":[18],//切single bokeh mfnr
+                        "NewFrames":[3],
+                        "Condition":
+                        {
+                            "DevVersion":2,
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x09",// QuickClick || MIVIFull 触发 （1001）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            //原模式：bokeh sr
+            "PhtType":[44],
+            "SupportAnchorQuickview":true
+        },
+        {
+            //原模式：bokeh snsc
+            "PhtType":[45],
+            "SupportAnchorQuickview":false
+        },
+        {
+            //原模式：bokeh hdsr
+            "PhtType":[46],
+            "SupportAnchorQuickview":true,
+            "QuickShotConfig"://触发条件
+            {
+                "MaxMIVICount":[2,2],//后处理任务数
+                "QuickShotTypeUpdate":
+                [
+                    {
+                        "NewType":[44],//切bokeh sr
+                        "NewFrames":[8],
+                        "Condition":
+                        {
+                            "DevVersion":2,
+                            "ConditionType":1,//或
+                            "ConditionInc":"0x09",// QuickClick || MIVIFull 触发 （1001）
+                            "ConditionCam":2 // 0rear 1front 2无限制
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            //原模式：Smart AE
+            "PhtType":[40],
+            "SupportAttachPreview":true
+        },
+        {
+            //原模式：Bokeh Smart AE
+            "PhtType":[41],
+            "SupportAttachPreview":true
+        },
+        {
+            //原模式：bokeh ainr
+            "PhtType":[43],
+            "SupportAnchorQuickview":true
+        }
+    ],
+    "QuickShotChangeInfoMap":[
+        {
+            //默认模式：抓拍+HDR
+            "PhtType":1,
+            "RoleId":0,
+            "needMotionCap":true,
+            "TargetPhtType":22, // AINR
+            "TargetMultiFrameNum":6
+        },
+        {
+            //默认模式：非抓拍+HDR
+            "PhtType":1,
+            "RoleId":0,
+            "needMotionCap":false,
+            "TargetPhtType":9, // MFNR
+            "TargetMultiFrameNum":8
+        },
+        {
+            //默认模式：抓拍+HDSR
+            "PhtType":5,
+            "RoleId":0,
+            "needMotionCap":true,
+            "TargetPhtType":2, // SR
+            "TargetMultiFrameNum":8
+        },
+        {
+            //默认模式：非抓拍+HDSR
+            "PhtType":5,
+            "RoleId":0,
+            "needMotionCap":false,
+            "TargetPhtType":2, // SR
+            "TargetMultiFrameNum":8
+        },
+        {
+            //人像模式：抓拍+人像HDR
+            "PhtType":12,
+            "RoleId":61,
+            "needMotionCap":true,
+            "TargetPhtType":43, // 人像AINR
+            "TargetMultiFrameNum":6
+        },
+        {
+            //人像模式：非抓拍+人像HDR
+            "PhtType":12,
+            "RoleId":61,
+            "needMotionCap":false,
+            "TargetPhtType":43, // 人像AINR
+            "TargetMultiFrameNum":6
+        },
+        {
+            //人像模式：抓拍+人像HDSR
+            "PhtType":46,
+            "RoleId":61,
+            "needMotionCap":true,
+            "TargetPhtType":44, // 人像SR
+            "TargetMultiFrameNum":8
+        },
+        {
+            //人像模式：非抓拍+人像HDSR
+            "PhtType":46,
+            "RoleId":61,
+            "needMotionCap":false,
+            "TargetPhtType":44, // 人像SR
+            "TargetMultiFrameNum":8
+        }
+    ]
+}

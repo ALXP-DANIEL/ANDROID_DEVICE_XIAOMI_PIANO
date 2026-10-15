@@ -1,0 +1,88 @@
+{
+  "PipelineName": "SimplePreview",
+  "NodesList": {
+      "Node": [
+          {
+              "NodeName": "com.xiaomi.plugin.offlineyuvsplit",
+              "NodeInstance": "Y2YSplitInstance1",
+              "NodeProperty":[
+                {
+                     "NodePropertyName":"NodeMask",
+                     "NodePropertyValue":4
+                }
+              ]
+          },
+          {
+            "NodeName": "com.xiaomi.plugin.previewldc",
+            "NodeInstance": "FrontLDCInstance0"
+          },
+          {
+            "NodeName": "com.xiaomi.plugin.arcskinbeautifierpreview",
+            "NodeInstance": "SkinBeautifierInstance0"
+          }
+      ]
+  },
+  "PortLinkages": {
+      "Link": [
+          {
+              "SrcPort": {
+                  "PortId": 0,
+                  "NodeInstance": "SourceBuffer0"
+              },
+              "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "FrontLDCInstance0",
+                "PortFormat": "YUV420_NV12"
+            }
+          },
+          {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "FrontLDCInstance0",
+                "PortFormat": "YUV420_NV12"
+            },
+            "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "SkinBeautifierInstance0",
+                "PortFormat": "YUV420_NV12",
+                "BufferType": "Gralloc"
+            }
+          },
+          {
+            "SrcPort": {
+                "PortId": 0,
+                "NodeInstance": "SkinBeautifierInstance0",
+                "PortFormat": "YUV420_NV12",
+                "BufferType": "Gralloc"
+            },
+            "DstPort": {
+                "PortId": 0,
+                "NodeInstance": "Y2YSplitInstance1",
+                "PortFormat": "YUV420_NV12"
+            }
+          },
+          {
+              "SrcPort": {
+                  "PortId": 0,
+                  "NodeInstance": "Y2YSplitInstance1",
+                  "PortFormat": "YUV420_NV12"
+              },
+              "DstPort": {
+                  "PortId": 0,
+                  "NodeInstance": "SinkBuffer0"
+              }
+          },
+          {
+              "SrcPort": {
+                  "PortId": 1,
+                  "NodeInstance": "Y2YSplitInstance1",
+                  "PortFormat": "YUV420_NV12"
+              },
+              "DstPort": {
+                  "PortId": 1,
+                  "NodeInstance": "SinkBuffer1"
+              }
+          }
+      ]
+  }
+}

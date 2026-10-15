@@ -1,0 +1,653 @@
+/*
+说明：
+    OptMode/RoleId/Meta 过滤\转换配置，Root为字典数组类型
+
+字典内字段说明:
+    Signature:      字符串，配置功能名称，内外部调用的凭依, 必须配置
+                    名称相同时，合并所有同名配置后生效, 如果子配置实在无法合并则文件下部的配置的生效，
+                        例如:
+                            {"Signature" = "A", x = 1, y = [2]}
+                            {"Signature" = "A", x = 3, y = [4]}
+                        最终表现为:
+                            {"Signature" = "A", x = 3, y = [2,4]}
+                    注意，若有 Version 配置，则还要比较 Version, Version 最大的那条配置生效
+                        例如:
+                            {"Signature" = "A", Version = "1.0" x = 1, y = [2]}
+                            {"Signature" = "A", Version = "2.0" x = 3, y = [4]}
+                        最终表现为:
+                            {"Signature" = "A", Version = "2.0" x = 3, y = [4]}
+
+
+    Version:        字符串，版本号，可不配置，默认为空，Signature相同时，版本大的配置完全覆盖替换同版本小的。
+                    使用字符串比较规则，从左向右比较，逐个比较ASCII码数值大小，
+                    字符串末尾的空(/0)最小，例如：
+                        "1.11" > "1.10" > "1.1.1" > "1.1" "1.0" > "1" > 空
+                    注意比较细节:
+                        数字 > '.' > '/0'
+
+    Parents:        字符串/字符串数组，父配置功能名称，可不配置，默认为空
+                    本配置在父配置的基础上合并后生效,
+                    数组代表多个父配置进行合并后，再对本配置进行合并后生效
+
+    IsPublish:      bool类型，是否允许外步调用，可不配置，默认 true
+                    如果配置为 false，则只作为内部引用，或废弃
+                    注意如果最大版本号的功能配置废弃，则同功能名较小版本号的配置也一起无效
+
+    Source/Target:  dict类型，输入/输出的参数配置字典，可不配置
+                    字典内子项均可不配置，不配置代表跳过，不关心此子项
+                    注意，Characteristics 阶段 只支持 Source 的 CameraRoleId 和 Target的 Meta，
+                         Preview/Capture阶段，仅支持 Target 的 Meta，
+                         Config 阶段各字段均支持。
+
+        CameraId:       Int类型/Int数组，保留字段，设备上挂载的摄像头id
+                        注意硬件变化此数值会有错误，如主摄硬件坏掉了，那 id 0 挂载的是前摄,
+                        故尽量不要用这个字段
+
+        CameraRoleId:   Int类型/Int数组，设备的 xiaomi role id，
+                        源自 meta tag: "com.xiaomi.cameraid.role.cameraId"
+                        注意此配置若在Source/Target设置了且不一致，则代表在config阶段就得关闭旧的
+                        并打开新的摄像头
+
+        Meta:           dict 数组类型，需要过滤或设置的 meta 信息字典
+            CamOpt:         字符串/字符串数组，操作阶段，枚举，可不配置，默认 Config，可互相组合:
+                                Characteristics: 静态查询，只能设置meta
+                                Config: 配流
+                                Preview:预览
+                                Capture:拍照
+                                Result: 回调
+
+            Name:           字符串，需要过滤/设置的 meta tag 名称，必须配置
+
+            Value:          字符串/字符串数组，需要过滤/设置的数值，可不配置
+                            如果MetaOpt为TgtCopy则填写转换后的 meta tag 名
+
+            Type:           字符串，数值的类型，枚举，必须配置
+                                Int,Long,Float,Double,String,Bool,Byte
+
+            Size:           Int类型, 标示 Value 数组的长度，可不配置，默认 1
+                            设置数值时，Value 需要配置数值长度的字符串数组
+
+            MetaOpt:       字符串/字符串数组，操作命令，枚举，可不配置，默认 SrcFilter/TgtSet (在 Characteristics 中无效)
+                                SrcPrint:      打印当前数值，可以和Source其他选项组合，（在Target中无效）
+                                SrcFilter:     读取过滤，（在Target中无效）
+
+                                TgtPrint:      打印当前数值，可以和Target其他选项组合，（在Source中无效）
+                                TgtSet:        设置（在Source中无效）
+                                TgtSetIfNone:  如果读到则不设置，读不到则设置配置的数值（在Source中无效）
+                                TgtCopy:       复制数值，目标meta tag存在Value里（在Source中无效）
+                                TgtDel:        删除清空数值（在Source中无效）
+                                TgtCut:        剪切数值，复制后清空原有meta，目标meta tag存在Value里（在Source中无效）
+
+        OptMode:        字符串，只允许以0x打头的16进制的数值
+                        谷歌的oprationmode参数，三方会下发 0，系统相机会下发非 0，
+                        定义在def.h的StreamConfigMode中
+
+        SdkOpMode:      字符串，只允许以0x打头的16进制的数值
+                        SDK下发的operation mode，定义在def.h的StreamConfigMode中,
+                        源自 meta tag: "com.xiaomi.sessionparams.operation"
+                        为了比较方便专门提出来
+
+        IsCameraX:      bool类型, 是否extension模式，
+                        源自 meta tag:"com.xiaomi.sessionparams.cameraxConnection"
+                        为了比较方便专门提出来
+
+        Prop:           dict 数组类型，需要过滤或设置的 prop 信息字典，注意此项还可过滤Characteristics
+                        prop 读取和设置都设置了内部缓冲，只在不一致的时候才会读写
+                        不支持多线程重入，故不建议放在preview里
+            Name:           字符串，需要过滤/设置的 prop 名称，必须配置
+            Value:          字符串/字符串数组，需要过滤/设置的数值，必须配置，注意最大 PROPERTY_VALUE_MAX 92，若数组且
+                            设置的时候只有第一个字符串有效
+
+        SourceFlag:     int 类型，输入源逻辑标识， 0 代表过滤; 1 代表排除，默认为 0。
+                        只在包含当前配置Source中生效，不影响其他任意配置
+
+
+注意：
+    配置内容除了写在本文件外，还有下列两种方式可补充内容(可选)，内容都拼接后才实际生效。
+
+    1. 在odm项目文件夹下增加 ecoMetaExtensionExt.json，其根与本文件一致。
+    2. 在odm项目文件夹下 EcoCloudInfo.json 中，补充在 "camera_extension/platformInfo/Convert" 为根的位置。
+       同样融合云文件json需要也补在这里，融合云文件若安装sdk，就会覆盖本地这个默认文件，
+       故改了这个文件别忘了也同步到融合云中，融合云测试文件修改位置：
+       https://cloud.d.xiaomi.net/#/product/file-store/objects/camera-devtest/02-Test-Doc/sdk-config/项目名/mivi_info.json
+       项目发布后，融合云数据需要推送到云控服务器，推送脚本方法：
+       https://xiaomi.f.mioffice.cn/docx/doxk4anYCkyM6bbj31pvZWDWLHb
+       云控服务器提交发布请联系 suojinpeng
+
+    可通过杀死provider进程，log 搜索 EcoEngine 和 getConvertMapFromJson 的方式，来查看实际生效配置。
+
+版本：
+    0.4 2024-06-13  suojinpeng@xiaomi.com： 增加 SourceFlag 逻辑
+    0.3 2023-07-13  suojinpeng@xiaomi.com： 增加 Prop 过滤和设置
+    0.2 2023-07-06  suojinpeng@xiaomi.com： 增加 Characteristics 方式，增加补充内容拼接
+    0.1 2023-06-17  suojinpeng@xiaomi.com： 基础版本发布
+*/
+
+[
+    {
+        "Signature":"_isCameraX",
+        "IsPublish": false,
+        "Version":"1.0",
+        "Source":{
+            "Meta": [
+                {
+                    "Name":"com.xiaomi.sessionparams.cameraxConnection", //SDK_SESSION_PARAMS_ISCAMERAX
+                    "Value": "1",
+                    "Type" : "Bool"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"_isCameraX",
+        "IsPublish": false,
+        "Version":"1.1",
+        "Source":{
+            "IsCameraX": true
+        }
+    },
+    {
+        "Signature":"_Orientation",
+        "IsPublish": false,
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":"Capture",
+                    "Name":"xiaomi.device.orientation",
+                    "Type" : "Int",
+                    "MetaOpt" : "TgtPrint"
+                } , {
+                    "CamOpt":"Capture",
+                    "Name": "android.jpeg.orientation",
+                    "Value": "0",
+                    "Type" : "Int",
+                    "MetaOpt" : ["TgtPrint", "TgtSetIfNone"]
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"_BeautyOn",
+        "IsPublish": false,
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Preview","Capture"],
+                    "Name":"com.xiaomi.algo.beautySkinSmoothRatio", //MI_BEAUTY_SKINSMOOTH "com.xiaomi.algo.beautySkinSmoothRatio", //SDK_BEAUTY_SKINSMOOTH
+                    "Value": "50",
+                    "Type" : "Int"
+                } , {
+                    "CamOpt":["Preview","Capture"],
+                    "Name": "com.xiaomi.algo.beautySlimFaceRatio", //MI_BEAUTY_SLIMFACE "com.xiaomi.algo.beautySlimFaceRatio", //SDK_BEAUTY_SLIMFACE
+                    "Value": "50",
+                    "Type" : "Int"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"_BeautyOff",
+        "IsPublish": false,
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Preview","Capture"],
+                    "Name":"com.xiaomi.algo.beautySkinSmoothRatio", //MI_BEAUTY_SKINSMOOTH "com.xiaomi.algo.beautySkinSmoothRatio", //SDK_BEAUTY_SKINSMOOTH
+                    "Value": "0",
+                    "Type" : "Int"
+                } , {
+                    "CamOpt":["Preview","Capture"],
+                    "Name": "com.xiaomi.algo.beautySlimFaceRatio", //MI_BEAUTY_SLIMFACE "com.xiaomi.algo.beautySlimFaceRatio", //SDK_BEAUTY_SLIMFACE
+                    "Value": "0",
+                    "Type" : "Int"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"_HdrOn",
+        "IsPublish": false,
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Preview","Capture"],
+                    "Name":"com.xiaomi.algo.hdrMode", //MI_HDR_MODE "xiaomi.hdr.hdrMode", //SDK_HDR_MODE
+                    "Value": "1",
+                    "Type" : "Bool"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"_HdrOff",
+        "IsPublish": false,
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Preview","Capture"],
+                    "Name":"com.xiaomi.algo.hdrMode", //MI_HDR_MODE "xiaomi.hdr.hdrMode", //SDK_HDR_MODE
+                    "Value": "0",
+                    "Type" : "Bool"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"_Mfnr",
+        "IsPublish": false,
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Preview","Capture"],
+                    "Name":"com.xiaomi.algo.mfnrEnable", //SDK_MFNR_ENABLE
+                    "Value": "1",
+                    "Type" : "Bool"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"_FaceDetect",
+        "IsPublish": false,
+        "Target":{
+            "Meta": [
+                {
+                    "Name":"android.statistics.faceDetectMode",
+                    "Value": "1", //ANDROID_STATISTICS_FACE_DETECT_MODE_SIMPLE
+                    "Type" : "Byte"
+                }
+            ]
+        }
+    },
+    {
+        //开启 se night，注意 auto 模式下默认会开启
+        "Signature":"_SeNightOn",
+        "IsPublish": false,
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Capture","Preview"],
+                    "Name":"com.xiaomi.algo.nightModeEnable", // night
+                    "Value": "1",
+                    "Type" : "Bool"
+                }
+            ]
+        }
+    },
+    {
+        //关闭 se night
+        "Signature":"_SeNightOff",
+        "IsPublish": false,
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Preview","Capture"],
+                    "Name":"com.xiaomi.algo.nightModeEnable", // night
+                    "Value": "0",
+                    "Type" : "Bool"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"_MiNomalOptMod",
+        "IsPublish": false,
+        "Target":{
+            "SdkOpMode": "0xff0a",  //StreamConfigModeEcoEngineNormal
+            "Meta": [
+                {
+                    "Name":"com.xiaomi.sessionparams.operation",
+                    "Value": "65290", //"0xff0a" StreamConfigModeEcoEngineNormal
+                    "Type" : "Int"
+                }
+            ]
+        }
+    },
+    {
+        // 定制 extension auto/bokeh 映射的系统 camera role id
+        "Signature":"_MappingMiSatId",
+        "IsPublish": false,
+        "Target":{
+            "CameraRoleId": 60 // RoleIdRearSat
+        }
+    },
+/*
+    -------------------------------- night -------------------------------------
+*/
+    {
+        "Signature":"FuncNight",
+        "IsPublish": false,
+        "Parents":["_isCameraX","_FaceDetect"],
+        "Source":{
+            "SdkOpMode": "0xff0c" //StreamConfigModeThirdPartySuperNight
+        }
+    },
+    {
+        "Signature":"ExtensionNightFront",
+        "Parents":["FuncNight","_Orientation","_BeautyOn"],
+        "Source":{
+            "CameraRoleId": 1 //RoleIdFront
+        }
+    },
+    {
+        // 在 id 0 里直接实现超夜算法
+        "Signature":"ExtensionNightRear",
+        "Parents":["FuncNight", "_BeautyOff"],
+        "Source":{
+            "CameraRoleId": 64, // RoleIdRear3PartSat
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.night", // 1:se super night , 0: super night se(default)
+                    "Value": ["", "0"]
+                }
+            ]
+        }
+    },
+    {
+        // 调用 auto 模式下的 se night 算法实现
+        "Signature":"ExtensionNightRearSe",
+        "Parents":["FuncNight","_HdrOff", "_Mfnr", "_BeautyOff", "_MiNomalOptMod"], //"_SeNightOn", 加这个会导致无法返回数据
+        "Source":{
+            "CameraRoleId": 64, // RoleIdRear3PartSat
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.night", // 1:se super night , 0: super night se(default)
+                    "Value": "1"
+                }
+            ]
+        }
+    },
+/*
+    -------------------------------- bokeh -------------------------------------
+*/
+    {
+        "Signature":"FuncBokeh",
+        "IsPublish": false,
+        "Parents":"_isCameraX",
+        "Source":{
+            "SdkOpMode": "0xFF12" // StreamConfigModeThirdPartyBokeh
+        },
+        "Target":{
+            // "OptMode": "0x9000",
+            "Meta": [
+                // {
+                //     "CamOpt":["Config"],
+                //     "Name":"com.xiaomi.algo.mibokehEnable", //SDK_BOKEH_ENABLE
+                //     "Value": "0",
+                //     "Type" : "Bool"
+                // } ,
+                // {
+                //     "CamOpt":["Config"],
+                //     "Name":"com.xiaomi.algo.mfnrEnable", //SDK_MFNR_ENBALE
+                //     "Value": "0",
+                //     "Type" : "Bool"
+                // } ,
+                {
+                    "CamOpt":["Capture","Preview"],
+                    "Name":"com.xiaomi.algo.bokeh.fNumberApplied", //SDK_BOKEH_FNUMBER_APPLIED
+                    "Value": "4",
+                    "Type" : "String",
+                    "MetaOpt" : ["TgtPrint","TgtSetIfNone"]
+                }
+                // {
+                //     "CamOpt":["Config"],
+                //     "Name":"com.xiaomi.sessionparams.clientName",
+                //     "Value": "com.android.camera",
+                //     "Type" : "String"
+                // },
+                // {
+                //     "CamOpt":["Config"],
+                //     "Name":"android.control.extendedSceneMode",
+                //     "Value": "2",
+                //     "Type" : "Byte"
+                // },
+                // {
+                //     "CamOpt":["Capture","Preview"],
+                //     "Name":"xiaomi.bokeh.fNumberApplied",
+                //     "Value": "4",
+                //     "Type" : "String"
+                // },
+                // {
+                //     "CamOpt":["Capture","Preview"],
+                //     "Name":"xiaomi.bokeh.enabled",
+                //     "Value": "1",
+                //     "Type" : "String"
+                // },
+                // {
+                //     "CamOpt":["Capture","Preview"],
+                //     "Name":"xiaomi.asd.enabled",
+                //     "Value": "1",
+                //     "Type" : "String"
+                // }
+            ]
+        }
+    },
+    {
+        "Signature":"BokehRear",
+        "Parents":["FuncBokeh","_Orientation","_BeautyOn", "_HdrOn"],
+        "IsPublish": false,
+        "Source":{
+            "CameraRoleId": 64 // RoleIdRear3PartSat
+        },
+        "Target":{
+            "Meta": [
+                {
+                    "CamOpt":["Config"],
+                    "Name":"com.xiaomi.sessionparams.bokehRole", //MI_CAMERA_BOKEH_ROLE
+                    "Value": "63", //RoleIdRearBokeh1x
+                    "Type" : "Int"
+                },
+                {
+                    "CamOpt":["Config", "Preview"],
+                    "Name":"android.control.aeTargetFpsRange",
+                    "Value":["12","24"],
+                    "Size":2,
+                    "Type":"Int",
+                    "MetaOpt":"TgtSet"
+                }
+            ]
+        }
+    },
+    {
+        "Signature":"ExtensionBokehFront",
+        "Parents":["FuncBokeh","_Orientation","_BeautyOn","_HdrOn"],
+        "Source":{
+            "CameraRoleId": 1 //RoleIdFront
+        }
+    },
+    {
+        // 使用 mapping id 的方式，直接调用系统相机的 bokeh 摄像头，默认关闭
+        "Signature":"ExtensionBokehMappingId",
+        "Parents":["BokehRear", "_MappingMiSatId"],
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.bokeh", // 1:normal(default) , 0: mapping id
+                    "Value": "1"
+                }
+            ]
+        }
+    },
+    {
+        // 直接在 id 0 上实现bokeh 算法，需要配合各项目中的 ecoMetaExtensionExt.json 配置，一并合并后实现，默认打开
+        "Signature":"ExtensionBokehRearNormal",
+        "Parents":["BokehRear"],
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.bokeh",
+                    "Value": ["", "0"]
+                }
+            ]
+        }
+    },
+
+/*
+    -------------------------------- auto -------------------------------------
+*/
+    {
+        "Signature":"FuncAuto",
+        "IsPublish": false,
+        "Parents":["_isCameraX","_FaceDetect", "_Orientation", "_Mfnr",
+                    "_HdrOn"],
+        "Source":{
+            "SdkOpMode": "0xff17" //StreamConfigModeThirdPartyAutoExtension
+        }
+    },
+    {
+        "Signature":"AutoRear",
+        "IsPublish": false,
+        "Parents":["FuncAuto","_BeautyOff"],
+        "Source":{
+            "CameraRoleId": 64 // RoleIdRear3PartSat
+        }
+    },
+    {
+        "Signature":"ExtensionAutoFront",
+        "Parents":["FuncAuto", "_MiNomalOptMod", "_SeNightOn", "_BeautyOn"], // 注意auto front单独加上了 "_SeNightOn"，后置若加的话会拍照卡死
+        "Source":{
+            "CameraRoleId": 1 // RoleIdFront
+        }
+    },
+    {
+        "Signature":"ExtensionAuto",
+        "Parents":["AutoRear", "_MiNomalOptMod"],
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.auto", // 1:mapping id , 0:normal (default)
+                    "Value": ["", "0"]
+                }
+            ]
+        }
+    },
+    {
+        // 使用 mapping id 的方式，直接调用系统相机的 sat 摄像头
+        "Signature":"ExtensionAutoMappingId",
+        "Parents":["AutoRear", "_MappingMiSatId"],
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.auto",// 1:mapping id , 0:normal (default)
+                    "Value": "1"
+                }
+            ]
+        }
+    },
+/*
+    -------------------------------- hdr -------------------------------------
+*/
+    {
+        "Signature":"FuncHdr",
+        "IsPublish": false,
+        "Parents":["_isCameraX","_FaceDetect", "_Orientation", "_Mfnr",
+                    "_HdrOn", "_BeautyOff", "_SeNightOff"],
+        "Source":{
+            "SdkOpMode": "0xff18" //StreamConfigModeThirdPartyHDR
+        }
+    },
+    {
+        "Signature":"ExtensionHdrFront",
+        "Parents":["FuncHdr", "_MiNomalOptMod"],
+        "Source":{
+            "CameraRoleId": 1 // RoleIdFront
+        }
+    },
+    {
+        "Signature":"HdrRear",
+        "IsPublish": false,
+        "Parents":["FuncHdr"],
+        "Source":{
+            "CameraRoleId": 64 // RoleIdRear3PartSat
+        }
+    },
+    {
+        "Signature":"ExtensionHdr",
+        "Parents":["HdrRear", "_MiNomalOptMod"],
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.hdr", // 1:mapping id , 0:normal (default)
+                    "Value": ["", "0"]
+                }
+            ]
+        }
+    },
+    {
+        // 使用 mapping id 的方式，直接调用系统相机的 sat 摄像头
+        "Signature":"ExtensionHdrMappingId",
+        "Parents":["HdrRear", "_MappingMiSatId"],
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.hdr", // 1:mapping id , 0:normal (default)
+                    "Value": "1"
+                }
+            ]
+        }
+    },
+/*
+    -------------------------------- beauty -------------------------------------
+*/
+    {
+        "Signature":"FuncBeauty",
+        "IsPublish": false,
+        "Parents":["_isCameraX","_FaceDetect", "_Orientation", "_Mfnr",
+                    "_HdrOff", "_BeautyOn", "_SeNightOff"],
+        "Source":{
+            "SdkOpMode": "0xff19" //StreamConfigModeThirdPartyBeauty
+        }
+    },
+    {
+        "Signature":"ExtensionBeautyFront",
+        "Parents":["FuncBeauty", "_MiNomalOptMod"],
+        "Source":{
+            "CameraRoleId": 1 // RoleIdFront
+        }
+    },
+    {
+        "Signature":"BeautyRear",
+        "IsPublish": false,
+        "Parents":["FuncBeauty"],
+        "Source":{
+            "CameraRoleId": 64 // RoleIdRear3PartSat
+        }
+    },
+    {
+        "Signature":"ExtensionBeauty",
+        "Parents":["BeautyRear", "_MiNomalOptMod"],
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.beauty", // 1:mapping id , 0:normal (default)
+                    "Value": ["", "0"]
+                }
+            ]
+        }
+    },
+    {
+        // 使用 mapping id 的方式，直接调用系统相机的 sat 摄像头
+        "Signature":"ExtensionBeautyMappingId",
+        "Parents":["BeautyRear", "_MappingMiSatId"],
+        "Source":{
+            "Prop":
+            [
+                {
+                    "Name": "persist.vendor.camera.extension.debug.beauty", // 1:mapping id , 0:normal (default)
+                    "Value": "1"
+                }
+            ]
+        }
+    }
+]
+
+

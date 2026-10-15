@@ -1,0 +1,188 @@
+{
+    "Description": "Xiaomi SmartAE config file - Aggregation",
+    "phone_code": "O1",
+    "jsonVersion": "Agre_V2.0-20241011",
+
+    "BOKEH_OPERATION_MODE": {
+        "serial": [
+            "AlgoType_SE"
+        ],
+        "parallel": [
+            "AlgoType_HDR",
+            "AlgoType_HDRSR"
+        ]
+    },
+
+    "CROP_SCALE": {
+
+        "PLATFORM": [
+            {
+                "algo_type": "AlgoType_HDR",
+                "CONDITIONS": null
+            }
+        ]
+
+    },
+
+    "OUTPUT_CONFIG": {
+        "Description": "SmartAE output config",
+        "out_config_enable": false,
+        "algo_type": 0,
+        "evlist_num": 0,
+        "is_motionfix_Long": false,
+        "ev_meta": [
+            {
+                "Description": "EV[0]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[1]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[2]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[3]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[4]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[5]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[6]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[7]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[8]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[9]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[10]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[11]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[12]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[13]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            },
+            {
+                "Description": "EV[14]",
+                "ev_value": "null",
+                "adrc_enable": "null",
+                "motion_exposure_type": "null",
+                "dst_capture_mode": "null",
+                "dst_sensor_mode": "null"
+            }
+        ],
+        "algo_meta": {
+            "Description": "post processing config",
+            "is_white_plus": "null",
+            "is_black_sub": "null",
+            "EV_offset": "null",
+            "is_smartmotion": "null",
+            "banding_type": "null",
+            "is_bracket_exposure": "null",
+            "is_scene_bright": "null",
+            "bokeh_setting_type": "null"
+        },
+        "feature_mode": {
+            "Description": "feature config",
+            "ae_mode": {
+                "Description": "AE mode",
+                "exposure_adjust": "null",
+                "is_bracketing": "null",
+                "is_lls": "null"
+            },
+            "isp_mode": "null"
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+}    
