@@ -22,10 +22,9 @@ set -eo pipefail
 
 GITHUB_USER="ALXP-DANIEL"
 REPO_NAME="android_device_xiaomi_piano"
-# GitHub redirects the historical lowercase URL. Use the canonical endpoint
-# for branch checks; keep REPO_NAME unchanged to preserve repo object-store IDs.
+# GitHub redirects the historical lowercase URL. Keep REPO_NAME unchanged
+# in the manifest to preserve existing repo object-store IDs.
 REPO_URL="https://github.com/${GITHUB_USER}/ANDROID_DEVICE_XIAOMI_PIANO.git"
-XIAOMI_HARDWARE_URL="https://github.com/LineageOS/android_hardware_xiaomi.git"
 
 TARGET=""
 ROM=""
@@ -111,27 +110,6 @@ check_android_source() {
 
     echo "Android source checkout detected:"
     echo "  $(pwd -P)"
-}
-
-check_branch() {
-    local branch="$1"
-    local remote_url="${2:-$REPO_URL}"
-
-    [[ "$branch" =~ ^[a-zA-Z0-9._/-]+$ ]] || die "Invalid branch name: $branch"
-    printf "Checking %-24s ... " "$branch"
-
-    # Avoid an unbounded connect when one remote endpoint is temporarily stuck.
-    if timeout 30 git ls-remote \
-        --exit-code \
-        --heads \
-        "$remote_url" \
-        "refs/heads/$branch" >/dev/null 2>&1; then
-
-        echo "OK"
-    else
-        echo "MISSING"
-        die "Branch '$branch' does not exist in $remote_url"
-    fi
 }
 
 confirm() {
@@ -313,14 +291,12 @@ if [[ "$TARGET" == "rom" ]]; then
 
     confirm
 
-    header "Checking Branches"
-
+    # repo sync is the authoritative branch check. A separate git ls-remote
+    # duplicates nine network fetches, and a timeout can falsely say a branch
+    # is missing even though its commit is already in the local repo cache.
     for index in "${selected[@]}"; do
-        if [[ "${paths[$index]}" == hardware/xiaomi ]]; then
-            check_branch "${branches[$index]}" "$XIAOMI_HARDWARE_URL"
-        else
-            check_branch "${branches[$index]}"
-        fi
+        [[ "${branches[$index]}" =~ ^[a-zA-Z0-9._/-]+$ ]] || \
+            die "Invalid branch name: ${branches[$index]}"
     done
 
     sync_paths=()
@@ -421,9 +397,7 @@ if [[ "$TARGET" == "recovery" ]]; then
 
     confirm
 
-    header "Checking Branch"
-
-    check_branch "$DEVICE_BRANCH"
+    [[ "$DEVICE_BRANCH" =~ ^[a-zA-Z0-9._/-]+$ ]] || die "Invalid recovery branch."
     check_worktrees_clean device/xiaomi/piano
 
     header "Creating Local Manifest"
