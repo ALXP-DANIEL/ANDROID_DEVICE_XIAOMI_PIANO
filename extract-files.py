@@ -16,7 +16,7 @@ def stock_vendor_module(lib, partition, *args, **kwargs):
 
 
 # Preserve stock vendor ABIs without replacing platform source modules.
-lib_fixups = {**default_lib_fixups, ("libui", "libultrahdr", "libjpegencoder", "libjpegdecoder"): stock_vendor_module}
+lib_fixups = {**default_lib_fixups, ("libultrahdr", "libjpegencoder", "libjpegdecoder"): stock_vendor_module}
 
 # V2 -> V3 frozen sensor API changes only add SensorType.MOISTURE_INTRUSION.
 # Source sensorservice V1 imports V3; keep selected clients on that same ABI.
