@@ -1,0 +1,40 @@
+--- a/services/inputflinger/PointerChoreographer.cpp
++++ b/services/inputflinger/PointerChoreographer.cpp
+@@ -170,6 +170,25 @@
+ }
+ 
+ void PointerChoreographer::notifyMotion(const NotifyMotionArgs& args) {
++    {
++        std::scoped_lock _l(getLock());
++        const InputDeviceInfo* device = findInputDeviceLocked(args.deviceId);
++        if (device != nullptr && args.pointerCount == 1 &&
++            isFromMouse(args.source, args.pointerProperties[0].toolType)) {
++            const auto& id = device->getIdentifier();
++            if (id.vendor == 34 && (id.product == 19840 || id.product == 12928 ||
++                                    id.product == 20609 || id.product == 12929)) {
++                auto [display, pc] = ensureMouseControllerLocked(args.displayId);
++                const vec2 delta{args.pointerCoords[0].getAxisValue(AMOTION_EVENT_AXIS_RELATIVE_X),
++                                 args.pointerCoords[0].getAxisValue(AMOTION_EVENT_AXIS_RELATIVE_Y)};
++                const vec2 logical = transformWithoutTranslation(pc.getDisplayTransform(), delta);
++                if (mPolicy.filterPenLaserMotion(args.deviceId, logical, display)) {
++                    pc.fade(PointerControllerInterface::Transition::IMMEDIATE);
++                    return; // Native interception: no cursor movement or app pointer dispatch.
++                }
++            }
++        }
++    }
+     NotifyMotionArgs newArgs = processMotion(args);
+ 
+     mNextListener.notify(newArgs);
+--- a/services/inputflinger/include/PointerChoreographerPolicyInterface.h
++++ b/services/inputflinger/include/PointerChoreographerPolicyInterface.h
+@@ -69,6 +69,9 @@
+      * This call happens on the input hot path and it is extremely performance sensitive.
+      * This also must not call back into native code.
+      */
++    virtual bool filterPenLaserMotion(int32_t /*deviceId*/, const vec2& /*delta*/,
++                                      ui::LogicalDisplayId /*displayId*/) { return false; }
++
+     virtual std::optional<vec2> filterPointerMotionForAccessibility(
+             const vec2& current, const vec2& delta, const ui::LogicalDisplayId& displayId) = 0;
+ };
