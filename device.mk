@@ -24,8 +24,7 @@ PRODUCT_COPY_FILES += \
     device/xiaomi/piano/rootdir/bin/piano-persist-check.sh:$(TARGET_COPY_OUT_VENDOR)/bin/piano-persist-check.sh \
     device/xiaomi/piano/rootdir/bin/piano-body-color.sh:$(TARGET_COPY_OUT_VENDOR)/bin/piano-body-color.sh \
     device/xiaomi/piano/rootdir/etc/init.piano.body-color.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/init.piano.body-color.rc \
-    device/xiaomi/piano/rootdir/etc/init.piano.wallpaper.rc:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/init/init.piano.wallpaper.rc \
-    device/xiaomi/piano/parts/privapp-permissions-pianoparts.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/privapp-permissions-pianoparts.xml
+    device/xiaomi/piano/rootdir/etc/init.piano.wallpaper.rc:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/init/init.piano.wallpaper.rc
 
 # Global 304 vendor properties required by the selected providers.
 PRODUCT_VENDOR_PROPERTIES += \
@@ -62,8 +61,10 @@ PRODUCT_PRODUCT_PROPERTIES += ro.sf.lcd_density=440
 
 # Shims (hardware/lineage/compat)
 PRODUCT_PACKAGES += \
-    libprocessgroup_shim \
-    PianoParts
+    libprocessgroup_shim
+
+# Reuse the latest shared XiaomiParts implementation on supported ROMs.
+$(call inherit-product, device/xiaomi/piano-parts/pianoparts.mk)
 
 # Lineage LiveDisplay reading mode and high touch polling rate,
 # served with the stock Xiaomi display and touch features
@@ -86,8 +87,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.camera.external.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.external.xml
 
-# MiuiCamera (optional, from vendor/xiaomi/piano-miuicamera)
-$(call inherit-product-if-exists, vendor/xiaomi/piano-miuicamera/miuicamera.mk)
+# Shared Camera and Notes are included automatically by sync-device.sh.
+$(call inherit-product, vendor/xiaomi/piano-miuicamera/miuicamera.mk)
+$(call inherit-product, vendor/xiaomi/piano-notes/notes.mk)
+PRODUCT_SOONG_NAMESPACES += vendor/xiaomi/piano-notes
 
 # Keyboard cover: do not rotate the arrow keys with the display.
 PRODUCT_COPY_FILES += \
