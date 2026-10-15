@@ -294,6 +294,17 @@ public final class PencilEngineRegistry {
                         colorSpace, color));
     }
 
+    /** Trusted UI cancellation. Keep the listener registered and deliver no invented color. */
+    public synchronized Outcome cancelColorPick(Caller owner, long lease) {
+        Objects.requireNonNull(owner, "owner");
+        Client client = clients.get(owner);
+        if (client == null || client.lease != lease || !owner.equals(pickerOwner)) {
+            return outcome(Status.STALE_LEASE);
+        }
+        pickerOwner = null;
+        return outcome(Status.OK);
+    }
+
     private void setPosture(Client client, boolean enable, List<Action> actions) {
         if (client.posture == enable) return;
         client.posture = enable;

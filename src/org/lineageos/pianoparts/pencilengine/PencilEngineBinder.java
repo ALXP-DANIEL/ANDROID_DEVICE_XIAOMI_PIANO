@@ -194,6 +194,13 @@ public final class PencilEngineBinder extends Binder {
         }
     }
 
+    /** Trusted backend cancellation after it removes its UI; no Binder transaction. */
+    public void cancelColorPick(int pid, int uid, long leaseId) {
+        synchronized (operations) {
+            registry.cancelColorPick(new PencilEngineRegistry.Caller(pid, uid), leaseId);
+        }
+    }
+
     /** Trusted backend completion; not an exposed Binder transaction. */
     public void completeColorPick(int pid, int uid, long leaseId, int space, int color) {
         IBinder callback;

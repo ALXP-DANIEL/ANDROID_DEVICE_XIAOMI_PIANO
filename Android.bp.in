@@ -4,6 +4,11 @@
 
 soong_namespace {}
 
+filegroup {
+    name: "piano-pencilengine-transport-sources",
+    srcs: ["src/org/lineageos/pianoparts/pencilengine/*.java"],
+}
+
 // The sync helper selects one of the two reviewed Settings placements.
 android_app {
     name: "PianoParts",

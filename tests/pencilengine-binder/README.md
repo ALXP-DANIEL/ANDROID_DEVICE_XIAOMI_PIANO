@@ -22,4 +22,6 @@ Failed cleanup requires backend-specific retry/reconciliation: this adapter does
 not claim a failed HAL write was undone merely because local ownership was freed.
 
 Transport close revokes all client leases, rejects subsequent registration/trigger
-requests and is idempotent. Current fixture suite passes 19 checks.
+requests and is idempotent. Trusted picker cancellation preserves registration,
+rejects stale leases, and cannot clear another client's picker. Current fixture
+suite passes 26 checks.

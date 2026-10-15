@@ -1,0 +1,10 @@
+android_app {
+    name: "PianoPencilEngine",
+    manifest: "AndroidManifest.xml",
+    srcs: ["src/**/*.java", ":piano-pencilengine-transport-sources"],
+    platform_apis: true,
+    certificate: "platform",
+    privileged: true,
+    system_ext_specific: true,
+    optimize: { enabled: false },
+}

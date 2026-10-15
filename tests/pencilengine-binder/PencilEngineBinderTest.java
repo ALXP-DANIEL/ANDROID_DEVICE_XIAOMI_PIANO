@@ -15,6 +15,14 @@ public class PencilEngineBinderTest {
  Token second=new Token();register(second,"com.example.notes");check(trigger(1,1)==0);check(lease!=old);first.death.binderDied();check(trigger(1,0)==0);
  accept=false;check(trigger(1,1)==-1);accept=true;check(trigger(1,1)==-1);
  register(new Token(),"com.example.notes");check(trigger(99,0)==-1);
+ check(trigger(0,1)==0);long pickerLease=lease;
+ Binder.pid=43;register(new Token(),"com.example.notes");check(trigger(0,1)==-1);
+ binder.cancelColorPick(42,2000,pickerLease-1);check(trigger(0,1)==-1);
+ binder.cancelColorPick(42,2000,pickerLease);check(trigger(0,1)==0);
+ binder.cancelColorPick(42,2000,pickerLease);int afterStaleCancel=effects;
+ check(trigger(0,1)==0);check(effects==afterStaleCancel);
+ binder.cancelColorPick(43,2000,lease);Binder.pid=42;
+ check(trigger(0,1)==0);binder.cancelColorPick(42,2000,pickerLease);
  check(trigger(1,1)==0); int beforeClose=effects; binder.close();check(effects==beforeClose+2);
  check(trigger(1,1)==-1);binder.close();check(effects==beforeClose+2);
  try{register(new Token(),"com.example.notes");throw new AssertionError();}catch(IllegalStateException ok){checks++;}
