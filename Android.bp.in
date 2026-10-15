@@ -12,7 +12,9 @@ filegroup {
 // The sync helper selects one of the two reviewed Settings placements.
 android_app {
     name: "PianoParts",
-    min_sdk_version: "36",
+    // Shared with Android 16 and 17. SettingsLib requires the current
+    // platform API (37 on EvoX A17), so a fixed 36 fails manifest merging.
+    min_sdk_version: "current",
     manifest: "@PIANO_PARTS_MANIFEST@",
     srcs: [
         "src/**/*.java",
