@@ -28,7 +28,19 @@ def build(prefix):
     branch = f"refs/heads/{prefix}"
     if subprocess.run(["git", "-C", str(GIT_ROOT), "show-ref", "--verify", "--quiet", branch]).returncode == 0:
         raise RuntimeError(f"local branch already exists: {prefix}")
-    sha = {version: git("rev-parse", f"origin/{prefix}-{version}") for version in (16, 17)}
+    sha = {}
+    for version in (16, 17):
+        previous = f"{prefix}-{version}"
+        candidates = (f"refs/remotes/origin/{previous}^{{commit}}",
+                      f"refs/tags/archive/pre-universal/{previous}^{{commit}}")
+        for ref in candidates:
+            probe = subprocess.run(["git", "-C", str(GIT_ROOT), "rev-parse", "--verify", ref],
+                                   text=True, capture_output=True)
+            if probe.returncode == 0:
+                sha[version] = probe.stdout.strip()
+                break
+        else:
+            raise RuntimeError(f"missing version snapshot for {previous}")
     with tempfile.TemporaryDirectory(prefix="piano-branch-index-") as temp:
         index = str(Path(temp) / "index")
         env = {**os.environ, "GIT_INDEX_FILE": index}

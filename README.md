@@ -38,5 +38,7 @@ kernel, XiaomiParts, Camera and Notes. It stages the matching Android 16/17
 hardware package set, Camera binaries and ROM-specific XiaomiParts Settings
 placement without an opt-in. Recovery uses `twrp` or `ofox` separately.
 
-The original versioned hardware branches remain available as historical
-recovery points until both complete ROM builds and device smoke tests pass.
+The original numbered hardware branches were retired after the exact commits
+were preserved in GitHub tags named `archive/pre-universal/<old-branch>`.
+These tags remain available as rollback points if complete ROM builds or
+tablet hardware testing reveal a compatibility problem.
