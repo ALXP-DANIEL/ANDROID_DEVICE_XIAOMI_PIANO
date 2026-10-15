@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.database.ContentObserver
 import android.hardware.input.InputManager
 import android.os.Handler
 import android.os.Looper
@@ -30,6 +31,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import com.android.internal.os.DeviceKeyHandler
 import java.util.ArrayDeque
+import org.lineageos.pianoparts.pencilengine.PencilEngineLease
 
 /**
  * Global piano stylus-button handler loaded into system_server.
@@ -42,6 +44,7 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
     private val recentEvents = HashSet<EventIdentity>()
     private val recentEventOrder = ArrayDeque<EventIdentity>()
     private val laserKeyLease = PenLaserKeyLease()
+    private val toolDispatch = PenToolDispatchPolicy()
 
     init {
         // A volatile, five-second authorization renewed only while the Parts
@@ -57,6 +60,18 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
             }, IntentFilter(PenLaserController.CONTROL), null, handler, Context.RECEIVER_NOT_EXPORTED)
         } catch (exception: RuntimeException) {
             Log.w(TAG, "Optional pen laser key observer unavailable", exception)
+        }
+        // Publish only from the loaded system-server handler, never from the APK
+        // process. APK-only updates cannot advertise an absent dispatch backend.
+        try {
+            context.contentResolver.registerContentObserver(
+                Settings.Global.getUriFor(Settings.Global.BOOT_COUNT), false,
+                object : ContentObserver(handler) {
+                    override fun onChange(selfChange: Boolean) { publishToolDispatchReadiness() }
+                })
+            publishToolDispatchReadiness()
+        } catch (exception: RuntimeException) {
+            Log.w(TAG, "Cannot publish pen tool dispatch readiness", exception)
         }
     }
 
@@ -93,6 +108,12 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         if (!XiaomiStylusDevice.isStylus(event.device)) return event
         val touchFilmKey = event.keyCode in KeyEvent.KEYCODE_BUTTON_8..KeyEvent.KEYCODE_BUTTON_10
         if (touchFilmKey && XiaomiStylusDevice.typeOf(event.device) != 8) return event
+        if (touchFilmKey) {
+            val editor = foregroundEditor()
+            val enabled = editor == null || editorTouchFilmEnabled(editor)
+            if (!toolDispatch.accepts(event.deviceId, event.keyCode, event.action,
+                    event.repeatCount, event.downTime, event.eventTime, enabled)) return null
+        }
 
         // PhoneWindowManager invokes a DeviceKeyHandler once before queueing
         // and again before dispatching. Those callbacks can run on different
@@ -268,11 +289,31 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         pendingActions.remove(keyCode)
     }
 
-    private fun isNotesEditorForeground(): Boolean = try {
+    private fun foregroundEditor(): String? = try {
         val task = context.getSystemService(ActivityManager::class.java)
             ?.getRunningTasks(1)?.firstOrNull()
-        NotesLaunchContract.ownsToolKeys(task?.topActivity?.packageName)
-    } catch (_: RuntimeException) { false }
+        task?.topActivity?.packageName?.takeIf { NotesLaunchContract.ownsToolKeys(it) }
+    } catch (_: RuntimeException) { null }
+
+    private fun isNotesEditorForeground(): Boolean = foregroundEditor() != null
+
+    private fun publishToolDispatchReadiness() {
+        val boot = Settings.Global.getInt(context.contentResolver, Settings.Global.BOOT_COUNT, -1)
+        if (boot >= 0) Settings.Global.putInt(context.contentResolver,
+            PencilEngineLease.TOUCH_FILM_READY, boot)
+    }
+
+    private fun editorTouchFilmEnabled(editor: String): Boolean {
+        if (editor == NotesLaunchContract.CREATION) return true // Stock built-in editor exception.
+        return try {
+            val user = ActivityManager.getCurrentUser()
+            val uid = context.packageManager.getPackageUidAsUser(editor, user)
+            PencilEngineLease.accepts(Settings.Secure.getStringForUser(context.contentResolver,
+                PencilEngineLease.TOUCH_FILM, user),
+                Settings.Global.getInt(context.contentResolver, Settings.Global.BOOT_COUNT, -1),
+                uid, SystemClock.elapsedRealtime())
+        } catch (_: Exception) { false }
+    }
 
     private fun executeAction(action: String, notesScene: String? = null) {
         if (action == StylusSettingsContract.Action.MENU) {
