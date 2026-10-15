@@ -11,7 +11,9 @@ Android device trees for the Xiaomi Pad 8 Pro (SM8750).
 | `vendor-17` | `vendor-16` | Device vendor files |
 | `vendor-common-17` | `vendor-common-16` | SM8750 common vendor files |
 | `kernel-17` | `kernel-16` | GKI kernel built from source, with the stock modules |
-| `miuicamera-17` | `miuicamera-16` | MiuiCamera matching each stock generation |
+| `camera` | `camera` | Shared MiuiCamera tree with Android-specific stock binaries |
+| `pianopart` | `pianopart` | Shared latest PianoParts app with ROM-specific Settings placement |
+| `notes` | `notes` | Shared Xiaomi Notes package without opt-in |
 | `twrp` | `twrp` | TWRP recovery (shared) |
 | `ofox` | `ofox` | OrangeFox recovery (shared) |
 | `uefi` | `uefi` | UEFI firmware, boot menu and Visor (shared) |
@@ -28,6 +30,8 @@ curl -fsSLO https://raw.githubusercontent.com/ALXP-DANIEL/android_device_xiaomi_
 bash sync-device.sh
 ```
 
-The script asks for the ROM or recovery, and asks for the Android version
-for ROM trees. Recovery uses the shared `twrp` or `ofox` branch. It syncs
-the device trees only.
+The script asks for the ROM or recovery and Android version for ROM trees.
+Whenever the ROM device tree is selected, XiaomiParts, Camera, and Notes are
+synced and prepared automatically from their shared branches. Camera selects
+the stock package for Android 16 or 17; XiaomiParts selects its ROM-specific
+Settings placement. Recovery uses the shared `twrp` or `ofox` branch.

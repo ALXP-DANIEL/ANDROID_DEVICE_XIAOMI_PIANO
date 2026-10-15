@@ -200,16 +200,16 @@ if [[ "$TARGET" == "rom" ]]; then
             ;;
     esac
 
-    paths=(device/xiaomi/piano device/xiaomi/sm8750-common vendor/xiaomi/piano vendor/xiaomi/sm8750-common device/xiaomi/piano-kernel vendor/xiaomi/piano-miuicamera)
-    branches=("$DEVICE_BRANCH" "$COMMON_BRANCH" "$VENDOR_BRANCH" "$VENDOR_COMMON_BRANCH" "$KERNEL_BRANCH" "$CAMERA_BRANCH")
-    echo "Trees: 1=device 2=common 3=vendor 4=vendor-common 5=kernel 6=camera"
+    paths=(device/xiaomi/piano device/xiaomi/sm8750-common vendor/xiaomi/piano vendor/xiaomi/sm8750-common device/xiaomi/piano-kernel)
+    branches=("$DEVICE_BRANCH" "$COMMON_BRANCH" "$VENDOR_BRANCH" "$VENDOR_COMMON_BRANCH" "$KERNEL_BRANCH")
+    echo "Trees: 1=device 2=common 3=vendor 4=vendor-common 5=kernel"
     read -r -p "Choose numbers separated by spaces, or all [all]: " selection
     selected=()
     if [[ "${selection:-all}" == all ]]; then
-        selected=(0 1 2 3 4 5)
+        selected=(0 1 2 3 4)
     else
         for number in $selection; do
-            [[ "$number" =~ ^[1-6]$ ]] || die "Invalid tree: $number"
+            [[ "$number" =~ ^[1-5]$ ]] || die "Invalid tree: $number"
             index=$((number - 1))
             for old in "${selected[@]}"; do
                 [[ "$old" != "$index" ]] || die "Duplicate tree: $number"
@@ -221,6 +221,19 @@ if [[ "$TARGET" == "rom" ]]; then
     for index in "${selected[@]}"; do
         read -r -p "${paths[$index]} branch [${branches[$index]}]: " branch
         branches[$index]=${branch:-${branches[$index]}}
+    done
+
+    # XiaomiParts, Camera and Notes are always required by a piano ROM device.
+    # One branch per app carries the ROM/Android version-specific configuration.
+    companions=()
+    for index in "${selected[@]}"; do
+        if [[ "$index" == 0 ]]; then
+            companions=(device/xiaomi/piano-parts vendor/xiaomi/piano-miuicamera vendor/xiaomi/piano-notes)
+            paths+=("${companions[@]}")
+            branches+=(pianopart camera notes)
+            selected+=(5 6 7)
+            break
+        fi
     done
 
     header "ROM Setup"
@@ -283,6 +296,13 @@ if [[ "$TARGET" == "rom" ]]; then
     sync_paths=()
     for index in "${selected[@]}"; do sync_paths+=("${paths[$index]}"); done
     repo sync "${sync_paths[@]}" --no-clone-bundle --no-tags -j"${SYNC_JOBS:-4}"
+
+    if [[ ${#companions[@]} -gt 0 ]]; then
+        header "Preparing Shared Xiaomi Apps"
+        python3 device/xiaomi/piano-parts/select-rom.py "$ROM"
+        python3 vendor/xiaomi/piano-miuicamera/select-camera.py "$ANDROID"
+        python3 vendor/xiaomi/piano-notes/stage-originals.py --from-parts
+    fi
 
     header "ROM Tree Sync Complete"
 
