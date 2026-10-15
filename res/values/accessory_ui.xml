@@ -8,4 +8,6 @@
  <string name="stylus_palette_reset">Reset</string>
  <string name="stylus_firmware_model">Model</string>
  <string name="stylus_firmware_current">Current firmware</string>
+ <string name="stylus_attachment_warning_title">Check pen attachment</string>
+ <string name="stylus_attachment_warning">The tablet reported a pen placement problem (code %1$d). Reposition the pen on its magnetic charging edge.</string>
  </resources>

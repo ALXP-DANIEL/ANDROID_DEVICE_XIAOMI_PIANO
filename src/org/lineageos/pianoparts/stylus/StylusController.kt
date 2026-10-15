@@ -118,6 +118,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     private var mippNegotiatedMtu = 0
     private var gattAttempts = 0
     private var hibernating = false
+    private var penFps: Int? = null
     private val pendingWrites = ArrayDeque<PenWrite>()
     private var activeWrite: PenWrite? = null
     private data class PenWrite(
@@ -601,10 +602,17 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         event.panelState?.let {
             mippSession?.onPanelState(it)
         }
+        event.fps?.let {
+            penFps = it
+            mippSession?.onFps(it)
+        }
+        event.placementError?.let { status = status.copy(placementError = it) }
         event.hibernation?.let {
             hibernating = it
+            val sleepPending = handler.hasCallbacks(sleepPen)
             handler.removeCallbacks(sleepPen)
-            if (it) handler.postDelayed(sleepPen, 5_000L) else mippSession?.sleep(false)
+            if (it) handler.postDelayed(sleepPen, 5_000L)
+            else if (!sleepPending) mippSession?.sleep(false)
         }
         publish()
     }
@@ -883,8 +891,18 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             },
             onDocked = { setDocked(it); publish() },
             onError = { status = status.copy(penError = it); publish() },
+            onFpsApplied = {
+                try {
+                    Settings.Secure.putInt(context.contentResolver, "miui_bluetooth_store_fps", it)
+                } catch (failure: RuntimeException) {
+                    // The parameter ACK already succeeded; a status-store failure
+                    // must not interrupt the serialized pen transport.
+                    Log.w(TAG, "Cannot publish acknowledged pen FPS", failure)
+                }
+            },
         )
         mippSession = session
+        penFps?.let(session::onFps)
         val readActive = status.vendorId == 34 &&
             (status.productId == 0x5081 || status.productId == 0x4d80 &&
                 firmwareAtLeast(status.firmwareRevision, 1, 0, 12))
