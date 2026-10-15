@@ -1,0 +1,76 @@
+diff --git a/data.cpp b/data.cpp
+index ee97ad2..f8b7ba3 100644
+--- a/data.cpp
++++ b/data.cpp
+@@ -22,6 +22,9 @@
+ #include <android-base/file.h>
+ #include <sys/stat.h>
+ #include <sys/mount.h>
++#include <errno.h>
++#include <stdlib.h>
++#include <string.h>
+ #include <android-base/strings.h>
+ #include <android-base/properties.h>
+ #include <sstream>
+@@ -455,10 +458,15 @@ static std::string Rom_Default_Time_Zone()
+ 		std::string mnt;
+ 		if (src.part) {
+ 			std::string dev = "/dev/block/mapper/" + std::string(src.part) + slot;
+-			mnt = "/tmp/tz_" + std::string(src.part);
+ 			if (!TWFunc::Path_Exists(dev))
+ 				continue;
+-			mkdir(mnt.c_str(), 0755);
++			// A private directory per call: two lookups sharing one path
++			// stacked their mounts and left one behind, which then kept
++			// the logical partition busy and made Format Data fail.
++			char tmpl[] = "/tmp/tz_XXXXXX";
++			if (!mkdtemp(tmpl))
++				continue;
++			mnt = tmpl;
+ 			if (mount(dev.c_str(), mnt.c_str(), "erofs", MS_RDONLY, nullptr) != 0) {
+ 				rmdir(mnt.c_str());
+ 				continue;
+@@ -478,7 +486,8 @@ static std::string Rom_Default_Time_Zone()
+ 		}
+ 
+ 		if (src.part) {
+-			umount(mnt.c_str());
++			if (umount2(mnt.c_str(), MNT_DETACH) != 0)
++				LOGINFO("Unable to unmount %s: %s\n", mnt.c_str(), strerror(errno));
+ 			rmdir(mnt.c_str());
+ 		}
+ 		if (!tz.empty())
+diff --git a/partitionmanager.cpp b/partitionmanager.cpp
+index 6eccef5..1bfa585 100755
+--- a/partitionmanager.cpp
++++ b/partitionmanager.cpp
+@@ -3509,6 +3509,13 @@ void TWPartitionManager::Unlock_Block_Partitions() {
+ 
+ bool TWPartitionManager::Unmap_Super_Devices() {
+     bool destroyed = false;
++    // Device recoveries may run services from the installed logical
++    // partitions (for example a stock secure stack used for decryption).
++    // A mapper device that is still mounted or held open cannot be
++    // destroyed, so give the device a chance to release them first.
++    constexpr char kPreUnmapHook[] = "/system/bin/twrp-pre-unmap";
++    if (TWFunc::Path_Exists(kPreUnmapHook) && TWFunc::Exec_Cmd(kPreUnmapHook) != 0)
++        LOGINFO("%s did not release every logical partition\n", kPreUnmapHook);
+     auto destroy_if_mapped = [](const std::string &name) {
+         const std::string mapper_path = std::format("/dev/block/mapper/{}", name);
+         struct stat st;
+@@ -3593,6 +3600,15 @@ bool TWPartitionManager::Check_Pending_Merges() {
+         LOGINFO("waiting for merge to complete: %.2f\n", progress);
+     };
+ 
++    // An update that was installed but has not booted yet is cancelled by
++    // HandleImminentDataWipe(), which also marks its slot unbootable, so the
++    // next boot silently falls back to the previous slot.
++    const auto state = sm->GetUpdateState();
++    if (state == android::snapshot::UpdateState::Initiated ||
++        state == android::snapshot::UpdateState::Unverified) {
++        gui_msg(Msg(msg::kWarning, "pending_update_cancelled=A ROM installed on the other slot has not booted yet. This wipe cancels it and the device will boot the previous slot. Install the ROM again after the wipe."));
++    }
++
+     LOGINFO("checking for merges\n");
+     if (!sm->HandleImminentDataWipe(callback)) {
+         LOGERR("Unable to check merge status\n");

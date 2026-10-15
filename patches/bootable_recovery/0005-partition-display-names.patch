@@ -1,0 +1,21 @@
+Give /system_dlkm and /mnt/vendor/persist display names
+
+TWRP names /vendor_dlkm and /odm_dlkm but not these two, so the Mount and
+Backup pages showed raw paths. Naming persist through twrp.flags does not
+work: it creates a second, writable persist partition.
+
+diff --git a/partition.cpp b/partition.cpp
+index d0022a0..2efba4b 100755
+--- a/partition.cpp
++++ b/partition.cpp
+@@ -669,6 +669,10 @@ bool TWPartition::Classify_By_Mount_Point(bool Display_Error) {
+             set_display_names("ODM DLKM");
+         } else if (Mount_Point == "/vendor_dlkm") {
+             set_display_names("Vendor DLKM");
++        } else if (Mount_Point == "/system_dlkm") {
++            set_display_names("System DLKM");
++        } else if (Mount_Point == "/mnt/vendor/persist") {
++            set_display_names("Persist");
+         }
+ #ifdef TW_EXTERNAL_STORAGE_PATH
+         if (Mount_Point == EXPAND(TW_EXTERNAL_STORAGE_PATH)) {
