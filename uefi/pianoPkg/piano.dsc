@@ -86,6 +86,11 @@
   ConfigurationMapLib|pianoPkg/Library/ConfigurationMapLib/ConfigurationMapLib.inf
 
   #
+  # Platform Libraries
+  #
+  PlatformSecLib|pianoPkg/Library/PlatformSecLib/PlatformSecLib.inf
+
+  #
   # Piano Libraries
   #
   KeypadDeviceLib|pianoPkg/Library/KeypadDeviceLib/KeypadDeviceLib.inf
@@ -131,6 +136,11 @@
   # Console at half resolution with 2x2 pixels, so text is readable
   #
   pianoPkg/Drivers/ScaledFbDxe/ScaledFbDxe.inf
+
+  #
+  # Android from Visor without a restart; copied to the ESP by make-esp.sh
+  #
+  pianoPkg/Application/AndroidBoot/AndroidBoot.inf
 
   #
   # UEFI Shell, opened when nothing else can boot
