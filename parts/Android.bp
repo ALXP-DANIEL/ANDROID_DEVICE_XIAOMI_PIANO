@@ -1,0 +1,29 @@
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+android_app {
+    name: "PianoParts",
+    srcs: [
+        "src/**/*.java",
+        "src/**/*.kt",
+        "aidl/**/*.aidl",
+    ],
+    aidl: {
+        local_include_dirs: ["aidl"],
+    },
+    resource_dirs: ["res"],
+    libs: ["framework-bluetooth.stubs.module_lib"],
+    static_libs: [
+        "SettingsLib",
+        "androidx.preference_preference",
+        "org.lineageos.platform.internal",
+    ],
+    certificate: "platform",
+    platform_apis: true,
+    privileged: true,
+    system_ext_specific: true,
+    optimize: {
+        proguard_flags_files: ["proguard.flags"],
+    },
+}
