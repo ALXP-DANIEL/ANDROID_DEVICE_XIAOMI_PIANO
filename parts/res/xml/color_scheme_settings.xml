@@ -15,7 +15,13 @@
 
     <PreferenceCategory
         android:key="screen_color"
-        android:title="@string/color_temperature_title" />
+        android:title="@string/color_temperature_title">
+
+        <com.android.settingslib.widget.LayoutPreference
+            android:key="color_temperature"
+            android:layout="@layout/color_temperature"
+            android:selectable="false" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/color_more_title">
 
