@@ -16,6 +16,7 @@ import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.RectF
 import android.os.Handler
+import android.os.SystemClock
 import android.os.UserHandle
 import android.view.WindowInsets
 import android.util.Log
@@ -35,6 +36,12 @@ internal class PenShortcutMenu(private val context: Context, private val handler
     private val keyguard = context.getSystemService(KeyguardManager::class.java)
     private var view: FrameLayout? = null
     private var started = false
+    private var shadeReceiverRegistered = false
+    private val shadeGate = PenShadeGate()
+    private data class PendingShow(val request: Long, val x: Float, val y: Float)
+    private var pendingShow: PendingShow? = null
+    private var nextRequest = 0L
+    private val shadeTimeout = Runnable { cancelPendingShow() }
     private val taskListener = object : TaskStackListener() {
         override fun onTaskMovedToFront(task: ActivityManager.RunningTaskInfo) { handler.post { hide() } }
         override fun onLockTaskModeChanged(mode: Int) { if (mode != ActivityManager.LOCK_TASK_MODE_NONE) handler.post { hide() } }
@@ -45,8 +52,25 @@ internal class PenShortcutMenu(private val context: Context, private val handler
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == StylusSettingsContract.ACTION_SHOW_MENU) {
-                show(intent.getFloatExtra("x", -1f), intent.getFloatExtra("y", -1f))
+                requestShow(intent.getFloatExtra("x", -1f), intent.getFloatExtra("y", -1f))
             } else hide()
+        }
+    }
+    private val shadeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action != SHADE_STATE) return
+            val expanded = intent.getBooleanExtra("expanded", true)
+            val request = intent.getLongExtra("request", 0L)
+            if (request == 0L) {
+                if (shadeGate.changed(expanded)) hide()
+            } else {
+                val pending = pendingShow
+                if (pending != null && pending.request == request) {
+                    val allowed = shadeGate.answer(request, expanded)
+                    cancelPendingShow()
+                    if (allowed) show(pending.x, pending.y)
+                }
+            }
         }
     }
 
@@ -59,13 +83,51 @@ internal class PenShortcutMenu(private val context: Context, private val handler
             addAction(Intent.ACTION_CONFIGURATION_CHANGED)
             addAction(Intent.ACTION_USER_SWITCHED)
         }, null, handler, Context.RECEIVER_NOT_EXPORTED)
+        // SystemUI uses android.uid.systemui, unlike system-UID PianoParts.
+        // Its state broadcast crosses UIDs, so restrict the exported receiver
+        // to the signature STATUS_BAR permission held by SystemUI.
+        try {
+            context.registerReceiver(shadeReceiver, IntentFilter(SHADE_STATE),
+                "android.permission.STATUS_BAR", handler, Context.RECEIVER_EXPORTED)
+            shadeReceiverRegistered = true
+        } catch (exception: RuntimeException) {
+            Log.w("PianoStylus", "SystemUI shade observer unavailable; menu remains gated", exception)
+        }
         started = true
     }
 
     fun close() {
         hide()
-        if (started) context.unregisterReceiver(receiver)
+        if (started) {
+            context.unregisterReceiver(receiver)
+            if (shadeReceiverRegistered) context.unregisterReceiver(shadeReceiver)
+        }
+        shadeReceiverRegistered = false
         started = false
+    }
+
+    private fun requestShow(x: Float, y: Float) {
+        if (view != null || pendingShow != null) { hide(); return }
+        if (keyguard.isKeyguardLocked || activities.lockTaskModeState != ActivityManager.LOCK_TASK_MODE_NONE || !canShow()) return
+        // SystemUI answers with its current panel state. If its bridge is
+        // absent, no panel is opened over an unknown/possibly expanded shade.
+        val request = (SystemClock.elapsedRealtimeNanos() + ++nextRequest).coerceAtLeast(1L)
+        if (!shadeGate.begin(request)) return
+        pendingShow = PendingShow(request, x, y)
+        handler.postDelayed(shadeTimeout, 350L)
+        try {
+            context.sendBroadcast(Intent(SHADE_QUERY).setPackage("com.android.systemui")
+                .putExtra("request", request))
+        } catch (exception: RuntimeException) {
+            Log.w("PianoStylus", "Could not request SystemUI shade state", exception)
+            cancelPendingShow()
+        }
+    }
+
+    private fun cancelPendingShow() {
+        pendingShow = null
+        shadeGate.cancel()
+        handler.removeCallbacks(shadeTimeout)
     }
 
     private fun show(x: Float, y: Float) {
@@ -160,11 +222,17 @@ internal class PenShortcutMenu(private val context: Context, private val handler
     }
 
     fun hide() {
+        cancelPendingShow()
         val menu = view ?: return
         view = null
         try { ActivityTaskManager.getService().unregisterTaskStackListener(taskListener) }
         catch (exception: Exception) { Log.w("PianoStylus", "Could not remove task listener", exception) }
         if (menu.isAttachedToWindow) windows.removeViewImmediate(menu)
+    }
+
+    companion object {
+        const val SHADE_QUERY = "org.lineageos.pianoparts.action.PEN_SHADE_QUERY"
+        const val SHADE_STATE = "org.lineageos.pianoparts.action.PEN_SHADE_STATE"
     }
 
 }

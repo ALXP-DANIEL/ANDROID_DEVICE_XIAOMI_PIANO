@@ -7,12 +7,15 @@
 
 package org.lineageos.pianoparts.stylus
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.hardware.input.InputManager
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import android.os.UserHandle
 import android.provider.Settings
 import android.util.Log
@@ -37,6 +40,28 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
     private val stylusTouchMonitor = StylusTouchMonitor(context, handler)
     private val recentEvents = HashSet<EventIdentity>()
     private val recentEventOrder = ArrayDeque<EventIdentity>()
+    private val laserKeyLease = PenLaserKeyLease()
+
+    init {
+        // A volatile, five-second authorization renewed only while the Parts
+        // laser overlay exists. No persisted toggle can seize squeeze after a crash.
+        try {
+            context.registerReceiver(object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    laserKeyLease.update(intent.getBooleanExtra("active", false),
+                        intent.getIntExtra("device", -1),
+                        intent.getIntExtra("vendor", -1), intent.getIntExtra("product", -1),
+                        SystemClock.uptimeMillis())
+                }
+            }, IntentFilter(PenLaserController.CONTROL), null, handler, Context.RECEIVER_NOT_EXPORTED)
+        } catch (exception: RuntimeException) {
+            Log.w(TAG, "Optional pen laser key observer unavailable", exception)
+        }
+    }
+
+    private fun hasVirtualLaserLease(device: InputDevice?): Boolean =
+        device != null && laserKeyLease.accepts(device.id, device.vendorId, device.productId,
+            SystemClock.uptimeMillis())
 
     override fun handleKeyEvent(event: KeyEvent): KeyEvent? {
         val setting = when (event.keyCode) {
@@ -86,7 +111,9 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         val effectiveSetting = if (event.keyCode == KeyEvent.KEYCODE_BUTTON_7 && stylusType != 8)
             setting.copy(defaultValue = StylusSettingsContract.Action.RECENTS) else setting
         handler.post { handleEventOnMain(eventIdentity, effectiveSetting, stylusType) }
-        return if (readAction(setting) == StylusSettingsContract.Action.LASER &&
+        val virtualLaserKey = event.keyCode == KeyEvent.KEYCODE_BUTTON_7 && stylusType == 8 &&
+            hasVirtualLaserLease(event.device)
+        return if ((readAction(setting) == StylusSettingsContract.Action.LASER || virtualLaserKey) &&
             stylusType in setOf(3, 8) && PenLaserController.isAvailable(context)) null else event
     }
 
@@ -110,7 +137,10 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
             return
         }
 
-        if (readAction(setting) == StylusSettingsContract.Action.LASER) {
+        val virtualLaserKey = event.keyCode == KeyEvent.KEYCODE_BUTTON_7 && stylusType == 8 &&
+            hasVirtualLaserLease(context.getSystemService(InputManager::class.java)
+                ?.getInputDevice(event.deviceId))
+        if (readAction(setting) == StylusSettingsContract.Action.LASER || virtualLaserKey) {
             if (stylusType in setOf(3, 8) && PenLaserController.isAvailable(context)) {
                 context.sendBroadcastAsUser(Intent(PenLaserController.KEY).setPackage(PARTS_PACKAGE)
                     .putExtra("device", event.deviceId).putExtra("action", event.action)
@@ -120,6 +150,14 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         }
 
         if (event.keyCode in KeyEvent.KEYCODE_BUTTON_7..KeyEvent.KEYCODE_BUTTON_10) {
+            if (stylusType == 8 && event.keyCode in KeyEvent.KEYCODE_BUTTON_9..KeyEvent.KEYCODE_BUTTON_10 &&
+                event.action == KeyEvent.ACTION_DOWN &&
+                hasVirtualLaserLease(context.getSystemService(InputManager::class.java)
+                    ?.getInputDevice(event.deviceId))) {
+                // Stock slide gestures exit P81C virtual laser before ordinary dispatch.
+                context.sendBroadcastAsUser(Intent(PenLaserController.EXIT)
+                    .setPackage(PARTS_PACKAGE), UserHandle.SYSTEM)
+            }
             // A squeeze is a single gesture, so act on it at once.
             if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
                 val haptic = when (event.keyCode) {
