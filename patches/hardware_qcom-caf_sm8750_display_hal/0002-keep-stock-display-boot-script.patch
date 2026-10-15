@@ -1,0 +1,27 @@
+diff --git a/config/display-modules.mk b/config/display-modules.mk
+--- a/config/display-modules.mk
++++ b/config/display-modules.mk
+@@ -30,7 +30,6 @@
+                             mapper.qti \
+                             libmapperutils \
+                             vendor.display.config@2.0.vendor \
+-                            init.qti.display_boot.sh \
+                             libfilefinder \
+                             vendor.qti.hardware.display.demura-service \
+                             modetest \
+diff --git a/init/Android.bp b/init/Android.bp
+--- a/init/Android.bp
++++ b/init/Android.bp
+@@ -1,12 +1,0 @@
+-prebuilt_etc {
+-    name: "init.qti.display_boot.rc",
+-    src: "init.qti.display_boot.rc",
+-    sub_dir: "init",
+-    vendor: true,
+-}
+-
+-sh_binary {
+-    name: "init.qti.display_boot.sh",
+-    src: "init.qti.display_boot.sh",
+-    vendor: true,
+-}

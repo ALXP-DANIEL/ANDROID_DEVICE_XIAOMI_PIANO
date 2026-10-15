@@ -1,0 +1,317 @@
+diff --git a/core/java/android/widget/OverScroller.java b/core/java/android/widget/OverScroller.java
+--- a/core/java/android/widget/OverScroller.java
++++ b/core/java/android/widget/OverScroller.java
+@@ -43,6 +43,9 @@
+ 
+     private final boolean mFlywheel;
+ 
++    // Stock HyperOS fling physics for the Xiaomi keyboard cover touchpad.
++    private final TouchpadFlingSpline.Config mTouchpadConfig;
++
+     private static final int DEFAULT_DURATION = 250;
+     private static final int SCROLL_MODE = 0;
+     private static final int FLING_MODE = 1;
+@@ -83,6 +86,9 @@
+         mFlywheel = flywheel;
+         mScrollerX = new SplineOverScroller(context);
+         mScrollerY = new SplineOverScroller(context);
++        mTouchpadConfig = new TouchpadFlingSpline.Config(context);
++        mScrollerX.mTouchpad = new TouchpadFlingSpline(mTouchpadConfig);
++        mScrollerY.mTouchpad = new TouchpadFlingSpline(mTouchpadConfig);
+     }
+ 
+     /**
+@@ -424,8 +430,13 @@
+      */
+     public void fling(int startX, int startY, int velocityX, int velocityY,
+             int minX, int maxX, int minY, int maxY, int overX, int overY) {
+-        // Continue a scroll or fling in progress
+-        if (mFlywheel && !isFinished()) {
++        if (mTouchpadConfig.isEnabled()) {
++            mTouchpadConfig.refreshTouchpadDown();
++        }
++        // Continue a scroll or fling in progress. Like stock HyperOS, a touchpad
++        // fling with its own physics does not add the previous velocity.
++        if (mFlywheel && !isFinished()
++                && !(mTouchpadConfig.isEnabled() && mTouchpadConfig.isTouchpadDown())) {
+             float oldVelocityX = mScrollerX.mCurrVelocity;
+             float oldVelocityY = mScrollerY.mCurrVelocity;
+             if (Math.signum(velocityX) == Math.signum(oldVelocityX) &&
+@@ -636,6 +647,9 @@
+             mFlingFriction = friction;
+         }
+ 
++        // Stock HyperOS fling physics for the Xiaomi keyboard cover touchpad.
++        TouchpadFlingSpline mTouchpad;
++
+         SplineOverScroller(Context context) {
+             mFinished = true;
+             final float ppi = context.getResources().getDisplayMetrics().density * 160.0f;
+@@ -669,6 +683,10 @@
+         private void adjustDuration(int start, int oldFinal, int newFinal) {
+             final int oldDistance = oldFinal - start;
+             final int newDistance = newFinal - start;
++            if (mTouchpad != null && mTouchpad.isEnabled()) {
++                mDuration = mTouchpad.adjustDuration(newDistance);
++                return;
++            }
+             final float x = Math.abs((float) newDistance / oldDistance);
+             final int index = (int) (NB_SAMPLES * x);
+             if (index < NB_SAMPLES) {
+@@ -755,6 +773,10 @@
+             mDuration = mSplineDuration = 0;
+             mStartTime = AnimationUtils.currentAnimationTimeMillis();
+             mCurrentPosition = mStart = start;
++            final boolean touchpad = mTouchpad != null && mTouchpad.isEnabled();
++            if (touchpad) {
++                mTouchpad.fling(start, velocity);
++            }
+ 
+             if (start > max || start < min) {
+                 startAfterEdge(start, min, max, velocity);
+@@ -764,7 +786,8 @@
+             mState = SPLINE;
+             double totalDistance = 0.0;
+ 
+-            if (velocity != 0) {
++            if (touchpad ? Math.abs(velocity) > mTouchpad.getFlingVelThreshold()
++                    : velocity != 0) {
+                 mDuration = mSplineDuration = getSplineFlingDuration(velocity);
+                 totalDistance = getSplineFlingDistance(velocity);
+             }
+@@ -789,6 +812,9 @@
+         }
+ 
+         private double getSplineFlingDistance(int velocity) {
++            if (mTouchpad != null && mTouchpad.isEnabled()) {
++                return mTouchpad.getSplineFlingDistance(velocity);
++            }
+             final double l = getSplineDeceleration(velocity);
+             final double decelMinusOne = DECELERATION_RATE - 1.0;
+             return mFlingFriction * mPhysicalCoeff * Math.exp(DECELERATION_RATE / decelMinusOne * l);
+@@ -796,6 +822,9 @@
+ 
+         /* Returns the duration, expressed in milliseconds */
+         private int getSplineFlingDuration(int velocity) {
++            if (mTouchpad != null && mTouchpad.isEnabled()) {
++                return mTouchpad.getSplineFlingDuration(velocity);
++            }
+             final double l = getSplineDeceleration(velocity);
+             final double decelMinusOne = DECELERATION_RATE - 1.0;
+             return (int) (1000.0 * Math.exp(l / decelMinusOne));
+@@ -912,6 +941,14 @@
+             final long time = AnimationUtils.currentAnimationTimeMillis();
+             final long currentTime = time - mStartTime;
+ 
++            if (mTouchpad != null && mTouchpad.isEnabled() && mState == SPLINE) {
++                if (mTouchpad.update(currentTime, mCurrVelocity)) {
++                    mCurrVelocity = mTouchpad.mCurrVel;
++                    mCurrentPosition = mTouchpad.mCurrPosition;
++                }
++                return mTouchpad.mUpdated;
++            }
++
+             if (currentTime == 0) {
+                 // Skip work but report that we're still going if we have a nonzero duration.
+                 return mDuration > 0;
+diff --git a/core/java/android/widget/TouchpadFlingSpline.java b/core/java/android/widget/TouchpadFlingSpline.java
+new file mode 100644
+--- /dev/null
++++ b/core/java/android/widget/TouchpadFlingSpline.java
+@@ -0,0 +1,196 @@
++/*
++ * SPDX-License-Identifier: Apache-2.0
++ */
++
++package android.widget;
++
++import android.content.ContentResolver;
++import android.content.Context;
++import android.provider.Settings;
++
++/**
++ * Fling physics for the Xiaomi keyboard cover touchpad, as in stock HyperOS
++ * (OverScrollerForTouchpadStubImpl). The velocity decays exponentially with
++ * the friction and the pixel size from the stock /odm/etc/flick_profile.xml,
++ * which the device publishes in global settings, and the fling ends at the
++ * stop velocity. Only used while the last touch came from that touchpad.
++ *
++ * @hide
++ */
++final class TouchpadFlingSpline {
++
++    private static final String ENABLE_FLICK_OPTIMIZATION = "enable_flick_optimization";
++    private static final String IS_TOUCHPAD_SCROLL = "is_touchpad_scroll";
++    private static final String PARAM_PIXEL_SIZE = "param_pixel_size";
++    private static final String PARAM_FRICTION = "param_friction";
++    private static final String PARAM_FLICK_STOP_VEL_THRESHOLD = "param_flick_stop_vel_threshold";
++    private static final String PARAM_FLICK_START_VEL_THRESHOLD =
++            "param_flick_start_vel_threshold";
++
++    /** Per OverScroller: the settings and whether the last touch was on the touchpad. */
++    static final class Config {
++        private final ContentResolver mResolver;
++        private final boolean mEnabled;
++        private final float mPixelSize;
++        private final float mFriction;
++        private final float mStopVel;
++        private final float mStartVel;
++        private volatile boolean mTouchpadDown;
++
++        Config(Context context) {
++            ContentResolver resolver = null;
++            boolean enabled = false;
++            float pixelSize = 0.07368f;
++            float friction = 2.017f;
++            float stopVel = 1.934728f;
++            float startVel = 40.0f;
++            try {
++                resolver = context.getContentResolver();
++                enabled = Settings.Global.getInt(resolver, ENABLE_FLICK_OPTIMIZATION, 0) == 1;
++                if (enabled) {
++                    pixelSize = getPositive(resolver, PARAM_PIXEL_SIZE, pixelSize);
++                    friction = getPositive(resolver, PARAM_FRICTION, friction);
++                    stopVel = getPositive(resolver, PARAM_FLICK_STOP_VEL_THRESHOLD, stopVel);
++                    startVel = getPositive(resolver, PARAM_FLICK_START_VEL_THRESHOLD, startVel);
++                }
++            } catch (RuntimeException e) {
++                // No settings in this process; keep the platform physics.
++                enabled = false;
++            }
++            mResolver = resolver;
++            mEnabled = enabled;
++            mPixelSize = pixelSize;
++            mFriction = friction;
++            mStopVel = stopVel;
++            mStartVel = startVel;
++        }
++
++        private static float getPositive(ContentResolver resolver, String key, float def) {
++            float value = Settings.Global.getFloat(resolver, key, def);
++            return value <= 0.0f ? def : value;
++        }
++
++        boolean isEnabled() {
++            return mEnabled;
++        }
++
++        /** Called when a fling starts, like stock OverScrollerForTouchpadStubImpl.fling(). */
++        void refreshTouchpadDown() {
++            try {
++                mTouchpadDown = Settings.Global.getInt(mResolver, IS_TOUCHPAD_SCROLL, 0) == 1;
++            } catch (RuntimeException e) {
++                mTouchpadDown = false;
++            }
++        }
++
++        boolean isTouchpadDown() {
++            return mTouchpadDown;
++        }
++
++        float mmToPx(float mm) {
++            return mm / mPixelSize;
++        }
++
++        float pxToMm(float px) {
++            return mPixelSize * px;
++        }
++    }
++
++    /** Update results, as stock SplineOverScrollerForTouchpad.updateResults. */
++    boolean mUpdated;
++    float mCurrVel;
++    int mCurrPosition;
++
++    private final Config mConfig;
++    private boolean mFinished = true;
++    private int mStartPosition;
++    private float mStartVel;
++    private float mTotalDeltaVel;
++    private int mTotalDistance;
++    private int mTotalDuration;
++    private boolean mAdjusted;
++    private int mAdjustedDistance;
++
++    TouchpadFlingSpline(Config config) {
++        mConfig = config;
++    }
++
++    boolean isEnabled() {
++        return mConfig.isEnabled() && mConfig.isTouchpadDown();
++    }
++
++    float getFlingVelThreshold() {
++        return mConfig.mmToPx(mConfig.mStartVel);
++    }
++
++    void fling(int start, float vel) {
++        mAdjusted = false;
++        mAdjustedDistance = 0;
++        if (Math.abs(vel) > getFlingVelThreshold()) {
++            mStartVel = vel;
++            mTotalDeltaVel = Math.signum(vel)
++                    * (Math.abs(vel) - Math.abs(mConfig.mmToPx(mConfig.mStopVel)));
++            mTotalDuration = getSplineFlingDuration((int) vel);
++            mStartPosition = start;
++            mTotalDistance = (int) (Math.signum(vel) * getSplineFlingDistance((int) vel));
++            mFinished = false;
++            return;
++        }
++        mStartVel = 0.0f;
++        mTotalDeltaVel = 0.0f;
++        mTotalDuration = 0;
++        mStartPosition = 0;
++        mTotalDistance = 0;
++        mFinished = true;
++    }
++
++    /** Returns false when there is nothing to update; results are in the fields. */
++    boolean update(long currentDuration, float currVel) {
++        mUpdated = false;
++        if (currVel == 0.0f || mFinished) {
++            return false;
++        }
++        float stopVel = mConfig.mmToPx(mConfig.mStopVel);
++        if (Math.abs(currVel) <= stopVel) {
++            mCurrVel = Math.signum(currVel) * stopVel;
++            mFinished = true;
++        } else {
++            float vel = mConfig.mmToPx((float) (Math.abs(mConfig.pxToMm(mStartVel))
++                    * Math.exp((-mConfig.mFriction * currentDuration) / 1000.0f)));
++            mCurrVel = Math.signum(currVel) * vel;
++        }
++        float deltaVel = mStartVel - mCurrVel;
++        int deltaDistance = (int) (mTotalDistance * (deltaVel / mTotalDeltaVel));
++        if (mAdjusted) {
++            if (Math.abs(deltaDistance) > Math.abs(mAdjustedDistance)) {
++                deltaDistance = mAdjustedDistance;
++                mFinished = true;
++            }
++        } else if (mFinished || Math.abs(deltaDistance) > Math.abs(mTotalDistance)) {
++            deltaDistance = mTotalDistance;
++            mFinished = true;
++        }
++        mCurrPosition = mStartPosition + deltaDistance;
++        mUpdated = true;
++        return true;
++    }
++
++    double getSplineFlingDistance(int vel) {
++        float distance = mConfig.mmToPx(
++                (Math.abs(mConfig.pxToMm(vel)) - mConfig.mStopVel) / mConfig.mFriction);
++        mTotalDistance = (int) (Math.signum(vel) * distance);
++        return distance;
++    }
++
++    int getSplineFlingDuration(int vel) {
++        mTotalDuration = (int) ((-1.0f / mConfig.mFriction)
++                * Math.log(mConfig.mStopVel / Math.abs(mConfig.pxToMm(vel))) * 1000.0d);
++        return mTotalDuration;
++    }
++
++    int adjustDuration(int newDistance) {
++        mAdjusted = true;
++        mAdjustedDistance = newDistance;
++        return mTotalDuration;
++    }
++}

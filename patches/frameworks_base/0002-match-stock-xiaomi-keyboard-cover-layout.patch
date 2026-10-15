@@ -1,0 +1,63 @@
+diff --git a/services/core/java/com/android/server/input/KeyboardLayoutManager.java b/services/core/java/com/android/server/input/KeyboardLayoutManager.java
+--- a/services/core/java/com/android/server/input/KeyboardLayoutManager.java
++++ b/services/core/java/com/android/server/input/KeyboardLayoutManager.java
+@@ -238,8 +238,10 @@
+                 final String key = keyboardIdentifier.toString();
+                 if (mDataStore.setSelectedKeyboardLayouts(key, selectedLayouts)) {
+                     // Need to show the notification only if layout selection changed
+-                    // from the previous configuration
+-                    needToShowNotification = true;
++                    // from the previous configuration. Like stock HyperOS, never
++                    // for the Xiaomi keyboard cover, whose input devices stay
++                    // registered even when it is detached.
++                    needToShowNotification = !isXiaomiKeyboardCover(inputDevice);
+                 }
+ 
+                 if (shouldLogConfiguration) {
+@@ -778,7 +780,28 @@
+             return new KeyboardLayoutSelectionResult(layoutDesc,
+                     LAYOUT_SELECTION_CRITERIA_VIRTUAL_KEYBOARD);
+         }
+-        return FAILED;
++        return getStockFallbackLayout(subtype);
++    }
++
++    /**
++     * Like stock HyperOS, fall back to the German or French layout for a German
++     * or French IME and to US English otherwise, instead of no layout.
++     */
++    @NonNull
++    private static KeyboardLayoutSelectionResult getStockFallbackLayout(
++            @NonNull InputMethodSubtype subtype) {
++        final String languageTag = subtype.getLanguageTag().replace('_', '-');
++        final String layout = "de-DE".equals(languageTag) ? "keyboard_layout_german"
++                : "fr-FR".equals(languageTag) ? "keyboard_layout_french"
++                : "keyboard_layout_english_us";
++        return new KeyboardLayoutSelectionResult(
++                "com.android.inputdevices/com.android.inputdevices.InputDeviceReceiver/" + layout,
++                LAYOUT_SELECTION_CRITERIA_DEFAULT);
++    }
++
++    private static boolean isXiaomiKeyboardCover(@NonNull InputDevice device) {
++        return device.getVendorId() == 0x15d9
++                && device.getProductId() >= 161 && device.getProductId() <= 164;
+     }
+ 
+     @Nullable
+@@ -1103,10 +1126,15 @@
+         return imeInfoList;
+     }
+ 
++    private static final boolean OFFER_ALL_LAYOUTS = true;
++
+     private static boolean isLayoutCompatibleWithLanguageTag(KeyboardLayout layout,
+             @NonNull String languageTag) {
+         LocaleList layoutLocales = layout.getLocales();
+-        if (layoutLocales.isEmpty() || TextUtils.isEmpty(languageTag)) {
++        // Like stock HyperOS outside CTS mode, offer every layout whatever the
++        // script of the IME language.
++        if (layoutLocales.isEmpty() || TextUtils.isEmpty(languageTag)
++                || OFFER_ALL_LAYOUTS) {
+             // KCM file doesn't have an associated language tag. This can be from
+             // a 3rd party app so need to include it as a potential layout.
+             return true;
