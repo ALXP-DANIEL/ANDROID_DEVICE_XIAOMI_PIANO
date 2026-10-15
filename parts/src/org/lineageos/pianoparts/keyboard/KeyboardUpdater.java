@@ -97,6 +97,9 @@ final class KeyboardUpdater {
         if (status != 0) {
             if (status == STATUS_RETRY || command == KeyboardProtocol.CMD_UPGRADE_FLASH) {
                 Log.i(TAG, "Keyboard asked to retry");
+                // A retry/busy status is not a successful acknowledgement.
+                // Keep the pending packet and let its bounded timeout retry it.
+                return true;
             } else {
                 Log.e(TAG, "Keyboard update error: " + KeyboardProtocol.hex(reply, reply.length));
                 finish(false);
@@ -108,6 +111,13 @@ final class KeyboardUpdater {
                 return true;
             }
             int offset = (reply[8] & 0xFF) | (reply[9] & 0xFF) << 8 | (reply[10] & 0xFF) << 16;
+            int pendingOffset = (mPending[10] & 0xFF) | (mPending[11] & 0xFF) << 8
+                    | (mPending[12] & 0xFF) << 16;
+            if (offset != pendingOffset) {
+                Log.w(TAG, "Ignoring update ACK for offset " + offset
+                        + ", waiting for " + pendingOffset);
+                return true;
+            }
             int index = offset / KeyboardFirmware.CHUNK;
             int count = mFirmware.chunkCount();
             report(index + 1, count);
