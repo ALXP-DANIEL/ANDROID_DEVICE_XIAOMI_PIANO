@@ -1,7 +1,6 @@
 APRIORI DXE {
   INF MdeModulePkg/Core/Dxe/DxeMain.inf
   INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
-  INF pianoPkg/Drivers/TouchBusDxe/TouchBusDxe.inf
   INF QcomPkg/Drivers/IortDtDxe/IortDtDxe.inf
 
 !if $(QCOM_DXE) == TRUE
@@ -200,9 +199,6 @@ APRIORI DXE {
 !if $(QCOM_DXE) == TRUE
   INF Binaries/piano/QcomPkg/Drivers/CPRDxe/CPRDxe.inf
 !endif
-!endif
-!if $(QCOM_DXE) == TRUE
-  # GpiDxe is stored as a raw file and started after ConnectAll (PianoTouch.c).
 !endif
 !if $(QCOM_DXE) == TRUE
   INF Binaries/piano/QcomPkg/Drivers/UCDxe/UCDxe.inf

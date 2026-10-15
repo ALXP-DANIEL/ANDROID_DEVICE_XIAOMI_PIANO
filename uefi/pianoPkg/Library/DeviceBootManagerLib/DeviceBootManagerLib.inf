@@ -18,8 +18,6 @@
   PianoDtb.c
   PianoFastboot.c
   PianoReset.c
-  PianoTouch.c
-  PianoTouchKeys.h
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -32,11 +30,9 @@
   PeCoffGetEntryPointLib
   CacheMaintenanceLib
   DebugLib
-  IoLib
   DxeServicesLib
   DevicePathLib
   MemoryAllocationLib
-  TimerLib
   UefiBootManagerLib
   UefiBootServicesTableLib
   UefiLib
@@ -55,7 +51,6 @@
   gEfiLoadedImageProtocolGuid
   gEfiGraphicsOutputProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
-  gEfiClockProtocolGuid
   gEfiBlockIoProtocolGuid
   gEfiResetNotificationProtocolGuid
   gEfiUsbDeviceProtocolGuid

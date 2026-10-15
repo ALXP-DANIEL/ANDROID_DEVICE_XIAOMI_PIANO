@@ -16,7 +16,6 @@
 #include <Library/IoLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
-#include "../DeviceBootManagerLib/PianoTouchKeys.h"
 
 
 
@@ -144,7 +143,7 @@ LibKeyUpdateKeyStatus (
 
 //
 // Piano keys are read from the PMIC through the SPMI arbiter's observer
-// channel (arbiter v7, EE0), the same way the boot menu reads them:
+// channel (arbiter v7, EE0), the same way the selector reads them:
 //   power and volume down: PON peripheral (PPID 0x013), register 0x10 bits 7 and 6
 //   volume up:             GPIO peripheral (PPID 0x18D), register 0x10 bit 0, active low
 // Only one-byte reads are issued.
@@ -275,34 +274,10 @@ KeypadDeviceGetKeys (
   KEYPAD_RETURN_API      *KeypadReturnApi,
   UINT64                  Delta)
 {
-  STATIC PIANO_TOUCH_KEYS_PROTOCOL  *Touch;
-  STATIC UINT64                     SinceLookup;
-  EFI_KEY_DATA                      TouchKeys[4];
-  UINTN                             Count;
-  UINT32                            Held = ReadKeys ();
+  UINT32  Held = ReadKeys ();
 
   for (UINTN Index = 0; Index < ARRAY_SIZE (KeyList); Index++) {
     LibKeyUpdateKeyStatus (&KeyList[Index]->EfiKeyContext, KeypadReturnApi, (Held & KeyList[Index]->Mask) != 0, Delta);
-  }
-
-  // The touch screen comes up later, in the boot manager; look for it
-  // once a second until it is there.
-  if (Touch == NULL) {
-    SinceLookup += Delta;
-    if (SinceLookup < MS2NS (1000)) {
-      return EFI_SUCCESS;
-    }
-
-    SinceLookup = 0;
-    if (EFI_ERROR (gBS->LocateProtocol (&gPianoTouchKeysProtocolGuid, NULL, (VOID **)&Touch))) {
-      Touch = NULL;
-      return EFI_SUCCESS;
-    }
-  }
-
-  Count = Touch->Poll (TouchKeys, ARRAY_SIZE (TouchKeys));
-  for (UINTN Index = 0; Index < Count; Index++) {
-    KeypadReturnApi->PushEfikeyBufTail (KeypadReturnApi, &TouchKeys[Index]);
   }
 
   return EFI_SUCCESS;

@@ -124,18 +124,6 @@
   INF Binaries/piano/QcomPkg/Drivers/CPRDxe/CPRDxe.inf
 !endif
 !endif
-  # GpiDxe reads its firmware from qupfw_a, so it must start after the
-  # partitions are connected; stored raw and started by PianoTouch.c.
-  FILE FREEFORM = 3E7B5A2C-91D4-4F68-B0A3-5C2E8D71F946 {
-    SECTION RAW = Binaries/piano/QcomPkg/Drivers/GpiDxe/GpiDxe.efi
-  }
-  # Novatek NT36532 touch firmware, loaded into the chip by PianoTouch.c.
-  FILE FREEFORM = 5B0C7E21-6A4D-4E83-9F12-3D7AC458B106 {
-    SECTION RAW = pianoPkg/Firmware/novatek_nt36532_piano_fw_csot.bin
-  }
-  FILE FREEFORM = 5B0C7E21-6A4D-4E83-9F12-3D7AC458B107 {
-    SECTION RAW = pianoPkg/Firmware/novatek_nt36532_piano_fw_boe.bin
-  }
 !if $(QCOM_DXE) == TRUE
   INF Binaries/piano/QcomPkg/Drivers/SPI/SPI.inf
 !endif
@@ -152,7 +140,6 @@
 !endif
 !else
   INF pianoPkg/Drivers/ScaledFbDxe/ScaledFbDxe.inf
-  INF pianoPkg/Drivers/TouchBusDxe/TouchBusDxe.inf
 !endif
 
 !if $(QCOM_DXE) == TRUE
