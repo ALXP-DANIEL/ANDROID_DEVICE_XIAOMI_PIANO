@@ -1,0 +1,82 @@
+# MIUI ADD: Recovery_StabilityEnhance
+# Copyright (c) 2017-2018,2020 The Linux Foundation. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of The Linux Foundation nor
+#       the names of its contributors may be used to endorse or promote
+#       products derived from this software without specific prior written
+#       permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+on early-init
+    insmod /vendor/lib/modules/q6_pdr_dlkm.ko
+    insmod /vendor/lib/modules/q6_notifier_dlkm.ko
+    insmod /vendor/lib/modules/snd_event_dlkm.ko
+    insmod /vendor/lib/modules/gpr_dlkm.ko
+    insmod /vendor/lib/modules/spf_core_dlkm.ko
+    insmod /vendor/lib/modules/adsp_loader_dlkm.ko
+
+on init
+    write /sys/class/backlight/panel0-backlight/brightness 200
+    setprop sys.usb.configfs 1
+
+on property:ro.boot.usbcontroller=*
+    setprop sys.usb.controller ${ro.boot.usbcontroller}
+    wait /sys/bus/platform/devices/${ro.boot.usb.dwc3_msm:-a600000.ssusb}/mode
+    write /sys/bus/platform/devices/${ro.boot.usb.dwc3_msm:-a600000.ssusb}/mode peripheral
+    wait /sys/class/udc/${ro.boot.usbcontroller} 1
+
+on fs
+    wait /dev/block/platform/soc/${ro.boot.bootdevice}
+    symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+    write /proc/sys/kernel/firmware_config/force_sysfs_fallback 1
+    mkdir /vendor/firmware_mnt
+    mkdir /vendor/firmware
+    mount_all /vendor/etc/charger_fw_fstab.qti --early
+    mount none /vendor/firmware_mnt/image /vendor/firmware bind rec
+    wait /sys/kernel/boot_adsp/ssr
+    write /sys/kernel/boot_adsp/ssr 1
+    wait /sys/class/power_supply/battery
+
+on boot
+    wait /sys/class/power_supply/usb/type
+    start recovery-batterysecret
+    start recovery-mi_thermald
+    chmod 0664 /sys/class/qcom-battery/pd_verifed
+    chmod 0664 /sys/class/qcom-battery/request_vdm_cmd
+    chmod 0664 /sys/class/qcom-battery/verify_process
+    chmod 0664 /sys/class/xm_power/fuelgauge/strategy_fg/authentic
+    chmod 0664 /sys/class/xm_power/fuelgauge/strategy_fg/verify_slave_flag
+    chmod 0664 /sys/class/xm_power/fuelgauge/strategy_fg/slave_authentic
+
+service recovery-batterysecret /vendor/bin/batterysecret
+    class main
+    user root
+    group system wakelock
+    disabled
+    seclabel u:r:batterysecret:s0
+
+service recovery-mi_thermald /vendor/bin/mi_thermald
+    class main
+    user root
+    group system
+    disabled
+    seclabel u:r:mi_thermald:s0
+# END Recovery_StabilityEnhance

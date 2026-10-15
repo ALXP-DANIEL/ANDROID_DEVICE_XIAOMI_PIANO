@@ -1,0 +1,6 @@
+# Qualcomm's SM8750 generic policy defines dedicated LOWI and XTRA domains,
+# but omits the transitions from loc_launcher that are present on SM8550 and
+# SM8650. Without these transitions both children inherit vendor_location and
+# lose their network, Binder, QRTR, and service-manager permissions.
+domain_auto_trans(vendor_location, vendor_location_lowi_server_exec, vendor_location_lowi_server)
+domain_auto_trans(vendor_location, vendor_location_xtra_daemon_exec, vendor_location_xtra_daemon)

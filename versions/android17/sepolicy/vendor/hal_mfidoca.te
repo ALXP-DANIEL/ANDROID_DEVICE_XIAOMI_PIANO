@@ -1,0 +1,22 @@
+type hal_mfidoca_default, domain;
+type hal_mfidoca_default_exec, exec_type, file_type, vendor_file_type;
+type hal_mfidoca_service, hal_service_type, protected_service, service_manager_type;
+
+init_daemon_domain(hal_mfidoca_default)
+hal_server_domain(hal_mfidoca_default, hal_mfidoca)
+hal_attribute_service(hal_mfidoca, hal_mfidoca_service)
+binder_use(hal_mfidoca_default)
+
+hal_client_domain(platform_app, hal_mfidoca)
+hal_client_domain(system_app, hal_mfidoca)
+hal_client_domain(system_server, hal_mfidoca)
+
+r_dir_file(hal_mfidoca_default, firmware_file)
+allow hal_mfidoca_default ion_device:chr_file rw_file_perms;
+allow hal_mfidoca_default tee_device:chr_file rw_file_perms;
+allow hal_mfidoca_default vendor_dmabuf_qseecom_heap_device:chr_file r_file_perms;
+allow hal_mfidoca_default vendor_dmabuf_qseecom_ta_heap_device:chr_file r_file_perms;
+
+get_prop(hal_mfidoca_default, vendor_fp_prop)
+get_prop(hal_mfidoca_default, vendor_system_prop)
+set_prop(hal_mfidoca_default, vendor_payment_security_prop)
