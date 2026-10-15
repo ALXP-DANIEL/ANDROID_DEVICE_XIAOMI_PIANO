@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/xiaomi_settings_title">
+
+    <com.android.settingslib.widget.TopIntroPreference
+        android:key="xiaomi_intro"
+        android:title="@string/xiaomi_intro" />
+
+    <PreferenceCategory android:title="@string/category_display">
+
+        <Preference
+            android:key="color_scheme"
+            android:icon="@drawable/ic_true_tone_tile"
+            android:title="@string/color_scheme_title"
+            android:summary="@string/color_scheme_summary">
+            <intent
+                android:targetClass="org.lineageos.pianoparts.ColorSchemeActivity"
+                android:targetPackage="org.lineageos.pianoparts" />
+        </Preference>
+
+        <SwitchPreferenceCompat
+            android:key="reading_mode"
+            android:icon="@drawable/ic_reading_tile"
+            android:title="@string/reading_mode_title"
+            android:summary="@string/reading_mode_summary"
+            android:persistent="false" />
+
+        <SwitchPreferenceCompat
+            android:key="sunlight_mode"
+            android:icon="@drawable/ic_sunlight_tile"
+            android:title="@string/sunlight_mode_title"
+            android:summary="@string/sunlight_mode_summary"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_performance">
+
+        <SwitchPreferenceCompat
+            android:key="thermal_game"
+            android:icon="@drawable/ic_thermal_tile"
+            android:title="@string/thermal_game_title"
+            android:summary="@string/thermal_game_summary"
+            android:persistent="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_battery">
+
+        <SwitchPreferenceCompat
+            android:key="bypass_charging"
+            android:icon="@drawable/ic_bypass_tile"
+            android:title="@string/bypass_charging_title"
+            android:summary="@string/bypass_charging_summary"
+            android:persistent="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/keyboard_settings_title">
+
+        <Preference
+            android:key="keyboard"
+            android:icon="@drawable/ic_keyboard_settings"
+            android:title="@string/keyboard_cover_title"
+            android:summary="@string/keyboard_settings_summary">
+            <intent
+                android:targetClass="org.lineageos.pianoparts.KeyboardSettingsActivity"
+                android:targetPackage="org.lineageos.pianoparts" />
+        </Preference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pen_category_title">
+
+        <Preference
+            android:key="pen"
+            android:icon="@drawable/ic_pen"
+            android:title="@string/pen_category_title"
+            android:summary="@string/stylus_settings_summary">
+            <intent
+                android:targetClass="org.lineageos.pianoparts.StylusSettingsActivity"
+                android:targetPackage="org.lineageos.pianoparts" />
+        </Preference>
+
+
+    </PreferenceCategory>
+</PreferenceScreen>
