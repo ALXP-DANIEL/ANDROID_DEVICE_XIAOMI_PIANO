@@ -1,0 +1,157 @@
+diff --git a/services/core/java/com/android/server/input/InputManagerService.java b/services/core/java/com/android/server/input/InputManagerService.java
+index 5706389..9990c5a 100644
+--- a/services/core/java/com/android/server/input/InputManagerService.java
++++ b/services/core/java/com/android/server/input/InputManagerService.java
+@@ -552,8 +552,9 @@ public class InputManagerService extends IInputManager.Stub
+ 
+         mContext = injector.getContext();
+         mHandler = new InputManagerHandler(injector.getLooper());
+-        mPenLaserBridge = new PianoPenLaserBridge(mContext, mHandler);
+         mNative = injector.getNativeService(this);
++        mPenLaserBridge = new PianoPenLaserBridge(mContext, mHandler,
++                device -> mNative.setPenLaserDrawingDevice(device));
+         mSettingsObserver = new InputSettingsObserver(mContext, mHandler, this, mNative);
+         mKeyboardLayoutManager = new KeyboardLayoutManager(mContext, mNative, mDataStore,
+                 injector.getLooper());
+diff --git a/services/core/java/com/android/server/input/NativeInputManagerService.java b/services/core/java/com/android/server/input/NativeInputManagerService.java
+index b969e67..38bacc9 100644
+--- a/services/core/java/com/android/server/input/NativeInputManagerService.java
++++ b/services/core/java/com/android/server/input/NativeInputManagerService.java
+@@ -130,6 +130,9 @@ interface NativeInputManagerService {
+ 
+     void setPointerSpeed(int speed);
+ 
++    /** Exact laser mouse device; -1 restores normal pointer acceleration. */
++    void setPenLaserDrawingDevice(int deviceId);
++
+     void setMouseScalingEnabled(int displayId, boolean enabled);
+ 
+     void setMouseReverseVerticalScrollingEnabled(boolean enabled);
+@@ -461,6 +464,9 @@ interface NativeInputManagerService {
+         @Override
+         public native void setPointerSpeed(int speed);
+ 
++        @Override
++        public native void setPenLaserDrawingDevice(int deviceId);
++
+         @Override
+         public native void setMouseScalingEnabled(int displayId, boolean enabled);
+ 
+diff --git a/services/core/java/com/android/server/input/PianoPenLaserBridge.java b/services/core/java/com/android/server/input/PianoPenLaserBridge.java
+index d58fb88..0af744d 100644
+--- a/services/core/java/com/android/server/input/PianoPenLaserBridge.java
++++ b/services/core/java/com/android/server/input/PianoPenLaserBridge.java
+@@ -17,6 +17,7 @@ import android.os.RemoteException;
+ import android.os.SystemClock;
+ import android.os.UserHandle;
+ import android.provider.Settings;
++import java.util.function.IntConsumer;
+ 
+ /** Native input hot path posts bounded/coalesced pen deltas; never calls native recursively. */
+ final class PianoPenLaserBridge {
+@@ -26,6 +27,7 @@ final class PianoPenLaserBridge {
+             "org.lineageos.pianoparts",
+             "org.lineageos.pianoparts.stylus.PenLaserMotionService");
+     private static final int MSG_MOTION = 1;
++    private final IntConsumer mSetDrawingDevice;
+     private final Context mContext;
+     private final Handler mHandler;
+     private final Object mLock = new Object();
+@@ -59,7 +61,8 @@ final class PianoPenLaserBridge {
+             mHandler.post(() -> setMotionServiceBound(false));
+         }
+     };
+-    PianoPenLaserBridge(Context context, Handler handler) {
++    PianoPenLaserBridge(Context context, Handler handler, IntConsumer drawingSetter) {
++        mSetDrawingDevice = drawingSetter;
+         mContext = context; mHandler = handler;
+         Settings.Global.putInt(context.getContentResolver(), "piano_pen_laser_bridge", -1);
+         context.getContentResolver().registerContentObserver(Settings.Global.getUriFor(Settings.Global.BOOT_COUNT), false,
+@@ -85,6 +88,10 @@ final class PianoPenLaserBridge {
+                     if (!mActive) { mDx = mDy = 0; }
+                 }
+                 // Binding is triggered by control/heartbeat, never from input threads.
++                // Stock bypasses pointer acceleration only during drawing,
++                // not while merely displaying the laser dot.
++                mSetDrawingDevice.accept(active && intent.getBooleanExtra("drawing", false)
++                        ? device : -1);
+                 setMotionServiceBound(active);
+             }
+         }, new IntentFilter(CONTROL), null, handler, Context.RECEIVER_NOT_EXPORTED);
+diff --git a/services/core/jni/com_android_server_input_InputManagerService.cpp b/services/core/jni/com_android_server_input_InputManagerService.cpp
+index fd3e397..7fb8815 100644
+--- a/services/core/jni/com_android_server_input_InputManagerService.cpp
++++ b/services/core/jni/com_android_server_input_InputManagerService.cpp
+@@ -67,6 +67,7 @@
+ #include <utils/threads.h>
+ 
+ #include <atomic>
++#include <chrono>
+ #include <cinttypes>
+ #include <map>
+ #include <variant>
+@@ -342,6 +343,18 @@ public:
+     void setPointerDisplayId(ui::LogicalDisplayId displayId);
+     int32_t getMousePointerSpeed();
+     void setPointerSpeed(int32_t speed);
++    void setPenLaserDrawingDevice(int32_t deviceId) {
++        if (deviceId < 0) {
++            mPenLaserDrawingDevice.store(-1, std::memory_order_release);
++            mPenLaserDrawingExpiryNs.store(0, std::memory_order_release);
++            return;
++        }
++        const auto now = std::chrono::steady_clock::now().time_since_epoch();
++        const auto expiry = std::chrono::duration_cast<std::chrono::nanoseconds>(now).count() +
++                5000000000LL;
++        mPenLaserDrawingExpiryNs.store(expiry, std::memory_order_release);
++        mPenLaserDrawingDevice.store(deviceId, std::memory_order_release);
++    }
+     void setMouseScalingEnabled(ui::LogicalDisplayId displayId, bool enabled);
+     void setMouseReverseVerticalScrollingEnabled(bool enabled);
+     void setMouseScrollingAccelerationEnabled(bool enabled);
+@@ -380,6 +393,15 @@ public:
+ 
+     /* --- InputReaderPolicyInterface implementation --- */
+ 
++    bool isPenLaserDrawingDevice(int32_t deviceId) override {
++        if (deviceId < 0 || mPenLaserDrawingDevice.load(std::memory_order_acquire) != deviceId) {
++            return false;
++        }
++        const auto now = std::chrono::steady_clock::now().time_since_epoch();
++        return std::chrono::duration_cast<std::chrono::nanoseconds>(now).count() <
++                mPenLaserDrawingExpiryNs.load(std::memory_order_acquire);
++    }
++
+     void getReaderConfiguration(InputReaderConfiguration* outConfig) override;
+     void notifyInputDevicesChanged(const std::vector<InputDeviceInfo>& inputDevices) override;
+     void notifyTouchpadHardwareState(const SelfContainedHardwareState& schs,
+@@ -468,6 +490,9 @@ public:
+ 
+ private:
+     sp<InputManagerInterface> mInputManager;
++    // Read by the input reader thread. A lost Parts process expires automatically.
++    std::atomic<int32_t> mPenLaserDrawingDevice{-1};
++    std::atomic<int64_t> mPenLaserDrawingExpiryNs{0};
+ 
+     jobject mServiceObj;
+     sp<Looper> mLooper;
+@@ -2634,6 +2659,11 @@ static jint nativeGetMousePointerSpeed(JNIEnv* env, jobject nativeImplObj) {
+     return static_cast<jint>(im->getMousePointerSpeed());
+ }
+ 
++static void nativeSetPenLaserDrawingDevice(JNIEnv* env, jobject nativeImplObj,
++                                            jint deviceId) {
++    getNativeInputManager(env, nativeImplObj)->setPenLaserDrawingDevice(deviceId);
++}
++
+ static void nativeSetPointerSpeed(JNIEnv* env, jobject nativeImplObj, jint speed) {
+     NativeInputManager* im = getNativeInputManager(env, nativeImplObj);
+ 
+@@ -3442,6 +3472,7 @@ static const JNINativeMethod gInputManagerMethods[] = {
+         {"transferTouch", "(Landroid/os/IBinder;I)Z", (void*)nativeTransferTouchOnDisplay},
+         {"getMousePointerSpeed", "()I", (void*)nativeGetMousePointerSpeed},
+         {"setPointerSpeed", "(I)V", (void*)nativeSetPointerSpeed},
++        {"setPenLaserDrawingDevice", "(I)V", (void*)nativeSetPenLaserDrawingDevice},
+         {"setMouseScalingEnabled", "(IZ)V", (void*)nativeSetMouseScalingEnabled},
+         {"setMouseReverseVerticalScrollingEnabled", "(Z)V",
+          (void*)nativeSetMouseReverseVerticalScrollingEnabled},
