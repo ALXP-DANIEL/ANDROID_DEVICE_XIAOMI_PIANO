@@ -92,6 +92,7 @@ DeviceBootManagerAfterConsole ()
 
   // Consoles are up: start the boot manager on the ESP, or show the
   // button menu when there is none.
+  PianoResetHookInstall ();
   PianoTouchStart ();
   PianoDtbInstall ();
   StartEspLoader ();

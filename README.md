@@ -33,7 +33,7 @@ from `uefi/pianoPkg`, which runs Visor from the ESP.
 | Visor boot manager on the ESP | Works |
 | Volume and power keys in UEFI | Works: volume moves, power selects |
 | Touch screen in UEFI | Works: swipe moves one step, double tap selects |
-| Reboot / Shut down from UEFI | **Hangs on a black screen**; hold power |
+| Reboot / Shut down from UEFI | Works |
 | Android entry inside Visor | Not yet |
 | Linux (Arch) from Visor | Not yet |
 | Installer ZIP for recovery | Not yet |
