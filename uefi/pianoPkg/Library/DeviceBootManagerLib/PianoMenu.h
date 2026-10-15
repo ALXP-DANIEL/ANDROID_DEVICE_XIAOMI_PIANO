@@ -24,4 +24,8 @@ PianoDtbInstall (VOID);
 VOID
 PianoResetHookInstall (VOID);
 
+/* Debug fastboot over USB as "piano-uefi" (PianoFastboot.c). */
+VOID
+PianoFastbootStart (VOID);
+
 #endif

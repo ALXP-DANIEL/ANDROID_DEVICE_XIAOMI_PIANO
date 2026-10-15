@@ -34,6 +34,7 @@ from `uefi/pianoPkg`, which runs Visor from the ESP.
 | Volume and power keys in UEFI | Works: volume moves, power selects |
 | Touch screen in UEFI | Works: swipe moves one step, double tap selects |
 | Reboot / Shut down from UEFI | Works |
+| Debug fastboot in UEFI (`piano-uefi`) | Works: screenshot, log, memory dump, run an EFI app |
 | Android entry inside Visor | Not yet |
 | Linux (Arch) from Visor | Not yet |
 | Installer ZIP for recovery | Not yet |
@@ -73,6 +74,25 @@ fastboot boot boot-uefi.img
 
 A normal reboot returns to the installed boot image. The image has no AVB
 footer, so the bootloader must be unlocked.
+
+### Debug fastboot
+
+While UEFI runs, the tablet is also a fastboot device named `piano-uefi`,
+served by Qualcomm's own USB driver. It is for debugging only: it never
+writes storage, so `flash` and `erase` are refused. Always pass
+`-s piano-uefi` so commands cannot reach the real bootloader.
+
+```sh
+fastboot -s piano-uefi oem screenshot && fastboot -s piano-uefi get_staged shot.bmp
+fastboot -s piano-uefi oem log && fastboot -s piano-uefi get_staged log.txt
+fastboot -s piano-uefi oem dump 81CE4000 10000 && fastboot -s piano-uefi get_staged xbl-log.bin
+fastboot -s piano-uefi boot app.efi       # run an EFI app from RAM
+fastboot -s piano-uefi reboot
+```
+
+`oem log` holds what was printed on the screen. `oem dump` reads memory;
+`81CE4000 10000` is the stock bootloader's boot log. While an app started
+with `boot` runs, the service pauses.
 
 ## Layout
 
