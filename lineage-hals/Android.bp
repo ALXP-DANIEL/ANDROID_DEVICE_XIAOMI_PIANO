@@ -1,0 +1,22 @@
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_binary {
+    name: "vendor.lineage.livedisplay-service.piano",
+    init_rc: ["vendor.lineage.livedisplay-service.piano.rc"],
+    vintf_fragments: ["vendor.lineage.livedisplay-service.piano.xml"],
+    relative_install_path: "hw",
+    vendor: true,
+    srcs: [
+        "XiaomiFeatures.cpp",
+        "service.cpp",
+    ],
+    shared_libs: [
+        "libbase",
+        "libbinder_ndk",
+        "liblog",
+        "vendor.lineage.livedisplay-V1-ndk",
+        "vendor.lineage.touch-V1-ndk",
+    ],
+}
