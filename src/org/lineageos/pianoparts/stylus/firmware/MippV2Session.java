@@ -3,9 +3,8 @@ package org.lineageos.pianoparts.stylus.firmware;
 
 /**
  * Offline-testable stock V2 query/start/requested-block/end sequence.
- * Not connected to GATT or the firmware repository. The future transport must
- * fragment a frame for the negotiated MTU and call onWrite only after all its
- * fragments succeed. Caller serializes every callback and owns the timeout.
+ * MippV2Gatt sends each frame as one stock characteristic value. Caller
+ * serializes every callback and owns the timeout.
  */
 public final class MippV2Session {
     public enum State { NEW, QUERY, BEGIN, DATA, END, VERIFY_REVISION, COMPLETE, FAILED, CANCELLED }
@@ -45,8 +44,12 @@ public final class MippV2Session {
         if (terminal() || !writePending) return;
         writePending = false;
         if (!success) { fail("Frame write failed"); return; }
+        boolean endWritten = state == State.END;
         byte[] reply = earlyReply; earlyReply = null;
         if (reply != null) onReply(reply);
+        // Stock j.k sends the end command then leaves the transfer immediately.
+        // A final notification is optional; successful write proceeds to readback.
+        if (endWritten && state == State.END) awaitRevision();
     }
     public void onReply(byte[] bytes) {
         if (terminal() || state == State.NEW || state == State.VERIFY_REVISION) return;
@@ -89,8 +92,7 @@ public final class MippV2Session {
                 if (reply.opcode != 3 || payload.length != 1 || payload[0] != 0) {
                     fail("Completion not acknowledged"); return;
                 }
-                state = State.VERIFY_REVISION;
-                listener.finished(state, "Reconnect and verify target revision"); break;
+                awaitRevision(); break;
             default: fail("Unexpected reply state");
         }
     }
@@ -100,12 +102,17 @@ public final class MippV2Session {
         listener.progress((int) ((long) (sequence - 1) * 99 / plan.packetCount));
         send(plan.packet(sequence));
     }
+    private void awaitRevision() {
+        state = State.VERIFY_REVISION;
+        listener.finished(state, "Reconnect and verify target revision");
+    }
     public void verifyRevision(String version) {
         if (state != State.VERIFY_REVISION) throw new IllegalStateException("Transfer not acknowledged");
         if (!targetVersion.equals(version)) { fail("Post-update revision mismatch"); return; }
         state = State.COMPLETE; listener.progress(100); listener.finished(state, "Target revision verified");
     }
     public void timeout() { if (!terminal()) fail("Firmware operation timed out"); }
+    public void transportFailure(String reason) { if (!terminal()) fail(reason); }
     public void cancel() {
         if (terminal()) return;
         state = State.CANCELLED; writePending = false; earlyReply = null;
