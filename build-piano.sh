@@ -10,8 +10,8 @@ usage() {
     cat <<'EOF'
 Usage: bash build-piano.sh [--sync-only]
 
-Automatically git-pulls the latest main build/sync scripts, refreshes all nine
-ROM trees from the generated repo manifest, stages the selected Android version,
+Automatically git-pulls the latest main build/sync scripts, syncs the full ROM,
+refreshes all nine piano trees, stages the selected Android version,
 then builds an OTA unless --sync-only is supplied.
 
 Defaults: PIANO_ANDROID=17, PIANO_ROM=evox, BUILD_VARIANT=userdebug.
@@ -96,14 +96,25 @@ restore_kernel() {
 }
 trap 'result=$?; restore_kernel; echo "PIANO_BUILD_EXIT=$result"' EXIT
 
-echo "Updating Android $PIANO_ANDROID $PIANO_ROM sources from Git manifest..."
+if ! command -v repo >/dev/null 2>&1 && [[ -x .repo/repo/repo ]]; then
+    export PATH="$ANDROID_ROOT/.repo/repo:$PATH"
+fi
+command -v repo >/dev/null 2>&1 || { echo 'repo command not found.' >&2; exit 1; }
+
+echo "Syncing full $PIANO_ROM Android $PIANO_ANDROID source manifest..."
+# No project list: refresh the ROM itself as well as the existing local manifest.
+# Never force checkout over local framework changes. A sync conflict must stop
+# the build so those changes can be inspected and preserved.
+repo sync -c --no-clone-bundle --no-tags -j"${SYNC_JOBS:-2}"
+
+echo "Updating Android $PIANO_ANDROID $PIANO_ROM piano trees from Git manifest..."
 # repo sync advances all nine detached Git checkouts to their manifest branch
 # tips; plain git pull would fail on their detached HEADs. The sync helper also
 # validates clean tracked files and stages all Android-specific generated files.
 bash "$PIANO_TOOLS_DIR/sync-device.sh" --android "$PIANO_ANDROID" --rom "$PIANO_ROM" --yes
 
 if [[ "$SYNC_ONLY" == true ]]; then
-    echo 'Piano Git manifest and all nine ROM trees are up to date; no build requested.'
+    echo 'Full ROM manifest and all nine piano trees synced; no build requested.'
     exit 0
 fi
 
