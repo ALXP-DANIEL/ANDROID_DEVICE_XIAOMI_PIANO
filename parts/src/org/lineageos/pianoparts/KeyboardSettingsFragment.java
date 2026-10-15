@@ -33,7 +33,9 @@ public class KeyboardSettingsFragment extends SettingsBasePreferenceFragment
     private Preference mMcuVersion;
     private Preference mUpdateKeyboard;
     private Preference mUpdateTouchpad;
+    private Preference mUpdateMcu;
     private String mProgress;
+    private String mMcuProgress;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -54,11 +56,13 @@ public class KeyboardSettingsFragment extends SettingsBasePreferenceFragment
         mMcuVersion = findPreference("mcu_version");
         mUpdateKeyboard = findPreference("keyboard_update");
         mUpdateTouchpad = findPreference("touchpad_update");
+        mUpdateMcu = findPreference("mcu_update");
         mAuto.setOnPreferenceChangeListener(this);
         mBrightness.setOnPreferenceChangeListener(this);
         mTouchpad.setOnPreferenceChangeListener(this);
         mUpdateKeyboard.setOnPreferenceClickListener(p -> confirmUpdate(false));
         mUpdateTouchpad.setOnPreferenceClickListener(p -> confirmUpdate(true));
+        mUpdateMcu.setOnPreferenceClickListener(p -> confirmMcuUpdate());
     }
 
     @Override
@@ -104,6 +108,25 @@ public class KeyboardSettingsFragment extends SettingsBasePreferenceFragment
         return true;
     }
 
+    private boolean confirmMcuUpdate() {
+        String version = mKeyboard.getAvailableMcuUpdate();
+        if (version == null || mKeyboard.isUpdating()) return true;
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.mcu_update_title)
+                .setMessage(getString(version.equals(mKeyboard.getMcuVersion())
+                        ? R.string.mcu_update_reinstall_warning
+                        : R.string.mcu_update_warning, version))
+                .setPositiveButton(R.string.keyboard_update_start, (dialog, which) -> {
+                    if (mKeyboard.startMcuUpdate()) {
+                        mMcuProgress = getString(R.string.keyboard_update_progress, 0);
+                        updateState();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+        return true;
+    }
+
     private void updateState() {
         boolean connected = mKeyboard.isConnected();
         boolean updating = mKeyboard.isUpdating();
@@ -132,6 +155,21 @@ public class KeyboardSettingsFragment extends SettingsBasePreferenceFragment
                 connected, updating);
         updateUpdatePreference(mUpdateTouchpad, mKeyboard.getAvailableTouchpadUpdate(),
                 connected && mKeyboard.hasTouchpad(), updating);
+        updateMcuUpdatePreference(connected, updating);
+    }
+
+    private void updateMcuUpdatePreference(boolean connected, boolean updating) {
+        mUpdateMcu.setVisible(connected);
+        if (updating && mMcuProgress != null) {
+            mUpdateMcu.setSummary(mMcuProgress);
+            mUpdateMcu.setEnabled(false);
+            return;
+        }
+        String version = mKeyboard.getAvailableMcuUpdate();
+        mUpdateMcu.setSummary(version == null ? getString(R.string.mcu_update_unavailable)
+                : getString(version.equals(mKeyboard.getMcuVersion())
+                        ? R.string.mcu_update_reinstall : R.string.keyboard_update_available, version));
+        mUpdateMcu.setEnabled(version != null && !updating);
     }
 
     private void updateUpdatePreference(Preference preference, String version,
@@ -175,6 +213,24 @@ public class KeyboardSettingsFragment extends SettingsBasePreferenceFragment
             new AlertDialog.Builder(requireContext())
                     .setMessage(success ? R.string.keyboard_update_success
                             : R.string.keyboard_update_failed)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+            updateState();
+        }
+    }
+
+    @Override
+    public void onMcuUpdateProgress(int percent) {
+        mMcuProgress = getString(R.string.keyboard_update_progress, percent);
+        if (isAdded()) updateState();
+    }
+
+    @Override
+    public void onMcuUpdateFinished(boolean success) {
+        mMcuProgress = null;
+        if (isAdded()) {
+            new AlertDialog.Builder(requireContext())
+                    .setMessage(success ? R.string.mcu_update_success : R.string.mcu_update_failed)
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
             updateState();
