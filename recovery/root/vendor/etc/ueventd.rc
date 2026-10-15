@@ -1,0 +1,27 @@
+# Qualcomm TEE / SMC Invoke
+/dev/smcinvoke    0660    system    drmrpc
+
+# Qualcomm QSEE DMA heaps — stock piano ownership/mode.
+# Stock ueventd.rc:93 uses the wildcard for every qcom heap. The single-name
+# rule only covered qcom,qseecom and left qcom,qseecom-ta at 0600 root:root,
+# so the supplicant (primary gid system, groups 1026/1027/1068) got EACCES
+# allocating the TA buffer:
+#   QSEECOMPAT: DMA-Buf allocation failed from heap qcom,qseecom-ta errno=13
+/dev/dma_heap/qcom,*    0444    system    system
+
+# UFS RPMB and the LUN4 GPT listener, copied verbatim from the stock
+# /vendor/etc/ueventd.rc (lines 117-121 of the HyperOS image).
+#
+# A KeyMint key upgrade has to persist state in RPMB, which is replay-protected
+# secure storage reached through qseecomd's RPMB listener. qseecomd drops to uid
+# system after registering its listeners, and without these rules the node stays
+# root:root, so the listener gets EACCES and every upgrade fails:
+#
+#   E rpmb_ufs: Unable to open /dev/0:0:0:49476 (error no: 13)
+#   E KeyMasterHalDevice: upgrade_key   ret: -8
+#   E keystore2: Upgrade failed.
+#
+# This is a DAC failure, not an SELinux one - no AVC is logged for it, which is
+# why it stayed hidden behind the SELinux work for so long.
+/dev/0:0:0:49476          0600   system     system
+/dev/0:0:0:4              0600   system     root
