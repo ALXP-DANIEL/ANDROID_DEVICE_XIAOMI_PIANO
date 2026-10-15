@@ -125,6 +125,12 @@
             android:theme="@style/Theme.SubSettingsBase.Expressive"
             android:exported="false" />
 
+        <activity
+            android:name=".StylusFirmwareActivity"
+            android:label="@string/stylus_firmware_update"
+            android:theme="@style/Theme.SubSettingsBase.Expressive"
+            android:exported="false" />
+
         <!-- Takes LiveDisplay's place in Settings > Display, as on HyperOS. -->
         <activity
             android:name=".ColorSchemeActivity"
