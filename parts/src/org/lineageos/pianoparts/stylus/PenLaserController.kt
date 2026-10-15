@@ -68,7 +68,10 @@ internal class PenLaserController(private val context: Context, private val hand
                             XiaomiStylusDevice.typeOf(it) in setOf(3, 8) && it.supportsSource(android.view.InputDevice.SOURCE_MOUSE)
                         } ?: return
                         device = pen.id; generation = XiaomiStylusDevice.typeOf(pen)
-                        virtual = generation == 8; mode = 0; sendMode(false); present()
+                        // Stock P81C virtual-laser selection sends mode 1 immediately;
+                        // generation 3 starts in dot mode instead.
+                        virtual = generation == 8; mode = if (virtual) 1 else 0
+                        sendMode(virtual); present()
                     }
                 }
                 else -> closePresentation()
