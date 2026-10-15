@@ -7,10 +7,10 @@ Android device trees for the Xiaomi Pad 8 Pro (SM8750).
 | Android 17 (active) | Android 16 (maintenance) | Purpose |
 | --- | --- | --- |
 | `lineage-24.0` | `lineage-23.2` | LineageOS device tree |
-| `device-common-17` | `device-common-16` | SM8750 common device tree |
-| `vendor-17` | `vendor-16` | Device vendor files |
-| `vendor-common-17` | `vendor-common-16` | SM8750 common vendor files |
-| `kernel-17` | `kernel-16` | GKI kernel built from source, with the stock modules |
+| `device-common` | `device-common` | Common device source, version selected automatically |
+| `vendor` | `vendor` | Device vendor blobs, version selected automatically |
+| `vendor-common` | `vendor-common` | Automatically stages stock common vendor files by Android version |
+| `kernel` | `kernel` | GKI kernel and matching stock modules, version selected automatically |
 | `camera` | `camera` | Shared MiuiCamera tree with Android-specific stock binaries |
 | `pianopart` | `pianopart` | Shared latest PianoParts app with ROM-specific Settings placement |
 | `notes` | `notes` | Shared Xiaomi Notes package without opt-in |
@@ -18,8 +18,9 @@ Android device trees for the Xiaomi Pad 8 Pro (SM8750).
 | `ofox` | `ofox` | OrangeFox recovery (shared) |
 | `uefi` | `uefi` | UEFI firmware, boot menu and Visor (shared) |
 
-Android 16 branches only get fixes and monthly security updates. The shared
-branches are intended to be reused by compatible ROMs.
+The four hardware branches retain separate Android 16 and Android 17 file sets
+under `versions/`. The sync script stages only the matching set at the usual
+Android source paths. No separate package selection or flag is required.
 
 ## Sync
 
@@ -31,7 +32,11 @@ bash sync-device.sh
 ```
 
 The script asks for the ROM or recovery and Android version for ROM trees.
-Whenever the ROM device tree is selected, XiaomiParts, Camera, and Notes are
-synced and prepared automatically from their shared branches. Camera selects
-the stock package for Android 16 or 17; XiaomiParts selects its ROM-specific
-Settings placement. Recovery uses the shared `twrp` or `ofox` branch.
+For ROM trees, the script syncs all eight required repositories automatically:
+the ROM-specific device tree, common device, device vendor, common vendor,
+kernel, XiaomiParts, Camera and Notes. It stages the matching Android 16/17
+hardware package set, Camera binaries and ROM-specific XiaomiParts Settings
+placement without an opt-in. Recovery uses `twrp` or `ofox` separately.
+
+The original versioned hardware branches remain available as historical
+recovery points until both complete ROM builds and device smoke tests pass.
