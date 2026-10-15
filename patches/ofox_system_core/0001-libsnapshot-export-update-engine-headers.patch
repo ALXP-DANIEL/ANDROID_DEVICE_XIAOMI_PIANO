@@ -1,0 +1,29 @@
+libsnapshot: export libupdate_engine_headers from libsnapshot_defaults and
+libsnapshot_cow. cow_reader.h includes payload_consumer/file_descriptor.h,
+so recovery, install and lpdump all need it.
+
+diff --git a/fs_mgr/libsnapshot/Android.bp b/fs_mgr/libsnapshot/Android.bp
+index 2297949..985689e 100644
+--- a/fs_mgr/libsnapshot/Android.bp
++++ b/fs_mgr/libsnapshot/Android.bp
+@@ -59,6 +59,8 @@ cc_defaults {
+     ],
+     export_header_lib_headers: [
+         "libfiemap_headers",
++        // cow_reader.h includes payload_consumer/file_descriptor.h.
++        "libupdate_engine_headers",
+     ],
+     export_include_dirs: ["include"],
+     proto: {
+@@ -225,7 +227,11 @@ cc_library_static {
+ 
+     header_libs: [
+         "libstorage_literals_headers",
++        "libupdate_engine_headers",
+     ],
++    // cow_reader.h includes payload_consumer/file_descriptor.h, so every user
++    // of these headers needs update_engine's headers too.
++    export_header_lib_headers: ["libupdate_engine_headers"],
+     export_include_dirs: ["include"],
+     host_supported: true,
+     recovery_available: true,

@@ -1,0 +1,59 @@
+Partition manager changes:
+- Start MTP after decryption when it is enabled. On encrypted devices it was
+  never started.
+- Run /system/bin/twrp-pre-decrypt (if present) before each user credential
+  decrypt, and refuse to decrypt if it fails (port of the TWRP 0000 hook).
+
+diff --git a/partitionmanager.cpp b/partitionmanager.cpp
+index 73a16d993..084dc3bd4 100755
+--- a/partitionmanager.cpp
++++ b/partitionmanager.cpp
+@@ -558,6 +558,7 @@ void TWPartitionManager::Setup_Fstab_Partitions(bool Display_Error) {
+ 
+ 		Unlock_Block_Partitions();
+ 
++#ifndef TW_EXCLUDE_APEX
+ 		//Setup Apex before decryption
+ 		TWPartition* sys = PartitionManager.Find_Partition_By_Path(PartitionManager.Get_Android_Root_Path());
+ 		TWPartition* ven = PartitionManager.Find_Partition_By_Path("/vendor");
+@@ -588,6 +589,8 @@ void TWPartitionManager::Setup_Fstab_Partitions(bool Display_Error) {
+ 			sys->UnMount(Display_Error);
+ 	#endif
+ 
++#endif
++
+ 		if (!datamedia && !settings_partition && Find_Partition_By_Path("/sdcard") == NULL && Find_Partition_By_Path("/internal_sd") == NULL && Find_Partition_By_Path("/internal_sdcard") == NULL && Find_Partition_By_Path("/emmc") == NULL) {
+ 			// Attempt to automatically identify /data/media emulated storage devices
+ 			TWPartition* Dat = Find_Partition_By_Path("/data");
+@@ -2217,6 +2220,16 @@ void TWPartitionManager::Post_Decrypt(const string& Block_Device) {
+ 		if (!dat->Bind_Mount(false))
+ 			LOGERR("Unable to bind mount /sdcard to %s\n", dat->Storage_Path.c_str());
+ 		}
++#ifdef TW_HAS_MTP
++		// MTP only starts at boot when storage is already readable, so on an
++		// encrypted device it never started at all. Start it once storage has
++		// been decrypted and bound, if the user has it enabled. Enable_MTP()
++		// returns early if MTP is already running.
++		if (DataManager::GetIntValue("tw_mtp_enabled")) {
++			if (!Enable_MTP())
++				Disable_MTP();
++		}
++#endif
+ 	} else
+ 		LOGERR("Unable to locate data partition.\n");
+ }
+@@ -2366,6 +2379,14 @@ int TWPartitionManager::Decrypt_Device(string Password, int user_id) {
+ 		while (!TWFunc::Path_Exists("/data/system/users/gatekeeper.password.key") && --retry_count)
+ 			usleep(2000); // A small sleep is needed after mounting /data to ensure reliable decrypt...maybe because of DE?
+ 		gui_msg(Msg("decrypting_user_fbe=Attempting to decrypt FBE for user {1}...")(user_id));
++        constexpr char kPreDecryptHook[] = "/system/bin/twrp-pre-decrypt";
++        if (TWFunc::Path_Exists(kPreDecryptHook)) {
++            LOGINFO("Running pre-decrypt hook before user %d credential decrypt\n", user_id);
++            if (TWFunc::Exec_Cmd(kPreDecryptHook) != 0) {
++                LOGERR("Pre-decrypt hook failed; refusing credential decrypt\n");
++                return -1;
++            }
++        }
+ 		if (android::keystore::Decrypt_User(user_id, Password)) {
+ 			gui_msg(Msg("decrypt_user_success_fbe=User {1} Decrypted Successfully")(user_id));
+ 			Mark_User_Decrypted(user_id);

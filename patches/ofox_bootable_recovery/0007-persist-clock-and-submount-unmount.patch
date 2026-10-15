@@ -1,0 +1,93 @@
+Partition changes:
+- Read the saved time offset from /mnt/vendor/persist/time as well as
+  /persist/time, so the clock does not start at 1970.
+- Before unmounting a partition, unmount anything mounted below it first
+  (longest path first), so the unmount does not fail with EBUSY.
+
+diff --git a/partition.cpp b/partition.cpp
+index 5185200f2..9ad1c2062 100644
+--- a/partition.cpp
++++ b/partition.cpp
+@@ -1,3 +1,7 @@
++#include <android-base/strings.h>
++#include <algorithm>
++#include <memory>
++#include <mntent.h>
+ /*
+ 	Copyright 2013 to 2021 TeamWin
+ 	This file is part of TWRP/TeamWin Recovery Project.
+@@ -678,6 +682,19 @@ bool TWPartition::Process_Fstab_Line(const char *fstab_line, bool Display_Error,
+ 		}
+ 	}
+ 
++	// Devices that mount persist at /mnt/vendor/persist keep the time-of-day
++	// offset in /mnt/vendor/persist/time/ats_2. Only /persist was handled above,
++	// so the clock came up at 1970 until something else corrected it. Read the
++	// offset only; leave a mount made by init in place.
++	if (Mount_Point == "/mnt/vendor/persist" && Can_Be_Mounted) {
++		bool mounted = Is_Mounted();
++		if (mounted || Mount(false)) {
++			TWFunc::Fixup_Time_On_Boot("/mnt/vendor/persist/time/");
++			if (!mounted)
++				UnMount(false);
++		}
++	}
++
+ 	return true;
+ }
+ 
+@@ -1802,6 +1819,45 @@ bool TWPartition::Bind_Mount(bool Display_Error) {
+ 	return true;
+ }
+ 
++static void Ensure_Subdirectory_Unmounted(const char *Mount_Point) {
++    std::unique_ptr<FILE, decltype(&endmntent)> mnts(setmntent("/proc/mounts", "r"), endmntent);
++    if (!mnts) {
++        LOGINFO("Could not read /proc/mounts\n");
++        return;
++    }
++
++    // Find sudirectory mount point
++    std::string top_directory(Mount_Point);
++    if (!android::base::EndsWith(top_directory, "/")) {
++        top_directory += "/";
++    }
++
++    std::vector<std::string> umount_points;
++    mntent *mentry;
++    while ((mentry = getmntent(mnts.get())) != nullptr) {
++        if (top_directory == mentry->mnt_dir) {
++            continue;
++        }
++
++        if (android::base::StartsWith(mentry->mnt_dir, top_directory)) {
++            LOGINFO("Found sub-directory mount '%s' under '%s'\n", mentry->mnt_dir, Mount_Point);
++            umount_points.emplace_back(mentry->mnt_dir);
++        }
++    }
++
++    // Sort by path length to umount longest path first
++    std::sort(umount_points.begin(), umount_points.end(), [](const std::string &s1, const std::string &s2) {
++        return s1.length() > s2.length();
++    });
++
++    for (const auto &mount_point: umount_points) {
++        LOGINFO("Unmounting sub-directory mount '%s'\n", mount_point.c_str());
++        if (umount(mount_point.c_str()) != 0) {
++            LOGINFO("Failed to unmount '%s': '%s'\n", mount_point.c_str(), strerror(errno));
++        }
++    }
++}
++
+ bool TWPartition::UnMount(bool Display_Error, int flags) {
+ 	if (Is_Mounted()) {
+ 		int never_unmount_system;
+@@ -1810,6 +1866,8 @@ bool TWPartition::UnMount(bool Display_Error, int flags) {
+ 		if (never_unmount_system == 1 && Mount_Point == PartitionManager.Get_Android_Root_Path())
+ 			return true; // Never unmount system if you're not supposed to unmount it
+ 
++		Ensure_Subdirectory_Unmounted(Mount_Point.c_str());
++
+ 		if (Is_Storage && MTP_Storage_ID > 0)
+ 			PartitionManager.Remove_MTP_Storage(MTP_Storage_ID);
+ 

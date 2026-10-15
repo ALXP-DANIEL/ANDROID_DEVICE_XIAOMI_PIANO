@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- QTI boot control HAL for recovery (android.hardware.boot-service.qti.recovery).
+       Needed for A/B OTA installs: update_engine switches slots through it. -->
+  <remote name="lineage-github" fetch="https://github.com/LineageOS/" />
+  <project path="hardware/qcom/bootctrl" name="android_hardware_qcom_bootctrl"
+           remote="lineage-github" revision="lineage-23.2-caf" />
+</manifest>
