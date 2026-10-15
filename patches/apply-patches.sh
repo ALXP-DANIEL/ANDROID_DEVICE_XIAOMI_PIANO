@@ -5,6 +5,36 @@
 set -e
 TOP=$(pwd)
 DIR=$(cd "$(dirname "$0")" && pwd)
+# The EvoX setup-wizard rotation patch was retired. If an earlier build
+# applied it in this source checkout, restore only that exact hunk. Do not
+# reset the vendor project or discard unrelated source modifications.
+pixel_common="$TOP/vendor/pixel-style/config/common.mk"
+if [ -f "$pixel_common" ]; then
+  python3 - "$pixel_common" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+previous = (
+    "# PRODUCT_CHARACTERISTICS is not set yet when this file is read, so lock\n"
+    "# rotation by default and let tablets set ro.setupwizard.rotation_locked=false.\n"
+    "PRODUCT_PRODUCT_PROPERTIES += ro.setupwizard.rotation_locked?=true\n"
+)
+original = (
+    "ifeq ($(PRODUCT_CHARACTERISTICS),tablet)\n"
+    "PRODUCT_PRODUCT_PROPERTIES += ro.setupwizard.rotation_locked=false\n"
+    "else\n"
+    "PRODUCT_PRODUCT_PROPERTIES += ro.setupwizard.rotation_locked=true\n"
+    "endif\n"
+)
+content = path.read_text()
+if previous in content:
+    if content.count(previous) != 1:
+        raise SystemExit("Unexpected duplicate retired rotation patch; manual review required")
+    path.write_text(content.replace(previous, original, 1))
+    print("reverted retired EvoX setup-wizard rotation patch")
+PY
+fi
 for d in "$DIR"/*/; do
   project=$(basename "$d" | tr _ /)
   # Later patches can change lines an earlier one touched, so a per-patch

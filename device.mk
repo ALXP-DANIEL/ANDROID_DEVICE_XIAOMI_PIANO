@@ -48,10 +48,6 @@ DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.bootanim.set_orientation_logical_0=ORIENTATION_90
 
-# Let the setup wizard follow the tablet's rotation.
-PRODUCT_PRODUCT_PROPERTIES += \
-    ro.setupwizard.rotation_locked=false
-
 # Stock HyperOS ignores the palm while the pen writes. Use the platform's
 # palm rejection model for the same, on top of stylus-over-touch blocking.
 PRODUCT_SYSTEM_PROPERTIES += \
