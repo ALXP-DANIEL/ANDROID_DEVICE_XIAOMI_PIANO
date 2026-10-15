@@ -4,7 +4,7 @@
  * branch to primary_entry) to branch here, so ABL's arguments arrive
  * untouched: x0 = FDT, x1..x3 = 0, MMU and D-cache off, EL1.
  *
- * We run the menu on our own stack, then restore every argument register,
+ * We run piano_boot on our own stack, then restore every argument register,
  * the stack pointer and the interrupt mask, and continue at the kernel's
  * original primary_entry. Nothing in the kernel image is written at runtime.
  */
@@ -31,23 +31,12 @@ _start:
 	mov	x0, x19
 	mov	x1, x26
 	mov	x2, x25
-	bl	piano_menu		/* 0 = Android, 1 = UEFI */
+	bl	piano_boot		/* 0 = Android, 1 = UEFI */
 
 	cbz	w0, 1f
-	cmp	w0, #2
-	b.eq	3f
 	/* UEFI: the payload after the selector starts like a Linux Image. */
 	ldr	x9, [x26, #40]		/* uefi_offset from the kernel base */
 	add	x9, x25, x9
-	b	2f
-3:
-	/* Mainline Linux: piano_menu copied the Image and set its DT. */
-	adr	x9, linux_jump
-	ldr	x19, [x9, #8]		/* x0 = our device tree */
-	ldr	x9, [x9]
-	ic	iallu
-	dsb	sy
-	isb
 	b	2f
 1:
 	/* Original primary_entry = base + 4 + imm26 * 4 from the saved branch. */
@@ -79,22 +68,7 @@ piano_meta:
 	.quad	0			/* 32: original image_size */
 	.quad	0			/* 40: uefi_offset, 0 if none */
 	.quad	0			/* 48: uefi_size */
-	.word	0			/* 56: linux initramfs offset, 0 if none */
-	.word	0			/* 60: linux initramfs size */
-	.word	0			/* 64: mainline Image offset, 0 if none */
-	.word	0			/* 68: mainline Image file size */
-	.word	0			/* 72: mainline DTB offset */
-	.word	0			/* 76: end of the payloads */
-	.quad	0			/* 80: mainline Image image_size */
-	.space	40			/* 88: Android entry note */
-	.space	40			/* 128: Arch Linux entry note */
-.size piano_meta, 168
-
-/* Where to jump for mainline Linux and its x0; set by piano_menu. */
-.section .data.jump,"aw",%progbits
-.balign 8
-.global linux_jump
-linux_jump:
-	.quad	0, 0
+	.quad	0			/* 56: original kernel file size */
+.size piano_meta, 64
 
 .section .note.GNU-stack,"",%progbits

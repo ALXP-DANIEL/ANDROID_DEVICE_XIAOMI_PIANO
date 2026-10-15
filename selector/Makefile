@@ -11,7 +11,7 @@ CFLAGS := --target=aarch64-none-elf -O2 -std=c11 -ffreestanding -fno-builtin \
 	-fno-stack-protector -fno-unwind-tables -fno-asynchronous-unwind-tables \
 	-fno-pic -fno-jump-tables -mgeneral-regs-only -mstrict-align -Wall -Wextra -Werror
 
-OBJS := $(addprefix $(OUT)/,entry.o menu.o keys.o font.o mmu.o fdt.o)
+OBJS := $(addprefix $(OUT)/,entry.o boot.o keys.o)
 
 all: $(OUT)/selector.bin
 
