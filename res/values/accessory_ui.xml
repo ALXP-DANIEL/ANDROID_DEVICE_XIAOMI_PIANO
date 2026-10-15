@@ -1,0 +1,11 @@
+<resources>
+ <string name="stylus_attach_guide">Attach the pen to the magnetic charging edge to pair and charge it.</string>
+ <string name="keyboard_attach_guide">Attach the keyboard cover to the pogo connector. Open the cover to start typing.</string>
+ <string name="stylus_palette_title">Shortcut menu apps</string>
+ <string name="stylus_palette_summary">Choose up to six actions and apps for the squeeze menu.</string>
+ <string name="stylus_palette_limit">Choose up to six items.</string>
+ <string name="stylus_palette_empty">Choose at least one item.</string>
+ <string name="stylus_palette_reset">Reset</string>
+ <string name="stylus_firmware_model">Model</string>
+ <string name="stylus_firmware_current">Current firmware</string>
+ </resources>

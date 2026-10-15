@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Like the stock paper_mode_settings and its classic mode page. -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/reading_mode_title">
+
+    <com.android.settingslib.widget.TopIntroPreference
+        android:key="reading_intro"
+        android:title="@string/reading_mode_intro" />
+
+    <com.android.settingslib.widget.MainSwitchPreference
+        android:key="reading_enabled"
+        android:title="@string/reading_mode_title" />
+
+    <PreferenceCategory
+        android:key="reading_effect"
+        android:title="@string/reading_effect_title">
+
+        <SeekBarPreference
+            android:key="reading_level"
+            android:title="@string/reading_level_title"
+            android:persistent="false"
+            app:updatesContinuously="true" />
+
+        <SeekBarPreference
+            android:key="reading_texture"
+            android:title="@string/reading_texture_title"
+            android:persistent="false"
+            app:updatesContinuously="true" />
+
+        <ListPreference
+            android:key="reading_colors"
+            android:title="@string/reading_colors_title"
+            android:entries="@array/reading_colors_entries"
+            android:entryValues="@array/reading_colors_values"
+            android:persistent="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            android:key="reading_reset"
+            android:title="@string/reading_reset_title" />
+    </PreferenceCategory>
+</PreferenceScreen>
