@@ -7,7 +7,8 @@ index 74fde65..24d75cd 100644
          mAccelerometer = findPreference(KEY_ACCELEROMETER);
          mAccelerometer.setOnPreferenceChangeListener((preference, newValue) -> {
 -            RotationPolicy.setRotationLockForAccessibility(requireActivity(),
-+            RotationPolicy.setRotationLock(requireActivity(),
-                     !(Boolean) newValue, /* caller= */ "DisplayRotation");
++            RotationPolicy.setRotationLockAtAngle(requireActivity(),
+-                    !(Boolean) newValue, /* caller= */ "DisplayRotation");
++                    !(Boolean) newValue, /* rotation= */ -1, /* caller= */ "DisplayRotation");
              return true;
          });

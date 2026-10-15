@@ -11,9 +11,27 @@ import java.util.Objects;
 /**
  * Pure-Java, clean-room PencilEngine client/feature state machine.
  *
- * Inspired by OS4.0.0.44 PencilEngineManagerService and its three controllers:
- * per-PID clients, callback death teardown, exclusive picker, aggregate posture
- * mode 20036, and per-package touch-film. No Android Binder or OEM libraries.
+ * Source reference (decoded JADX, not a confirmed device runtime capture):
+ * RND/analysis/accessories-44-20261014/pencilengine-stock/touchservice/
+ * sources/com/xiaomi/touchservice/pencilengine/
+ *   PencilEngineManagerService.java:98-134,137-175,196-255
+ *   ColorPickController.java:24-56,72-96
+ *   PencilPostureController.java:28-62,65-102
+ *   TouchFilmController.java:26-79
+ *
+ * Available here: caller registration, lease-scoped cleanup, exclusive picker,
+ * global aggregate posture mode 20036, per-app reference-counted feature
+ * ownership, and declarative effects. No Android Binder or OEM libraries.
+ *
+ * TODO for future integration: an authenticated, permission-checked Binder
+ * adapter, PackageManager UID ownership checks, linkToDeath/unlinkToDeath,
+ * color-picker UI and callback delivery, foreground-app policy, and verified
+ * touch HAL / system-server dispatch. None of these are active in this class.
+ *
+ * Deliberate secure compatibility changes from the decompiled stock code:
+ * register by package requires UID ownership, identity keys include UID,
+ * unknown functions are rejected, repeated registration is reported, a busy
+ * picker is reported, and per-package state waits for its last owner to exit.
  *
  * Caller MUST be obtained from a trusted transport (e.g. Binder.getCallingPid
  * and getCallingUid), never read from client-provided arguments. AccessPolicy
