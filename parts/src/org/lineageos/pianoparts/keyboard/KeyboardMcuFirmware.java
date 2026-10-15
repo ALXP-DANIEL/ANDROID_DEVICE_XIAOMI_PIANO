@@ -11,9 +11,9 @@ import java.util.Arrays;
 /**
  * Exact HyperOS .44 connector MCU image parser and packet planner.
  *
- * <p>This class deliberately contains NO transport or flashing entry point.
- * Firmware writes remain disabled until the live MCU VID/PID, bootloader ACK
- * sequence, safe rollback/recovery, and post-reset verification are established.
+ * <p>This value object performs no I/O to a device. Only an explicit manual
+ * KeyboardMcuUpdater session may send packets, with authenticated connection
+ * guards, ACK validation and mandatory post-reset version verification.
  */
 final class KeyboardMcuFirmware {
     static final int MCU_VID = 0x3206;
@@ -87,7 +87,7 @@ final class KeyboardMcuFirmware {
         return Integer.parseInt(VERSION.substring(VERSION.length() - 4)) > Integer.parseInt(current);
     }
 
-    /** Preview only; returning packets cannot dispatch them to any MCU. */
+    /** Packet formation is independent of device transport. */
     byte[] infoPacket(int year, int month, int day) {
         if (year < 2020 || year > 2100 || month < 1 || month > 12 || day < 1 || day > 31) {
             throw new IllegalArgumentException("Invalid date");

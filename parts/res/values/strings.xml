@@ -58,6 +58,13 @@
     <string name="keyboard_unknown">Unknown</string>
     <string name="keyboard_update_title">Update keyboard firmware</string>
     <string name="touchpad_update_title">Update touchpad firmware</string>
+    <string name="mcu_update_title">Update keyboard connector MCU</string>
+    <string name="mcu_update_warning">The keyboard connector controller will be rewritten to version %1$s. Keep the tablet charged and the cover firmly attached. An interruption could leave the connector unusable. Continue?</string>
+    <string name="mcu_update_success">Keyboard connector MCU updated and verified.</string>
+    <string name="mcu_update_failed">MCU update could not be verified. Do not retry or disconnect the cover until you check the logs.</string>
+    <string name="mcu_update_unavailable">No compatible MCU firmware or verified connection</string>
+    <string name="mcu_update_reinstall">Reinstall %1$s (already installed)</string>
+    <string name="mcu_update_reinstall_warning">The MCU already reports version %1$s. Reinstalling the same firmware has no known benefit and may permanently disable the keyboard connector if interrupted. Continue anyway?</string>
     <string name="keyboard_update_available">Version <xliff:g id="version" example="1294">%1$s</xliff:g> is available</string>
     <string name="keyboard_update_none">Up to date</string>
     <string name="keyboard_update_progress">Updating… <xliff:g id="percent" example="40">%1$d</xliff:g>%%</string>
