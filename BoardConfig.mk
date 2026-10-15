@@ -32,7 +32,13 @@ BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
 BOARD_USES_METADATA_PARTITION := true
 
 # Recovery
-TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
+# Keep the normal Android 16 first-stage fstab unchanged. The recovery
+# variant must not auto-format encrypted userdata after a failed mount.
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery.fstab
+TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+
+# Piano uses a kernel-less recovery partition and stock header v4 / LZ4
+# ramdisk layout. Override recovery init only; preserve normal vendor init.
 
 # Filesystems
 TARGET_USERIMAGES_USE_F2FS := true
