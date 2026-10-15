@@ -90,7 +90,9 @@ fastboot -s piano-uefi boot app.efi       # run an EFI app from RAM
 fastboot -s piano-uefi reboot
 ```
 
-`oem log` holds what was printed on the screen. `oem dump` reads memory;
+`oem log` holds what was printed on the screen. A DEBUG build
+(`build_uefi.py -d piano -r DEBUG`) also keeps every driver's debug output
+in RAM instead of drawing it over the screen; read it with `oem debuglog`. `oem dump` reads memory;
 `81CE4000 10000` is the stock bootloader's boot log. While an app started
 with `boot` runs, the service pauses.
 

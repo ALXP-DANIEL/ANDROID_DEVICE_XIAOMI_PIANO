@@ -8,6 +8,7 @@
 
     getvar:product|version   identify the firmware
     oem log                  stage the console output; "fastboot get_staged"
+    oem debuglog             stage the DEBUG build's driver log
     oem screenshot           stage the framebuffer as a BMP
     oem dump <addr> <size>   stage memory (hex), for logs and registers
     stage <file>, boot       run an EFI application from RAM
@@ -31,6 +32,7 @@
 #include <Library/UefiRuntimeServicesTableLib.h>
 
 #include "PianoMenu.h"
+#include "../MemorySerialPortLib/PianoLog.h"
 
 #define FB_EP_RX     0x01      // bulk OUT, host to device
 #define FB_EP_TX     0x81      // bulk IN, device to host
@@ -352,6 +354,39 @@ StageLog (
   FbReply ("OKAY", "", FbNextCommand);
 }
 
+// Stage the DEBUG build's RAM log (MemorySerialPortLib), oldest first.
+STATIC
+VOID
+StageDebugLog (
+  VOID
+  )
+{
+  PIANO_LOG  *Log;
+  UINTN      Size;
+
+  Log = (PIANO_LOG *)(UINTN)PIANO_LOG_BASE;
+  if (Log->Magic != PIANO_LOG_MAGIC) {
+    FbFail ("no debug log: needs a DEBUG build");
+    return;
+  }
+
+  Size = Log->Wrapped ? PIANO_LOG_DATA_SIZE : Log->Head;
+  if ((Size == 0) || !DataReserve (Size)) {
+    FbFail ("debug log empty");
+    return;
+  }
+
+  if (Log->Wrapped) {
+    CopyMem (mData, Log->Data + Log->Head, PIANO_LOG_DATA_SIZE - Log->Head);
+    CopyMem (mData + PIANO_LOG_DATA_SIZE - Log->Head, Log->Data, Log->Head);
+  } else {
+    CopyMem (mData, Log->Data, Size);
+  }
+
+  mDataSize = Size;
+  FbReply ("OKAY", "", FbNextCommand);
+}
+
 // Stage the framebuffer as a 24-bit BMP.
 STATIC
 VOID
@@ -531,6 +566,8 @@ FbCommand (
     StageLog ();
   } else if (AsciiStrnCmp (Cmd, "oem dump ", 9) == 0) {
     StageMemory (Cmd + 9);
+  } else if (AsciiStrCmp (Cmd, "oem debuglog") == 0) {
+    StageDebugLog ();
   } else if (AsciiStrCmp (Cmd, "oem screenshot") == 0) {
     StageScreenshot ();
   } else if (AsciiStrCmp (Cmd, "boot") == 0) {
