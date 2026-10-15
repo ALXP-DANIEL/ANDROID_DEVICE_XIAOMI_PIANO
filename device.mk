@@ -89,6 +89,13 @@ PRODUCT_COPY_FILES += \
 # MiuiCamera (optional, from vendor/xiaomi/piano-miuicamera)
 $(call inherit-product-if-exists, vendor/xiaomi/piano-miuicamera/miuicamera.mk)
 
+# Opt-in Xiaomi Notes experiment. The external package must be prepared
+# separately; see docs/xiaomi-notes-experiment.md for compatibility gates.
+ifeq ($(PIANO_EXPERIMENTAL_XIAOMI_NOTES),true)
+$(call inherit-product, vendor/xiaomi/piano-notes/notes.mk)
+PRODUCT_SOONG_NAMESPACES += vendor/xiaomi/piano-notes
+endif
+
 # Keyboard cover: do not rotate the arrow keys with the display.
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/idc/Vendor_15d9_Product_00a3.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/Vendor_15d9_Product_00a3.idc

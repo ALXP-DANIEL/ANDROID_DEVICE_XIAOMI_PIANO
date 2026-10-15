@@ -4,6 +4,7 @@
     <string name="stylus_menu_assistant">Assistant</string>
     <string name="stylus_menu_notes">Notes</string>
     <string name="stylus_menu_screenshot">Screenshot</string>
+    <string name="stylus_menu_settings">Pen settings</string>
     <string name="stylus_pen_controls">Pen gestures and feedback</string>
     <string name="stylus_double_tap_enabled">Double tap</string>
     <string name="stylus_squeeze_enabled">Squeeze gesture</string>

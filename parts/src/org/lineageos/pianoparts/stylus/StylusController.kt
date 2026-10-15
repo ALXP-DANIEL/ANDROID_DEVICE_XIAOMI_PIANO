@@ -742,7 +742,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 publish()
                 if (PenControls.isTouchFilm(status)) mippSession?.screen(screenOn)
                 applyPenControls()
-                if (firmwareAdapter == null && status.updateState != "complete") checkFirmware()
+                // Keep a failed transfer visible after reconnect until the user checks again.
+                if (firmwareAdapter == null && status.updateState != "complete" &&
+                    status.updateState != "failed") checkFirmware()
             },
             onDocked = { setDocked(it); publish() },
             onError = { status = status.copy(penError = it); publish() },
