@@ -89,12 +89,10 @@ PRODUCT_COPY_FILES += \
 # MiuiCamera (optional, from vendor/xiaomi/piano-miuicamera)
 $(call inherit-product-if-exists, vendor/xiaomi/piano-miuicamera/miuicamera.mk)
 
-# Opt-in Xiaomi Notes experiment. The external package must be prepared
-# separately; see docs/xiaomi-notes-experiment.md for compatibility gates.
-ifeq ($(PIANO_EXPERIMENTAL_XIAOMI_NOTES),true)
+# Original Xiaomi Notes + shared MiCloud SDK are part of this Android 17 product.
+# The verified original package is staged separately; missing inputs fail closed.
 $(call inherit-product, vendor/xiaomi/piano-notes/notes.mk)
 PRODUCT_SOONG_NAMESPACES += vendor/xiaomi/piano-notes
-endif
 
 # Keyboard cover: do not rotate the arrow keys with the display.
 PRODUCT_COPY_FILES += \

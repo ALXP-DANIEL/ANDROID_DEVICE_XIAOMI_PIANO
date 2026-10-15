@@ -31,3 +31,13 @@ for d in "$DIR"/*/; do
   done
   echo "$sum" > "$stamp"
 done
+
+# The original Notes + MiCloud SDK pair requires a real APK shared-library
+# Soong provider. This runs in all Android 17 piano builds (no opt-in flag).
+# Unlike the generic patch-series loop above, it never resets/cleans Soong.
+notes_helper="$TOP/vendor/xiaomi/piano-notes/apply-soong.py"
+if [ ! -f "$notes_helper" ]; then
+  echo "piano: missing original Notes staging/Soong helper: $notes_helper" >&2
+  exit 1
+fi
+python3 "$notes_helper" "$TOP/build/soong" --apply
