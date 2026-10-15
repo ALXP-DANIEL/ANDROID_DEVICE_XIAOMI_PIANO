@@ -9,6 +9,8 @@ import android.util.Log;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * A keyboard or touchpad firmware image from the stock /odm/etc, with the
@@ -133,6 +135,14 @@ final class KeyboardFirmware {
 
     private boolean verify() {
         int bodyStart = mHeader + 64;
+        // The stock headers describe the exact payload length. Reject a file
+        // with trailing bytes or a truncated body before computing packets.
+        // The 24-bit data offset must also be able to address the final chunk.
+        if (mLength == 0 || mLength != mImage.length - bodyStart
+                || mLength + (touchpad ? 64 : 0) > 0x1000000L) {
+            Log.e(TAG, "Firmware image length mismatch: " + path);
+            return false;
+        }
         long sum = KeyboardProtocol.sumInt(mImage, bodyStart, mImage.length - bodyStart);
         if ((sum & 0xFFFFFFFFL) != le32(mSumBytes)) {
             Log.e(TAG, "Firmware body checksum mismatch: " + path);
@@ -143,6 +153,52 @@ final class KeyboardFirmware {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Only permit the exact HyperOS 4.0.0.44 piano images selected by their
+     * stock model/type filename. The additive checksums above catch corruption,
+     * but cannot establish which model an image was built for.
+     */
+    boolean isVerifiedStockImage() {
+        if (!path.startsWith("/system_ext/etc/piano_keyboard/")) {
+            return false;
+        }
+        String filename = new File(path).getName();
+        String expected;
+        switch (filename) {
+            case "Keyboard_Upgrade_0x01_1260.bin":
+            case "Keyboard_Upgrade_0x10_1260.bin":
+            case "Keyboard_Upgrade_0x61_1260.bin":
+                expected = "7fc5bbb3f59b12e54e8b8929359d01d3a88e9958ef17c45fcaa1e3293d620e08";
+                break;
+            case "Keyboard_Upgrade_0x01_1294.bin":
+            case "Keyboard_Upgrade_0x10_1294.bin":
+            case "Keyboard_Upgrade_0x61_1294.bin":
+                expected = "8faa690b82a13b3064fb574c97b7ac318dba0236981880e0af9697855943b119";
+                break;
+            case "TouchPad_Upgrade_0x04_1260.bin":
+            case "TouchPad_Upgrade_0x04_1294.bin":
+                expected = "4410398004441e974db92206ded7c58864b94ddd8a33d0ea767b9be5a2a3480e";
+                break;
+            case "TouchPad_Upgrade_0x06_1294.bin":
+                expected = "deab46fb5db8ecb443cd3f220ea809ea2ccd6cb22fe282fd955f2dd7f73f2285";
+                break;
+            default:
+                return false;
+        }
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(mImage);
+            StringBuilder result = new StringBuilder(64);
+            for (byte b : digest) {
+                result.append(Character.forDigit((b >>> 4) & 15, 16));
+                result.append(Character.forDigit(b & 15, 16));
+            }
+            return expected.contentEquals(result);
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "Cannot verify keyboard firmware SHA-256", e);
+            return false;
+        }
     }
 
     /** Whether this image is newer than the running version. */
@@ -156,7 +212,10 @@ final class KeyboardFirmware {
     }
 
     byte[] infoPacket() {
-        byte[] packet = KeyboardProtocol.newPacket(KeyboardProtocol.REPORT_LONG,
+        // Stock IIC KeyboardUpgradeUtil uses the short report for keyboard
+        // info; TouchPadUpgradeUtil uses the long report for touchpad info.
+        byte[] packet = KeyboardProtocol.newPacket(touchpad
+                ? KeyboardProtocol.REPORT_LONG : KeyboardProtocol.REPORT_SHORT,
                 KeyboardProtocol.VERSION_UPGRADE, KeyboardProtocol.ADDRESS_KEYBOARD,
                 KeyboardProtocol.CMD_UPGRADE_INFO, 19);
         System.arraycopy(mLengthBytes, 0, packet, 10, 4);
