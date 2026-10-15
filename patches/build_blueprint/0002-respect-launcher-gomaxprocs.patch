@@ -1,0 +1,12 @@
+diff --git a/bootstrap/command.go b/bootstrap/command.go
+--- a/bootstrap/command.go
++++ b/bootstrap/command.go
+@@ -71,3 +71,7 @@ func RunBlueprint(args Args, stopBefore StopBefore, ctx *blueprint.Context, config interface{}) ([]string, error) {
+-	runtime.GOMAXPROCS(runtime.NumCPU())
++	// The Go runtime already honors GOMAXPROCS from the environment. Do not
++	// override a deliberate bound set by the ROM build launcher.
++	if os.Getenv("GOMAXPROCS") == "" {
++		runtime.GOMAXPROCS(runtime.NumCPU())
++	}
+ 
+ 	if args.NoGC {
