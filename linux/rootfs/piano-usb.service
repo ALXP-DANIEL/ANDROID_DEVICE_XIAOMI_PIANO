@@ -1,0 +1,12 @@
+[Unit]
+Description=USB network gadget for ssh
+After=piano-modules.service
+Wants=piano-modules.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/piano-usb
+
+[Install]
+WantedBy=multi-user.target

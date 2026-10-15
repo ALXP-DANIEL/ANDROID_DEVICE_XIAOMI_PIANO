@@ -1,0 +1,13 @@
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = EXFG
+  FILE_GUID                      = 0A6063F5-8FEA-4C48-9143-911C2A8E7EB6
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+
+[Binaries.AARCH64]
+  DXE_DEPEX|EXFG.depex|*
+  PE32|EXFG.efi|*
+
+[Depex]
+  TRUE

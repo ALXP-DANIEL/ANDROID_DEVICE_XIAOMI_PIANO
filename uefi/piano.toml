@@ -1,0 +1,17 @@
+#
+# Mu-Silicium build config for piano. The menu (selector/) starts the
+# BootShim + FD itself, so only the FD layout and the shim header matter.
+#
+[boot_shim]
+requires_kernel_header = true
+
+[uefi_fd]
+base = 0xA7100000
+size = 0x300000
+
+[boot_image_kernel]
+kernel_compression = "none"
+append_dtb         = false
+
+[boot_image]
+header_version = 4

@@ -1,0 +1,107 @@
+#!/bin/busybox sh
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+# First stage for Arch Linux on piano. The boot menu hands the Android
+# kernel this initramfs instead of Android's. Load the same first-stage
+# vendor modules Android loads, find the "linux" partition by GPT label,
+# and switch to it. If anything fails, bring up USB networking with a
+# shell on telnet port 23 so it can be debugged from a computer, then
+# reboot after 10 minutes.
+
+/bin/busybox --install -s /bin
+export PATH=/bin
+
+mkdir -p /proc /sys /dev /run /newroot
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
+mkdir -p /dev/pts && mount -t devpts devpts /dev/pts
+exec >/dev/kmsg 2>&1
+echo "piano-linux: first stage"
+
+# Restart cleanly if Arch is not reached in 150 s: a clean restart dumps
+# this log to the oops partition (mtdoops), readable from Android.
+(sleep 150; echo "piano-linux: watchdog, restarting"; sync; reboot -f) &
+watchdog=$!
+# No ueventd here: fail firmware requests fast instead of waiting 60 s each.
+echo 1 > /sys/class/firmware/timeout
+
+# busybox modprobe wants /lib/modules/<release>/modules.dep; the paths in
+# it are absolute, so a link is enough. Load only what reaches storage
+# (UFS) plus the crash log; Arch loads the full set itself.
+ln -s /lib/modules "/lib/modules/$(uname -r)"
+n=0
+while read -r m; do
+	insmod "/lib/modules/$m" 2>/dev/null
+	n=$((n + 1))
+done < /lib/modules/modules.load
+echo "piano-linux: loaded $n modules"
+
+find_part() {
+	for u in /sys/class/block/*/uevent; do
+		if grep -qx "PARTNAME=$1" "$u"; then
+			sed -n 's/^DEVNAME=//p' "$u"
+			return 0
+		fi
+	done
+	return 1
+}
+
+# USB network with a telnet shell on 172.16.42.1, kept running into Arch.
+usb_shell() {
+	g=/sys/kernel/config/usb_gadget/piano
+	mount -t configfs configfs /sys/kernel/config 2>/dev/null
+	mkdir -p $g/strings/0x409 $g/configs/c.1 $g/functions/ncm.usb0
+	echo 0x18d1 > $g/idVendor
+	echo 0x4ee7 > $g/idProduct
+	echo piano-linux > $g/strings/0x409/product
+	ln -s $g/functions/ncm.usb0 $g/configs/c.1/ 2>/dev/null
+	for i in $(seq 50); do [ -n "$(ls /sys/class/udc)" ] && break; sleep 0.1; done
+	ls /sys/class/udc | head -1 > $g/UDC
+	for i in $(seq 50); do ifconfig usb0 >/dev/null 2>&1 && break; sleep 0.1; done
+	ifconfig usb0 172.16.42.1 netmask 255.255.255.0 up
+	udhcpd -S /etc/udhcpd.conf
+	telnetd -l /bin/sh -p 23
+	echo "piano-linux: USB shell on 172.16.42.1 ($(cat $g/UDC))"
+}
+
+# Signal how far we got by where the tablet restarts to:
+#   fastboot = no storage, recovery = storage but no usable root.
+rescue() {
+	echo "piano-linux: $1"
+	insmod /lib/modules/qcom-reboot-reason.ko 2>/dev/null
+	sleep 2
+	/rb "$2"
+}
+
+# Android's /dev/block/by-name links; block2mtd finds the oops partition there.
+by_name() {
+	mkdir -p /dev/block/by-name
+	for u in /sys/class/block/*/uevent; do
+		p=$(sed -n 's/^PARTNAME=//p' "$u")
+		d=$(sed -n 's/^DEVNAME=//p' "$u")
+		[ -n "$p" ] && ln -sf "/dev/$d" "/dev/block/by-name/$p"
+	done
+}
+
+
+dev=
+for i in $(seq 1 300); do
+	dev=$(find_part linux) && break
+	sleep 0.1
+done
+[ -n "$dev" ] || rescue "no linux partition" bootloader
+by_name
+# Crash and restart logs to the oops partition, configured by the kernel
+# command line (block2mtd.block2mtd=..., mtdoops.*) as on Android.
+modprobe block2mtd && modprobe mtdoops && echo "piano-linux: mtdoops ready"
+mount -o rw,noatime "/dev/$dev" /newroot || rescue "cannot mount /dev/$dev" recovery
+[ -x /newroot/sbin/init ] || [ -L /newroot/sbin/init ] || rescue "no /sbin/init on the root" recovery
+
+echo "piano-linux: switching to /dev/$dev"
+kill $watchdog
+dmesg > /newroot/var/log/piano-first-stage.log
+umount /dev/pts
+mount --move /dev /newroot/dev 2>/dev/null
+umount /proc /sys
+exec switch_root /newroot /sbin/init

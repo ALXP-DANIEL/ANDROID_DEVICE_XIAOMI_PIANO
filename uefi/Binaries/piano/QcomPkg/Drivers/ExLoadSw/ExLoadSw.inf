@@ -1,0 +1,13 @@
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = ExLoadSw
+  FILE_GUID                      = 35A428B4-05CE-4603-995E-BE83213FD545
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+
+[Binaries.AARCH64]
+  DXE_DEPEX|ExLoadSw.depex|*
+  PE32|ExLoadSw.efi|*
+
+[Depex]
+  TRUE

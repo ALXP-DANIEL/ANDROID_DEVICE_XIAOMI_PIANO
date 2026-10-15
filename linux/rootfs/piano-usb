@@ -1,0 +1,15 @@
+#!/bin/sh
+# USB network gadget: the tablet is 172.16.42.1, reachable with ssh over USB.
+g=/sys/kernel/config/usb_gadget/piano
+mountpoint -q /sys/kernel/config || mount -t configfs configfs /sys/kernel/config
+[ -d $g ] && exit 0
+mkdir -p $g/strings/0x409 $g/configs/c.1 $g/functions/ncm.usb0
+echo 0x18d1 > $g/idVendor
+echo 0x4ee7 > $g/idProduct
+echo piano-linux > $g/strings/0x409/product
+ln -s $g/functions/ncm.usb0 $g/configs/c.1/
+for i in $(seq 50); do [ -n "$(ls /sys/class/udc)" ] && break; sleep 0.2; done
+ls /sys/class/udc | head -1 > $g/UDC
+for i in $(seq 50); do ip link show usb0 >/dev/null 2>&1 && break; sleep 0.2; done
+ip addr add 172.16.42.1/24 dev usb0
+ip link set usb0 up

@@ -1,0 +1,13 @@
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = FvDxe
+  FILE_GUID                      = 16AE0290-FD71-4E89-8FE1-39A838CB538D
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+
+[Binaries.AARCH64]
+  DXE_DEPEX|FvDxe.depex|*
+  PE32|FvDxe.efi|*
+
+[Depex]
+  TRUE

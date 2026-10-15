@@ -1,94 +1,106 @@
-# Xiaomi Pad 8 Pro (piano)
+# Xiaomi Pad 8 Pro (piano) UEFI
 
-Android device trees for the Xiaomi Pad 8 Pro (SM8750).
+UEFI firmware and boot menu for the Xiaomi Pad 8 Pro (SM8750), loaded from
+the Android boot image. It lets the tablet boot Android, a UEFI boot manager
+(Visor) and, later, Linux, without replacing anything Xiaomi ships.
 
-## Branches
+> **Work in progress.** It boots and is usable from the touch screen, but
+> some things below do not work yet. Use it only with an unlocked
+> bootloader and a way back (fastboot, a recovery).
 
-| Android 17 (active) | Android 16 (maintenance) | Purpose |
-| --- | --- | --- |
-| `lineage-24.0` | `lineage-23.2` | LineageOS device tree |
-| `device-common` | `device-common` | Common device source, version selected automatically |
-| `vendor` | `vendor` | Device vendor blobs, version selected automatically |
-| `vendor-common` | `vendor-common` | Automatically stages stock common vendor files by Android version |
-| `kernel` | `kernel` | GKI kernel and matching stock modules, version selected automatically |
-| `camera` | `camera` | Shared MiuiCamera tree with Android-specific stock binaries |
-| `pianopart` | `pianopart` | Shared latest PianoParts app with ROM-specific Settings placement |
-| `notes` | `notes` | Shared Xiaomi Notes package without opt-in |
-| `hardware/xiaomi` | `lineage-24.0` | Upstream LineageOS Xiaomi interfaces and Soong namespace; `lineage-23.2` on Android 16 |
-| `twrp` | `twrp` | TWRP recovery (shared) |
-| `ofox` | `ofox` | OrangeFox recovery (shared) |
-| `uefi` | `uefi` | UEFI firmware, boot menu and Visor (shared) |
+## How it boots
 
-The four hardware branches retain separate Android 16 and Android 17 file sets
-under `versions/`. The sync script stages only the matching set at the usual
-Android source paths. No separate package selection or flag is required.
-
-## Sync
-
-Run from the root of an existing ROM or recovery source checkout:
-
-```sh
-curl -fsSLO https://raw.githubusercontent.com/ALXP-DANIEL/android_device_xiaomi_piano/main/sync-device.sh
-bash sync-device.sh
+```
+ABL ──► boot.img (Android kernel + piano menu + UEFI)
+          │
+          ├─ Android      the kernel starts exactly as before
+          ├─ Recovery / Fastboot
+          └─ UEFI ──► Visor on the ESP ──► Linux, UEFI Shell, …
 ```
 
-The script first asks for Android 17 ROM, Android 16 ROM or Recovery.
-Android 17 then offers LineageOS 24.0 and Evolution X 12.3; Android 16
-offers LineageOS 23.2. Recovery separately offers TWRP or OrangeFox.
-For ROM trees, the script syncs all nine required repositories automatically:
-the ROM-specific device tree, common device, device vendor, common vendor,
-kernel, XiaomiParts, Camera, Notes and upstream `LineageOS/android_hardware_xiaomi`.
-It stages the matching Android 16/17
-hardware package set, Camera binaries and ROM-specific XiaomiParts Settings
-placement without an opt-in. Recovery uses `twrp` or `ofox` separately.
+The piano menu (`selector/`) is placed after the kernel in any header v3/v4
+`boot.img` whose kernel is a raw arm64 GKI Image (EvoX, LineageOS, HyperOS).
+The kernel's first branch is redirected to the menu; picking Android returns
+to the kernel untouched. Picking UEFI starts the Mu-Silicium firmware built
+from `uefi/pianoPkg`, which runs Visor from the ESP.
 
-The original numbered hardware branches were retired after the exact commits
-were preserved in GitHub tags named `archive/pre-universal/<old-branch>`.
-These tags remain available as rollback points if complete ROM builds or
-tablet hardware testing reveal a compatibility problem.
+## Status
 
-## Refresh and build on the builder
+| Feature | State |
+|---|---|
+| Piano menu before Android (volume/power keys) | Works |
+| UEFI display (1600×1068, scaled) | Works |
+| Visor boot manager on the ESP | Works |
+| Volume and power keys in UEFI | Works: volume moves, power selects |
+| Touch screen in UEFI | Works: swipe moves one step, double tap selects |
+| Reboot / Shut down from UEFI | **Hangs on a black screen**; hold power |
+| Android entry inside Visor | Not yet |
+| Linux (Arch) from Visor | Not yet |
+| Installer ZIP for recovery | Not yet |
 
-The generated `.repo/local_manifests/piano.xml` is kept up to date automatically.
-Re-running the sync script does **not** require selecting every branch or
-answering an existing-manifest replacement prompt. If the manifest changes, its
-previous contents are backed up first. The script refuses to sync tracked local
-edits rather than silently overwriting them. Unrelated local manifests remain
-untouched.
+### Touch screen
 
-For a non-interactive Android 17 EvoX update, run from the ROM root:
+The NT36532 touch controller has no flash and reports no coordinates: the
+host loads its firmware at every boot and turns its raw 60×40 sensor frames
+into a touch point. Its serial engine (QUP1 SE2) runs GSI-only firmware, so
+transfers go over GPI DMA through Qualcomm's GpiDxe. Details are in
+`uefi/pianoPkg/Library/DeviceBootManagerLib/PianoTouch.c`.
 
-```sh
-bash sync-device.sh --android 17 --rom evox --yes
-```
+## Build
 
-`repo sync` is the equivalent of `git pull` for these `repo`-managed, detached
-Git checkouts. It updates **all nine** selected Git branches, then stages the
-matching hardware files and Xiaomi apps. Do **not** run `git pull` directly
-inside one of the detached device directories.
-
-`build-piano.sh` is the matching build launcher. Copy the published main-branch
-script to the builder once. Every subsequent execution fetches or fast-forward
-pulls the latest `main` build tools into
-`~/android/piano-shared/piano-tools`, runs their `sync-device.sh`, applies the
-selected ROM's compatibility patches and builds with the existing external AVB
-key. It never fetches or checks out retired numbered hardware branches.
+Needs Docker, plus Homebrew `llvm` and `lld` for the menu.
 
 ```sh
-# Bootstrap from GitHub on the builder (once):
-curl -fsSL https://raw.githubusercontent.com/ALXP-DANIEL/android_device_xiaomi_piano/main/build-piano.sh \
-    -o ~/android/piano-shared/build-piano.sh
-
-# Refresh all nine trees, without building:
-bash ~/android/piano-shared/build-piano.sh --sync-only
-
-# Refresh and build an Android 17 Evolution X OTA:
-bash ~/android/piano-shared/build-piano.sh
+tools/setup-deps.sh                       # Mu-Silicium at the tested commit
+docker build -f docker/Dockerfile -t piano-uefi-build .
+docker run --rm -v "$PWD:/p" -w /p/deps/Mu-Silicium piano-uefi-build \
+	python3 build_uefi.py -d piano -r RELEASE
+make -C selector
+python3 tools/pack.py boot.img out/selector.bin \
+	--uefi deps/Mu-Silicium/Mu-piano.img -o boot-uefi.img
 ```
 
-Defaults: `PIANO_ANDROID=17`, `PIANO_ROM=evox`, `BUILD_VARIANT=userdebug`,
-`BUILD_JOBS=2`, `BUILD_TARGET=evolution` for EvoX (`bacon` for LineageOS). Override `ANDROID_ROOT` and
-`PIANO_AVB_KEY_PATH` if the source directory or existing external signing key
-differs. Android 16 supports `PIANO_ANDROID=16 PIANO_ROM=lineage`; Android 17
-LineageOS uses `PIANO_ANDROID=17 PIANO_ROM=lineage`. The launcher does not
-create new signing keys, alter installed ROMs or flash the device.
+`boot.img` is the boot image of the Android build you run. The ESP with
+Visor and your own wallpaper is made by `tools/esp/make-esp.sh`.
+
+## Test
+
+Boot it once without flashing:
+
+```sh
+fastboot boot boot-uefi.img
+```
+
+A normal reboot returns to the installed boot image. The image has no AVB
+footer, so the bootloader must be unlocked.
+
+## Layout
+
+| Path | What |
+|---|---|
+| `selector/` | Piano menu, runs before the kernel |
+| `uefi/pianoPkg/` | Mu-Silicium device package: drivers, boot manager, touch |
+| `uefi/Binaries/piano/` | Qualcomm UEFI drivers extracted from the stock firmware |
+| `uefi/pianoPkg/Firmware/` | Stock touch controller firmware (BOE and CSOT panels) |
+| `uefi/patches/` | Changes to Mu-Silicium's Mu_Basecore |
+| `tools/` | Packing, driver extraction and patching, ESP builder |
+| `linux/` | Early Linux bring-up (initramfs, rootfs) |
+
+## Credits
+
+- [Project Silicium](https://github.com/Project-Silicium/Mu-Silicium): the
+  UEFI framework, and the OnePlus 13 (`dodge`) package this one starts from.
+- [Project SunUEFI](https://github.com/slwyts/Project-SunUEFI): piano memory
+  and configuration maps (BSD-2-Clause-Patent).
+- [blu-sharky/debian-piano](https://github.com/blu-sharky/debian-piano) and
+  [yzddmr6/xiaomipad-8pro-mainline](https://github.com/yzddmr6/xiaomipad-8pro-mainline):
+  the QUP SMMU routing and THP frame layout, from their Linux bring-up.
+- [Visor](https://github.com/IO-ZetZor/Visor-BootManager): the boot manager.
+
+## License
+
+Our code is BSD-2-Clause-Patent, except `selector/keys.c`, which is
+GPL-2.0-only because its register layout follows Linux's SPMI PMIC arbiter
+driver. The Qualcomm drivers in `uefi/Binaries/piano` and the touch firmware
+in `uefi/pianoPkg/Firmware` are proprietary files from the device's own
+stock firmware, included so the image can be built.

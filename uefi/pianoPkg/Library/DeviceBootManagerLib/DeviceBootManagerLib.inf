@@ -1,0 +1,51 @@
+## @file
+#  Piano boot manager hooks: the Qualcomm ones plus a UEFI Shell fallback.
+#
+#  SPDX-License-Identifier: BSD-2-Clause
+##
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PianoDeviceBootManagerLib
+  FILE_GUID                      = 8E3B2D41-7C59-4F1A-B6E2-3D9A5C8F1B07
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = DeviceBootManagerLib|DXE_DRIVER
+
+[Sources]
+  DeviceBootManager.c
+  PianoMenu.c
+  PianoMenu.h
+  PianoTouch.c
+  PianoTouchKeys.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MsCorePkg/MsCorePkg.dec
+  ShellPkg/ShellPkg.dec
+  QcomPkg/QcomPkg.dec
+
+[LibraryClasses]
+  CacheMaintenanceLib
+  DebugLib
+  IoLib
+  DxeServicesLib
+  DevicePathLib
+  MemoryAllocationLib
+  TimerLib
+  UefiBootManagerLib
+  UefiBootServicesTableLib
+  UefiLib
+  UefiRuntimeServicesTableLib
+  RfsProtectionLib
+
+[Guids]
+  gUsbControllerInitGuid
+  gSdCardInitGuid
+  gUefiShellFileGuid
+
+[Protocols]
+  gEfiLoadedImageProtocolGuid
+  gEfiGraphicsOutputProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiClockProtocolGuid
