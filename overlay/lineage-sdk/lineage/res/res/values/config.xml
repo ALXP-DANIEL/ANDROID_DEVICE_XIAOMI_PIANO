@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <!-- Piano has no hardware navigation keys. -->
+    <integer name="config_deviceHardwareKeys">0</integer>
+
+    <!-- One RGB status LED: battery and notification light with colour,
+         pulsing and brightness control (RGB_NOTIFICATION + RGB_BATTERY +
+         PULSATING + BATTERY_LED). -->
+    <integer name="config_deviceLightCapabilities">75</integer>
+
+    <!-- Focus Pen buttons -->
+    <string-array name="config_deviceKeyHandlerLibs" translatable="false">
+        <item>/system_ext/priv-app/LineageParts/LineageParts.apk</item>
+        <item>/system_ext/priv-app/PianoParts/PianoParts.apk</item>
+    </string-array>
+
+    <string-array name="config_deviceKeyHandlerClasses" translatable="false">
+        <item>org.lineageos.lineageparts.gestures.KeyHandler</item>
+        <item>org.lineageos.pianoparts.stylus.KeyHandler</item>
+    </string-array>
+</resources>

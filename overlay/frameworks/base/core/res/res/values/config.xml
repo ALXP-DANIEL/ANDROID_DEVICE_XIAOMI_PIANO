@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Global OS3.0.303.0.WPYMIXM AospFrameworkResOverlay.apk values (hardware
+     values match China OS3.0.307.0.WPYCNXM).
+     Keep automatic brightness and sensor-dependent tuning for later validation. -->
+<resources>
+    <bool name="config_showNavigationBar">true</bool>
+    <bool name="config_voice_capable">false</bool>
+    <item name="config_screenBrightnessDimFloat" format="float" type="dimen">0.00170982</item>
+    <item name="config_screenBrightnessSettingMinimumFloat" format="float" type="dimen">0.00170982</item>
+    <item name="config_screenBrightnessSettingMaximumFloat" format="float" type="dimen">1.0</item>
+    <item name="config_screenBrightnessSettingDefaultFloat" format="float" type="dimen">0.0747435</item>
+
+    <!-- Tablet: let the lock screen follow the device orientation. -->
+    <bool name="config_enableLockScreenRotation">true</bool>
+
+    <!-- The smart cover's hall sensor reports SW_LID: sleep when it closes,
+         wake when it opens. -->
+    <bool name="config_lidControlsSleep">true</bool>
+
+    <!-- Stock piano auto-brightness curve: ambient lux thresholds and the
+         backlight level (0-255) used above each of them. -->
+    <integer-array name="config_autoBrightnessLevels">
+        <item>1</item><item>2</item><item>5</item><item>9</item>
+        <item>13</item><item>17</item><item>21</item><item>26</item>
+        <item>30</item><item>40</item><item>83</item><item>104</item>
+        <item>200</item><item>400</item><item>500</item><item>600</item>
+        <item>700</item><item>800</item><item>1000</item><item>1200</item>
+        <item>1500</item><item>1800</item><item>2000</item><item>2165</item>
+        <item>2680</item><item>3000</item><item>3540</item><item>4000</item>
+    </integer-array>
+    <integer-array name="config_autoBrightnessLcdBacklightValues">
+        <item>4</item><item>4</item><item>4</item><item>8</item>
+        <item>15</item><item>20</item><item>26</item><item>35</item>
+        <item>45</item><item>46</item><item>46</item><item>46</item>
+        <item>60</item><item>60</item><item>60</item><item>64</item>
+        <item>66</item><item>70</item><item>73</item><item>80</item>
+        <item>88</item><item>110</item><item>130</item><item>135</item>
+        <item>145</item><item>180</item><item>200</item><item>240</item>
+        <item>255</item>
+    </integer-array>
+    <fraction name="config_autoBrightnessAdjustmentMaxGamma">300%</fraction>
+    <integer name="config_brightness_ramp_rate_fast">180</integer>
+    <integer name="config_brightness_ramp_rate_slow">60</integer>
+
+    <!-- Stock panel corner radius. -->
+    <dimen name="rounded_corner_radius">20dp</dimen>
+    <dimen name="rounded_corner_content_padding">0dp</dimen>
+
+    <!-- Stock: shut down when the battery reaches 58 C. -->
+    <integer name="config_shutdownBatteryTemperature">580</integer>
+
+    <!-- The stock composer has no Android color modes; the color scheme is set
+         through DisplayFeature on the Xiaomi settings page, as on HyperOS. -->
+    <integer-array name="config_availableColorModes" />
+
+    <!-- Global stock: allow light and deep idle (Doze). -->
+    <bool name="config_enableAutoPowerModes">true</bool>
+
+    <!-- Global stock: offer the microphone privacy toggle. -->
+    <bool name="config_supportsMicToggle">true</bool>
+
+    <!-- Android desktop windowing (floating, resizable app windows), the
+         counterpart of the HyperOS workstation mode. This is the documented
+         OEM configuration: the tablet screen can host desktops, and apps
+         stay full screen until the user enters the desktop from the app
+         header. -->
+    <bool name="config_isDesktopModeSupported">true</bool>
+    <bool name="config_canInternalDisplayHostDesktops">true</bool>
+    <bool name="config_enterDesktopByDefaultOnFreeformDisplay">false</bool>
+
+    <!-- MiuiCamera finishes itself in a multi-window or freeform window, so
+         keep it full screen in desktop mode, as HyperOS does. -->
+    <string-array name="config_desktopExemptPackages" translatable="false">
+        <item>com.android.camera</item>
+    </string-array>
+
+    <!-- Use the RGB status LED for notifications. -->
+    <bool name="config_intrusiveNotificationLed">true</bool>
+</resources>
