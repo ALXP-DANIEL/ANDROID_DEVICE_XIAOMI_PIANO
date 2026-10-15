@@ -14,7 +14,7 @@ set -eo pipefail
 #   - TWRP
 #   - OrangeFox
 #
-# This script only syncs device/vendor/kernel trees.
+# This script syncs the device, hardware, kernel and Xiaomi app trees.
 # It does NOT download the ROM or recovery source itself.
 #
 # Run this script from the root of your Android source checkout.
@@ -29,7 +29,7 @@ ROM=""
 RECOVERY=""
 
 DEVICE_BRANCH=""
-# Android 16 branches end in -16 and Android 17 branches in -17.
+# The Android release selects the matching pinned stock inputs automatically.
 ANDROID=""
 LINEAGE_BRANCH=""
 
@@ -104,10 +104,11 @@ header "Xiaomi Pad 8 Pro (piano) Tree Sync"
 check_android_source
 
 echo
-echo "What do you want to sync?"
+echo "Choose Android version or recovery:"
 echo
-echo "  1) ROM"
-echo "  2) Recovery"
+echo "  1) Android 17 ROM (active)"
+echo "  2) Android 16 ROM (maintenance)"
+echo "  3) Recovery (TWRP / OrangeFox)"
 echo
 
 read -r -p "Choose [1]: " choice
@@ -115,43 +116,21 @@ read -r -p "Choose [1]: " choice
 case "${choice:-1}" in
     1)
         TARGET="rom"
+        ANDROID=17
+        LINEAGE_BRANCH="lineage-24.0"
         ;;
     2)
+        TARGET="rom"
+        ANDROID=16
+        LINEAGE_BRANCH="lineage-23.2"
+        ;;
+    3)
         TARGET="recovery"
         ;;
     *)
         die "Invalid selection."
         ;;
 esac
-
-if [[ "$TARGET" == "rom" ]]; then
-echo
-echo "Android version:"
-echo
-echo "  1) Android 17 (active)"
-echo "  2) Android 16 (maintenance)"
-echo
-
-read -r -p "Choose [1]: " choice
-
-case "${choice:-1}" in
-    1)
-        ANDROID=17
-        LINEAGE_BRANCH="lineage-24.0"
-        ;;
-    2)
-        ANDROID=16
-        LINEAGE_BRANCH="lineage-23.2"
-        ;;
-    *)
-        die "Invalid Android version."
-        ;;
-esac
-
-else
-    ANDROID=17
-    LINEAGE_BRANCH="lineage-24.0"
-fi
 
 COMMON_BRANCH="device-common"
 VENDOR_BRANCH="vendor"
@@ -168,10 +147,12 @@ OFOX_BRANCH="ofox"
 if [[ "$TARGET" == "rom" ]]; then
 
     echo
-    echo "Select ROM:"
+    echo "Available Android $ANDROID ROMs:"
     echo
     echo "  1) LineageOS ${LINEAGE_BRANCH#lineage-}"
-    echo "  2) Evolution X"
+    if [[ "$ANDROID" == 17 ]]; then
+        echo "  2) Evolution X 12.3"
+    fi
     echo
 
     read -r -p "Choose [1]: " choice
@@ -184,17 +165,10 @@ if [[ "$TARGET" == "rom" ]]; then
             ;;
 
         2)
+            [[ "$ANDROID" == 17 ]] || die "Evolution X is not available for Android $ANDROID."
             ROM="evox"
-            ROM_NAME="Evolution X"
-
-            echo
-            evox_default=""
-            [[ "$ANDROID" != 17 ]] || evox_default="evox-12.3"
-            read -r -p "Evolution X device branch [${evox_default:-required for Android $ANDROID}]: " DEVICE_BRANCH
-            DEVICE_BRANCH=${DEVICE_BRANCH:-$evox_default}
-
-            [[ -n "$DEVICE_BRANCH" ]] \
-                || die "Evolution X device branch cannot be empty."
+            ROM_NAME="Evolution X 12.3"
+            DEVICE_BRANCH="evox-12.3"
             ;;
 
         *)

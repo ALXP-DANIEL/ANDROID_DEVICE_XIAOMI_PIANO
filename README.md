@@ -31,7 +31,9 @@ curl -fsSLO https://raw.githubusercontent.com/ALXP-DANIEL/android_device_xiaomi_
 bash sync-device.sh
 ```
 
-The script asks for the ROM or recovery and Android version for ROM trees.
+The script first asks for Android 17 ROM, Android 16 ROM or Recovery.
+Android 17 then offers LineageOS 24.0 and Evolution X 12.3; Android 16
+offers LineageOS 23.2. Recovery separately offers TWRP or OrangeFox.
 For ROM trees, the script syncs all eight required repositories automatically:
 the ROM-specific device tree, common device, device vendor, common vendor,
 kernel, XiaomiParts, Camera and Notes. It stages the matching Android 16/17
