@@ -123,6 +123,7 @@ internal class PenShortcutMenu(private val context: Context, private val handler
 
     private fun requestShow(x: Float, y: Float) {
         if (view != null || pendingShow != null) { hide(); return }
+        if (!shadeRegistered) return // Optional SystemUI bridge failed; never open blindly.
         if (keyguard.isKeyguardLocked || activities.lockTaskModeState != ActivityManager.LOCK_TASK_MODE_NONE || !canShow()) return
         // SystemUI answers with its current panel state. If its bridge is
         // absent, no panel is opened over an unknown/possibly expanded shade.
