@@ -1,0 +1,36 @@
+# Xiaomi piano QTI BootControl recovery permissions.
+#
+# QTI enumerates A/B partitions through /dev/block/bootdevice/by-name and
+# reads/writes the GPT disk containing boot_a/boot_b when switching slots.
+
+type piano_bootctrl_gpt_block_device, dev_type;
+
+# Enumerate /dev/block/bootdevice/by-name.
+allow hal_bootctl_default block_device:dir r_dir_perms;
+
+# Resolve boot_a / boot_b symlink targets.
+allow hal_bootctl_default block_device:blk_file getattr;
+
+# Access only the UFS LUN whose GPT contains the A/B boot partitions.
+allow hal_bootctl_default piano_bootctrl_gpt_block_device:blk_file rw_file_perms;
+
+# Piano UFS BSG boot-LUN switching.
+#
+# QTI BootControl switches the active XBL boot LUN after updating GPT slot
+# attributes. The BSG implementation enumerates scsi_generic in sysfs and
+# issues SG_IO against /dev/ufs-bsg0.
+
+# Enumerate /sys/block/sdX/device/scsi_generic.
+allow hal_bootctl_default sysfs:dir r_dir_perms;
+
+# Locate the UFS BSG node under /dev.
+allow hal_bootctl_default device:dir r_dir_perms;
+
+# QTI recovery-ufs-bsg uses /dev/ufs-bsg0.
+allow hal_bootctl_default vendor_bsg_device:chr_file rw_file_perms;
+
+# UFS query operations require raw I/O capability.
+allow hal_bootctl_default self:capability sys_rawio;
+
+# SG_IO used by recovery-ufs-bsg.
+allowxperm hal_bootctl_default vendor_bsg_device:chr_file ioctl { 0x2285 };
