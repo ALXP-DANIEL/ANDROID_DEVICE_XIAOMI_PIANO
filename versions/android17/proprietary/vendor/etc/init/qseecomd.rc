@@ -1,0 +1,17 @@
+# Copyright (c) 2019 Qualcomm Technologies, Inc.
+# All Rights Reserved.
+# Confidential and Proprietary - Qualcomm Technologies, Inc.
+
+on post-fs
+    start vendor.qseecomd
+
+service vendor.qseecomd /vendor/bin/qseecomd
+    socket notify-topology stream 660 system drmrpc
+    class core
+    disabled
+    user root
+    group root drmrpc
+
+on property:vendor.car.hiber=hiberExit
+   stop vendor.qseecomd
+   start vendor.qseecomd

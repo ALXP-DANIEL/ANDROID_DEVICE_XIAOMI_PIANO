@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  NICM configuration XML file
+  Copyright (c) 2020-2023 Qualcomm Technologies, Inc.
+  All Rights Reserved.
+  Confidential and Proprietary - Qualcomm Technologies, Inc. -->
+
+<!-- NICM configuration -->
+<list name="nicm_config">
+  <data name="num_log_files" type="int"> 4 </data>
+  <data name="log_file_size_mb" type="int"> 2 </data>
+</list>

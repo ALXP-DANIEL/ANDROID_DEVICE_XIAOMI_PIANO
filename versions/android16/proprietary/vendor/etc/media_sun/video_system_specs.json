@@ -1,0 +1,160 @@
+// If you modify this file,
+//    1. Push it to /vendor/etc/media_sun/video_system_specs.json on the device
+//    2. Kill media.hwcodec to get the new changed values.
+// Note: Please do not use hexadecimal values 0x in this file.
+{
+    "Video": {
+    // feature list used for enable/disable
+        "Features": {
+            // This is used for encoder color space conversion with custom matrix.
+            // custom matrix is defined in kernel driver
+            // this triggers to enable CSC to 709LR with custom matrix
+            "enc_csc_custom_matrix": false,
+            // encoder csc enable
+            "enc_csc_enable": false,
+            //Reduce the startup latency of the first session
+            //by starting vpp service at boot
+            "vpp_lazy_init": true
+        },
+        "Presets": {
+            // control to force enable linear color format for encoder
+            // if this is enable, then encoder will ask camera via
+            // consumer flag to inform usage of linear color format.
+            // it is used only for camera path. can't be used for non-camera producer case
+            // it is bitmask:
+            //  0: no override,
+            //  1: enable 8 bit: linear format. 10 bit: compressed format
+            //  2: 8 bit: compressed format. 10 bit: linear format
+            //  3: 8 bit: linear format. 10 bit: linear format
+            "enc_linear_color_format": 0,
+            // override chroma qp offset value for 8 and 10 bits:
+            // Table for future reference.
+            //========================================
+            // Chroma offset	Hex representation
+            //----------------------------------------
+            //   0	               0x00
+            //  -1	               0xFF
+            //  -2	               0xFE
+            //  -3	               0xFD
+            //  -4	               0xFC
+            //  -5	               0xFB
+            //  -6	               0xFA
+            //  -7	               0xF9
+            //  -8	               0xF8
+            //  -9	               0xF7
+            //  -10	               0xF6
+            //  -11	               0xF5
+            //  -12	               0xF4
+            //=======================================
+            // default: firmware will decide the offsets
+            // allowed override value: in range [-12, 0]
+            // cb/cr can be set different offset,
+            // but this new way is only supported for h264 high profile and hevc encoder.
+            // Also, legacy single value usage is also supported
+            // if cb/cr offset value are the same.
+            //======================================
+            // Example of Cb: 0, Cr: -12,
+            //((CB_offset = 0 << 8) & 0xFF00) | (CR_offset = 0xF4 & 0xFF) = 0xF4
+            // offset setting 0x00F4 (in decimal : 244)
+            //"enc_chroma_qp_offset_10_bit": 244,
+            //"enc_chroma_qp_offset_8_bit": 244,
+            //======================================
+            // video certified version capability used for MediaCodec - MLVEC
+            "vt_certified_version": 0,
+            //encoder bitrate savings control (CAC) - content adaptive coding feature
+            // it is bitmask.
+            //  0x0: disable CAC
+            //  0x1: 8 bit: enable.  10 bit: disable
+            //  0x2: 8 bit: disable. 10 bit: enable
+            //  0x3: 8 bit: enable.  10 bit: enable
+            "enc_bitrate_savings": 1,
+            // max input work count, max output work done in one dump file
+            // if frame count in dump file is larger than max work count,
+            // will dump in a new file
+            // if set to 0, this feature is not enabled, all frames will dump
+            // into one file.
+            //This is debug feature, can slow down performance, work only for non secure case.
+            "max_input_work_count_for_dump": 0,
+            // Set max input dump count, max output work donw to limit dump file size.
+            // It specifies number of input or output worked dumped.
+            // Only keep last two dump files, remove all others.
+            // No IDR cut for new file. If a few frames mosaic at beginning, it is expected.
+            // A txt file is generated to record frame index,
+            // frame size and frame type for every frame.
+            // Name of txt file is like 20230512_142335_18.txt, 15 bytes system time, last session id.
+            "max_output_work_done_for_dump": 0,
+            // dump will begin from this timestamp, in us
+            // like 3004355, this means dump from 3.004355s
+            "timestamp_begin_to_dump": 0,
+            // dump location, if not set, will use default location
+            // dump location like /data/vendor/media/qc2/, absolute path
+            // max dump location length should less than 128 bytes.
+            "dump_location": 0,
+            // client can set thier own log mask by default
+            "qc2_log_mask": 0,
+            // Set the bufferpool fence wait time in case of decoder. The value is in milliseconds.
+            // Default value of this wait time is 150ms, even if this value is not set in this file.
+            // Lower wait time might increase the thread activity in some corner cases.
+            // Higher wait time might affect stop latency in some cases.
+            "dec_bufferpool_fence_wait_time_ms": 150,
+            // do not override transfer value to 170M if stream contains unspecified transfer
+            "dec_send_clip_transfer_value" : 0,
+            // create a new thread to execute vpp start
+            // if set to a positive integer like 2000, main thread will wait for vpp start at most 2s
+            // if set to 0, just execute vpp start in main thread.
+            "vpp_max_retry_vpp_start_timeout": 2500
+        },
+
+        "ProsightModeBitrateTable": [
+            // 2D-array of [min_mb, max_mb, bitrate]
+            [3600, 8100, 120],
+            [8100, 8640, 160],
+            [8640, 32420, 245]
+         ],
+
+         "DolbyVision": {
+             "profiles": [5, 8],
+             "max_main_tier_level": 12,
+             "max_high_tier_level": 12
+         },
+
+        // list of codec plugin libraries to be loaded into codec registry
+        "QC2CodecPlugins": [
+            "libqc2vppfilter.so",
+            "libqcodec2_imgtxrfilter.so",
+            "libqcodec2_dolbydecoderfilter.so",
+            "libqcodec2_srfilter.so",
+            // "libqcodec2_psfilter.so",
+            "libqcodec2_rffilter.so"
+        ],
+
+        "QC2PreProcessingFilters": [
+            "libqcodec2_imgtxrfilter.so",
+            "libqcodec2_cvpfilter.so",
+            "libqcodec2_streaminteg_filter.so",
+            // "libqcodec2_videofrcfilter.so",
+            "libqcodec2_dolbyencoderfilter.so",
+            "libqcodec2_roiencfilter.so"
+        ],
+
+        "QC2PostProcessingFilters": {
+            "vppFilter": [
+                "c2.mi.filter.sr",
+                // "c2.mi.filter.ps",
+                "c2.mi.filter.rf"
+            ]
+        },
+
+        //
+        // Put below optional codecs under "OptionalCodecs" to enable it
+        // "c2.qti.dv.decoder",
+        // "c2.qti.dv.decoder.secure",
+        // "c2.qti.dv.encoder"
+        //
+        "OptionalCodecs": [
+            "c2.qti.dv.decoder",
+            "c2.qti.dv.decoder.secure"
+            // "c2.qti.dv.encoder"
+        ]
+    }
+}

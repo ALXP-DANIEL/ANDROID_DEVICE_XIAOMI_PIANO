@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+ /*:)
+  *Parser configs to overlay the hint paramters
+  */
+-->
+
+<BoostConfigs>
+    <PerfBoost>
+
+    <!--app lauch boost-->
+        <!-- SCHEDBOOST resource opcode, value-->
+        <!-- CPUBOOST_MAX_FREQ BIG Core resource opcode, value-->
+        <!-- CPUBOOST_MAX_FREQ PRIME Core resource opcode, value-->
+        <!-- CPUBOOST_MIN_FREQ BIG Core resource opcode, value-->
+        <!-- CPUBOOST_MIN_FREQ PRIME Core resource opcode, value-->
+        <!-- CPU_LLCC_BW_MAX_FREQ_V2 resource opcode, value-->
+        <!-- CPU_LLCC_BW_MIN_FREQ_V2 resource opcode, value-->
+        <!-- STORAGE CLK SCALING resource opcode, value-->
+        <!-- LLCC DDR LAT GOLD MIN FREQ resource opcode, value-->
+        <!-- GPU DISABLE resource opcode, value-->
+        <!-- CPU_CORE_CONTROL_CPU_NOT_PREFERRED resource opcode, value-->
+
+        <!-- Type="1", main launch boost of 2sec -->
+        <Config
+            Id="0x00001081" Type="1" Enable="true" Timeout="600" Target="sun"
+            Resources="0x40C00000, 0x1, 0x40804000, 2745, 0x40804200, 4089,
+                       0x40800000, 2745, 0x40800200, 4089, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+		0x4281C000, 2000, 0x4100C000, 0x3, 0x5FC00000, 0x3f, 0X42808000, 0x2"
+            Applist="com.miui.calculator, com.miui.weather2, com.miui.notes, com.miui.gallery, com.android.calendar, com.android.deskclock,
+                     com.android.soundrecorder, com.android.contacts, com.android.mms, com.duokan.reader, com.miui.securitycenter, com.android.settings,
+		com.xiaomi.market, com.android.quicksearchbox, com.android.fileexplorer, com.xiaomi.gamecenter, com.miui.video"/>
+
+
+         <Config
+            Id="0x00001081" Type="1" Enable="true" Timeout="600" Target="tuna"
+            Resources="0x40C00000, 0x1, 0x40804000, 0xFFF, 0x40804100, 0xFFF,
+                       0x40804200, 0xFFF, 0x40804300, 2803200, 0x40800000, 0xFFF,
+                       0x40800100, 0xFFF, 0x40800200, 0xFFF, 0x40800300, 2803200,
+                       0x42C10000, 0x1, 0x4303C000, 0xC3500, 0x41844000, 0xE3C88,
+                       0x43458000, 0x148200, 0x42834000, 1, 0x5FC00000, 0x3f"
+            Applist="com.miui.calculator, com.miui.weather2, com.miui.notes, com.miui.gallery, com.android.calendar, com.android.deskclock,
+                     com.android.soundrecorder, com.android.contacts, com.android.mms, com.duokan.reader, com.miui.securitycenter, com.android.settings,
+		com.xiaomi.market, com.android.quicksearchbox, com.android.fileexplorer, com.xiaomi.gamecenter, com.miui.video"/>
+
+	<!-- SCHEDBOOST resource opcode, value-->
+        <!-- CPUBOOST_MIN_FREQ BIG Core resource opcode, value-->
+	      <!-- CPUBOOST_MIN_FREQ PRIME Core resource opcode, value-->
+        <!-- GPU DISABLE resource opcode, value-->
+
+        <!-- Type="2",  launch boost keep conservative state to 10th seconds -->
+        <Config
+            Id="0x00001081" Type="2" Enable="true" Timeout="10000" Target="sun"
+            Resources="0x40C00000, 0x2, 0x40800000, 1536, 0x40800200, 1632, 0x4281C000, 2000, 0X42808000, 0x2"
+            Applist="com.tencent.mm, com.ss.android.article.news,  com.taobao.taobao, com.sina.weibo, com.smile.gifmaker, com.ss.android.ugc.aweme,
+	    com.kuaishou.nebula, com.ss.android.ugc.aweme.lite, com.ss.android.article.lite"/>
+
+        <Config
+	    Id="0x00001081" Type="2" Enable="true" Timeout="10000" Target="tuna"
+	    Resources="0x40C00000, 0x2, 0x40800000, 1516, 0x40800100, 1286, 0x40800200, 1670,
+                       0x40800300, 1516, 0x4281C000, 2000"
+            Applist="com.tencent.mm, com.ss.android.article.news,  com.taobao.taobao, com.sina.weibo, com.smile.gifmaker, com.ss.android.ugc.aweme,
+            com.kuaishou.nebula, com.ss.android.ugc.aweme.lite, com.ss.android.article.lite"/>
+
+    <!--Horizontal Scroll boost-->
+        <!-- LLCBW_MIN_FREQ resource opcode, value-->
+        <!-- SCHEDBOOST resource opcode, value-->
+        <!-- SCHED_BUSY_HYSTERSIS_CPU_MASK resource opcode, value-->
+        <!-- LPM Bias resource opcode, value-->
+        <!-- MIN_ONLINE_CPU_CLUSTER_BIG opcode, value-->
+        <!-- MPCTLV3_WALT_ADAPTIVE_LOW_FREQ_BIG resource opcode, value -->
+        <!-- MPCTLV3_WALT_ADAPTIVE_LOW_FREQ_PRIME resource opcode, value -->
+        <!-- Below additional resources for 120+fps-->
+        <!-- SCHED_MIN_TASK_UTIL_FOR_COLOCATION, value-->
+        <!-- SCHED_MIN_TASK_UTIL_FOR_BOOST, value-->
+        <!-- MIN_ONLINE_CPU_CLUSTER_PRIME opcode, value-->
+        <!-- SCHED_UP_DOWN_MIGRATE PRIME resource opcode, value -->
+
+        <Config
+            Id="0x00001080" Type="2" Enable="true" Target="sun" Fps="60"
+            Resources="0x4303C000, 0xA6428, 0x40C00000, 0x2, 0x40C74000, 0xFF,
+                       0x40408000, 0x63, 0x41000000, 6, 0x40800000, 1071, 0x40808200, 800000, 0X42808000, 0x2"
+            Applist="com.miui.home, com.zhihu.android, com.ss.android.article.news, tv.danmaku.bili, com.tencent.mm"/>
+
+        <Config
+            Id="0x00001080" Type="2" Enable="true" Target="sun" Fps="120"
+            Resources="0x4303C000, 0xA6428,0x40C00000, 0x2, 0x40C74000, 0xFF,
+                       0x40408000, 0x63, 0x41000000, 6, 0x40800000, 1170, 0x40808200, 800000,
+                       0x40C78000, 0, 0x40C7C000, 0, 0x41000200, 2, 0x40CE0200, 0x0023000A, 0X42808000, 0x2"
+            Applist="com.miui.home, com.zhihu.android, com.ss.android.article.news, tv.danmaku.bili, com.tencent.mm"/>
+
+        <Config
+            Id="0x00001080" Type="2" Enable="true" Target="sun" Fps="60"
+            Resources="0x4303C000, 0xA6428, 0x40C00000, 0x2, 0x40C74000, 0xFF,
+                       0x40408000, 0x63, 0x41000000, 6, 0x40800000, 1071, 0x40808200, 3072000, 0X42808000, 0x2"
+            Applist="com.ss.android.ugc.aweme"/>
+
+        <Config
+            Id="0x00001080" Type="2" Enable="true" Target="sun" Fps="120"
+            Resources="0x4303C000, 0xA6428,0x40C00000, 0x2, 0x40C74000, 0xFF,
+                       0x40408000, 0x63, 0x41000000, 6, 0x40800000, 1170, 0x40808200, 3072000,
+                       0x40C78000, 0, 0x40C7C000, 0, 0x41000200, 2, 0x40CE0200, 0x0023000A, 0X42808000, 0x2"
+            Applist="com.ss.android.ugc.aweme"/>
+
+        <Config
+            Id="0x00001080" Type="2" Enable="true" Target="tuna" Fps="120"
+            Resources="0x4303C000, 0xA6428,0x40C00000, 0x2, 0x40C74000, 0xFF,
+                       0x40408000, 0x63, 0x41000000, 6, 0x40800000, 1170, 0x40808200, 800000,
+                       0x40C78000, 0, 0x40C7C000, 0, 0x41000200, 2, 0x40CE0200, 0x0023000A, 0X42808000, 0x2,
+                       0x40800000, 2073, 0x40800100, 1516, 0x40800200, 1920, 0x40800300, 2073, 0X42804000, 0x3"
+            Applist="com.miui.home, com.android.systemui"/>
+
+        <Config
+            Id="0x00001080" Type="1" Enable="true" Target="tuna" Fps="60"
+            Resources="0x4303C000, 0xA6428, 0x40C00000, 0x2, 0x40C74000, 0xF0,
+                       0x40408000, 0x27, 0x41000000, 3, 0x40808000, 2400, 0x40808200, 2496,
+                       0x40808300, 2400"
+            Applist="com.ss.android.ugc.aweme"/>
+
+        <Config
+            Id="0x00001080" Type="3" Enable="true" Target="tuna" Fps="60"
+            Resources="0x4303C000, 0xA6428, 0x40800000, 1100, 0x40800100, 1000, 0x40800200, 800,
+                       0x40800300, 1000, 0x40C00000, 2, 0x40C74000, 0xFF, 0x40408000, 0x63,
+                       0x5FC00000, 0x3f"
+            Applist="com.miui.home"/>
+
+        <Config
+            Id="0x00001080" Type="3" Enable="true" Target="tuna" Fps="120"
+            Resources="0x4303C000, 0xA6428, 0x40800000, 1100, 0x40800100, 1000, 0x40800200, 800,
+                       0x40800300, 1000, 0x40C00000, 2, 0x40C74000, 0xFF, 0x40408000, 0x63,
+                       0x5FC00000, 0x3f, 0x40800000, 2073, 0x40800100, 1516, 0x40800200, 1920,
+                       0x40800300, 2073, 0X42804000, 0x3"
+            Applist="com.miui.home, com.android.systemui"/>
+
+        <!--Folded Vertical Scroll boost-->
+        <!-- CPU_LLCC_BW_MIN_FREQ_V2 resource opcode, value-->
+        <!-- MPCTLV3_WALT_ADAPTIVE_HIGH_FREQ_BIG resource opcode, value -->
+        <!-- MPCTLV3_WALT_ADAPTIVE_HIGH_FREQ_PRIME resource opcode, value -->
+        <!-- SCHEDBOOST resource opcode, value-->
+        <!-- SCHED_BUSY_HYSTERSIS_CPU_MASK resource opcode, value-->
+        <!-- LPM Bias resource opcode, value-->
+        <!-- MIN_ONLINE_CPU_CLUSTER_BIG opcode, value-->
+        <!-- MPCTLV3_WALT_ADAPTIVE_LOW_FREQ_BIG resource opcode, value -->
+        <!-- MPCTLV3_WALT_ADAPTIVE_LOW_FREQ_PRIME resource opcode, value -->
+        <!-- Below additional resources for 120+fps-->
+        <!-- SCHED_MIN_TASK_UTIL_FOR_COLOCATION, value-->
+        <!-- SCHED_MIN_TASK_UTIL_FOR_BOOST, value-->
+        <!-- MIN_ONLINE_CPU_CLUSTER_PRIME opcode, value-->
+        <!-- SCHED_UP_DOWN_MIGRATE PRIME resource opcode, value -->
+
+        <!-- Type="101",  Folded State Vertical Scroll boost -->
+        <Config
+            Id="0x00001080" Type="101" Enable="true" Target="sun" Fps="60" Mitb="2"
+            Resources="0x41844000, 350000, 0x4080C000, 1000000, 0x4080C200, 1000000,
+                       0x40C00000, 0x2, 0x40C74000, 0xFF,
+                       0x40408000, 0x63, 0x41000000, 6, 0x40808000, 600000, 0x40808200, 800000,
+                       0x5FC00000, 0x3f"
+            Applist="*" />
+        <Config
+            Id="0x00001080" Type="101" Enable="true" Target="sun" Fps="120" Mitb="2"
+            Resources="0x41844000, 350000, 0x4080C000, 1000000, 0x4080C200, 1000000,
+                       0x40C00000, 0x2, 0x40C74000, 0xFF,
+                       0x40408000, 0x63, 0x41000000, 6, 0x40808000, 600000, 0x40808200, 800000,
+                       0x40C78000, 0, 0x40C7C000, 0, 0x41000200, 2, 0x40CE0200, 0x0023000A,
+                       0x5FC00000, 0x3f"
+            Applist="*" />
+
+        <!--Folded Horizontal Scroll boost-->
+        <!-- LLCBW_MIN_FREQ resource opcode, value-->
+        <!-- SCHEDBOOST resource opcode, value-->
+        <!-- SCHED_BUSY_HYSTERSIS_CPU_MASK resource opcode, value-->
+        <!-- LPM Bias resource opcode, value-->
+        <!-- MIN_ONLINE_CPU_CLUSTER_BIG opcode, value-->
+        <!-- MPCTLV3_WALT_ADAPTIVE_LOW_FREQ_BIG resource opcode, value -->
+        <!-- MPCTLV3_WALT_ADAPTIVE_LOW_FREQ_PRIME resource opcode, value -->
+        <!-- Below additional resources for 120+fps-->
+        <!-- SCHED_MIN_TASK_UTIL_FOR_COLOCATION, value-->
+        <!-- SCHED_MIN_TASK_UTIL_FOR_BOOST, value-->
+        <!-- MIN_ONLINE_CPU_CLUSTER_PRIME opcode, value-->
+        <!-- SCHED_UP_DOWN_MIGRATE PRIME resource opcode, value -->
+
+        <!-- Type="102",  Folded State Horizontal Scroll boost -->
+        <Config
+            Id="0x00001080" Type="102" Enable="true" Target="sun" Fps="60" Mitb="2"
+            Resources="0x4303C000, 0xA6428, 0x40C00000, 0x2, 0x40C74000, 0xFF,
+                       0x40408000, 0x63, 0x41000000, 6, 0x40800000, 1071, 0x40808200, 800000"
+            Applist="com.miui.fliphome, com.zhihu.android, com.ss.android.article.news"/>
+
+        <Config
+            Id="0x00001080" Type="102" Enable="true" Target="sun" Fps="120" Mitb="2"
+            Resources="0x4303C000, 0xA6428,0x40C00000, 0x2, 0x40C74000, 0xFF,
+                       0x40408000, 0x63, 0x41000000, 6, 0x40800000, 1170, 0x40808200, 800000,
+                       0x40C78000, 0, 0x40C7C000, 0, 0x41000200, 2, 0x40CE0200, 0x0023000A"
+            Applist="com.miui.fliphome, com.zhihu.android, com.ss.android.article.news"/>
+
+        <!--app resume boost-->
+        <Config
+            Id="0x00001082" Type="1" Enable="true" Timeout="400" Target="sun"
+            Resources=""
+            Applist="com.android.camera"/>
+
+    <!--Rotation animation boost-->
+        <!-- CPUBOOST_MIN_FREQ LITTLE Core resource opcode, value-->
+        <!-- Type="", Rotation animation boost -->
+
+        <Config
+            Id="0x00001090" Enable="true" Timeout="1000" Target="tuna"
+            Resources="0x40800100, 1286"
+            Applist="com.antutu.ABenchMark, com.antutu.benchmark.full"/>
+
+    <!--Large Comp Hint -->
+        <!-- MIN_FREQ_CLUSTER_BIG resource opcode, value -->
+        <!-- MIN_FREQ_CLUSTER_TITANIUM resource opcode, value -->
+        <!-- PID Affine opcode,value -->
+        <Config
+            Id="0x00001097" Type="0" Enable="true" Target="tuna" Timeout="5000"
+            Fps="120, 144, 180" Resources="0x40800000, 1632, 0x40800300, 1632"
+            Applist="com.antutu.ABenchMark, com.antutu.benchmark.full"/>
+
+    </PerfBoost>
+</BoostConfigs>
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Included>
+    <Decoders>
+        <MediaCodec name="c2.mi.mihc.decoder" type="audio/mihc">
+            <Alias name="OMX.mi.mihc.decoder" />
+            <Limit name="channel-count" max="12" />
+            <Limit name="sample-rate" ranges="1-655350" />
+            <Limit name="bitrate" range="1-21000000" />
+            <Attribute name="software-codec" />
+        </MediaCodec>
+        <MediaCodec name="c2.mi.aihc.decoder" type="audio/aihc">
+            <Alias name="OMX.mi.aihc.decoder" />
+            <Limit name="channel-count" max="1" />
+            <Limit name="sample-rate" ranges="1-16000" />
+            <Limit name="bitrate" range="1-21000000" />
+            <Attribute name="software-codec" />
+        </MediaCodec>
+    </Decoders>
+    <Encoders>
+        <MediaCodec name="c2.mi.mihc.encoder" type="audio/mihc">
+            <Alias name="OMX.mi.mihc.encoder" />
+            <Limit name="channel-count" max="12" />
+            <Limit name="sample-rate" ranges="1-655350" />
+            <Limit name="bitrate" range="1-21000000" />
+            <Attribute name="software-codec" />
+        </MediaCodec>
+        <MediaCodec name="c2.mi.aihc.encoder" type="audio/aihc">
+            <Alias name="OMX.mi.aihc.encoder" />
+            <Limit name="channel-count" max="1" />
+            <Limit name="sample-rate" ranges="1-16000" />
+            <Limit name="bitrate" range="1-21000000" />
+            <Attribute name="software-codec" />
+        </MediaCodec>
+    </Encoders>
+</Included>
