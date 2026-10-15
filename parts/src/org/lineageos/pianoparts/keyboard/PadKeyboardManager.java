@@ -55,13 +55,6 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     public static final String KEY_BACKLIGHT_LEVEL = "keyboard_backlight_level";
     public static final String KEY_TOUCHPAD = "keyboard_touchpad";
 
-    // Input devices of the cover (vendor 0x15d9).
-    private static final int VENDOR_ID = 0x15d9;
-    private static final int PRODUCT_TOUCHPAD = 161;
-    private static final int PRODUCT_UNUSED = 162;
-    private static final int PRODUCT_KEYBOARD = 163;
-    private static final int PRODUCT_CONSUMER = 164;
-
     // Stock keeps the keyboard awake while the screen is on.
     private static final long KEEP_AWAKE_MS = 12000;
     private static final long CAPS_POLL_MS = 500;
@@ -151,7 +144,10 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         @Override
         public void run() {
             if (mConnected && mScreenOn) {
-                mTransport.send(KeyboardProtocol.feature(KeyboardProtocol.CMD_POWER, (byte) 1));
+                boolean sent = mTransport.send(
+                        KeyboardProtocol.feature(KeyboardProtocol.CMD_POWER, (byte) 1));
+                Log.i(TAG, "Keyboard wake send=" + sent + ", sleeping=" + mSleeping
+                        + ", keysEnabled=" + mKeysEnabled + ", authTrusted=" + mAuthTrusted);
                 mHandler.postDelayed(this, KEEP_AWAKE_MS);
             }
         }
@@ -474,6 +470,8 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                 break;
             case KeyboardProtocol.CMD_REQUEST:
                 if (reply.length < 7) break;
+                Log.i(TAG, "Keyboard requested setup/auth: " + (reply[6] & 0xFF)
+                        + ", connected=" + mConnected + ", sleeping=" + mSleeping);
                 // The keyboard asks to be set up again.
                 if (reply[6] == 0 || reply[6] == 1) {
                     onAttached();
@@ -491,6 +489,11 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                 if (reply.length < 7) break;
                 if (reply[5] == 1 && reply[6] == 0x36) {
                     showToast(R.string.keyboard_reset_success);
+                }
+                break;
+            case KeyboardProtocol.CMD_POWER:
+                if (reply.length >= 7 && reply[5] == 1) {
+                    Log.i(TAG, "Keyboard power reply=" + (reply[6] & 0xFF));
                 }
                 break;
             case KeyboardProtocol.CMD_SLEEP:
@@ -522,6 +525,12 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     }
 
     private void onStatus(byte[] reply) {
+        Log.i(TAG, "Keyboard MCU state=0x" + Integer.toHexString(reply[9] & 0xFF)
+                + ", millivolts=" + ((reply[10] & 0xFF) | (reply[11] & 0xFF) << 8)
+                + ", uart=0x" + Integer.toHexString((reply[12] & 0xFF)
+                        | (reply[13] & 0xFF) << 8)
+                + ", powerCounter=" + ((reply[17] >> 4) & 0x0F)
+                + ", overCurrent=" + (reply[18] & 0xFF));
         boolean connected = reply[18] == 0 && (reply[9] & 0x63) == 0x23;
         if (reply[18] == 1) {
             Log.w(TAG, "Keyboard cover over current");
@@ -617,6 +626,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     }
 
     private void onSleepChanged(boolean sleeping) {
+        Log.i(TAG, "Keyboard sleep reply=" + sleeping + ", screenOn=" + mScreenOn);
         mSleeping = sleeping;
         if (sleeping) mFeatures.clear();
         if (!sleeping) {
@@ -628,6 +638,8 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     }
 
     private void onScreenChanged(boolean on) {
+        Log.i(TAG, "Keyboard screen=" + on + ", connected=" + mConnected
+                + ", sleeping=" + mSleeping);
         mScreenOn = on;
         mHandler.removeCallbacks(mKeepAwake);
         mHandler.removeCallbacks(mCapsPoll);
@@ -812,7 +824,12 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                 public void onInputDeviceRemoved(int deviceId) {}
 
                 @Override
-                public void onInputDeviceChanged(int deviceId) {}
+                public void onInputDeviceChanged(int deviceId) {
+                    // Stock reasserts policy while rebuilding its input-device list.
+                    // Reconfiguration can change the actual state while our cached
+                    // keysEnabled value remains unchanged.
+                    applyInputDeviceState(deviceId);
+                }
             };
 
     private void applyInputDeviceState() {
@@ -821,22 +838,32 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         }
     }
 
+    private final KeyboardInputPolicy.DeviceState mDeviceState =
+            new KeyboardInputPolicy.DeviceState() {
+                @Override
+                public boolean isEnabled(int id) {
+                    InputDevice device = mInputManager.getInputDevice(id);
+                    return device != null && device.isEnabled();
+                }
+
+                @Override
+                public void setEnabled(int id, boolean enabled) {
+                    if (enabled) mInputManager.enableInputDevice(id);
+                    else mInputManager.disableInputDevice(id);
+                }
+            };
+
     private void applyInputDeviceState(int id) {
         InputDevice device = mInputManager.getInputDevice(id);
-        if (device == null || device.getVendorId() != VENDOR_ID) {
-            return;
-        }
-        int product = device.getProductId();
-        boolean enabled = mKeysEnabled;
-        if (product == PRODUCT_KEYBOARD || product == PRODUCT_CONSUMER
-                || product == PRODUCT_TOUCHPAD) {
-            if (enabled) {
-                mInputManager.enableInputDevice(id);
-            } else {
-                mInputManager.disableInputDevice(id);
-            }
-        } else if (product == PRODUCT_UNUSED) {
-            mInputManager.disableInputDevice(id);
+        if (device == null) return;
+        Boolean desired = KeyboardInputPolicy.desired(device.getVendorId(),
+                device.getProductId(), mKeysEnabled);
+        if (desired == null) return;
+        if (KeyboardInputPolicy.reconcile(mDeviceState, id, device.getVendorId(),
+                device.getProductId(), mKeysEnabled)) {
+            Log.i(TAG, "Reconciled cover input id=" + id + ", product=" + device.getProductId()
+                    + ", enabled=" + desired + ", connected=" + mConnected
+                    + ", rejected=" + mRejected + ", angle=" + mAngle.getAngle());
         }
     }
 
