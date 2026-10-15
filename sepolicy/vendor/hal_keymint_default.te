@@ -1,0 +1,40 @@
+# Stock QTI KeyMint runs in the existing AOSP hal_keymint_default domain, so
+# no new domain is introduced. AOSP already covers binder, servicemanager
+# registration and the four service labels (keymint, rkp, secureclock,
+# sharedsecret).
+#
+# Only the additions below are device-specific. They are carried from the
+# TWRP14 tree where each was established on hardware; note that TWRP16 may not
+# need all of them, and any that prove unnecessary can be removed once the
+# service is confirmed working.
+
+# KeyMint polls vendor.sys.listeners.registered and retries until qseecomd has
+# registered its TZ listeners. Without read access it spins forever.
+get_prop(hal_keymint_default, vendor_tee_listener_prop)
+
+# Stock sets vendor.gatekeeper.is_security_level_spu=0 to select the
+# TrustZone-backed implementation over SPU, and vendor.keymint.retry_timer=5
+# as the startup retry interval. Both are read during startup.
+get_prop(hal_keymint_default, vendor_piano_spu_level_prop)
+get_prop(hal_keymint_default, vendor_keymint_retry_timer_prop)
+
+# libQSEEComAPI / libminkdescriptor open the SMC invoke node directly.
+allow hal_keymint_default tee_device:chr_file { ioctl read write getattr lock map open };
+
+# QSEE DMA heap used for secure buffer allocation.
+allow hal_keymint_default vendor_dmabuf_qseecom_heap_device:chr_file {
+    ioctl
+    read
+    getattr
+    lock
+    map
+    open
+    watch
+    watch_reads
+};
+
+# TWRP runs servicemanager inside the recovery domain rather than a dedicated
+# servicemanager domain, so the AOSP hal -> servicemanager binder rule never
+# matches and addService() is refused. This was the silent failure on TWRP14.
+allow hal_keymint_default recovery:binder { call transfer };
+allow recovery hal_keymint_default:binder { call transfer };

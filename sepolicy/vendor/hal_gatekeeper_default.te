@@ -1,0 +1,17 @@
+# Stock QTI Gatekeeper runs in the existing AOSP hal_gatekeeper_default
+# domain. AOSP already provides the HAL service label and baseline TEE access.
+
+# TWRP runs servicemanager inside the recovery domain, so the AOSP
+# hal -> servicemanager binder rule never matches.
+allow hal_gatekeeper_default recovery:binder { call transfer };
+allow recovery hal_gatekeeper_default:binder { call transfer };
+
+# Stock selects the TrustZone-backed implementation with
+# vendor.gatekeeper.is_security_level_spu=0; recovery mirrors that value.
+get_prop(hal_gatekeeper_default, vendor_piano_spu_level_prop)
+
+# Waits for qseecomd's listener registration before publishing its interface.
+get_prop(hal_gatekeeper_default, vendor_tee_listener_prop)
+
+# Stock Gatekeeper shares KeyMint's retry timer property.
+get_prop(hal_gatekeeper_default, vendor_keymint_retry_timer_prop)

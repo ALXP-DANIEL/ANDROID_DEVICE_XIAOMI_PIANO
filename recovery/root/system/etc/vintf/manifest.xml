@@ -1,0 +1,59 @@
+<!--
+    Recovery device VINTF manifest.
+
+    MUST live at /system/etc/vintf/manifest.xml, not /vendor/etc/vintf/.
+    In recovery, servicemanager resolves the manifest through
+    VintfObjectRecovery::fetchRecoveryHalManifest(), whose comment reads
+    "All manifests are installed under /system/etc/vintf" and which reads
+    kSystemManifest plus the kSystemManifestFragmentDir fragments. A manifest
+    placed under /vendor/etc/vintf is silently ignored: servicemanager logs
+    "getRecoveryHalManifest: Successfully processed VINTF information" for the
+    empty result, then rejects every addService() with
+    "Could not find <interface> in the VINTF manifest".
+
+    TWRP ships no VINTF manifest, so without this file servicemanager reports
+    "NULL VINTF MANIFEST!" and client lookups such as
+    AServiceManager_isDeclared() fail. Only the secure services this recovery
+    actually runs are declared.
+
+    Note from the TWRP14 bring-up: declaring these was NOT what made
+    registration work - the binder pair was - but the declarations are still
+    required for clients that check isDeclared() before binding, which is how
+    the decryption path finds Gatekeeper.
+-->
+<manifest version="1.0" type="device">
+    <hal format="aidl">
+        <name>android.hardware.security.keymint</name>
+        <version>3</version>
+        <fqname>IKeyMintDevice/default</fqname>
+    </hal>
+    <hal format="aidl">
+        <name>android.hardware.security.keymint</name>
+        <version>3</version>
+        <fqname>IRemotelyProvisionedComponent/default</fqname>
+    </hal>
+    <hal format="aidl">
+        <name>android.hardware.security.secureclock</name>
+        <fqname>ISecureClock/default</fqname>
+    </hal>
+    <hal format="aidl">
+        <name>android.hardware.security.sharedsecret</name>
+        <fqname>ISharedSecret/default</fqname>
+    </hal>
+
+    <hal format="aidl">
+        <name>android.hardware.gatekeeper</name>
+        <fqname>IGatekeeper/default</fqname>
+    </hal>
+
+    <hal format="aidl">
+        <name>android.hardware.weaver</name>
+        <version>2</version>
+        <fqname>IWeaver/default</fqname>
+    </hal>
+
+    <hal format="aidl">
+        <name>android.hardware.boot</name>
+        <fqname>IBootControl/default</fqname>
+    </hal>
+</manifest>

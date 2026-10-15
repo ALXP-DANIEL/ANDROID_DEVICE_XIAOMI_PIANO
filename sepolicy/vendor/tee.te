@@ -1,0 +1,321 @@
+# Xiaomi Pad 8 Pro (piano) — stock Qualcomm TEE daemon policy.
+#
+# AOSP's tee domain grants almost nothing (only fingerprint data files), so
+# everything here is additive. The TWRP14 tree accumulated a larger rule set
+# during the Stage 8 investigation; this is deliberately the subset with
+# actual evidence behind it. The rest is listed at the bottom and is added
+# back only if a runtime AVC proves it necessary.
+
+# PROVEN. qseecomd drops privileges after registering its listeners.
+# Disassembly of the stock binary shows setgid(1000) at 0x7470 and
+# setuid(1000) at 0x7504; either returning non-zero logs
+# "qseecomd permission reset failed, not starting services" and returns -1,
+# which becomes exit status 255.
+#
+# Stock vendor_sepolicy.cil:9433 grants more than this to tee_202404. chown and
+# sys_admin are still not taken; block_suspend now is, see below.
+allow tee self:capability { setgid setuid };
+
+# RUNTIME AVC EVIDENCE (2026-09-14). This was withheld as unnecessary when this
+# file was written - "capability2 block_suspend deliberately NOT granted" - on
+# the reasoning that a recovery has no business blocking suspend. The device
+# disproved it, the same way it disproved the trimmed block_device rules above.
+#
+# qseecomd takes a wakelock around every RPMB transaction, because losing power
+# midway through a replay-protected write would be unrecoverable. Denied, the
+# wakelock fails with EPERM and the transaction is abandoned:
+#
+#   avc: denied { block_suspend } for comm="piano-qseecomd" capability=36
+#        scontext=u:r:tee:s0 tclass=capability2 permissive=0
+#   E rpmb: RPMB wakelock NOT acquired, write_res=-1, errno=1
+#
+# and a KeyMint key upgrade, which must persist state in RPMB, then fails:
+#
+#   E KeyMasterHalDevice: upgrade_key   ret: -8
+#
+# Stock grants this to tee_202404 for exactly this reason.
+allow tee self:capability2 block_suspend;
+
+# PROVEN. qseecomd publishes listener-registration completion, which is the
+# signal every later secure service waits on.
+set_prop(tee, vendor_tee_listener_prop)
+
+# STOCK-BACKED. vendor_sepolicy.cil:9433 grants sys_rawio to tee_202404.
+# Required for the SG_IO ioctls the daemon issues against UFS.
+allow tee self:capability sys_rawio;
+
+# RUNTIME AVC EVIDENCE (2026-09-14). Without this qseecomd exits with status
+# 255 - the Stage 8 signature for the listener init function returning
+# negative - after:
+#   avc: denied { search } for comm="piano-qseecomd" name="block"
+#        dev="tmpfs" scontext=u:r:tee:s0 tcontext=u:object_r:block_device
+#
+# The TWRP14 note that these probing AVCs are "non-fatal" held only because
+# the rule was already granted there. Denied, they are fatal.
+allow tee block_device:dir { getattr search };
+
+# Same probing phase, same stock behaviour: the daemon walks /dev as well as
+# /dev/block. Granted together because they are one operation, and the
+# alternative is another build-flash cycle to discover the second half.
+allow tee device:dir {
+    ioctl
+    read
+    getattr
+    lock
+    open
+    watch
+    watch_reads
+    search
+};
+
+# RUNTIME AVC EVIDENCE (2026-09-14). The UFS/SCSI secure-storage access below
+# was dropped once as "speculative" because the RPMB investigation concluded
+# the SSD path was not the fatal listener. That was wrong: without these rules
+# qseecomd exits 255 during device probing, after
+#   avc: denied { read write } name="ufs-bsg0"    tcontext=u:object_r:device:s0
+#   avc: denied { read write } name="0:0:0:49476" tcontext=u:object_r:device:s0
+#   avc: denied { read write } name="sda2"        tcontext=u:object_r:block_device:s0
+#
+# The rules are restored exactly as the TWRP14 tree had them, which is the
+# configuration that reached healthy listener registration on this hardware.
+
+# Stage 8: stock piano SSD partition type and TEE access.
+# This is deliberately specific to the SSD block device; generic
+# block_device:blk_file access is not granted.
+type vendor_ssd_block_device, dev_type;
+
+allow tee vendor_ssd_block_device:blk_file {
+    ioctl
+    read
+    write
+    getattr
+    lock
+    append
+    map
+    open
+    watch
+    watch_reads
+};
+
+# Stage 8: stock Qualcomm UFS secure-storage character devices.
+type vendor_sg_device, dev_type;
+type vendor_bsg_device, dev_type;
+type vendor_ufs_lun4_bsg_device, dev_type;
+
+# Stock piano TEE access to SCSI generic devices.
+allow tee vendor_sg_device:chr_file {
+    ioctl
+    read
+    write
+    getattr
+    setattr
+    lock
+    append
+    map
+    open
+    watch
+    watch_reads
+};
+
+# Stock piano TEE access to generic UFS BSG devices.
+allow tee vendor_bsg_device:chr_file {
+    ioctl
+    read
+    write
+    getattr
+    lock
+    append
+    map
+    open
+    watch
+    watch_reads
+};
+
+# Stock piano TEE access to the UFS LUN4 BSG device.
+allow tee vendor_ufs_lun4_bsg_device:chr_file {
+    ioctl
+    read
+    write
+    getattr
+    lock
+    append
+    map
+    open
+    watch
+    watch_reads
+};
+
+# Stage 8: stock piano TEE wake-lock access.
+allow tee sysfs_wake_lock:file {
+    ioctl
+    read
+    write
+    getattr
+    lock
+    append
+    map
+    open
+    watch
+    watch_reads
+};
+
+# Qualcomm QSEE DMA heap.
+# Stock piano labels /dev/dma_heap/qcom,qseecom with a dedicated type and
+# grants tee only the access required by BufferAllocator.
+type vendor_dmabuf_qseecom_heap_device, dev_type, dmabuf_heap_device_type;
+
+allow tee vendor_dmabuf_qseecom_heap_device:chr_file {
+    ioctl
+    read
+    getattr
+    lock
+    map
+    open
+    watch
+    watch_reads
+};
+
+# QSEE TA heap. The secure stack allocates trusted-application buffers from
+# qcom,qseecom-ta and was denied (errno 13) before this type existed:
+#   QSEECOMPAT: DMA-Buf allocation failed from heap qcom,qseecom-ta errno=13
+# Stock tee_202404 rule (vendor CIL:12715), read-only set, verbatim.
+type vendor_dmabuf_qseecom_ta_heap_device, dev_type, dmabuf_heap_device_type;
+
+allow tee vendor_dmabuf_qseecom_ta_heap_device:chr_file {
+    ioctl
+    read
+    getattr
+    lock
+    map
+    open
+    watch
+    watch_reads
+};
+
+
+# Allow qseecomd to publish listener-registration completion.
+set_prop(tee, vendor_tee_listener_prop)
+
+
+# RUNTIME AVC EVIDENCE (2026-09-14). The daemon takes a wake lock while it
+# talks to the secure world:
+#   avc: denied { append } name="wake_lock" tcontext=u:object_r:sysfs_wake_lock:s0
+allow tee sysfs_wake_lock:file { open read write append getattr };
+
+
+# ssgtzd, the GlobalPlatform TA loader, runs in this same domain (see
+# file_contexts). It needs two things qseecomd does not:
+#
+# WAKE_ALARM, because stock grants it alongside BLOCK_SUSPEND — loading a TA
+# must not be interrupted by suspend any more than an RPMB write may be.
+allow tee self:capability2 wake_alarm;
+
+# Its two control sockets are created by init, not by the daemon, so no rule is
+# added for them here. If the daemon turns out to need more than this, the AVC
+# will say so and the rule can be written against that evidence rather than
+# against a guess — the block_device, UFS and block_suspend rules in this file
+# were all restored that way after being trimmed on reasoning alone.
+
+# RUNTIME AVC EVIDENCE (2026-09-15). ssgtzd, which shares this domain, opens a
+# QRTR (IPC router) socket to reach the secure-world services:
+#
+#   avc: denied { create } for comm="piano-ssgtzd"
+#        scontext=u:r:tee:s0 tcontext=u:r:tee:s0 tclass=qipcrtr_socket
+#
+# Stock grants exactly this set to its own vendor_ssgtzd domain
+# (vendor_sepolicy.cil:13085 and the ioctl range at :13087). Reproduced here
+# because our file_contexts places ssgtzd in tee rather than a private domain.
+allow tee self:qipcrtr_socket {
+    ioctl
+    read
+    write
+    create
+    getattr
+    setattr
+    lock
+    append
+    map
+    bind
+    connect
+    getopt
+    setopt
+    shutdown
+};
+allowxperm tee self:qipcrtr_socket ioctl { 0xc300-0xc305 };
+
+# RUNTIME AVC EVIDENCE (2026-09-15). qseecomd keeps secure-world state under
+# /data/vendor/tzstorage. The directory exists on the decrypted userdata with
+# its stock label, but the type was absent from the recovery policy, so it
+# resolved as unlabeled and every access was denied:
+#
+#   avc: denied { search } for comm="piano-qseecomd" name="tzstorage" dev="dm-8"
+#        tcontext=u:object_r:unlabeled:s0 tclass=dir
+#        trawcon="u:object_r:vendor_data_tzstorage_file:s0"
+#
+# Declaring the type makes the on-disk label resolve. The rules are copied from
+# stock vendor_sepolicy.cil:9454-9455.
+type vendor_data_tzstorage_file, file_type, data_file_type;
+
+allow tee vendor_data_tzstorage_file:dir {
+    ioctl read write create getattr setattr lock rename open watch watch_reads
+    add_name remove_name reparent search rmdir
+};
+allow tee vendor_data_tzstorage_file:file {
+    ioctl read write create getattr setattr lock append map unlink rename open
+    watch watch_reads
+};
+type vendor_persist_file, file_type;
+type vendor_persist_data_file, file_type;
+
+allow tee vendor_persist_file:dir { search getattr open read };
+
+# Stock Qualcomm GPFS/SFS store under /mnt/vendor/persist/data.
+# Runtime AVC:
+#   scontext=u:r:tee:s0
+#   tcontext=u:object_r:unlabeled:s0
+#   trawcon=u:object_r:vendor_persist_data_file:s0
+#
+# Grant only what is required to consume existing objects.  Do not grant
+# create/write/rename/unlink here; the partition remains read-only.
+allow tee vendor_persist_data_file:dir {
+    search
+    getattr
+    open
+    read
+};
+
+allow tee vendor_persist_data_file:file {
+    getattr
+    open
+    read
+};
+
+# Stock persist parent carries mnt_vendor_file. Permit traversal only.
+allow tee mnt_vendor_file:dir { search getattr open read };
+
+
+# Runtime AVC evidence: the tee domain must traverse the read-only modem
+# firmware mount that holds GlobalPlatform trusted applications:
+#   denied { search } name="/" dev="sdd7" scontext=u:r:tee:s0
+#   tcontext=u:object_r:vfat:s0 tclass=dir permissive=0
+# Stock uses a dedicated firmware label. Its fstab mounts the modem partition
+# with context=u:object_r:firmware_file:s0 and grants tee_202404 read access
+# to that type (vendor CIL 9439 and 12705-12707, verified on HyperOS 3 Global).
+# Apply the same mount label using this platform's context-mount type model:
+# fs_type + contextmount_type, like oemfs. Do not also attach file_type:
+# file.te forbids combining it with fs_type, and its inherited init write
+# rules conflict with the contextmount_type neverallows (6528da9 build).
+# The modem stays mounted RO; no write grant is added here.
+# Rules below are the stock read-only sets.
+type firmware_file, fs_type, contextmount_type;
+
+allow tee firmware_file:dir {
+    ioctl read getattr lock open watch watch_reads search
+};
+allow tee firmware_file:file {
+    ioctl read getattr lock map open watch watch_reads
+};
+allow tee firmware_file:lnk_file {
+    ioctl read getattr lock map open watch watch_reads
+};
+
