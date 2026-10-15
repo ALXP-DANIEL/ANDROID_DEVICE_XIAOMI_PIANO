@@ -1,0 +1,91 @@
+diff --git a/src/core/main.c b/src/core/main.c
+index 886bc75..a8391ff 100644
+--- a/src/core/main.c
++++ b/src/core/main.c
+@@ -720,8 +720,13 @@ boot_selected:
+         efi_log(L"main: password captured for encrypted/LUKS boot entry");
+     }
+ 
++    int logo_shown = 0;
+     if (!text_mode && !gui_closed) {
+         gui_fade_out(&gui);
++        if (config.quiet) {
++            gui_show_entry_logo(&gui, selected);
++            logo_shown = 1;
++        }
+         gui_shutdown(&gui);
+         gui_closed = 1;
+         text_mode = 1;
+@@ -730,7 +735,8 @@ boot_selected:
+     visor_quiet = config.quiet;
+     if (visor_quiet) {
+         efi_log(L"main: quiet mode - suppressing console output");
+-        ST->ConOut->ClearScreen(ST->ConOut);
++        if (!logo_shown)
++            ST->ConOut->ClearScreen(ST->ConOut);
+     }
+     efi_log_set_console(!visor_quiet);
+     efi_log(L"main: boot log streaming to console is active");
+diff --git a/src/gui/gui_fade.c b/src/gui/gui_fade.c
+index eb91d3c..6a256b1 100644
+--- a/src/gui/gui_fade.c
++++ b/src/gui/gui_fade.c
+@@ -172,3 +172,22 @@ void gui_crossfade(gui_state_t *state, UINT32 *from, UINT32 *to) {
+         if (spent < FADE_MIN_FRAME_US) BS->Stall(FADE_MIN_FRAME_US - spent);
+     }
+ }
++
++/* Quiet boot: the selected entry's icon, at its menu size and color, alone on
++ * black. The screen keeps it after Visor is gone, until the system draws its
++ * own boot screen. */
++void gui_show_entry_logo(gui_state_t *state, boot_entry_t *entry) {
++    if (!state || !state->backbuffer || !entry || !entry->icon) return;
++    UINTN px = state->screen_width * state->screen_height;
++    fade_write_black(state, px);
++    UINTN is = state->icon_size ? state->icon_size : default_icon_size(state);
++    UINTN ei = entry_icon_size(entry, is);
++    UINTN x = (state->screen_width - ei) / 2;
++    UINTN y = (state->screen_height - ei) / 2;
++    if (state->os_icon_tint_on)
++        draw_image_tinted_a(state, entry->icon, x, y, ei, state->os_icon_tint, 255);
++    else
++        draw_image_sized_a(state, entry->icon, x, y, ei, 255);
++    gui_present(state);
++    state->keep_screen = 1;
++}
+diff --git a/src/include/gui.h b/src/include/gui.h
+index 15fe0b1..6b6156f 100644
+--- a/src/include/gui.h
++++ b/src/include/gui.h
+@@ -286,6 +286,7 @@ typedef struct gui_state {
+     color_t logo_tint;      int logo_tint_on;
+     color_t os_icon_tint;   int os_icon_tint_on;
+     int     pwr_tint_on[3];
++    int     keep_screen;    /* gui_show_entry_logo() drew the last frame */
+ 
+     int     show_clock;
+     int     accent_clock;
+@@ -429,6 +430,7 @@ void gui_present(gui_state_t *state);
+ void gui_present_band(gui_state_t *state, INTN y, INTN h);
+ 
+ void gui_fade_out(gui_state_t *state);
++void gui_show_entry_logo(gui_state_t *state, boot_entry_t *entry);
+ 
+ void gui_rbd_screen(gui_state_t *state);
+ 
+--- a/src/gui/gui_run.c
++++ b/src/gui/gui_run.c
+@@ -658,8 +658,11 @@
+         efi_free_pool(state->background_path);
+     }
+ 
+-    gui_fill_rect(state, 0, 0, state->screen_width, state->screen_height, COLOR_BLACK);
+-    gui_present(state);
++    /* Leave a boot logo up; otherwise hand over a black screen. */
++    if (!state->keep_screen) {
++        gui_fill_rect(state, 0, 0, state->screen_width, state->screen_height, COLOR_BLACK);
++        gui_present(state);
++    }
+ 
+     if (state->backbuffer) {
+         efi_free_pool(state->backbuffer);
