@@ -105,8 +105,8 @@
     <string name="stylus_unavailable">Unavailable</string>
     <string name="stylus_charging_battery">%1$d%%, attached</string>
     <string name="stylus_battery_percent">%1$d%%</string>
-    <string-array name="stylus_button_actions"><item>None</item><item>Notes</item><item>Screenshot</item><item>Back</item><item>Home</item><item>Recent apps</item><item>Play/pause</item><item>Laser pointer (hold)</item></string-array>
-    <string-array name="stylus_button_values" translatable="false"><item>none</item><item>open_notes</item><item>screenshot</item><item>back</item><item>home</item><item>recents</item><item>media_play_pause</item><item>laser</item></string-array>
+    <string-array name="stylus_button_actions"><item>None</item><item>Notes</item><item>Screenshot</item><item>Back</item><item>Home</item><item>Recent apps</item><item>Play/pause</item><item>Laser pointer (hold)</item><item>Shortcut menu</item></string-array>
+    <string-array name="stylus_button_values" translatable="false"><item>none</item><item>open_notes</item><item>screenshot</item><item>back</item><item>home</item><item>recents</item><item>media_play_pause</item><item>laser</item><item>menu</item></string-array>
     <string name="stylus_settings_summary">Button actions, connection, battery and firmware</string>
 
     <!-- Same wording as the stock HyperOS notice. -->
