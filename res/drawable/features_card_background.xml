@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="?android:attr/colorControlHighlight">
+    <item><shape><solid android:color="?android:attr/colorBackgroundFloating" /><corners android:radius="24dp" /></shape></item>
+    <item android:id="@android:id/mask"><shape><solid android:color="#FFFFFFFF" /><corners android:radius="24dp" /></shape></item>
+</ripple>

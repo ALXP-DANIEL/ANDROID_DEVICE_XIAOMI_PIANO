@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <string name="features_hero_title">Your Pad, your way</string>
+    <string name="features_hero_summary">Make room for focus, creativity and everyday comfort.</string>
+    <string name="features_accessories">Create and connect</string>
+    <string name="features_pen_summary">Make every stroke and shortcut yours</string>
+    <string name="features_keyboard_summary">Connection, shortcuts and updates</string>
+    <color name="features_hero_surface">#EEF0FB</color>
+    <color name="features_icon_surface">#E9ECF8</color>
+    <color name="features_device_frame">#39425B</color>
+    <color name="features_device_screen">#D5DFF7</color>
+    <color name="features_device_wave">#A7B4E1</color>
+    <color name="features_device_light">#EDF0FF</color>
+    <color name="features_device_keys">#69738F</color>
+</resources>
