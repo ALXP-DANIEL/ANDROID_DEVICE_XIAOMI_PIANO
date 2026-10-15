@@ -50,6 +50,7 @@ public class PianoPartsApp extends Application {
     // IDisplayFeature.setFeature(displayId, featureId, value, cookie)
     private static final int TRANSACTION_SET_FEATURE = IBinder.FIRST_CALL_TRANSACTION + 6;
     private static final int FEATURE_TRUE_TONE = 32;
+    private static final int FEATURE_COLOR_TEMP = 23;
     static final int FEATURE_SUNLIGHT_SCREEN = 12;
 
     private static final String CAMERA_PACKAGE = "com.android.camera";
@@ -61,7 +62,6 @@ public class PianoPartsApp extends Application {
     private static final String SETTING_COLOR_MODE = "screen_optimize_mode";
     private static final String SETTING_COLOR_LEVEL = "screen_color_level";
     static final int[] COLOR_MODES = { 1, 2, 3 };
-    static final int[] COLOR_LEVELS = { 1, 2, 3 };
     private static final String KEY_SUNLIGHT_MODE = "sunlight_mode";
 
     private DisplayManager mDisplayManager;
@@ -180,6 +180,8 @@ public class PianoPartsApp extends Application {
             default -> 0;
         };
         setDisplayFeature(effect, getColorLevel());
+        // Like stock, also set the level on the colour temperature feature.
+        setDisplayFeature(FEATURE_COLOR_TEMP, getColorLevel());
     }
 
     boolean isSunlightMode() {

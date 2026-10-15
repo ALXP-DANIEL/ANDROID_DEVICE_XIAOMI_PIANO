@@ -8,6 +8,7 @@ import android.app.WallpaperManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
@@ -26,8 +27,16 @@ public class ColorSchemeFragment extends SettingsBasePreferenceFragment
 
     private static final String KEY_PREVIEW = "color_preview";
     private static final String KEY_MODES = "screen_optimize";
-    private static final String KEY_LEVELS = "screen_color";
     private static final String KEY_TRUE_TONE = "screen_truetone_pref";
+    private static final String KEY_TEMPERATURE = "color_temperature";
+
+    // Stock warm and cool colors, where the presets put the picker dot.
+    private static final int WARM_RGB = 0xffd4b8;
+    private static final int COOL_RGB = 0xb8d4ff;
+
+    private ColorPickerView mPicker;
+    private RadioGroup mTabs;
+    private boolean mUpdatingTabs;
 
     private PianoPartsApp mApp;
 
@@ -45,7 +54,25 @@ public class ColorSchemeFragment extends SettingsBasePreferenceFragment
 
         addChoices(KEY_MODES, R.array.color_mode_titles, R.array.color_mode_summaries,
                 PianoPartsApp.COLOR_MODES);
-        addChoices(KEY_LEVELS, R.array.color_level_titles, 0, PianoPartsApp.COLOR_LEVELS);
+        LayoutPreference temperature = findPreference(KEY_TEMPERATURE);
+        mPicker = temperature.findViewById(R.id.color_picker);
+        mTabs = temperature.findViewById(R.id.color_tabs);
+        mPicker.setOnColorPickedListener(rgb -> {
+            mApp.setColorScheme(mApp.getColorMode(), rgb);
+            checkTab(R.id.color_custom);
+        });
+        mTabs.setOnCheckedChangeListener((group, id) -> {
+            if (mUpdatingTabs) {
+                return;
+            }
+            // Like stock, the Custom tab only selects; dragging the dot sets it.
+            int level = id == R.id.color_warm ? 1 : id == R.id.color_cool ? 3
+                    : id == R.id.color_standard ? 2 : 0;
+            if (level != 0) {
+                mApp.setColorScheme(mApp.getColorMode(), level);
+                mPicker.setColor(levelToRgb(level));
+            }
+        });
 
         SwitchPreferenceCompat trueTone = findPreference(KEY_TRUE_TONE);
         trueTone.setOnPreferenceChangeListener((p, value) -> {
@@ -58,7 +85,7 @@ public class ColorSchemeFragment extends SettingsBasePreferenceFragment
     public void onResume() {
         super.onResume();
         updateChecked(KEY_MODES, mApp.getColorMode());
-        updateChecked(KEY_LEVELS, mApp.getColorLevel());
+        updateLevels(mApp.getColorLevel());
         ((SwitchPreferenceCompat) findPreference(KEY_TRUE_TONE)).setChecked(mApp.isTrueTone());
     }
 
@@ -66,12 +93,33 @@ public class ColorSchemeFragment extends SettingsBasePreferenceFragment
     public void onRadioButtonClicked(SelectorWithWidgetPreference preference) {
         String category = preference.getParent().getKey();
         int value = Integer.parseInt(preference.getKey().substring(category.length() + 1));
-        if (KEY_MODES.equals(category)) {
-            mApp.setColorScheme(value, mApp.getColorLevel());
-        } else {
-            mApp.setColorScheme(mApp.getColorMode(), value);
-        }
+        mApp.setColorScheme(value, mApp.getColorLevel());
         updateChecked(category, value);
+    }
+
+    private void updateLevels(int level) {
+        mPicker.setColor(levelToRgb(level));
+        checkTab(switch (level) {
+            case 1 -> R.id.color_warm;
+            case 2 -> R.id.color_standard;
+            case 3 -> R.id.color_cool;
+            default -> R.id.color_custom;
+        });
+    }
+
+    private void checkTab(int id) {
+        mUpdatingTabs = true;
+        mTabs.check(id);
+        mUpdatingTabs = false;
+    }
+
+    private static int levelToRgb(int level) {
+        return switch (level) {
+            case 1 -> WARM_RGB;
+            case 2 -> 0xffffff;
+            case 3 -> COOL_RGB;
+            default -> level;
+        };
     }
 
     private void addChoices(String categoryKey, int titles, int summaries, int[] values) {
