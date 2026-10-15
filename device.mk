@@ -48,6 +48,11 @@ DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.bootanim.set_orientation_logical_0=ORIENTATION_90
 
+# EvoX reads PRODUCT_CHARACTERISTICS before the tablet sets it. Override its
+# optional setup-wizard default so first-boot setup can follow tablet rotation.
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.setupwizard.rotation_locked=false
+
 # Stock HyperOS ignores the palm while the pen writes. Use the platform's
 # palm rejection model for the same, on top of stylus-over-touch blocking.
 PRODUCT_SYSTEM_PROPERTIES += \
