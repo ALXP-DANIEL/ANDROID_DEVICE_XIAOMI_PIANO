@@ -45,6 +45,7 @@ final class KeyboardTransport {
     private final Listener mListener;
     private final Handler mHandler;
     private IBinder mService;
+    private IBinder.DeathRecipient mDeathRecipient;
 
     private final Binder mCallback = new Binder() {
         {
@@ -97,9 +98,12 @@ final class KeyboardTransport {
     }
 
     /** Connects to the HAL and registers the reply callback. */
-    boolean connect() {
-        mService = ServiceManager.checkService(SERVICE);
-        if (mService == null) {
+    synchronized boolean connect() {
+        if (mService != null) {
+            return true;
+        }
+        IBinder service = ServiceManager.checkService(SERVICE);
+        if (service == null) {
             Log.e(TAG, "Keyboard nanoapp service is not available");
             return false;
         }
@@ -108,12 +112,30 @@ final class KeyboardTransport {
         try {
             data.writeInterfaceToken(DESCRIPTOR);
             data.writeStrongBinder(mCallback);
-            mService.transact(TRANSACTION_SET_CALLBACK, data, reply, 0);
+            if (!service.transact(TRANSACTION_SET_CALLBACK, data, reply, 0)) {
+                Log.e(TAG, "Keyboard HAL does not implement callback registration");
+                return false;
+            }
             reply.readException();
+            IBinder.DeathRecipient recipient = () -> {
+                synchronized (KeyboardTransport.this) {
+                    if (mService != service) {
+                        return;
+                    }
+                    Log.w(TAG, "Keyboard nanoapp service died");
+                    clearService();
+                }
+                // Re-register the callback if the service has already returned;
+                // later sends retry if it is still unavailable.
+                mHandler.post(() -> connect());
+            };
+            service.linkToDeath(recipient, 0);
+            mService = service;
+            mDeathRecipient = recipient;
             return true;
         } catch (RemoteException | RuntimeException e) {
             Log.e(TAG, "Failed to register the keyboard callback", e);
-            mService = null;
+            clearService();
             return false;
         } finally {
             data.recycle();
@@ -121,7 +143,15 @@ final class KeyboardTransport {
         }
     }
 
-    boolean send(byte[] packet) {
+    private synchronized void clearService() {
+        if (mService != null && mDeathRecipient != null) {
+            mService.unlinkToDeath(mDeathRecipient, 0);
+        }
+        mService = null;
+        mDeathRecipient = null;
+    }
+
+    synchronized boolean send(byte[] packet) {
         if (mService == null && !connect()) {
             return false;
         }
@@ -130,12 +160,20 @@ final class KeyboardTransport {
         try {
             data.writeInterfaceToken(DESCRIPTOR);
             data.writeByteArray(packet);
-            mService.transact(TRANSACTION_SEND_CMD, data, reply, 0);
+            if (!mService.transact(TRANSACTION_SEND_CMD, data, reply, 0)) {
+                Log.e(TAG, "Keyboard HAL does not implement command sending");
+                return false;
+            }
             reply.readException();
+            int result = reply.readInt();
+            if (result < 0) {
+                Log.e(TAG, "Keyboard nanoapp write failed: " + result);
+                return false;
+            }
             return true;
         } catch (RemoteException | RuntimeException e) {
             Log.e(TAG, "Failed to send a keyboard command", e);
-            mService = null;
+            clearService();
             return false;
         } finally {
             data.recycle();

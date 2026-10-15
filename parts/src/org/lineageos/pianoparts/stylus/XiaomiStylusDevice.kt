@@ -22,11 +22,15 @@ object XiaomiStylusDevice {
             }
 
             VENDOR_PRIMAX -> when (device.productId) {
-                19840, 12929, 12928 -> 3
+                19840, 12928 -> 3
                 20099 -> 4
                 12675 -> 5
                 12931 -> 6
                 20356 -> 7
+                20609, 12929 -> 8
+                20867, 20868 -> 9
+                20869 -> 10
+                20870 -> 11
                 else -> TYPE_NONE
             }
 

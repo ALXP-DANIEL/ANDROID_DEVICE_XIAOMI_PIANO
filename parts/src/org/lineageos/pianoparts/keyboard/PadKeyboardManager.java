@@ -88,6 +88,8 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     private final Context mContext;
     private final KeyboardTransport mTransport;
     private final KeyboardUpdater mUpdater;
+    private final KeyboardFeatureCommands mFeatures;
+    private final KeyboardBacklightFilter mBacklightFilter = new KeyboardBacklightFilter();
     private final Handler mHandler;
     private final Handler mMainHandler = new Handler(Looper.getMainLooper());
     private final InputManager mInputManager;
@@ -207,6 +209,18 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         mTransport = new KeyboardTransport(this);
         mUpdater = new KeyboardUpdater(mTransport);
         mHandler = mTransport.getHandler();
+        mFeatures = new KeyboardFeatureCommands(new KeyboardFeatureCommands.Scheduler() {
+            @Override
+            public void postDelayed(Runnable task, long delayMs) {
+                mHandler.postDelayed(task, delayMs);
+            }
+
+            @Override
+            public void remove(Runnable task) {
+                mHandler.removeCallbacks(task);
+            }
+        }, (command, value) -> mTransport.send(KeyboardProtocol.feature(command, value)),
+                () -> mConnected && !mSleeping && !mRejected && !mUpdater.isRunning());
         mInputManager = context.getSystemService(InputManager.class);
         mPowerManager = context.getSystemService(PowerManager.class);
         mSensorManager = context.getSystemService(SensorManager.class);
@@ -454,6 +468,13 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                     updateKeysEnabled();
                 }
                 break;
+            case KeyboardProtocol.CMD_BACKLIGHT:
+            case KeyboardProtocol.CMD_TIPS_LIGHT_2022:
+            case KeyboardProtocol.CMD_TIPS_LIGHT:
+                if (reply.length >= 7 && reply[5] == 1) {
+                    mFeatures.acknowledge(command, reply[6]);
+                }
+                break;
             case KeyboardProtocol.CMD_FEATURE_RESPONSE:
                 if (reply.length < 8) break;
                 if (reply[7] != 0) {
@@ -493,6 +514,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
             // Invalidate its result before a different cover can be attached.
             mAuthGeneration++;
             mUpdater.abort();
+            mFeatures.clear();
             mAuthHandler.removeCallbacksAndMessages(null);
             mAuthRunning = false;
             mAuthTrusted = false;
@@ -518,6 +540,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     }
 
     private void onAttached() {
+        mFeatures.clear();
         mTransport.send(KeyboardProtocol.getVersion(KeyboardProtocol.ADDRESS_KEYBOARD));
         scheduleAuth(true, AUTH_START_DELAY_MS);
         mSleeping = false;
@@ -556,6 +579,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
 
     private void onSleepChanged(boolean sleeping) {
         mSleeping = sleeping;
+        if (sleeping) mFeatures.clear();
         if (!sleeping) {
             mLastBacklight = -1;
             mLastCaps = null;
@@ -595,6 +619,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
 
     private void updateBacklightSource() {
         mSensorManager.unregisterListener(mLightListener);
+        mMainHandler.post(mBacklightFilter::reset);
         if (!hasBacklight() || !mScreenOn) {
             return;
         }
@@ -612,12 +637,15 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
 
     private void animateBacklight(int target) {
         mMainHandler.post(() -> {
+            long delay = mBacklightFilter.update(target, SystemClock.uptimeMillis());
+            if (delay == KeyboardBacklightFilter.UNCHANGED) return;
             int from = mActiveBacklight < 0 ? target : mActiveBacklight;
             if (mBacklightAnimator != null) {
                 mBacklightAnimator.cancel();
             }
             // Stock fades the backlight over two seconds.
             mBacklightAnimator = ValueAnimator.ofInt(from, target);
+            mBacklightAnimator.setStartDelay(delay);
             mBacklightAnimator.setDuration(2000);
             mBacklightAnimator.addUpdateListener(animation -> {
                 int value = (int) animation.getAnimatedValue();
@@ -645,8 +673,9 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         }
         level = Math.max(0, Math.min(100, level));
         if (level != mLastBacklight) {
-            mLastBacklight = level;
-            mTransport.send(KeyboardProtocol.feature(KeyboardProtocol.CMD_BACKLIGHT, (byte) level));
+            if (mFeatures.send(KeyboardProtocol.CMD_BACKLIGHT, (byte) level)) {
+                mLastBacklight = level;
+            }
         }
     }
 
@@ -660,12 +689,11 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         if (!force && Boolean.valueOf(on).equals(mLastCaps)) {
             return;
         }
-        mLastCaps = on;
         byte command = mMcu2022 ? KeyboardProtocol.CMD_TIPS_LIGHT_2022
                 : KeyboardProtocol.CMD_TIPS_LIGHT;
         byte value = mMcu2022 ? (byte) (on ? 1 : 0)
                 : (on ? KeyboardProtocol.CAPS_ON : KeyboardProtocol.CAPS_OFF);
-        mTransport.send(KeyboardProtocol.feature(command, value));
+        if (mFeatures.send(command, value)) mLastCaps = on;
     }
 
     private boolean readCapsLed() {
@@ -713,8 +741,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
             return;
         }
         boolean enabled = prefs().getBoolean(KEY_TOUCHPAD, true) && mKeysEnabled;
-        mTransport.send(KeyboardProtocol.feature(KeyboardProtocol.CMD_TOUCHPAD_ENABLE,
-                (byte) (enabled ? 1 : 0)));
+        mFeatures.send(KeyboardProtocol.CMD_TOUCHPAD_ENABLE, (byte) (enabled ? 1 : 0));
     }
 
     // Folded away: like stock, ignore the keys outside 45 to 185 degrees.
@@ -732,6 +759,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         mSensorManager.unregisterListener(mLightListener);
         mAngle.reset();
         cancelBacklightAnimation();
+        mMainHandler.post(mBacklightFilter::reset);
     }
 
     private final InputManager.InputDeviceListener mInputDeviceListener =
@@ -802,8 +830,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
             mLastBacklight = -1;
             applyBacklight(mActiveBacklight);
         } else if (hasBacklight()) {
-            mTransport.send(KeyboardProtocol.feature(KeyboardProtocol.CMD_BACKLIGHT, (byte) 0));
-            mLastBacklight = 0;
+            if (mFeatures.send(KeyboardProtocol.CMD_BACKLIGHT, (byte) 0)) mLastBacklight = 0;
         }
         applyTouchpad();
         notifyChanged();
@@ -876,6 +903,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                 mAuthTrusted = false;
                 mRejected = true;
                 mUpdater.abort();
+                mFeatures.clear();
                 // Like stock, stop keeping a rejected cover awake.
                 mHandler.removeCallbacks(mKeepAwake);
                 updateKeysEnabled();

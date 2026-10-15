@@ -12,6 +12,8 @@ internal data class PenChargingEvent(
     val address: String?,
     val battery: Int?,
     val docked: Boolean?,
+    val panelState: Int? = null,
+    val hibernation: Boolean? = null,
 )
 
 internal class PenUEventObserver(
@@ -23,6 +25,8 @@ internal class PenUEventObserver(
         if (started) return
         started = true
         startObserving("SUBSYSTEM=power_supply")
+        startObserving("MIPP_PEN_STATE=")
+        startObserving("PEN_HIBERNATION_STATE=")
     }
 
     override fun onUEvent(event: UEvent) {
@@ -34,8 +38,13 @@ internal class PenUEventObserver(
         val hall3 = event["POWER_SUPPLY_PEN_HALL3"]?.toIntOrNull()?.takeIf { it in 0..1 }
         val hall4 = event["POWER_SUPPLY_PEN_HALL4"]?.toIntOrNull()?.takeIf { it in 0..1 }
         val docked = if (hall3 != null && hall4 != null) hall3 == 0 || hall4 == 0 else null
-        if (chargeState != null || address != null || battery != null || docked != null) {
-            onEvent(PenChargingEvent(chargeState, address, battery, docked))
+        val panelState = event["MIPP_PEN_STATE"]?.toIntOrNull()
+        val hibernation = event["PEN_HIBERNATION_STATE"]?.toIntOrNull()
+            ?.takeIf { it in 0..1 }?.let { it == 1 }
+        if (chargeState != null || address != null || battery != null || docked != null ||
+            panelState != null || hibernation != null
+        ) {
+            onEvent(PenChargingEvent(chargeState, address, battery, docked, panelState, hibernation))
         }
     }
 
