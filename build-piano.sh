@@ -57,17 +57,17 @@ PIANO_ANDROID=${PIANO_ANDROID:-17}
 PIANO_ROM=${PIANO_ROM:-evox}
 BUILD_VARIANT=${BUILD_VARIANT:-userdebug}
 BUILD_JOBS=${BUILD_JOBS:-2}
-BUILD_TARGET=${BUILD_TARGET:-bacon}
 PIANO_AVB_KEY_PATH=${PIANO_AVB_KEY_PATH:-piano-local-keys/lineage-23.2-avb.pem}
 
 case "$PIANO_ANDROID:$PIANO_ROM" in
-    17:evox) default_root="$HOME/android/evox-17"; default_glob='EvolutionX-*-piano*.zip' ;;
-    17:lineage) default_root="$HOME/android/lineage-24.0"; default_glob='lineage-*-piano.zip' ;;
-    16:lineage) default_root="$HOME/android/lineage-23.2"; default_glob='lineage-*-piano.zip' ;;
+    17:evox) default_root="$HOME/android/evox-17"; default_glob='EvolutionX-*-piano*.zip'; default_target=evolution ;;
+    17:lineage) default_root="$HOME/android/lineage-24.0"; default_glob='lineage-*-piano.zip'; default_target=bacon ;;
+    16:lineage) default_root="$HOME/android/lineage-23.2"; default_glob='lineage-*-piano.zip'; default_target=bacon ;;
     *) echo "Unsupported ROM/release: $PIANO_ROM / Android $PIANO_ANDROID" >&2; exit 2 ;;
 esac
 ANDROID_ROOT=${ANDROID_ROOT:-$default_root}
 OTA_GLOB=${OTA_GLOB:-$default_glob}
+BUILD_TARGET=${BUILD_TARGET:-$default_target}
 PIANO_BUILD_DIR=${PIANO_BUILD_DIR:-$ANDROID_ROOT/out/piano-builds}
 PIANO_BUILD_LOG=${PIANO_BUILD_LOG:-/tmp/piano-build.log}
 

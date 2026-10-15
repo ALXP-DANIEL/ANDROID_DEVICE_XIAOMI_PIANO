@@ -85,7 +85,7 @@ bash ~/android/piano-shared/build-piano.sh
 ```
 
 Defaults: `PIANO_ANDROID=17`, `PIANO_ROM=evox`, `BUILD_VARIANT=userdebug`,
-`BUILD_JOBS=2`, `BUILD_TARGET=bacon`. Override `ANDROID_ROOT` and
+`BUILD_JOBS=2`, `BUILD_TARGET=evolution` for EvoX (`bacon` for LineageOS). Override `ANDROID_ROOT` and
 `PIANO_AVB_KEY_PATH` if the source directory or existing external signing key
 differs. Android 16 supports `PIANO_ANDROID=16 PIANO_ROM=lineage`; Android 17
 LineageOS uses `PIANO_ANDROID=17 PIANO_ROM=lineage`. The launcher does not
