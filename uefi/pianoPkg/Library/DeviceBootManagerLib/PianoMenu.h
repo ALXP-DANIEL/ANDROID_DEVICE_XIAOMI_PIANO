@@ -16,4 +16,8 @@ PianoMenuRun (VOID);
 VOID
 PianoTouchStart (VOID);
 
+/* Publish \EFI\piano\piano.dtb for Linux, if present (PianoDtb.c). */
+VOID
+PianoDtbInstall (VOID);
+
 #endif

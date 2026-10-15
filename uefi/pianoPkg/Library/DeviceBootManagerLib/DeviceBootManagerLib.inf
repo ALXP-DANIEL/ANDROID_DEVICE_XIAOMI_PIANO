@@ -15,6 +15,7 @@
   DeviceBootManager.c
   PianoMenu.c
   PianoMenu.h
+  PianoDtb.c
   PianoTouch.c
   PianoTouchKeys.h
 
@@ -43,6 +44,8 @@
   gUsbControllerInitGuid
   gSdCardInitGuid
   gUefiShellFileGuid
+  gFdtTableGuid
+  gEfiFileInfoGuid
 
 [Protocols]
   gEfiLoadedImageProtocolGuid
