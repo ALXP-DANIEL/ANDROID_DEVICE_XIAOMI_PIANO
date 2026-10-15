@@ -6,6 +6,8 @@
 package org.lineageos.pianoparts.stylus
 
 import android.content.SharedPreferences
+import android.content.Intent
+import android.app.AlertDialog
 import android.os.Bundle
 import android.provider.Settings
 import androidx.preference.ListPreference
@@ -26,6 +28,8 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
     private lateinit var notConnected: Preference
     private lateinit var buttonsCategory: PreferenceCategory
     private lateinit var firmware: Preference
+    private lateinit var firmwareCheck: Preference
+    private lateinit var firmwareUpdate: Preference
     private lateinit var penControls: PreferenceCategory
 
     private val statusListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
@@ -119,7 +123,7 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
                 getString(R.string.stylus_pinch_title),
                 resources.getTextArray(R.array.stylus_button_actions),
                 resources.getTextArray(R.array.stylus_button_values),
-                StylusSettingsContract.DEFAULT_PINCH_ACTION,
+                defaultPinchAction(),
             ),
         )
         buttonsCategory.addPreference(
@@ -168,6 +172,30 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
             isSelectable = false
         }
         deviceInfoCategory.addPreference(firmware)
+        firmwareCheck = Preference(context).apply {
+            setTitle(R.string.stylus_firmware_check)
+            setOnPreferenceClickListener {
+                context.sendBroadcast(Intent(StylusController.ACTION_CHECK_FIRMWARE).setPackage(context.packageName))
+                true
+            }
+        }
+        deviceInfoCategory.addPreference(firmwareCheck)
+        firmwareUpdate = Preference(context).apply {
+            setTitle(R.string.stylus_firmware_update)
+            setOnPreferenceClickListener {
+                val state = StylusStatusStore.snapshot(context)
+                if (state.updateState == "available") {
+                    AlertDialog.Builder(context).setTitle(R.string.stylus_firmware_update)
+                        .setMessage(getString(R.string.stylus_firmware_confirm, state.updateVersion))
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(R.string.stylus_firmware_update) { _, _ ->
+                            context.sendBroadcast(Intent(StylusController.ACTION_UPDATE_FIRMWARE).setPackage(context.packageName))
+                        }.show()
+                }
+                true
+            }
+        }
+        deviceInfoCategory.addPreference(firmwareUpdate)
     }
 
     override fun onResume() {
@@ -175,13 +203,15 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
         StylusStatusStore.preferences(requireContext())
             .registerOnSharedPreferenceChangeListener(statusListener)
         refreshStatus()
+        requireContext().sendBroadcast(Intent(StylusController.ACTION_CHECK_FIRMWARE)
+            .setPackage(requireContext().packageName))
         listOf(StylusSettingsContract.DOUBLE_TAP_ACTION, StylusSettingsContract.SLIDE_UP_ACTION,
             StylusSettingsContract.SLIDE_DOWN_ACTION).forEach {
             refreshActionPreference(it, StylusSettingsContract.Action.NONE)
         }
         refreshActionPreference(
             StylusSettingsContract.PINCH_ACTION,
-            StylusSettingsContract.DEFAULT_PINCH_ACTION,
+            defaultPinchAction(),
         )
         refreshActionPreference(
             StylusSettingsContract.PRIMARY_BUTTON_ACTION,
@@ -301,6 +331,7 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
 
     private fun refreshStatus() {
         val status = StylusStatusStore.snapshot(requireContext())
+        refreshActionPreference(StylusSettingsContract.PINCH_ACTION, defaultPinchAction())
         val connected = status.state == StylusConnectionState.CONNECTED
         notConnected.isVisible = !connected
         buttonsCategory.isEnabled = connected
@@ -322,6 +353,20 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
             else -> getString(R.string.stylus_battery_percent, status.battery)
         }
         firmware.summary = status.firmwareRevision ?: getString(R.string.stylus_unavailable)
+        val busy = status.updateState in setOf("updating", "verifying")
+        firmwareCheck.isEnabled = connected && !busy
+        firmwareUpdate.isEnabled = connected && status.penInitialized &&
+            status.updateState == "available" && (status.battery ?: -1) >= 20
+        firmwareUpdate.summary = when (status.updateState) {
+            "available" -> getString(R.string.stylus_firmware_available, status.updateVersion)
+            "updating" -> getString(R.string.stylus_firmware_progress, status.updateProgress)
+            "verifying" -> getString(R.string.stylus_firmware_verifying)
+            "complete" -> getString(R.string.stylus_firmware_complete)
+            "unsupported" -> getString(R.string.stylus_firmware_unsupported)
+            "invalid", "failed" -> getString(R.string.stylus_firmware_failed)
+            "not_ready" -> getString(R.string.stylus_firmware_not_ready)
+            else -> getString(R.string.stylus_firmware_unavailable)
+        }
         if (connected && !status.penInitialized && PenControls.isTouchFilm(status)) {
             connection.summary = getString(R.string.stylus_initializing)
         }
@@ -337,6 +382,10 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
 
     private fun getSecure(key: String): String? =
         Settings.Secure.getString(requireContext().contentResolver, key)
+
+    private fun defaultPinchAction(): String =
+        if (PenControls.isTouchFilm(StylusStatusStore.snapshot(requireContext())))
+            StylusSettingsContract.DEFAULT_PINCH_ACTION else StylusSettingsContract.Action.RECENTS
 
     private fun putSecure(key: String, value: String): Boolean =
         Settings.Secure.putString(requireContext().contentResolver, key, value)

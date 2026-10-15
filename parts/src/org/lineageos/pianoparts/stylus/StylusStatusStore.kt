@@ -29,6 +29,9 @@ data class StylusStatus(
     val features: Int? = null,
     val penInitialized: Boolean = false,
     val penError: Int = 0,
+    val updateVersion: String? = null,
+    val updateState: String = "idle",
+    val updateProgress: Int = 0,
 )
 
 object StylusStatusStore {
@@ -53,6 +56,9 @@ object StylusStatusStore {
             features = prefs.getInt("features", -1).takeIf { it >= 0 },
             penInitialized = prefs.getBoolean("pen_initialized", false),
             penError = prefs.getInt("pen_error", 0),
+            updateVersion = prefs.getString("update_version", null),
+            updateState = prefs.getString("update_state", "idle") ?: "idle",
+            updateProgress = prefs.getInt("update_progress", 0),
         )
     }
 
@@ -69,6 +75,9 @@ object StylusStatusStore {
             .putInt("features", status.features ?: -1)
             .putBoolean("pen_initialized", status.penInitialized)
             .putInt("pen_error", status.penError)
+            .putString("update_version", status.updateVersion)
+            .putString("update_state", status.updateState)
+            .putInt("update_progress", status.updateProgress)
             .apply()
     }
 }
