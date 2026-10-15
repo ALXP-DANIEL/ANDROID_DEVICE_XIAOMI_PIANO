@@ -7,6 +7,7 @@
 
 package org.lineageos.pianoparts.stylus
 
+import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -132,7 +133,7 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
                     PowerManager.WAKE_REASON_WAKE_KEY,
                     "$TAG:quick_note",
                 )
-                executeAction(StylusSettingsContract.Action.OPEN_NOTES)
+                executeAction(StylusSettingsContract.Action.OPEN_NOTES, "off_screen")
             }
             return
         }
@@ -146,6 +147,14 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
                     .putExtra("device", event.deviceId).putExtra("action", event.action)
                     .putExtra("repeat", event.repeatCount), UserHandle.SYSTEM)
             }
+            return
+        }
+
+        // Stock editors own their pen tool keys. Do not also open the global
+        // palette or arm quick-note over the editor's brush/color toolbar.
+        if (isNotesEditorForeground()) {
+            cancelPending(event.keyCode)
+            stylusTouchMonitor.cancel(event.keyCode)
             return
         }
 
@@ -179,8 +188,8 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
                     val action = readAction(setting)
                     val runnable = Runnable {
                         pendingActions.remove(event.keyCode)
-                        if (!powerManager.isInteractive) return@Runnable
-                        val execute = Runnable { executeAction(action) }
+                        if (!powerManager.isInteractive || isNotesEditorForeground()) return@Runnable
+                        val execute = Runnable { if (!isNotesEditorForeground()) executeAction(action) }
                         if (action == StylusSettingsContract.Action.OPEN_NOTES) {
                             stylusTouchMonitor.arm(event.keyCode, execute)
                         } else {
@@ -250,7 +259,13 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         pendingActions.remove(keyCode)
     }
 
-    private fun executeAction(action: String) {
+    private fun isNotesEditorForeground(): Boolean = try {
+        val task = context.getSystemService(ActivityManager::class.java)
+            ?.getRunningTasks(1)?.firstOrNull()
+        NotesLaunchContract.ownsToolKeys(task?.topActivity?.packageName)
+    } catch (_: RuntimeException) { false }
+
+    private fun executeAction(action: String, notesScene: String? = null) {
         if (action == StylusSettingsContract.Action.MENU) {
             context.sendBroadcastAsUser(Intent(StylusSettingsContract.ACTION_SHOW_MENU)
                 .setPackage(PARTS_PACKAGE).putExtra("x", stylusTouchMonitor.hoverX)
@@ -258,7 +273,7 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
             return
         }
         try {
-            StylusActions.run(context, handler, action)
+            StylusActions.run(context, handler, action, notesScene)
         } catch (exception: RuntimeException) {
             Log.e(TAG, "Stylus action $action failed", exception)
         }
