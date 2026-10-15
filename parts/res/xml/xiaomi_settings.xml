@@ -20,12 +20,16 @@
                 android:targetPackage="org.lineageos.pianoparts" />
         </Preference>
 
-        <SwitchPreferenceCompat
+        <com.android.settingslib.PrimarySwitchPreference
             android:key="reading_mode"
             android:icon="@drawable/ic_reading_tile"
             android:title="@string/reading_mode_title"
             android:summary="@string/reading_mode_summary"
-            android:persistent="false" />
+            android:persistent="false">
+            <intent
+                android:targetClass="org.lineageos.pianoparts.ReadingModeActivity"
+                android:targetPackage="org.lineageos.pianoparts" />
+        </com.android.settingslib.PrimarySwitchPreference>
 
         <SwitchPreferenceCompat
             android:key="sunlight_mode"
@@ -56,10 +60,12 @@
             android:persistent="false" />
 
         <Preference
-            android:key="charging_control"
-            android:title="@string/charging_control_title"
-            android:summary="@string/charging_control_summary">
-            <intent android:action="org.lineageos.lineageparts.CHARGING_CONTROL_SETTINGS" />
+            android:key="battery_protection"
+            android:title="@string/battery_protection_title"
+            android:summary="@string/battery_protection_summary">
+            <intent
+                android:targetClass="org.lineageos.pianoparts.BatteryProtectionActivity"
+                android:targetPackage="org.lineageos.pianoparts" />
         </Preference>
     </PreferenceCategory>
 
