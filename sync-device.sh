@@ -22,7 +22,9 @@ set -eo pipefail
 
 GITHUB_USER="ALXP-DANIEL"
 REPO_NAME="android_device_xiaomi_piano"
-REPO_URL="https://github.com/${GITHUB_USER}/${REPO_NAME}.git"
+# GitHub redirects the historical lowercase URL. Use the canonical endpoint
+# for branch checks; keep REPO_NAME unchanged to preserve repo object-store IDs.
+REPO_URL="https://github.com/${GITHUB_USER}/ANDROID_DEVICE_XIAOMI_PIANO.git"
 XIAOMI_HARDWARE_URL="https://github.com/LineageOS/android_hardware_xiaomi.git"
 
 TARGET=""
@@ -118,7 +120,8 @@ check_branch() {
     [[ "$branch" =~ ^[a-zA-Z0-9._/-]+$ ]] || die "Invalid branch name: $branch"
     printf "Checking %-24s ... " "$branch"
 
-    if git ls-remote \
+    # Avoid an unbounded connect when one remote endpoint is temporarily stuck.
+    if timeout 30 git ls-remote \
         --exit-code \
         --heads \
         "$remote_url" \
