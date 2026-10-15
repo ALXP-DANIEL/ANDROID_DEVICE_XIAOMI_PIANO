@@ -18,7 +18,6 @@ import android.hardware.HardwareBuffer;
 import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.OutcomeReceiver;
 import android.os.PowerManager;
 import android.os.UserHandle;
 import android.os.UserManager;
@@ -29,7 +28,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.window.ScreenCapture;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -161,24 +159,9 @@ final class ScreenColorPicker implements PencilEngineBinder.Backend, AutoCloseab
             if (owns(request) && !attached) teardown(request, true);
         }, 2500);
         try {
-            ScreenCapture.ScreenCaptureParams params =
-                    new ScreenCapture.ScreenCaptureParams.Builder(Display.DEFAULT_DISPLAY)
-                    .setSecureContentPolicy(ScreenCapture.ScreenCaptureParams
-                            .SECURE_CONTENT_POLICY_THROW_EXCEPTION)
-                    .setProtectedContentPolicy(ScreenCapture.ScreenCaptureParams
-                            .PROTECTED_CONTENT_POLICY_THROW_EXCEPTION)
-                    .setUseDisplayInstallationOrientation(false)
-                    .setPreserveDisplayColors(false)
-                    .build();
-            ScreenCapture.capture(params, command -> main.post(command),
-                    new OutcomeReceiver<ScreenCapture.ScreenCaptureResult, Exception>() {
-                @Override public void onResult(ScreenCapture.ScreenCaptureResult result) {
-                    received(request, result);
-                }
-                @Override public void onError(Exception failure) {
-                    Log.w(TAG, "Screenshot unavailable; picker cancelled", failure);
-                    teardown(request, true);
-                }
+            DisplayCaptureCompat.capture(main, result -> received(request, result), failure -> {
+                Log.w(TAG, "Screenshot unavailable; picker cancelled", failure);
+                teardown(request, true);
             });
         } catch (RuntimeException failure) {
             Log.w(TAG, "Screenshot API unavailable", failure);
@@ -186,8 +169,8 @@ final class ScreenColorPicker implements PencilEngineBinder.Backend, AutoCloseab
         }
     }
 
-    private void received(Request request, ScreenCapture.ScreenCaptureResult result) {
-        HardwareBuffer buffer = result == null ? null : result.getHardwareBuffer();
+    private void received(Request request, DisplayCaptureCompat.Frame result) {
+        HardwareBuffer buffer = result == null ? null : result.buffer;
         Bitmap hardware = null;
         Bitmap pixels = null;
         try {
@@ -195,7 +178,7 @@ final class ScreenColorPicker implements PencilEngineBinder.Backend, AutoCloseab
             Point size = displaySize();
             if (size.x <= 0 || size.y <= 0 || buffer.getWidth() != size.x
                     || buffer.getHeight() != size.y || (long) size.x * size.y > MAX_PIXELS) return;
-            ColorSpace sourceSpace = result.getColorSpace();
+            ColorSpace sourceSpace = result.colorSpace;
             if (sourceSpace == null) return;
             hardware = Bitmap.wrapHardwareBuffer(buffer, sourceSpace);
             if (hardware == null) return;

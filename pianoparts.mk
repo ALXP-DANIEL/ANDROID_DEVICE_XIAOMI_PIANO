@@ -4,8 +4,8 @@ $(error Stage PianoParts with device/xiaomi/piano-parts/select-rom.py)
 endif
 PRODUCT_SOONG_NAMESPACES += device/xiaomi/piano-parts
 PRODUCT_PACKAGES += PianoParts
-# ScreenCapture's asynchronous API is available on the active Android 17 tree.
-ifeq ($(PLATFORM_SDK_VERSION),37)
+# The capture bridge handles Android 16 and 17 platform API revisions.
+ifneq ($(filter 36 37,$(PLATFORM_SDK_VERSION)),)
 PRODUCT_PACKAGES += PianoPencilEngine
 endif
 PRODUCT_COPY_FILES += \
