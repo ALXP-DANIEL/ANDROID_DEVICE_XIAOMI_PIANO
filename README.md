@@ -14,6 +14,7 @@ Android device trees for the Xiaomi Pad 8 Pro (SM8750).
 | `camera` | `camera` | Shared MiuiCamera tree with Android-specific stock binaries |
 | `pianopart` | `pianopart` | Shared latest PianoParts app with ROM-specific Settings placement |
 | `notes` | `notes` | Shared Xiaomi Notes package without opt-in |
+| `hardware/xiaomi` | `lineage-24.0` | Upstream LineageOS Xiaomi interfaces and Soong namespace; `lineage-23.2` on Android 16 |
 | `twrp` | `twrp` | TWRP recovery (shared) |
 | `ofox` | `ofox` | OrangeFox recovery (shared) |
 | `uefi` | `uefi` | UEFI firmware, boot menu and Visor (shared) |
@@ -34,9 +35,10 @@ bash sync-device.sh
 The script first asks for Android 17 ROM, Android 16 ROM or Recovery.
 Android 17 then offers LineageOS 24.0 and Evolution X 12.3; Android 16
 offers LineageOS 23.2. Recovery separately offers TWRP or OrangeFox.
-For ROM trees, the script syncs all eight required repositories automatically:
+For ROM trees, the script syncs all nine required repositories automatically:
 the ROM-specific device tree, common device, device vendor, common vendor,
-kernel, XiaomiParts, Camera and Notes. It stages the matching Android 16/17
+kernel, XiaomiParts, Camera, Notes and upstream `LineageOS/android_hardware_xiaomi`.
+It stages the matching Android 16/17
 hardware package set, Camera binaries and ROM-specific XiaomiParts Settings
 placement without an opt-in. Recovery uses `twrp` or `ofox` separately.
 
@@ -61,7 +63,7 @@ bash sync-device.sh --android 17 --rom evox --yes
 ```
 
 `repo sync` is the equivalent of `git pull` for these `repo`-managed, detached
-Git checkouts. It updates **all eight** selected Git branches, then stages the
+Git checkouts. It updates **all nine** selected Git branches, then stages the
 matching hardware files and Xiaomi apps. Do **not** run `git pull` directly
 inside one of the detached device directories.
 
@@ -77,7 +79,7 @@ key. It never fetches or checks out retired numbered hardware branches.
 curl -fsSL https://raw.githubusercontent.com/ALXP-DANIEL/android_device_xiaomi_piano/main/build-piano.sh \
     -o ~/android/piano-shared/build-piano.sh
 
-# Refresh all eight trees, without building:
+# Refresh all nine trees, without building:
 bash ~/android/piano-shared/build-piano.sh --sync-only
 
 # Refresh and build an Android 17 Evolution X OTA:

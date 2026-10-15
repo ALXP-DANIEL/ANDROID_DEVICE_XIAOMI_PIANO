@@ -23,6 +23,7 @@ set -eo pipefail
 GITHUB_USER="ALXP-DANIEL"
 REPO_NAME="android_device_xiaomi_piano"
 REPO_URL="https://github.com/${GITHUB_USER}/${REPO_NAME}.git"
+XIAOMI_HARDWARE_URL="https://github.com/LineageOS/android_hardware_xiaomi.git"
 
 TARGET=""
 ROM=""
@@ -112,6 +113,7 @@ check_android_source() {
 
 check_branch() {
     local branch="$1"
+    local remote_url="${2:-$REPO_URL}"
 
     [[ "$branch" =~ ^[a-zA-Z0-9._/-]+$ ]] || die "Invalid branch name: $branch"
     printf "Checking %-24s ... " "$branch"
@@ -119,13 +121,13 @@ check_branch() {
     if git ls-remote \
         --exit-code \
         --heads \
-        "$REPO_URL" \
+        "$remote_url" \
         "refs/heads/$branch" >/dev/null 2>&1; then
 
         echo "OK"
     else
         echo "MISSING"
-        die "Branch '$branch' does not exist in $REPO_URL"
+        die "Branch '$branch' does not exist in $remote_url"
     fi
 }
 
@@ -276,7 +278,8 @@ if [[ "$TARGET" == "rom" ]]; then
     esac
 
     # No package-by-package opt-in: the chosen Android release determines all
-    # four hardware source variants; all three shared Xiaomi apps are included.
+    # four hardware source variants; all three shared Xiaomi apps and the
+    # upstream Xiaomi hardware namespace are included.
     paths=(
         device/xiaomi/piano
         device/xiaomi/sm8750-common
@@ -286,9 +289,10 @@ if [[ "$TARGET" == "rom" ]]; then
         device/xiaomi/piano-parts
         vendor/xiaomi/piano-miuicamera
         vendor/xiaomi/piano-notes
+        hardware/xiaomi
     )
-    branches=("$DEVICE_BRANCH" "$COMMON_BRANCH" "$VENDOR_BRANCH" "$VENDOR_COMMON_BRANCH" "$KERNEL_BRANCH" pianopart camera notes)
-    selected=(0 1 2 3 4 5 6 7)
+    branches=("$DEVICE_BRANCH" "$COMMON_BRANCH" "$VENDOR_BRANCH" "$VENDOR_COMMON_BRANCH" "$KERNEL_BRANCH" pianopart camera notes "$LINEAGE_BRANCH")
+    selected=("${!paths[@]}")
 
     header "ROM Setup"
 
@@ -308,7 +312,13 @@ if [[ "$TARGET" == "rom" ]]; then
 
     header "Checking Branches"
 
-    for index in "${selected[@]}"; do check_branch "${branches[$index]}"; done
+    for index in "${selected[@]}"; do
+        if [[ "${paths[$index]}" == hardware/xiaomi ]]; then
+            check_branch "${branches[$index]}" "$XIAOMI_HARDWARE_URL"
+        else
+            check_branch "${branches[$index]}"
+        fi
+    done
 
     sync_paths=()
     for index in "${selected[@]}"; do sync_paths+=("${paths[$index]}"); done
@@ -320,8 +330,13 @@ if [[ "$TARGET" == "rom" ]]; then
         echo '<?xml version="1.0" encoding="UTF-8"?>'
         echo '<manifest>'
         printf '  <remote name="piano" fetch="https://github.com/%s" />\n' "$GITHUB_USER"
+        echo '  <remote name="piano-lineage" fetch="https://github.com/LineageOS" />'
         for index in "${selected[@]}"; do
-            printf '  <project name="%s" path="%s" remote="piano" revision="%s" />\n' "$REPO_NAME" "${paths[$index]}" "${branches[$index]}"
+            if [[ "${paths[$index]}" == hardware/xiaomi ]]; then
+                printf '  <project name="android_hardware_xiaomi" path="hardware/xiaomi" remote="piano-lineage" revision="%s" />\n' "${branches[$index]}"
+            else
+                printf '  <project name="%s" path="%s" remote="piano" revision="%s" />\n' "$REPO_NAME" "${paths[$index]}" "${branches[$index]}"
+            fi
         done
         echo '</manifest>'
     } | install_manifest

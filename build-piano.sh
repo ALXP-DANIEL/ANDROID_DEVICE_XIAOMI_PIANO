@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build a selected piano ROM using the Git-manifest-managed source trees.
-# The builder launcher tracks this script on `main`, not eight manual Git refs.
+# The builder launcher tracks this script on `main`, not manual project Git refs.
 set -eo pipefail
 
 PIANO_GIT_URL=${PIANO_GIT_URL:-https://github.com/ALXP-DANIEL/android_device_xiaomi_piano.git}
@@ -10,7 +10,7 @@ usage() {
     cat <<'EOF'
 Usage: bash build-piano.sh [--sync-only]
 
-Automatically git-pulls the latest main build/sync scripts, refreshes all eight
+Automatically git-pulls the latest main build/sync scripts, refreshes all nine
 ROM trees from the generated repo manifest, stages the selected Android version,
 then builds an OTA unless --sync-only is supplied.
 
@@ -97,13 +97,13 @@ restore_kernel() {
 trap 'result=$?; restore_kernel; echo "PIANO_BUILD_EXIT=$result"' EXIT
 
 echo "Updating Android $PIANO_ANDROID $PIANO_ROM sources from Git manifest..."
-# repo sync advances all eight detached Git checkouts to their manifest branch
+# repo sync advances all nine detached Git checkouts to their manifest branch
 # tips; plain git pull would fail on their detached HEADs. The sync helper also
 # validates clean tracked files and stages all Android-specific generated files.
 bash "$PIANO_TOOLS_DIR/sync-device.sh" --android "$PIANO_ANDROID" --rom "$PIANO_ROM" --yes
 
 if [[ "$SYNC_ONLY" == true ]]; then
-    echo 'Piano Git manifest and all eight ROM trees are up to date; no build requested.'
+    echo 'Piano Git manifest and all nine ROM trees are up to date; no build requested.'
     exit 0
 fi
 
