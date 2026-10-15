@@ -36,7 +36,8 @@ internal class PenShortcutMenu(private val context: Context, private val handler
     private val keyguard = context.getSystemService(KeyguardManager::class.java)
     private var view: FrameLayout? = null
     private var started = false
-    private var shadeReceiverRegistered = false
+    private var privateRegistered = false
+    private var shadeRegistered = false
     private val shadeGate = PenShadeGate()
     private data class PendingShow(val request: Long, val x: Float, val y: Float)
     private var pendingShow: PendingShow? = null
@@ -76,20 +77,25 @@ internal class PenShortcutMenu(private val context: Context, private val handler
 
     fun start() {
         if (started) return
-        context.registerReceiver(receiver, IntentFilter().apply {
-            addAction(StylusSettingsContract.ACTION_SHOW_MENU)
-            addAction(Intent.ACTION_SCREEN_OFF)
-            addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-            addAction(Intent.ACTION_CONFIGURATION_CHANGED)
-            addAction(Intent.ACTION_USER_SWITCHED)
-        }, null, handler, Context.RECEIVER_NOT_EXPORTED)
+        try {
+            context.registerReceiver(receiver, IntentFilter().apply {
+                addAction(StylusSettingsContract.ACTION_SHOW_MENU)
+                addAction(Intent.ACTION_SCREEN_OFF)
+                addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
+                addAction(Intent.ACTION_CONFIGURATION_CHANGED)
+                addAction(Intent.ACTION_USER_SWITCHED)
+            }, null, handler, Context.RECEIVER_NOT_EXPORTED)
+            privateRegistered = true
+        } catch (exception: RuntimeException) {
+            Log.w("PianoStylus", "Pen shortcut receiver unavailable", exception)
+        }
         // SystemUI uses android.uid.systemui, unlike system-UID PianoParts.
         // Its state broadcast crosses UIDs, so restrict the exported receiver
         // to the signature STATUS_BAR permission held by SystemUI.
         try {
             context.registerReceiver(shadeReceiver, IntentFilter(SHADE_STATE),
                 "android.permission.STATUS_BAR", handler, Context.RECEIVER_EXPORTED)
-            shadeReceiverRegistered = true
+            shadeRegistered = true
         } catch (exception: RuntimeException) {
             Log.w("PianoStylus", "SystemUI shade observer unavailable; menu remains gated", exception)
         }
@@ -99,10 +105,19 @@ internal class PenShortcutMenu(private val context: Context, private val handler
     fun close() {
         hide()
         if (started) {
-            context.unregisterReceiver(receiver)
-            if (shadeReceiverRegistered) context.unregisterReceiver(shadeReceiver)
+            if (privateRegistered) try {
+                context.unregisterReceiver(receiver)
+            } catch (exception: RuntimeException) {
+                Log.w("PianoStylus", "Could not unregister pen shortcut receiver", exception)
+            }
+            if (shadeRegistered) try {
+                context.unregisterReceiver(shadeReceiver)
+            } catch (exception: RuntimeException) {
+                Log.w("PianoStylus", "Could not unregister SystemUI shade observer", exception)
+            }
         }
-        shadeReceiverRegistered = false
+        privateRegistered = false
+        shadeRegistered = false
         started = false
     }
 
