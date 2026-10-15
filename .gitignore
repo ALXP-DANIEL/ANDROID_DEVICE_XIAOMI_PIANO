@@ -1,0 +1,10 @@
+*.img
+out/
+.DS_Store
+
+# Private signing keys never belong in the repository.
+security/*.pem
+security/*.pk8
+
+# Local pre-edit backups.
+*.before-*
