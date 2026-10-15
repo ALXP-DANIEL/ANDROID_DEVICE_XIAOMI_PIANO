@@ -330,10 +330,10 @@ if [[ "$TARGET" == "rom" ]]; then
         echo '<?xml version="1.0" encoding="UTF-8"?>'
         echo '<manifest>'
         printf '  <remote name="piano" fetch="https://github.com/%s" />\n' "$GITHUB_USER"
-        echo '  <remote name="piano-lineage" fetch="https://github.com/LineageOS" />'
+        echo '  <remote name="piano-lineage" fetch="https://github.com" />'
         for index in "${selected[@]}"; do
             if [[ "${paths[$index]}" == hardware/xiaomi ]]; then
-                printf '  <project name="android_hardware_xiaomi" path="hardware/xiaomi" remote="piano-lineage" revision="%s" />\n' "${branches[$index]}"
+                printf '  <project name="LineageOS/android_hardware_xiaomi" path="hardware/xiaomi" remote="piano-lineage" revision="%s" />\n' "${branches[$index]}"
             else
                 printf '  <project name="%s" path="%s" remote="piano" revision="%s" />\n' "$REPO_NAME" "${paths[$index]}" "${branches[$index]}"
             fi
