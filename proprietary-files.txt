@@ -303,6 +303,7 @@ vendor/bin/hw/vendor.qti.MemHal-service|683504fe32c1bd2206d1cf3df3f2a4e64aebc057
 vendor/lib64/vendor.qti.MemHal-V1-ndk.so|d2bbfaba7e51f8609b939623a1093e1674f7c3a4
 
 # Camera (Global 304)
+vendor/lib64/libui.so:vendor/lib64/camera/libui.so;MODULE=libui-camera|0d9c4ebcbab13d0e60e8ffd004655ef2739787da
 odm/etc/camera/AIGesture/buling_1s.png|abd3285d3ccd87a4ce178c5fdfcbe01ac54e50ed
 odm/etc/camera/AIGesture/buling_2s.png|39c41de028a9cedf06d2d771e503003deedba127
 odm/etc/camera/AIGesture/buling_3s.png|fccd5ae8235bf510d14a42abf0e4387881af76a8
@@ -767,7 +768,7 @@ odm/lib64/libportrait_repair_qnn.so|6399cc70b40486cef043fea274e56a24909bbce0
 odm/lib64/libremosaic_wrapper.so|bb6d450fa693723e30e21d41acfaa315d08c0232
 odm/lib64/librfs_warp.so|c6b8e09cdcfd72ea93400c166ea44ae5db9bda07
 odm/lib64/libwa_widelens_undistort.so|ec8ee00bddb6ebf3d34a0250914dff9bed24a00f
-vendor/bin/hw/vendor.qti.camera.provider-service_64|5b30e7a11406a10f90b4438c074d3b398104cbdf|8285695312256122912582a8c1e28be2183850e5
+vendor/bin/hw/vendor.qti.camera.provider-service_64;REQUIRED=libui-camera|5b30e7a11406a10f90b4438c074d3b398104cbdf|031826798c4535f626e49c547827e62a870990a0
 vendor/etc/camera/cameraopt_perf.json|b157d3999bc781ca21d4b66e5e7f46590ae03dc0
 vendor/etc/camera/cameraopt_vendor.json|a018b232e9b328132353ee3ab4d435165c1f3676
 vendor/etc/init/vendor.qti.camera.provider-service_64.rc|044b74e69ef7ecbb4ac4c06dc0032dfd5506c20f
