@@ -54,7 +54,6 @@ class StylusAppModeController {
     private final TouchModeSetter mSetter;
     private final Context mContext;
     private final PowerManager mPower;
-    private final SharedPreferences mSettings;
     private final SharedPreferences mPenStatus;
     private final PencilEnginePosturePolicy mPosturePolicy =
             new PencilEnginePosturePolicy();
@@ -62,7 +61,6 @@ class StylusAppModeController {
     private final Set<String> mPaintApps = new HashSet<>();
     private Boolean mGame;
     private Boolean mPaint;
-    private String mForegroundPackage;
     private boolean mStarted;
     private boolean mScreenWatchRegistered;
     private boolean mTaskWatchRegistered;
@@ -84,12 +82,6 @@ class StylusAppModeController {
     };
     private final Runnable mRefreshTask = this::refreshTopTask;
 
-    private final SharedPreferences.OnSharedPreferenceChangeListener mSettingsListener =
-            (prefs, key) -> {
-                if (PencilEnginePosturePolicy.KEY_ENABLED.equals(key)) {
-                    queueRefresh();
-                }
-            };
     private final SharedPreferences.OnSharedPreferenceChangeListener mPenListener =
             (prefs, key) -> {
                 if ("pen_initialized".equals(key) || "state".equals(key)) {
@@ -127,8 +119,6 @@ class StylusAppModeController {
         mHandler = handler;
         mSetter = setter;
         mPower = mContext.getSystemService(PowerManager.class);
-        mSettings = mContext.createDeviceProtectedStorageContext()
-                .getSharedPreferences(PencilEnginePosturePolicy.PREFS_NAME, Context.MODE_PRIVATE);
         mPenStatus = mContext.createDeviceProtectedStorageContext()
                 .getSharedPreferences("stylus_status", Context.MODE_PRIVATE);
     }
@@ -142,7 +132,6 @@ class StylusAppModeController {
         // Engine clients remain supported when the optional game/app list is absent.
         loadConfig();
         mStarted = true;
-        mSettings.registerOnSharedPreferenceChangeListener(mSettingsListener);
         mPenStatus.registerOnSharedPreferenceChangeListener(mPenListener);
         IntentFilter screen = new IntentFilter();
         screen.addAction(Intent.ACTION_SCREEN_ON);
@@ -194,17 +183,13 @@ class StylusAppModeController {
         } catch (android.content.pm.PackageManager.NameNotFoundException absent) {
             // No installed Notes UID can own a request.
         }
-        boolean enabled = mSettings.getBoolean(PencilEnginePosturePolicy.KEY_ENABLED, false);
         boolean ready = mPenStatus.getBoolean("pen_initialized", false)
                 && "CONNECTED".equals(mPenStatus.getString("state", null))
                 && mPenStatus.getInt("vendor", -1) == 34
                 && (mPenStatus.getInt("product", -1) == 20609
                     || mPenStatus.getInt("product", -1) == 12929);
         boolean interactive = consumerReady && mPower != null && mPower.isInteractive();
-        boolean drawing = mForegroundPackage != null
-                && mPaintApps.contains(mForegroundPackage);
-        int requested = mPosturePolicy.transition(enabled && consumerReady, ready, interactive, drawing,
-                clientRequested);
+        int requested = mPosturePolicy.transition(ready, interactive, clientRequested);
         if (requested != PencilEnginePosturePolicy.UNCHANGED) {
             Log.i(TAG, "App-aware PencilEngine posture " + (requested == 1 ? "on" : "off"));
             mPostureHalReady = mSetter.setTouchMode(PencilEnginePosturePolicy.TOUCH_MODE, requested);
@@ -248,7 +233,6 @@ class StylusAppModeController {
     }
 
     private void update(String packageName) {
-        mForegroundPackage = packageName;
         // Like stock, only tell the panel when a result changes.
         boolean game = mGames.contains(packageName);
         if (mGame == null || mGame != game) {
