@@ -3,7 +3,7 @@ new file mode 100644
 index 0000000..a25675d
 --- /dev/null
 +++ b/libs/WindowManager/Shell/res/drawable/piano_desktop_three_dots.xml
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,12 @@
 +<?xml version="1.0" encoding="utf-8"?>
 +<!-- Piano: three-dot caption affordance. Tint is supplied by AOSP WM Shell. -->
 +<vector xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,6 +13,7 @@ index 0000000..a25675d
 +    android:viewportHeight="8">
 +    <path
 +        android:fillColor="#FFFFFFFF"
++        android:fillAlpha="0.58"
 +        android:pathData="M7,4 A3,3 0,1 1,1 4 A3,3 0,1 1,7 4 Z M18,4 A3,3 0,1 1,12 4 A3,3 0,1 1,18 4 Z M29,4 A3,3 0,1 1,23 4 A3,3 0,1 1,29 4 Z" />
 +</vector>
 diff --git a/libs/WindowManager/Shell/res/layout/desktop_mode_app_handle.xml b/libs/WindowManager/Shell/res/layout/desktop_mode_app_handle.xml
