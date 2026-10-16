@@ -6,6 +6,9 @@ from pathlib import Path
 import re
 import struct
 import zipfile
+import tempfile
+from offline_dex import transform
+from offline_manifest import apply as offline_manifest
 
 
 def definitions(data):
@@ -26,7 +29,19 @@ def definitions(data):
     return {types[u32(u32(100) + index * 32)] for index in range(u32(96))}
 
 
-def append(stock, compat, output, features):
+def append(stock, compat, output, features, dex_tool=None):
+    if hashlib.sha256(Path(features).read_bytes()).hexdigest() != "22f2f00ad81f499354a02e313955ae47a72fad34d14d9de83d762f7782501931":
+        raise ValueError("piano feature metadata is not the pinned .44 file")
+    with zipfile.ZipFile(stock) as original:
+        if "assets/piano-device-features.xml" in original.namelist():
+            raise ValueError("compatibility metadata already present")
+    with tempfile.TemporaryDirectory(prefix="notes-offline-") as directory:
+        offline = Path(directory) / "offline.apk"
+        transform(stock, offline, tool=dex_tool)
+        _append(offline, compat, output, features)
+
+
+def _append(stock, compat, output, features):
     metadata = Path(features).read_bytes()
     if hashlib.sha256(metadata).hexdigest() != "22f2f00ad81f499354a02e313955ae47a72fad34d14d9de83d762f7782501931":
         raise ValueError("piano feature metadata is not the pinned .44 file")
@@ -37,7 +52,8 @@ def append(stock, compat, output, features):
             raise ValueError("expected one compatibility DEX")
         payload = library.read("classes.dex")
         added = definitions(payload)
-        if added != {"Lmiui/os/Build;", "Lmiui/util/FeatureParser;"}:
+        if added != {"Lmiui/os/Build;", "Lmiui/util/FeatureParser;",
+                     "Lmiui/accounts/ExtraAccountManager;", "Lorg/lineageos/notes/OfflineUi;"}:
             raise ValueError("unexpected compatibility classes")
         existing = set()
         indices = []
@@ -60,7 +76,10 @@ def append(stock, compat, output, features):
                         name.endswith((".SF", ".RSA", ".DSA", ".EC"))
                         or name == "META-INF/MANIFEST.MF"):
                     continue
-                target.writestr(info, original.read(info.filename))
+                entry_data = original.read(info.filename)
+                if info.filename == "AndroidManifest.xml":
+                    entry_data = offline_manifest(entry_data)
+                target.writestr(info, entry_data)
             for name, data, compression in (
                     (destination, payload, zipfile.ZIP_STORED),
                     ("assets/piano-device-features.xml", metadata, zipfile.ZIP_DEFLATED)):
@@ -76,5 +95,6 @@ if __name__ == "__main__":
     parser.add_argument("compat")
     parser.add_argument("output")
     parser.add_argument("features")
+    parser.add_argument("dex_tool", nargs="?")
     args = parser.parse_args()
-    append(args.stock, args.compat, args.output, args.features)
+    append(args.stock, args.compat, args.output, args.features, args.dex_tool)

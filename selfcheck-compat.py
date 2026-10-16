@@ -20,13 +20,24 @@ with tempfile.TemporaryDirectory(prefix="notes-compat-check-") as directory:
     assert hashlib.sha256(first.read_bytes()).digest() == hashlib.sha256(second.read_bytes()).digest()
     with zipfile.ZipFile(stock) as before, zipfile.ZipFile(first) as after:
         assert after.testzip() is None
+        new_dex = set(after.namelist()) - set(before.namelist()) - {"assets/piano-device-features.xml"}
+        assert len(new_dex) == 1
+        with zipfile.ZipFile(dex) as compiled:
+            assert after.read(next(iter(new_dex))) == compiled.read("classes.dex")
+        assert len(packager.definitions(after.read(next(iter(new_dex))))) == 4
         assert len(after.namelist()) == len(set(after.namelist()))
         for name in before.namelist():
             upper = name.upper()
             if upper.startswith("META-INF/") and (upper.endswith((".SF", ".RSA", ".DSA", ".EC"))
                     or upper == "META-INF/MANIFEST.MF"):
                 continue
-            assert before.read(name) == after.read(name), name
+            if name == "AndroidManifest.xml":
+                from offline_manifest import apply
+                assert apply(before.read(name)) == after.read(name)
+            elif not (name.startswith("classes") and name.endswith(".dex")):
+                assert before.read(name) == after.read(name), name
+            # OfflineDex checks every unmodified method's operands, graph,
+            # handlers and debug locations after the DEX writer serializes it.
         assert after.read("assets/piano-device-features.xml") == metadata.read_bytes()
     try:
         packager.append(first, dex, second, metadata)
