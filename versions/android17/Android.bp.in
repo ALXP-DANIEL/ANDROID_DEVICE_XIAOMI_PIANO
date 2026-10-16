@@ -18395,9 +18395,8 @@ cc_prebuilt_library_shared {
     name: "libui-camera",
     stem: "libui",
     // This stock binary DT_NEEDEDs graphics.common-V5, while allocator-V2
-    // brings graphics.common-V7 through Soong. Keep V5 installed without
-    // putting both AIDL interface versions into this link dependency graph.
-    required: ["android.hardware.graphics.common-V5-ndk"],
+    // links graphics.common-V7. The Android 17 vendor makefile installs V5
+    // separately so both interface versions avoid this module's Soong graph.
     check_elf_files: false,
     owner: "xiaomi",
     strip: {
