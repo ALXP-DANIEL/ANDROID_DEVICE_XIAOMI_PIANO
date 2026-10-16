@@ -17863,6 +17863,7 @@ cc_prebuilt_binary {
                 "proprietary/vendor/bin/hw/vendor.qti.camera.provider-service_64",
             ],
             shared_libs: [
+                "libui",
                 "libbase",
                 "libbinder",
                 "libbinder_ndk",
@@ -17905,6 +17906,9 @@ cc_prebuilt_binary {
     prefer: true,
     relative_install_path: "hw",
     soc_specific: true,
+    required: [
+        "libui-camera",
+    ],
 }
 
 cc_prebuilt_binary {
@@ -18385,4 +18389,49 @@ cc_prebuilt_binary {
     },
     prefer: true,
     device_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libui-camera",
+    stem: "libui",
+    owner: "xiaomi",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/camera/libui.so",
+            ],
+            shared_libs: [
+                "android.hardware.graphics.common-V5-ndk",
+                "android.hardware.graphics.allocator-V2-ndk",
+                "android.hardware.graphics.allocator@2.0",
+                "android.hardware.graphics.allocator@3.0",
+                "android.hardware.graphics.allocator@4.0",
+                "android.hardware.graphics.common@1.2",
+                "android.hardware.graphics.mapper@2.0",
+                "android.hardware.graphics.mapper@2.1",
+                "android.hardware.graphics.mapper@3.0",
+                "android.hardware.graphics.mapper@4.0",
+                "libbase",
+                "libbinder_ndk",
+                "libcutils",
+                "libgralloctypes",
+                "libhidlbase",
+                "libsync",
+                "libutils",
+                "liblog",
+                "libvndksupport",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    relative_install_path: "camera",
+    prefer: true,
+    soc_specific: true,
 }

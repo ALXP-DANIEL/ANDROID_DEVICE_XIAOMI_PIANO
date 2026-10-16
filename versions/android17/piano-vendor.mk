@@ -1464,6 +1464,7 @@ PRODUCT_PACKAGES += \
     vendor.xiaomi.hw.touchfeature-service.xml \
     ddr_freq \
     vendor.qti.MemHal-service \
+    libui-camera \
     vendor.qti.camera.provider-service_64 \
     vendor.qti.hardware.minkipcbinder@1.0-service \
     vendor.qti.memory.pasrmanager-service \
