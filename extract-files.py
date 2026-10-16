@@ -9,6 +9,15 @@ sys.path.insert(0, str(ROOT / 'tools/extract-utils'))
 from extract_utils.main import ExtractUtils, ExtractUtilsModule
 from extract_utils.fixups_blob import blob_fixup
 from extract_utils.fixups_lib import lib_fixups as default_lib_fixups
+from extract_utils.tools import DEFAULT_PATCHELF_VERSION, patchelf_version_path_map
+from extract_utils.utils import run_cmd
+
+
+def camera_libui_runpath(ctx, file, file_path, *args, **kwargs):
+    # Load the stock GraphicBuffer ABI in the provider, without replacing
+    # libui for other vendor processes. Keep its original SONAME.
+    run_cmd([patchelf_version_path_map[DEFAULT_PATCHELF_VERSION],
+             '--set-rpath', '/vendor/lib64/camera', file_path])
 
 
 def stock_vendor_module(lib, partition, *args, **kwargs):
@@ -30,12 +39,15 @@ tinyxml2_clients = tuple(
         'offlinemfnr', 'offlinemlawb', 'offlinetintlesshdr', 'offlinetintless',
         'offlineyuvreprocess', 'offlineyuvsplit')] +
     ['odm/lib64/libmiXmlParser.so',
-     'vendor/bin/hw/vendor.qti.camera.provider-service_64',
      'vendor/bin/hw/vendor.xiaomi.hardware.miperf2-service',
      'vendor/lib64/libcamxcoreutils.so', 'vendor/lib64/libcamxods.so',
      'vendor/lib64/libmicamera_aidl_provider.so',
      'vendor/lib64/libmicamera_hal_core.so', 'vendor/lib64/libsimulation.so'])
 blob_fixups = {
+    'vendor/bin/hw/vendor.qti.camera.provider-service_64': blob_fixup()
+        .replace_needed('libtinyxml2.so', 'libtinyxml2-v34.so')
+        .add_needed('libui.so')
+        .call(camera_libui_runpath, need_tmp_dir=False),
     tuple(c for c in sensor_clients if c != 'odm/lib64/hw/displayfeature.default.so'):
         blob_fixup().replace_needed(
             'android.hardware.sensors-V2-ndk.so', 'android.hardware.sensors-V3-ndk.so'),
