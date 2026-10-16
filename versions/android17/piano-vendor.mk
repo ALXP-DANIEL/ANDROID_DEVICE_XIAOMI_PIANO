@@ -1480,3 +1480,9 @@ PRODUCT_PACKAGES += \
     vendor.xiaomi.hw.touchfeature-service \
     ntag_tool \
     vendor.xiaomi.hardware.mikeybag-service
+
+# The stock camera libui.so needs graphics.common-V5 at runtime. Package
+# the vendor variant separately to avoid mixing V5 and allocator-V2's
+# graphics.common-V7 in libui-camera's Soong dependency graph.
+PRODUCT_PACKAGES += \
+    android.hardware.graphics.common-V5-ndk.vendor
