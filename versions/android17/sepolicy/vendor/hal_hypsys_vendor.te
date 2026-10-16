@@ -12,3 +12,10 @@ allow hal_hypsys_vendor hal_hypsys_vendor_service:service_manager { add find };
 # MiSys core service and consumes the local HypSys compatibility service.
 hal_client_domain(hal_hypsys_vendor, hal_misyscore)
 binder_call(hal_hypsys_vendor, hal_hypsys_vendor)
+
+# MiSys receives Camera shared-memory descriptors and writes LUT/watermark
+# payloads beneath the existing camera data directory.
+allow hal_hypsys_vendor platform_app_all:fd use;
+allow hal_hypsys_vendor vendor_camera_data_file:dir create_dir_perms;
+allow hal_hypsys_vendor vendor_camera_data_file:file create_file_perms;
+allow hal_hypsys_vendor mnt_vendor_file:dir search;
