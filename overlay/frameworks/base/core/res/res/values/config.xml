@@ -13,11 +13,6 @@
     <!-- Tablet: let the lock screen follow the device orientation. -->
     <bool name="config_enableLockScreenRotation">true</bool>
 
-    <!-- Piano supports hardware double-tap-to-wake (Novatek touch controller).
-         Advertise this to PowerManager; the touch firmware must still keep
-         gesture wake armed during suspend for deep-sleep wakeups. -->
-    <bool name="config_supportDoubleTapWake">true</bool>
-
     <!-- Keep the currently displayed angle when rotation is locked from
          Quick Settings, Android Settings or LineageParts. The platform default
          otherwise snaps to the tablet's natural (landscape) orientation. Do
