@@ -110,6 +110,15 @@ jobs:
           sed -i "s/^quiet=.*/quiet=$([ "$QUIET" = true ] && echo 1 || echo 0)/" "$conf"
           grep -E '^(timeout|default|quiet|theme|accent|accent_variant)=' "$conf"
 
+      - name: Validate storage installer
+        run: |
+          docker run --rm -v "$PWD:/p" -w /p piano-uefi-build sh -ec '
+            python3 tools/inject/test-esp.py
+            sh -n tools/inject/update-binary
+            sh -n tools/inject/reclaim.sh
+            bash -n tools/inject/make-zip.sh
+          '
+
       - name: Build the recovery ZIPs
         # The runner is arm64, so its own gcc builds the static injector.
         run: |
@@ -117,13 +126,24 @@ jobs:
           CC=gcc tools/inject/make-zip.sh --esp out/esp deps/Mu-Silicium/Mu-piano.img \
             out/piano-uefi-${{ github.run_number }}.zip
 
-      # Flash the ZIP in OrangeFox or TWRP; the -uninstall ZIP takes it out.
+      - name: Verify recovery packages
+        run: |
+          python3 tools/inject/verify-zips.py out/piano-uefi-${{ github.run_number }}
+          cd out
+          sha256sum piano-uefi-${{ github.run_number }}-installer.zip \
+            piano-uefi-${{ github.run_number }}-uninstall.zip \
+            piano-uefi-${{ github.run_number }}-uninstall-clean.zip > piano-uefi-${{ github.run_number }}-SHA256SUMS
+
+      # Clean uninstall requires two recovery runs and an installer ownership receipt.
       - uses: actions/upload-artifact@v4
         with:
           name: piano-uefi-${{ github.run_number }}
           path: |
-            out/piano-uefi-${{ github.run_number }}.zip
+            out/piano-uefi-${{ github.run_number }}-installer.zip
             out/piano-uefi-${{ github.run_number }}-uninstall.zip
+            out/piano-uefi-${{ github.run_number }}-uninstall-clean.zip
+            out/piano-uefi-${{ github.run_number }}-SHA256SUMS
+          if-no-files-found: error
 
       - uses: actions/upload-artifact@v4
         with:
