@@ -1,94 +1,111 @@
 # Xiaomi Pad 8 Pro (piano)
 
-Android device trees for the Xiaomi Pad 8 Pro (SM8750).
+Custom Android for the Xiaomi Pad 8 Pro (Snapdragon 8 Elite, SM8750).
+This repository holds everything needed to build it: device trees, stock
+vendor files, kernel, Xiaomi apps, recoveries and an optional UEFI boot menu.
+
+| ROM | Android | State |
+| --- | --- | --- |
+| Evolution X 12.3 | 17 | Active, daily tested |
+| LineageOS 24.0 | 17 | Active |
+| LineageOS 23.2 | 16 | Maintenance |
+
+Recoveries: TWRP and OrangeFox. Boot menu: [UEFI with Visor](../../tree/uefi).
+
+## Install
+
+You need an unlocked bootloader.
+
+1. Flash a recovery built from the `twrp` or `ofox` branch.
+2. In recovery, flash the ROM zip.
+3. Coming from HyperOS or another ROM: format data once.
+4. Reboot.
+
+Updates: flash the new ROM zip in recovery, no wipe needed.
+
+## What comes from stock HyperOS
+
+These Xiaomi features are carried over and set up for AOSP:
+
+- Xiaomi Pen and keyboard (pairing, pen settings, pressure, shortcuts)
+- Xiaomi Camera
+- Xiaomi Notes (offline, no Xiaomi account or cloud)
+- Xiaomi Parts settings: tap to wake, reading mode, refresh rate and more
+- Stock audio (Dolby), display tuning and battery care
 
 ## Branches
 
-| Android 17 (active) | Android 16 (maintenance) | Purpose |
+Every tree lives in this one repository, one branch each. The sync script
+picks the right branches and the right Android version for you.
+
+| Branch | What it is |
+| --- | --- |
+| `main` | This page, the sync and build scripts, GitHub build workflows |
+| `evox-12.3` | Evolution X device tree (Android 17) |
+| `lineage-24.0` | LineageOS device tree (Android 17) |
+| `lineage-23.2` | LineageOS device tree (Android 16) |
+| `device-common` | Settings shared by every SM8750 build |
+| `vendor` | Stock files for this tablet, taken from HyperOS |
+| `vendor-common` | Stock files shared by SM8750 devices |
+| `kernel` | Prebuilt kernel and its modules |
+| `pianopart` | Xiaomi Parts settings app, pen and keyboard support |
+| `camera` | Stock Xiaomi Camera |
+| `notes` | Stock Xiaomi Notes, made to work offline |
+| `twrp` | TWRP recovery |
+| `ofox` | OrangeFox recovery |
+| `uefi` | UEFI firmware and the Visor boot menu |
+
+The `device-common`, `vendor`, `vendor-common`, `kernel` and `camera`
+branches hold both Android 16 and Android 17 files under `versions/`. Only
+the set matching your build is used.
+
+## Other code the build downloads
+
+| Folder | From | Why |
 | --- | --- | --- |
-| `lineage-24.0` | `lineage-23.2` | LineageOS device tree |
-| `device-common` | `device-common` | Common device source, version selected automatically |
-| `vendor` | `vendor` | Device vendor blobs, version selected automatically |
-| `vendor-common` | `vendor-common` | Automatically stages stock common vendor files by Android version |
-| `kernel` | `kernel` | GKI kernel and matching stock modules, version selected automatically |
-| `camera` | `camera` | Shared MiuiCamera tree with Android-specific stock binaries |
-| `pianopart` | `pianopart` | Shared latest PianoParts app with ROM-specific Settings placement |
-| `notes` | `notes` | Shared Xiaomi Notes package without opt-in |
-| `hardware/xiaomi` | `lineage-24.0` | Upstream LineageOS Xiaomi interfaces and Soong namespace; `lineage-23.2` on Android 16 |
-| `twrp` | `twrp` | TWRP recovery (shared) |
-| `ofox` | `ofox` | OrangeFox recovery (shared) |
-| `uefi` | `uefi` | UEFI firmware, boot menu and Visor (shared) |
+| `hardware/xiaomi` | [LineageOS/android_hardware_xiaomi](https://github.com/LineageOS/android_hardware_xiaomi) | LineageOS's shared code for Xiaomi devices (touch, fingerprint and similar). Branch `lineage-24.0` for Android 17, `lineage-23.2` for Android 16 |
 
-The four hardware branches retain separate Android 16 and Android 17 file sets
-under `versions/`. The sync script stages only the matching set at the usual
-Android source paths. No separate package selection or flag is required.
+## Build it yourself
 
-## Sync
-
-Run from the root of an existing ROM or recovery source checkout:
+From the top folder of your ROM source:
 
 ```sh
 curl -fsSLO https://raw.githubusercontent.com/ALXP-DANIEL/android_device_xiaomi_piano/main/sync-device.sh
 bash sync-device.sh
 ```
 
-The script first asks for Android 17 ROM, Android 16 ROM or Recovery.
-Android 17 then offers LineageOS 24.0 and Evolution X 12.3; Android 16
-offers LineageOS 23.2. Recovery separately offers TWRP or OrangeFox.
-For ROM trees, the script syncs all nine required repositories automatically:
-the ROM-specific device tree, common device, device vendor, common vendor,
-kernel, XiaomiParts, Camera, Notes and upstream `LineageOS/android_hardware_xiaomi`.
-It stages the matching Android 16/17
-hardware package set, Camera binaries and ROM-specific XiaomiParts Settings
-placement without an opt-in. Recovery uses `twrp` or `ofox` separately.
+It asks which ROM or recovery you want, downloads the matching trees and
+prepares them. Run it again any time to update. Then build as usual for
+your ROM (`brunch piano` style, or `m evolution` for EvoX).
 
-The original numbered hardware branches were retired after the exact commits
-were preserved in GitHub tags named `archive/pre-universal/<old-branch>`.
-These tags remain available as rollback points if complete ROM builds or
-tablet hardware testing reveal a compatibility problem.
-
-## Refresh and build on the builder
-
-The generated `.repo/local_manifests/piano.xml` is kept up to date automatically.
-Re-running the sync script does **not** require selecting every branch or
-answering an existing-manifest replacement prompt. If the manifest changes, its
-previous contents are backed up first. The script refuses to sync tracked local
-edits rather than silently overwriting them. Unrelated local manifests remain
-untouched.
-
-For a non-interactive Android 17 EvoX update, run from the ROM root:
+Without questions, for example Evolution X:
 
 ```sh
 bash sync-device.sh --android 17 --rom evox --yes
 ```
 
-`repo sync` is the equivalent of `git pull` for these `repo`-managed, detached
-Git checkouts. It updates **all nine** selected Git branches, then stages the
-matching hardware files and Xiaomi apps. Do **not** run `git pull` directly
-inside one of the detached device directories.
+### Build server helper
 
-`build-piano.sh` is the matching build launcher. Copy the published main-branch
-script to the builder once. Every subsequent execution fetches or fast-forward
-pulls the latest `main` build tools into
-`~/android/piano-shared/piano-tools`, runs their `sync-device.sh`, applies the
-selected ROM's compatibility patches and builds with the existing external AVB
-key. It never fetches or checks out retired numbered hardware branches.
+`build-piano.sh` updates the trees and builds in one go:
 
 ```sh
-# Bootstrap from GitHub on the builder (once):
 curl -fsSL https://raw.githubusercontent.com/ALXP-DANIEL/android_device_xiaomi_piano/main/build-piano.sh \
     -o ~/android/piano-shared/build-piano.sh
-
-# Refresh all nine trees, without building:
-bash ~/android/piano-shared/build-piano.sh --sync-only
-
-# Refresh and build an Android 17 Evolution X OTA:
-bash ~/android/piano-shared/build-piano.sh
+bash ~/android/piano-shared/build-piano.sh              # update and build EvoX
+bash ~/android/piano-shared/build-piano.sh --sync-only  # update only
 ```
 
-Defaults: `PIANO_ANDROID=17`, `PIANO_ROM=evox`, `BUILD_VARIANT=userdebug`,
-`BUILD_JOBS=2`, `BUILD_TARGET=evolution` for EvoX (`bacon` for LineageOS). Override `ANDROID_ROOT` and
-`PIANO_AVB_KEY_PATH` if the source directory or existing external signing key
-differs. Android 16 supports `PIANO_ANDROID=16 PIANO_ROM=lineage`; Android 17
-LineageOS uses `PIANO_ANDROID=17 PIANO_ROM=lineage`. The launcher does not
-create new signing keys, alter installed ROMs or flash the device.
+Pick another ROM with `PIANO_ANDROID=16|17` and `PIANO_ROM=lineage|evox`.
+It uses your existing signing keys and never flashes the tablet.
+
+### GitHub Actions
+
+From the Actions tab of `main`:
+
+- **TWRP Builder** and **OrangeFox Builder** build the recoveries.
+- **UEFI Builder** builds the UEFI installer, uninstall and clean uninstall zips.
+
+## Notes for contributors
+
+Use `repo sync` or the sync script, not `git pull`, inside the synced
+folders.
