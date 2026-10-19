@@ -84,6 +84,10 @@ Without questions, for example Evolution X:
 bash sync-device.sh --android 17 --rom evox --yes
 ```
 
+Add `--alxpparts` (Android 17 only) for ALXP Features, the experimental,
+opt-in AirPods switching app. It builds from source with the ROM and patches
+`packages/modules/Bluetooth`; syncing without the option undoes that.
+
 ### Build server helper
 
 `build-piano.sh` updates the trees and builds in one go:

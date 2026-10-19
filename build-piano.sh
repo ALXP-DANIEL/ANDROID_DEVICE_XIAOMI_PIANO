@@ -17,6 +17,7 @@ then builds an OTA unless --sync-only is supplied.
 Defaults: PIANO_ANDROID=17, PIANO_ROM=evox, BUILD_VARIANT=userdebug.
 Override ANDROID_ROOT, PIANO_ANDROID, PIANO_ROM, BUILD_TARGET, BUILD_JOBS,
 PIANO_AVB_KEY_PATH, PIANO_BUILD_DIR, PIANO_MENU_DIR as needed.
+PIANO_ALXPPARTS=true adds the optional ALXPParts (Android 17 only).
 EOF
 }
 
@@ -105,13 +106,26 @@ echo "Syncing full $PIANO_ROM Android $PIANO_ANDROID source manifest..."
 # No project list: refresh the ROM itself as well as the existing local manifest.
 # Never force checkout over local framework changes. A sync conflict must stop
 # the build so those changes can be inspected and preserved.
+# The optional ALXPParts Bluetooth patch is the one expected local change:
+# undo it so repo can update that project; sync-device.sh reapplies it.
+for patch in .repo/local_manifests/alxpparts-applied/*.patch; do
+    [[ -f "$patch" ]] || continue
+    if git -C packages/modules/Bluetooth apply --reverse --check "$ANDROID_ROOT/$patch" 2>/dev/null; then
+        git -C packages/modules/Bluetooth apply --reverse "$ANDROID_ROOT/$patch"
+    fi
+done
+rm -rf .repo/local_manifests/alxpparts-applied
 repo sync -c --no-clone-bundle --no-tags -j"${SYNC_JOBS:-2}"
 
 echo "Updating Android $PIANO_ANDROID $PIANO_ROM piano trees from Git manifest..."
 # repo sync advances all nine detached Git checkouts to their manifest branch
 # tips; plain git pull would fail on their detached HEADs. The sync helper also
 # validates clean tracked files and stages all Android-specific generated files.
-bash "$PIANO_TOOLS_DIR/sync-device.sh" --android "$PIANO_ANDROID" --rom "$PIANO_ROM" --yes
+alxpparts=()
+if [[ "${PIANO_ALXPPARTS:-false}" == true ]]; then
+    alxpparts=(--alxpparts)
+fi
+bash "$PIANO_TOOLS_DIR/sync-device.sh" --android "$PIANO_ANDROID" --rom "$PIANO_ROM" --yes "${alxpparts[@]}"
 
 if [[ "$SYNC_ONLY" == true ]]; then
     echo 'Full ROM manifest and all nine piano trees synced; no build requested.'

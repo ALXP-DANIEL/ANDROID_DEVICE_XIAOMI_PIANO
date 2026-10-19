@@ -41,15 +41,23 @@ REQUESTED_ANDROID=""
 REQUESTED_ROM=""
 REQUESTED_RECOVERY=""
 ASSUME_YES=false
+# Optional GPL AirPods companion; off unless --alxpparts is given.
+WITH_ALXPPARTS=false
 
 usage() {
     cat <<'EOF'
 Usage: bash sync-device.sh [--android 16|17 --rom lineage|evox | --recovery twrp|ofox] [--yes]
+                          [--alxpparts]
 
 Without arguments, choose the release interactively. Re-running always refreshes
 the generated Git manifest and all selected branches using repo sync (the
 repo-managed equivalent of git pull), then re-stages Android-specific files.
 --yes skips only the setup confirmation; it never forces dirty Git checkouts.
+
+--alxpparts (Android 17 ROM only) syncs the experimental alxpparts Parts branch,
+selects ALXPParts (built from source with the ROM) and applies its Bluetooth
+patch. Syncing without the option
+reverts the Bluetooth patch and removes the selection.
 EOF
 }
 
@@ -66,6 +74,7 @@ while (($#)); do
             shift 2
             ;;
         -y|--yes) ASSUME_YES=true; shift ;;
+        --alxpparts) WITH_ALXPPARTS=true; shift ;;
         -h|--help) usage; exit 0 ;;
         *) usage >&2; echo "Unknown argument: $1" >&2; exit 2 ;;
     esac
@@ -73,6 +82,10 @@ done
 
 if [[ -n "$REQUESTED_RECOVERY" && ( -n "$REQUESTED_ANDROID" || -n "$REQUESTED_ROM" ) ]]; then
     echo "Use either --recovery or --android/--rom." >&2
+    exit 2
+fi
+if [[ "$WITH_ALXPPARTS" == true && -n "$REQUESTED_RECOVERY" ]]; then
+    echo "--alxpparts applies only to ROM builds." >&2
     exit 2
 fi
 if [[ -n "$REQUESTED_ROM" && -z "$REQUESTED_ANDROID" ]]; then
@@ -148,6 +161,54 @@ install_manifest() {
     fi
     mv -f "$candidate" "$MANIFEST_FILE"
     echo "Updated Git manifest: $MANIFEST_FILE"
+}
+
+ALXPPARTS_DIR="device/xiaomi/piano-parts/alxpparts"
+BLUETOOTH_DIR="packages/modules/Bluetooth"
+
+# Applied patches are copied here so a later sync without --alxpparts can
+# revert them after the Parts checkout no longer contains them.
+ALXPPARTS_APPLIED="$MANIFEST_DIR/alxpparts-applied"
+
+# Apply (or with "revert", undo) the optional Bluetooth identity patch. Both
+# directions are idempotent and refuse a tree where the patch does not fit.
+alxpparts_bluetooth_patch() {
+    local mode="$1" patch source="$ALXPPARTS_DIR/patches/packages_modules_Bluetooth"
+    [[ -d "$BLUETOOTH_DIR" ]] || die "Missing $BLUETOOTH_DIR"
+    if [[ "$mode" == revert ]]; then
+        source="$ALXPPARTS_APPLIED"
+        [[ -d "$source" ]] || return 0
+    fi
+    for patch in "$source"/*.patch; do
+        [[ -f "$patch" ]] || continue
+        patch=$(pwd -P)/$patch
+        if git -C "$BLUETOOTH_DIR" apply --reverse --check "$patch" 2>/dev/null; then
+            if [[ "$mode" == revert ]]; then
+                git -C "$BLUETOOTH_DIR" apply --reverse "$patch"
+                echo "Reverted: $(basename "$patch")"
+            else
+                echo "Already applied: $(basename "$patch")"
+            fi
+        elif [[ "$mode" == apply ]]; then
+            git -C "$BLUETOOTH_DIR" apply --check "$patch" || \
+                die "$(basename "$patch") does not apply to $BLUETOOTH_DIR"
+            git -C "$BLUETOOTH_DIR" apply "$patch"
+            echo "Applied: $(basename "$patch")"
+        fi
+    done
+    if [[ "$mode" == revert ]]; then
+        rm -rf "$ALXPPARTS_APPLIED"
+    else
+        rm -rf "$ALXPPARTS_APPLIED"
+        mkdir -p "$ALXPPARTS_APPLIED"
+        cp -f "$source"/*.patch "$ALXPPARTS_APPLIED"/
+    fi
+}
+
+# ALXPParts builds from source with the ROM; select it and patch Bluetooth.
+stage_alxpparts() {
+    echo 'WITH_ALXP_PARTS := true' > "$ALXPPARTS_DIR/selected.mk"
+    alxpparts_bluetooth_patch apply
 }
 
 check_worktrees_clean() {
@@ -272,7 +333,12 @@ if [[ "$TARGET" == "rom" ]]; then
         vendor/xiaomi/piano-notes
         hardware/xiaomi
     )
-    branches=("$DEVICE_BRANCH" "$COMMON_BRANCH" "$VENDOR_BRANCH" "$VENDOR_COMMON_BRANCH" "$KERNEL_BRANCH" pianopart camera notes "$LINEAGE_BRANCH")
+    PARTS_BRANCH=pianopart
+    if [[ "$WITH_ALXPPARTS" == true ]]; then
+        [[ "$ANDROID" == 17 ]] || die "ALXPParts is only available for Android 17."
+        PARTS_BRANCH=alxpparts
+    fi
+    branches=("$DEVICE_BRANCH" "$COMMON_BRANCH" "$VENDOR_BRANCH" "$VENDOR_COMMON_BRANCH" "$KERNEL_BRANCH" "$PARTS_BRANCH" camera notes "$LINEAGE_BRANCH")
     selected=("${!paths[@]}")
 
     header "ROM Setup"
@@ -282,6 +348,9 @@ if [[ "$TARGET" == "rom" ]]; then
     echo
     echo "Repository:"
     echo "  $REPO_URL"
+    echo
+    echo "ALXPParts:"
+    echo "  $([[ "$WITH_ALXPPARTS" == true ]] && echo "enabled (patches $BLUETOOTH_DIR)" || echo disabled)"
     echo
     echo "Trees:"
     for index in "${selected[@]}"; do
@@ -332,6 +401,14 @@ if [[ "$TARGET" == "rom" ]]; then
     python3 device/xiaomi/piano-parts/select-rom.py "$ROM"
     python3 vendor/xiaomi/piano-miuicamera/select-camera.py "$ANDROID"
     python3 vendor/xiaomi/piano-notes/stage-originals.py --from-parts
+
+    if [[ "$WITH_ALXPPARTS" == true ]]; then
+        header "Staging Optional ALXPParts"
+        stage_alxpparts
+    else
+        rm -f "$ALXPPARTS_DIR/selected.mk"
+        [[ ! -d "$BLUETOOTH_DIR" ]] || alxpparts_bluetooth_patch revert
+    fi
 
     header "ROM Tree Sync Complete"
 
