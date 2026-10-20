@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="280dp" android:height="148dp" android:viewportWidth="280" android:viewportHeight="148">
+    <path android:fillColor="@color/features_device_frame" android:pathData="M48,8H232Q242,8 242,18V112Q242,122 232,122H48Q38,122 38,112V18Q38,8 48,8Z" />
+    <path android:fillColor="@color/features_device_screen" android:pathData="M49,15H231Q235,15 235,20V110Q235,115 230,115H50Q45,115 45,110V20Q45,15 49,15Z" />
+    <path android:fillColor="@color/features_device_wave" android:pathData="M45,85C90,5 148,108 235,32V115H45Z" />
+    <path android:fillColor="@color/features_device_light" android:pathData="M45,106C99,32 159,144 235,65V115H45Z" />
+    <path android:fillColor="@color/features_device_frame" android:pathData="M30,126H249L262,140Q263,143 258,143H20Q15,143 17,140Z" />
+    <path android:fillColor="@color/features_device_keys" android:pathData="M35,130H243V132H35ZM30,135H248V137H30Z" />
+    <path android:strokeColor="@color/features_device_light" android:strokeWidth="1" android:strokeAlpha="0.5" android:pathData="M51,130V137M70,130V137M89,130V137M108,130V137M127,130V137M146,130V137M165,130V137M184,130V137M203,130V137M222,130V137" />
+    <path android:fillColor="@color/features_device_frame" android:pathData="M253,24Q252,20 255,19Q259,18 260,22L276,108L274,117L269,110Z" />
+    <path android:strokeColor="@color/features_device_light" android:strokeWidth="1.5" android:strokeLineCap="round" android:pathData="M257,25L271,103" />
+</vector>
