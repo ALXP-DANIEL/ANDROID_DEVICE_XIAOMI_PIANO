@@ -1,0 +1,22 @@
+## @file
+#  Debug output into a RAM ring buffer, cleared at the start of each boot.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = MemorySerialPortLibSec
+  FILE_GUID                      = 5C1E2B7A-3D4F-4A86-9E21-7B0C4D8F6A14
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SerialPortLib
+
+[Sources]
+  MemorySerialPortLib.c
+  PianoLog.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[BuildOptions]
+  *_*_*_CC_FLAGS = -DPIANO_LOG_RESET

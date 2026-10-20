@@ -91,6 +91,29 @@
   KeypadDeviceLib|pianoPkg/Library/KeypadDeviceLib/KeypadDeviceLib.inf
   DeviceBootManagerLib|pianoPkg/Library/DeviceBootManagerLib/DeviceBootManagerLib.inf
 
+#
+# DEBUG builds keep their debug output in RAM (Piano_Log) for
+# "fastboot -s piano-uefi oem debuglog" instead of drawing it over the
+# screen. Runtime drivers stay silent: after ExitBootServices the log is not
+# mapped for them.
+#
+!if $(TARGET) == DEBUG
+[LibraryClasses]
+  SerialPortLib|pianoPkg/Library/MemorySerialPortLib/MemorySerialPortLib.inf
+
+[LibraryClasses.common.SEC]
+  SerialPortLib|pianoPkg/Library/MemorySerialPortLib/MemorySerialPortLibSec.inf
+
+[LibraryClasses.common.DXE_RUNTIME_DRIVER]
+  SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
+
+[PcdsFixedAtBuild]
+  # Print errors, warnings, info and image loads; never stop on an ASSERT.
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x06
+  gEfiMdePkgTokenSpaceGuid.PcdDebugClearMemoryValue|0x00
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000046
+!endif
+
 [Components]
   #
   # ACPI Tables
