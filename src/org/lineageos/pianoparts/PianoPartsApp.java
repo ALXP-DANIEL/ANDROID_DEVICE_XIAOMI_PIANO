@@ -9,6 +9,7 @@ import android.compat.Compatibility;
 import android.content.pm.ActivityInfo;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.ContentObserver;
 import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -16,6 +17,7 @@ import android.os.Looper;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
@@ -42,6 +44,8 @@ public class PianoPartsApp extends Application {
             "vendor.xiaomi.hw.touchfeature.ITouchFeature/default";
     private static final int TOUCH_ID = 0;
     private static final int MODE_PANEL_ORIENTATION = 8;
+    // Stock TouchWakeUpFeatureManager arms double tap to wake with mode 14.
+    private static final int MODE_DOUBLE_TAP_WAKE = 14;
 
     private static final String DISPLAY_FEATURE_SERVICE =
             "vendor.xiaomi.hardware.displayfeature_aidl.IDisplayFeature/default";
@@ -118,6 +122,27 @@ public class PianoPartsApp extends Application {
         mReadingModeController = new ReadingModeController(this);
         mSunlightModeController = new SunlightModeController(this);
         mSunlightModeController.setEnabled(isSunlightMode());
+        watchDoubleTapToWake();
+    }
+
+    /** Android's Tap to wake switch only reaches the panel through here. */
+    private void watchDoubleTapToWake() {
+        ContentObserver observer = new ContentObserver(new Handler(Looper.getMainLooper())) {
+            @Override
+            public void onChange(boolean selfChange) {
+                applyDoubleTapToWake();
+            }
+        };
+        getContentResolver().registerContentObserver(
+                Settings.Secure.getUriFor(Settings.Secure.DOUBLE_TAP_TO_WAKE), false,
+                observer, UserHandle.USER_ALL);
+        applyDoubleTapToWake();
+    }
+
+    private void applyDoubleTapToWake() {
+        int enabled = Settings.Secure.getIntForUser(getContentResolver(),
+                Settings.Secure.DOUBLE_TAP_TO_WAKE, 0, UserHandle.USER_CURRENT);
+        setTouchMode(MODE_DOUBLE_TAP_WAKE, enabled != 0 ? 1 : 0);
     }
 
     /**
