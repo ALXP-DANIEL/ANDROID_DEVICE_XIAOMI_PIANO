@@ -1,0 +1,12 @@
+# Lineage LiveDisplay and touch HALs backed by the stock Xiaomi display and
+# touch feature services
+type hal_lineage_livedisplay_piano, domain;
+type hal_lineage_livedisplay_piano_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(hal_lineage_livedisplay_piano)
+binder_use(hal_lineage_livedisplay_piano)
+
+hal_server_domain(hal_lineage_livedisplay_piano, hal_lineage_livedisplay)
+hal_server_domain(hal_lineage_livedisplay_piano, hal_lineage_touch)
+
+hal_client_domain(hal_lineage_livedisplay_piano, vendor_hal_displayfeature_xiaomi)
+hal_client_domain(hal_lineage_livedisplay_piano, hal_touchfeature_xiaomi)
