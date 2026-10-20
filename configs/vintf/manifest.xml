@@ -1,0 +1,13 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<manifest version="2.0" type="device" target-level="202404">
+    <hal format="aidl">
+        <name>android.hardware.gatekeeper</name>
+        <version>1</version>
+        <fqname>IGatekeeper/default</fqname>
+    </hal>
+    <!-- USB (UVC) webcams: the stock external camera provider instance. -->
+    <hal format="aidl">
+        <name>android.hardware.camera.provider</name>
+        <fqname>ICameraProvider/external/0</fqname>
+    </hal>
+</manifest>
