@@ -13,3 +13,5 @@ vendor.xiaomi.hardware.miperf2.IMiPerf/default                     u:object_r:ha
 # USB (UVC) webcams: the external camera provider instance.
 android.hardware.camera.provider.ICameraProvider/external/0  u:object_r:hal_camera_service:s0
 vendor.xiaomi.hardware.otrpagent2.IOTrPAgent/default        u:object_r:hal_otrpagent_service:s0
+
+vendor.xiaomi.hardware.aidl.midevauth.IMidevauthService/default u:object_r:hal_midevauth_service:s0

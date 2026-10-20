@@ -53,3 +53,6 @@
 /(odm|vendor/odm)/bin/vendor\.xiaomi\.hardware\.otrpagent@2\.0-service u:object_r:hal_otrpagent_default_exec:s0
 /data/vendor/otrp(/.*)?                                  u:object_r:otrp_data_file:s0
 /vendor/bin/hw/vendor\.lineage\.livedisplay-service\.piano u:object_r:hal_lineage_livedisplay_piano_exec:s0
+
+# Keyboard cover authentication
+/(odm|vendor/odm)/bin/midevauthd u:object_r:hal_midevauth_default_exec:s0
