@@ -1,0 +1,25 @@
+# Keyboard cover authentication daemon, ported from the stock .44 policy.
+# MiDevAuthService needs it for every challenge and token check.
+hal_attribute(midevauth)
+type hal_midevauth_default, domain;
+type hal_midevauth_default_exec, exec_type, file_type, vendor_file_type;
+type hal_midevauth_service, hal_service_type, service_manager_type;
+
+init_daemon_domain(hal_midevauth_default)
+hal_server_domain(hal_midevauth_default, hal_midevauth)
+hal_attribute_service(hal_midevauth, hal_midevauth_service)
+binder_use(hal_midevauth_default)
+
+hal_client_domain(midevauth_app, hal_midevauth)
+# Service discovery alone does not permit AIDL transactions.
+binder_call(hal_midevauth_client, hal_midevauth_server)
+
+# Secure world keys through QSEECom.
+allow hal_midevauth_default tee_device:chr_file rw_file_perms;
+allow hal_midevauth_default ion_device:chr_file rw_file_perms;
+allow hal_midevauth_default vendor_dmabuf_qseecom_heap_device:chr_file r_file_perms;
+allow hal_midevauth_default vendor_dmabuf_qseecom_ta_heap_device:chr_file { ioctl read open };
+r_dir_file(hal_midevauth_default, firmware_file)
+
+get_prop(hal_midevauth_default, vendor_system_prop)
+set_prop(hal_midevauth_default, vendor_payment_security_prop)

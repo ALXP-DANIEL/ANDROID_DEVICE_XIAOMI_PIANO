@@ -1529,3 +1529,9 @@ odm/etc/TouchPad_Upgrade_0x06_1294.bin:system_ext/etc/piano_keyboard/TouchPad_Up
 
 # Dependency of the stock camera MFNR libraries
 vendor/lib64/libopencv.so|068aa6c0ef0efcdfca4c2291acbb2ea5d30e9a22
+
+# Keyboard cover authentication
+odm/bin/midevauthd|6ab46d812d289b5be46f01584050f5695f18b84e
+odm/lib64/libmidevauth.so|e437f5b0cf301e18a107c891e704b963052ceeb1
+odm/etc/init/vendor.xiaomi.hardware.aidl.midevauth@1.0-service.rc|9f1b0f24a2a86410013fd339280c75fe47712d54
+odm/etc/vintf/manifest/manifest_vendor.xiaomi.hardware.aidl.midevauth.xml|1422874527154834fb2e79b5359f6a8863024554

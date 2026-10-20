@@ -22,3 +22,6 @@ vendor.sys.thermal.bcl.  u:object_r:vendor_thermal_normal_prop:s0
 ro.vendor.piano.body_color u:object_r:vendor_piano_body_color_prop:s0 exact string
 
 vendor.devauth.keyboard_connected u:object_r:vendor_security_devauth_keyboard_connected_prop:s0 exact bool
+
+# Keyboard cover authentication status, set by midevauthd.
+persist.vendor.sys.devauth u:object_r:vendor_payment_security_prop:s0
