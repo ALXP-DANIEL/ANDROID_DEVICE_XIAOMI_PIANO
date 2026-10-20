@@ -155,6 +155,15 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         if (isNotesEditorForeground()) {
             cancelPending(event.keyCode)
             stylusTouchMonitor.cancel(event.keyCode)
+            // .44 sends the gesture feedback before dispatching tool keys to
+            // the editor. Keeping global actions out must not also mute it.
+            if (stylusType == 8 && event.action == KeyEvent.ACTION_DOWN &&
+                event.repeatCount == 0) {
+                when (event.keyCode) {
+                    KeyEvent.KEYCODE_BUTTON_8 -> sendPenHaptic(3)
+                    KeyEvent.KEYCODE_BUTTON_9, KeyEvent.KEYCODE_BUTTON_10 -> sendPenHaptic(4)
+                }
+            }
             return
         }
 
