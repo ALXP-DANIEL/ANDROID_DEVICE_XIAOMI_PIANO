@@ -1,4 +1,4 @@
-# Matched kernel and modules from Global OS3.0.304.
+# Vendor modules from China OS4.0.0.44 with our GKI kernel.
 PIANO_KERNEL_PATH := device/xiaomi/piano-kernel
 # Lineage's generated_kernel_includes still runs headers_install with a
 # prebuilt boot kernel. Xiaomi's piano OSS source lacks the Qualcomm techpack
