@@ -1,0 +1,2 @@
+# Trust this one preserved package, not every Xiaomi-signed or system application.
+user=_app seinfo=piano_midevauth name=com.xiaomi.devauth domain=midevauth_app type=app_data_file levelFrom=all
