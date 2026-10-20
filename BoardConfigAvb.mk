@@ -1,9 +1,7 @@
-# Existing private AVB key kept outside the source repositories.
-# Pass a source-relative symlink to the external key via PIANO_AVB_KEY_PATH.
-# Soong fsgen rejects absolute paths; no public AOSP fallback key.
-ifeq ($(strip $(PIANO_AVB_KEY_PATH)),)
-$(error Set PIANO_AVB_KEY_PATH to your external piano Lineage RSA4096 signing key)
-endif
+# AVB signing key. Release builds pass their own RSA4096 key as a
+# source-relative path in PIANO_AVB_KEY_PATH (Soong rejects absolute paths);
+# other builds use the AOSP test key.
+PIANO_AVB_KEY_PATH ?= external/avb/test/data/testkey_rsa4096.pem
 BOARD_AVB_ENABLE := true
 BOARD_AVB_KEY_PATH := $(PIANO_AVB_KEY_PATH)
 BOARD_AVB_ALGORITHM := SHA256_RSA4096
