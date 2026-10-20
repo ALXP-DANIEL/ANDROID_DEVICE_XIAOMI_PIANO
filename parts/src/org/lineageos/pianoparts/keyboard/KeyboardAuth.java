@@ -41,6 +41,9 @@ final class KeyboardAuth {
     static final int RESULT_AGAIN = 2;
     static final int RESULT_INTERNAL_ERROR = 3;
     static final int RESULT_TRANSFER_ERROR = 4;
+    // Stock accepts some legacy/incomplete exchanges as OK for ordinary
+    // keyboard use. Those cases do not prove identity strongly enough to flash.
+    static final int RESULT_ACCEPTED_UNVERIFIED = 5;
 
     private static final int TRANSFER_ERROR_LIMIT = 2;
     private static final int INTERNAL_ERROR_LIMIT = 3;
@@ -49,6 +52,9 @@ final class KeyboardAuth {
     /** Sends a packet to the cover and returns its reply, or null. */
     interface Link {
         byte[] request(byte[] packet);
+
+        /** Final Type-1 token is sent without a reply callback in stock. */
+        boolean sendWithoutResponse(byte[] packet);
     }
 
     private final Context mContext;
@@ -207,7 +213,7 @@ final class KeyboardAuth {
                 if (shortAnswer) {
                     // Firmware 120 answers with the short form and cannot be
                     // checked further; stock accepts it.
-                    return RESULT_OK;
+                    return RESULT_ACCEPTED_UNVERIFIED;
                 }
                 if (answer[5] != 32 || answer.length < 39
                         || KeyboardProtocol.sum(answer, 0, 38) != answer[38]) {
@@ -244,10 +250,18 @@ final class KeyboardAuth {
                 mInternalErrors++;
                 return RESULT_AGAIN;
             }
-            mLink.request(KeyboardProtocol.authStep5(padToken));
+            // Stock KeyboardAuthHelper sends Step5 with a null response
+            // callback. A missing reply is expected; check the actual send
+            // result and the MiDevAuth online-key verdict instead.
+            if (!mLink.sendWithoutResponse(KeyboardProtocol.authStep5(padToken))) {
+                mTransferErrors++;
+                return RESULT_AGAIN;
+            }
             mTransferErrors = 0;
             mInternalErrors = 0;
-            return RESULT_OK;
+            // Offline-key verdicts remain stock-usable but cannot authorize
+            // a firmware write until independently validated.
+            return verdict == 1 ? RESULT_OK : RESULT_ACCEPTED_UNVERIFIED;
         } catch (RemoteException e) {
             mInternalErrors++;
             Log.w(TAG, "The device authentication service connection failed", e);

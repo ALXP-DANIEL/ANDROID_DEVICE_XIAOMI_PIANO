@@ -123,12 +123,17 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     private static final int AUTH_ATTEMPTS = 5;
     private static final long AUTH_RETRY_MS = 5000;
     private static final long AUTH_REPLY_MS = 400;
-    private static final int AUTO_UPDATE_MIN_BATTERY = 15;
+    // Stock allows automatic updates at 15% off charger, or at any charge
+    // level while plugged in. Require a measured >=20% for an untested port.
+    private static final int FLASH_MIN_BATTERY = 20;
     private final Handler mAuthHandler;
     private final KeyboardAuth mAuth;
     private volatile CountDownLatch mAuthLatch;
     private volatile byte[] mAuthReply;
     private volatile boolean mAuthTrusted;
+    // Unlike mAuthTrusted, this is only set by a positive cryptographic
+    // exchange, never by stock's five-failed-attempt usability fallback.
+    private volatile boolean mAuthVerified;
     private volatile boolean mRejected;
     private volatile boolean mAuthRunning;
     private int mAuthAttempts;
@@ -228,7 +233,17 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         HandlerThread authThread = new HandlerThread("PianoPartsKeyboardAuth");
         authThread.start();
         mAuthHandler = new Handler(authThread.getLooper());
-        mAuth = new KeyboardAuth(context, this::requestAuth);
+        mAuth = new KeyboardAuth(context, new KeyboardAuth.Link() {
+            @Override
+            public byte[] request(byte[] packet) {
+                return requestAuth(packet);
+            }
+
+            @Override
+            public boolean sendWithoutResponse(byte[] packet) {
+                return mTransport.send(packet);
+            }
+        });
     }
 
     /** Starts talking to the keyboard; called once from the application. */
@@ -331,17 +346,19 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         if (!mConnected || mPid == null || mKeyboardType < 0) {
             return null;
         }
-        return KeyboardFirmware.loadKeyboard(firmwareDir() + "Keyboard_Upgrade_"
+        KeyboardFirmware firmware = KeyboardFirmware.loadKeyboard(firmwareDir() + "Keyboard_Upgrade_"
                 + String.format("0x%02x", mKeyboardType) + "_" + mPid + ".bin",
                 mKeyboardType, mMcu2022);
+        return firmware != null && firmware.isVerifiedStockImage() ? firmware : null;
     }
 
     private KeyboardFirmware touchpadFirmware() {
         if (!mConnected || mPid == null || mTouchpadType < 0 || !hasTouchpad(mKeyboardType)) {
             return null;
         }
-        return KeyboardFirmware.loadTouchpad(firmwareDir() + "TouchPad_Upgrade_"
+        KeyboardFirmware firmware = KeyboardFirmware.loadTouchpad(firmwareDir() + "TouchPad_Upgrade_"
                 + String.format("0x%02x", mTouchpadType) + "_" + mPid + ".bin");
+        return firmware != null && firmware.isVerifiedStockImage() ? firmware : null;
     }
 
     public boolean isUpdating() {
@@ -351,7 +368,9 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     /** Starts a manual update; returns false when nothing can be flashed. */
     public boolean startUpdate(boolean touchpad) {
         KeyboardFirmware firmware = touchpad ? touchpadFirmware() : keyboardFirmware();
-        if (firmware == null || mRejected || !mConnected || mUpdater.isRunning()) {
+        String currentVersion = touchpad ? mTouchpadVersion : mKeyboardVersion;
+        if (firmware == null || !firmware.isNewerThan(currentVersion)
+                || !canFlashKeyboardFirmware() || mUpdater.isRunning()) {
             return false;
         }
         PowerManager.WakeLock wakeLock = mPowerManager.newWakeLock(
@@ -363,8 +382,13 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
             showToast(R.string.keyboard_upgrade_start);
         }
         int generation = mAuthGeneration;
+        String pid = mPid;
+        byte keyboardType = mKeyboardType;
+        byte touchpadType = mTouchpadType;
         mUpdater.start(firmware,
-                () -> mConnected && !mRejected && generation == mAuthGeneration,
+                () -> canFlashKeyboardFirmware() && generation == mAuthGeneration
+                        && pid.equals(mPid) && keyboardType == mKeyboardType
+                        && touchpadType == mTouchpadType,
                 new KeyboardUpdater.Callback() {
             @Override
             public void onProgress(int percent) {
@@ -393,6 +417,18 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
             }
         });
         return true;
+    }
+
+    private boolean canFlashKeyboardFirmware() {
+        if (!mConnected || !mScreenOn || mSleeping || mPogoFault
+                || mRejected || !mAuthVerified || !mAuthTrusted || mAuthRunning
+                || mPid == null || mKeyboardVersion == null || mMcuVersion == null) {
+            return false;
+        }
+        BatteryManager battery = mContext.getSystemService(BatteryManager.class);
+        return battery != null
+                && battery.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+                        >= FLASH_MIN_BATTERY;
     }
 
     // Replies, on the transport thread.
@@ -445,6 +481,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                 if (reply[6] == 100) {
                     // The cover asks to be checked again.
                     mAuthTrusted = false;
+                    mAuthVerified = false;
                     mRejected = false;
                     scheduleAuth(true, 0);
                     updateKeysEnabled();
@@ -518,6 +555,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
             mAuthHandler.removeCallbacksAndMessages(null);
             mAuthRunning = false;
             mAuthTrusted = false;
+            mAuthVerified = false;
             mRejected = false;
             mAuthAttempts = 0;
             mAutoKeyboardTried = false;
@@ -527,6 +565,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
             stopSensors();
             mKeyboardType = -1;
             mTouchpadType = -1;
+            mPid = null;
             mKeyboardVersion = null;
             mTouchpadVersion = null;
             mLastBacklight = -1;
@@ -861,6 +900,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     private void scheduleAuth(boolean first, long delayMs) {
         if (first) {
             mAuthGeneration++;
+            mAuthVerified = false;
             mAuthAttempts = 0;
             mAuthHandler.removeCallbacksAndMessages(null);
         }
@@ -895,12 +935,20 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                 Log.i(TAG, "Keyboard cover is genuine");
                 mAuthRunning = false;
                 mAuthTrusted = true;
+                mAuthVerified = true;
                 maybeAutoUpdate();
+                break;
+            case KeyboardAuth.RESULT_ACCEPTED_UNVERIFIED:
+                Log.i(TAG, "Keyboard usable; firmware flashing requires stronger authentication");
+                mAuthRunning = false;
+                mAuthTrusted = true;
+                mAuthVerified = false;
                 break;
             case KeyboardAuth.RESULT_REJECT:
                 Log.w(TAG, "Keyboard cover was rejected");
                 mAuthRunning = false;
                 mAuthTrusted = false;
+                mAuthVerified = false;
                 mRejected = true;
                 mUpdater.abort();
                 mFeatures.clear();
@@ -918,12 +966,14 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                     Log.w(TAG, "Keyboard cover could not be checked, trusting it like stock");
                     mAuthRunning = false;
                     mAuthTrusted = true;
+                    mAuthVerified = false;
                     maybeAutoUpdate();
                 }
                 break;
             default:
                 Log.w(TAG, "Keyboard cover check failed: " + result);
                 mAuthRunning = false;
+                mAuthVerified = false;
                 showDialog(R.string.keyboard_identity_transfer_error_message);
                 break;
         }
@@ -954,16 +1004,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
      * once per attachment.
      */
     private void maybeAutoUpdate() {
-        if (!mAuthTrusted || mRejected || !mConnected || !mScreenOn || mUpdater.isRunning()) {
-            return;
-        }
-        BatteryManager battery = mContext.getSystemService(BatteryManager.class);
-        Intent status = mContext.registerReceiver(null,
-                new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        boolean charging = status != null && status.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0;
-        if (!charging && battery.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-                < AUTO_UPDATE_MIN_BATTERY) {
-            Log.i(TAG, "Battery too low to update the keyboard cover");
+        if (!canFlashKeyboardFirmware() || mUpdater.isRunning()) {
             return;
         }
         if (!mAutoKeyboardTried && getAvailableKeyboardUpdate() != null) {

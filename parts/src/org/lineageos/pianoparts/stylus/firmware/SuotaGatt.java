@@ -19,6 +19,7 @@ public final class SuotaGatt implements SuotaV1.Transport {
     private final SuotaV1.Listener listener;
     private final Runnable timeout = this::onTimeout;
     private SuotaV1 transfer;
+    private Runnable pendingReboot;
     private int patchSize;
     private boolean active, prepared, failed;
     private long startedAt;
@@ -65,7 +66,7 @@ public final class SuotaGatt implements SuotaV1.Transport {
         transfer = new SuotaV1(image, patchSize, mtu, this, new SuotaV1.Listener() {
             public void progress(int percent) { listener.progress(percent); }
             public void finished(SuotaV1.State state, String reason) {
-                active = false; handler.removeCallbacks(timeout); restorePriority();
+                active = false; clearPendingReboot(); handler.removeCallbacks(timeout); restorePriority();
                 listener.finished(state, reason);
             }
         });
@@ -90,12 +91,32 @@ public final class SuotaGatt implements SuotaV1.Transport {
     }
     public void write(UUID id, byte[] bytes, boolean withoutResponse) {
         if (!active) return;
-        arm(); int type = withoutResponse ? BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE : BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
-        int result = gatt.writeCharacteristic(characteristic(id), bytes, type);
-        if (result != BluetoothStatusCodes.SUCCESS) transfer.onWrite(id, false);
+        // Stock .44 waits 500 ms after the final end acknowledgement before issuing reboot.
+        if (SuotaV1.MEMORY.equals(id) && transfer.state() == SuotaV1.State.REBOOT) {
+            arm();
+            pendingReboot = () -> {
+                pendingReboot = null;
+                if (active && transfer.state() == SuotaV1.State.REBOOT) writeNow(id, bytes, withoutResponse);
+            };
+            if (!handler.postDelayed(pendingReboot, 500L)) transfer.transportFailure("Could not schedule SUOTA reboot");
+            return;
+        }
+        writeNow(id, bytes, withoutResponse);
+    }
+    private void writeNow(UUID id, byte[] bytes, boolean withoutResponse) {
+        if (!active) return;
+        arm();
+        int type = withoutResponse ? BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE : BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
+        try {
+            if (gatt.writeCharacteristic(characteristic(id), bytes, type) != BluetoothStatusCodes.SUCCESS)
+                transfer.onWrite(id, false);
+        } catch (RuntimeException exception) {
+            transfer.transportFailure("SUOTA GATT write threw " + exception.getClass().getSimpleName());
+        }
     }
     public void onCharacteristicWrite(UUID id, int result) {
-        if (active && transfer != null) transfer.onWrite(id, result == BluetoothGatt.GATT_SUCCESS);
+        if (active && transfer != null && !(pendingReboot != null && SuotaV1.MEMORY.equals(id)))
+            transfer.onWrite(id, result == BluetoothGatt.GATT_SUCCESS);
     }
     public void onNotification(UUID id, byte[] value) {
         if (active && transfer != null && prepared && transfer.state() != SuotaV1.State.NEW && SuotaV1.STATUS.equals(id)) transfer.onStatus(value);
@@ -103,6 +124,7 @@ public final class SuotaGatt implements SuotaV1.Transport {
     public void verifyRevision(String revision) { if (transfer != null) transfer.verifyRevision(revision); }
     public void disconnected() { if (active) abort("Disconnected during firmware operation"); }
     public void cancel() {
+        clearPendingReboot();
         if (transfer != null && transfer.state() != SuotaV1.State.NEW) transfer.cancel();
         else if (active) { active = false; handler.removeCallbacks(timeout); listener.finished(SuotaV1.State.CANCELLED, "Preparation cancelled"); }
     }
@@ -115,9 +137,13 @@ public final class SuotaGatt implements SuotaV1.Transport {
     private void onTimeout() { if (transfer != null) transfer.timeout(); else abort("SUOTA preparation timed out"); }
     private void abort(String reason) {
         if (failed) return;
-        failed = true; active = false; handler.removeCallbacks(timeout); restorePriority();
+        failed = true; active = false; clearPendingReboot(); handler.removeCallbacks(timeout); restorePriority();
         if (transfer != null) transfer.transportFailure(reason);
         else listener.finished(SuotaV1.State.FAILED, reason);
+    }
+    private void clearPendingReboot() {
+        if (pendingReboot != null) handler.removeCallbacks(pendingReboot);
+        pendingReboot = null;
     }
     private void restorePriority() {
         // Revision verification occurs after the old transfer GATT has been closed.
