@@ -1,23 +1,32 @@
-# Evolution X 12.3 for Xiaomi Pad 8 Pro (piano)
+# Device tree for the Xiaomi Pad 8 Pro (piano)
 
-Device tree for Evolution X 12.3 (Android 17).
-Stock files come from HyperOS 4 China `OS4.0.0.44.XPYCNXM`.
+Android 17 device tree for the Xiaomi Pad 8 Pro (`piano`, Snapdragon 8 Elite,
+SM8750). Stock files come from HyperOS 4 China `OS4.0.0.44.XPYCNXM`; flash
+that firmware before installing a build from this tree.
 
-Goes in `device/xiaomi/piano`. The sync script on the
-[main branch](../../tree/main) adds every other tree it needs:
+## Getting the sources
 
-```sh
-bash sync-device.sh --android 17 --rom evox --yes
+Add the [local manifest](https://github.com/xiaomi-pad-8-pro-development/local_manifests) to your ROM checkout:
+
+```
+git clone https://github.com/xiaomi-pad-8-pro-development/local_manifests -b seventeen .repo/local_manifests
+repo sync
 ```
 
-## What is here
+## Trees
 
-| Path | What |
+| Path | Repository |
 | --- | --- |
-| `BoardConfig*.mk`, `device.mk` | Build and partition setup |
-| `lineage_piano.mk` | Product definition |
-| `rootdir/` | Init scripts and fstab |
-| `sepolicy/` | SELinux rules |
-| `overlay/` | Settings and framework tweaks |
-| `proprietary-files.txt` | List of stock files pulled from HyperOS |
-| `patches/` | Small ROM source patches applied at build time |
+| `device/xiaomi/piano` | this repository |
+| `device/xiaomi/sm8750-common` | [android_device_xiaomi_sm8750-common](https://github.com/xiaomi-pad-8-pro-development/android_device_xiaomi_sm8750-common) |
+| `device/xiaomi/piano-kernel` | [android_device_xiaomi_piano-kernel](https://github.com/xiaomi-pad-8-pro-development/android_device_xiaomi_piano-kernel) |
+| `vendor/xiaomi/piano` | [android_vendor_xiaomi_piano](https://github.com/xiaomi-pad-8-pro-development/android_vendor_xiaomi_piano) |
+| `vendor/xiaomi/sm8750-common` | [android_vendor_xiaomi_sm8750-common](https://github.com/xiaomi-pad-8-pro-development/android_vendor_xiaomi_sm8750-common) |
+
+## Building
+
+```
+source build/envsetup.sh
+lunch lineage_piano-bp4a-userdebug
+m bacon
+```
