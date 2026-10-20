@@ -1501,9 +1501,6 @@ vendor/lib64/rfs/dsp/libworker_pool.so|cd3d287a3534fe7c7386ed28fb17960b9157fe93
 vendor/lib64/libSNPESample.so|7f45c63ab8a92c2a3d6e44fede45a8b8747365c3
 vendor/lib64/libopencl_loader.so|204af1d5e0c07145c39ebd1b6ba98139719eb6e3
 
-# Stock libui, installed to odm (see Android.bp)
-vendor/lib64/libui.so:odm/lib64/libui.so;MODULE_SUFFIX=-vendor;DISABLE_DEPS|0d9c4ebcbab13d0e60e8ffd004655ef2739787da
-
 # Public libraries for MiuiCamera (slow motion, text scanning)
 odm/lib64/libxmi_slow_motion_mein.so|8ca13832f34e391a31f6a35ecf44b00981c99b39
 odm/lib64/libmiocr.so|3c0fc7c72b5f4d0bc61f2ec584e3bf1bd6d4b659
