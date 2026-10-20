@@ -20,13 +20,15 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import android.os.SystemClock
+import android.os.PowerManager
+import android.database.ContentObserver
 import android.provider.Settings
 import android.util.Log
 import java.util.ArrayDeque
 import java.util.Locale
 import java.util.UUID
 
-/** Charger pairing and standard Bluetooth information, hosted by the Parts service. */
+/** Magnetic charger pairing, MIPP touch initialization and Bluetooth information. */
 class StylusController(context: Context, handler: Handler) : AutoCloseable {
     private val context = context.applicationContext
     private val handler = Handler(handler.looper)
@@ -44,6 +46,30 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     private var lastPenBondRemoval = 0L
     private var gatt: BluetoothGatt? = null
     private var mippCommand: BluetoothGattCharacteristic? = null
+    private var mippReply: BluetoothGattCharacteristic? = null
+    private var mippSession: MippSession? = null
+    private val touchClient = PenTouchClient()
+    private var screenOn = context.getSystemService(PowerManager::class.java).isInteractive
+    private val controlObserver = object : ContentObserver(this.handler) {
+        override fun onChange(selfChange: Boolean) { dispatch { applyPenControls() } }
+    }
+    private var gattAttempts = 0
+    private var hibernating = false
+    private val pendingWrites = ArrayDeque<PenWrite>()
+    private var activeWrite: PenWrite? = null
+    private data class PenWrite(
+        val bytes: ByteArray,
+        val opcode: Int,
+        val complete: (ByteArray) -> Unit,
+        var written: Boolean = false,
+        var reply: ByteArray? = null,
+    )
+    private val reconnectGatt = Runnable {
+        if (started && status.state == StylusConnectionState.CONNECTED && gatt == null) {
+            currentDevice()?.let(::openGatt)
+        }
+    }
+    private val sleepPen = Runnable { mippSession?.sleep(true) }
     private val pendingReads = ArrayDeque<BluetoothGattCharacteristic>()
 
     private val chargingObserver = PenUEventObserver { event -> dispatch { onChargingEvent(event) } }
@@ -100,13 +126,27 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     // From the stylus key handler in system_server, which runs as the same uid.
     private val laserReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            dispatch { setLaserMode(intent.getBooleanExtra(StylusSettingsContract.EXTRA_LASER_ON, false)) }
+            dispatch {
+                if (intent.action == StylusSettingsContract.ACTION_HAPTIC) {
+                    if (PenControls.isTouchFilm(status) && mippSession?.initialized == true) {
+                        PenControls.haptic(this@StylusController.context,
+                            intent.getIntExtra(StylusSettingsContract.EXTRA_HAPTIC_TYPE, 0))?.let {
+                            mippSession?.setting(it, 0, false)
+                        }
+                    }
+                } else setLaserMode(intent.getBooleanExtra(StylusSettingsContract.EXTRA_LASER_ON, false))
+            }
         }
     }
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             dispatch {
+                if (intent.action == Intent.ACTION_SCREEN_ON || intent.action == Intent.ACTION_SCREEN_OFF) {
+                    screenOn = intent.action == Intent.ACTION_SCREEN_ON
+                    if (PenControls.isTouchFilm(status)) mippSession?.screen(screenOn)
+                    return@dispatch
+                }
                 if (intent.action == BluetoothAdapter.ACTION_STATE_CHANGED) {
                     onAdapterState(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1))
                     return@dispatch
@@ -170,6 +210,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                     return@dispatch
                 }
                 mippCommand = client.getService(MIPP_SERVICE)?.getCharacteristic(MIPP_COMMAND)
+                mippReply = client.getService(MIPP_SERVICE)?.getCharacteristic(MIPP_REPLY)
                 val battery = client.getService(BATTERY_SERVICE)?.getCharacteristic(BATTERY)
                 val info = client.getService(INFORMATION_SERVICE)
                 listOfNotNull(battery, info?.getCharacteristic(FIRMWARE), info?.getCharacteristic(PNP_ID))
@@ -192,7 +233,37 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
 
         override fun onDescriptorWrite(client: BluetoothGatt, descriptor: BluetoothGattDescriptor, result: Int) {
             dispatch {
-                if (client === gatt && descriptor.uuid == CLIENT_CONFIG) readNextCharacteristic()
+                if (client !== gatt || descriptor.uuid != CLIENT_CONFIG) return@dispatch
+                if (descriptor.characteristic.uuid == MIPP_REPLY) {
+                    if (result != BluetoothGatt.GATT_SUCCESS || !client.requestMtu(512)) {
+                        closeGatt()
+                    } else armGattTimeout()
+                } else readNextCharacteristic()
+            }
+        }
+
+        override fun onMtuChanged(client: BluetoothGatt, mtu: Int, result: Int) {
+            dispatch {
+                if (client !== gatt) return@dispatch
+                handler.removeCallbacks(gattTimeout)
+                if (result != BluetoothGatt.GATT_SUCCESS || mtu < 35) closeGatt()
+                else startMipp()
+            }
+        }
+
+        override fun onCharacteristicWrite(
+            client: BluetoothGatt, characteristic: BluetoothGattCharacteristic, result: Int,
+        ) {
+            dispatch {
+                if (client !== gatt || characteristic.uuid != MIPP_COMMAND) return@dispatch
+                val write = activeWrite ?: return@dispatch
+                if (result != BluetoothGatt.GATT_SUCCESS) {
+                    Log.w(TAG, "Pen write failed: $result")
+                    closeGatt()
+                } else {
+                    write.written = true
+                    finishWrite()
+                }
             }
         }
 
@@ -230,8 +301,18 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             value: ByteArray,
         ) {
             dispatch {
-                if (client === gatt && characteristic.uuid == BATTERY) {
+                if (client !== gatt) return@dispatch
+                if (characteristic.uuid == BATTERY) {
                     value.firstOrNull()?.let { setBattery(it.toInt() and 0xff) }
+                } else if (characteristic.uuid == MIPP_REPLY) {
+                    mippSession?.onNotification(value)
+                    val write = activeWrite
+                    if (write != null && value.isNotEmpty() &&
+                        (value[0].toInt() and 255) == write.opcode
+                    ) {
+                        write.reply = value.copyOf()
+                        finishWrite()
+                    }
                 }
             }
         }
@@ -254,6 +335,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 context.registerReceiver(
                     receiver,
                     IntentFilter().apply {
+                        addAction(Intent.ACTION_SCREEN_ON)
+                        addAction(Intent.ACTION_SCREEN_OFF)
                         addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
                         addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
                         addAction(BluetoothDevice.ACTION_BATTERY_LEVEL_CHANGED)
@@ -267,11 +350,16 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 receiverRegistered = true
                 context.registerReceiver(
                     laserReceiver,
-                    IntentFilter(StylusSettingsContract.ACTION_LASER_MODE),
+                    IntentFilter(StylusSettingsContract.ACTION_LASER_MODE).apply {
+                        addAction(StylusSettingsContract.ACTION_HAPTIC)
+                    },
                     null,
                     handler,
                     Context.RECEIVER_NOT_EXPORTED,
                 )
+                PenControls.keys.forEach {
+                    context.contentResolver.registerContentObserver(Settings.System.getUriFor(it), false, controlObserver)
+                }
                 chargingObserver.start()
                 if (adapter?.isEnabled == true) {
                     requestProfile()
@@ -294,6 +382,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             started = false
             handler.removeCallbacks(connectionTimeout)
             chargingObserver.close()
+            context.contentResolver.unregisterContentObserver(controlObserver)
             if (receiverRegistered) {
                 context.unregisterReceiver(receiver)
                 context.unregisterReceiver(laserReceiver)
@@ -329,10 +418,19 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         }
         event.docked?.let(::setDocked)
         if (chargeState == PAIRING_CHARGE_STATE) event.battery?.let(::setBattery)
+        event.panelState?.let {
+            mippSession?.onPanelState(it)
+        }
+        event.hibernation?.let {
+            hibernating = it
+            handler.removeCallbacks(sleepPen)
+            if (it) handler.postDelayed(sleepPen, 5_000L) else mippSession?.sleep(false)
+        }
         publish()
     }
 
     private fun onPenAddress(address: String) {
+        if (address != status.address) gattAttempts = 0
         removePreviousPenBond(address)
         if (address != status.address) {
             scanner?.close()
@@ -374,7 +472,14 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun setDocked(docked: Boolean) {
+        if (docked && !status.docked) {
+            gattAttempts = 0
+            if (status.state == StylusConnectionState.CONNECTED && gatt == null) {
+                currentDevice()?.let(::openGatt)
+            }
+        }
         status = status.copy(docked = docked)
+        mippSession?.setDocked(docked)
         val value = if (docked) HALL_STATUS_DOCKED else HALL_STATUS_UNDOCKED
         if (value != hallStatus) {
             hallStatus = value
@@ -389,6 +494,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         } else if (state == BluetoothAdapter.STATE_OFF || state == BluetoothAdapter.STATE_TURNING_OFF) {
             scanner?.close()
             closeGatt()
+            gattAttempts = 0
             closeProfile()
             updateState(StylusConnectionState.BLUETOOTH_OFF)
         }
@@ -457,10 +563,17 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         status = status.copy(name = device.name)
         updateState(StylusConnectionState.CONNECTED)
         if (status.battery == null) setBattery(device.batteryLevel)
-        if (gatt == null) {
-            gatt = device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
-            if (gatt != null) armGattTimeout()
+        if (gatt == null) openGatt(device)
+    }
+
+    private fun openGatt(device: BluetoothDevice) {
+        if (gattAttempts >= 3) {
+            Log.w(TAG, "Pen initialization retry limit reached; dock again to retry")
+            return
         }
+        gattAttempts++
+        gatt = device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
+        if (gatt != null) armGattTimeout() else closeGatt()
     }
 
     private fun readNextCharacteristic() {
@@ -473,6 +586,107 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             }
             pendingReads.removeFirst()
         }
+        val reply = mippReply ?: return
+        val command = mippCommand ?: return
+        val descriptor = reply.getDescriptor(CLIENT_CONFIG) ?: run { closeGatt(); return }
+        if (reply.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY == 0 ||
+            command.properties and BluetoothGattCharacteristic.PROPERTY_WRITE == 0 ||
+            !client.setCharacteristicNotification(reply, true)
+        ) {
+            closeGatt()
+            return
+        }
+        armGattTimeout()
+        if (client.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) !=
+            BluetoothStatusCodes.SUCCESS
+        ) closeGatt()
+    }
+
+    private fun startMipp() {
+        val address = PenUEventObserver.normalizeAddress(adapter?.address)
+        if (address == null || address == "02:00:00:00:00:00") {
+            Log.w(TAG, "Cannot initialize pen without the tablet Bluetooth address")
+            closeGatt()
+            return
+        }
+        val bytes = address.split(":").map { it.toInt(16).toByte() }.toByteArray()
+        val session = MippSession(bytes, ::queueWrite, touchClient::setMode, ::closeGatt,
+            setFirmware = { touchClient.setFirmware(status.firmwareRevision) },
+            onFeatures = { features -> status = status.copy(features = features); publish() },
+            onReady = {
+                status = status.copy(penInitialized = true, penError = 0)
+                publish()
+                if (PenControls.isTouchFilm(status)) mippSession?.screen(screenOn)
+                applyPenControls()
+            },
+            onDocked = { setDocked(it); publish() },
+            onError = { status = status.copy(penError = it); publish() },
+        )
+        mippSession = session
+        val readActive = status.vendorId == 34 &&
+            (status.productId == 0x5081 || status.productId == 0x4d80 &&
+                firmwareAtLeast(status.firmwareRevision, 1, 0, 12))
+        session.start(status.docked, readActive)
+    }
+
+    private fun firmwareAtLeast(value: String?, major: Int, minor: Int, patch: Int): Boolean {
+        val numbers = value?.split(".")?.map { it.toIntOrNull() ?: return false } ?: return false
+        if (numbers.size != 3) return false
+        for ((actual, required) in numbers.zip(listOf(major, minor, patch))) {
+            if (actual != required) return actual > required
+        }
+        return true
+    }
+
+    private fun applyPenControls() {
+        val session = mippSession ?: return
+        if (!session.initialized) return
+        if (PenControls.isTouchFilm(status)) {
+            touchClient.setMode(39, if (PenControls.value(context, PenControls.HOVER, 1) != 0) 1 else 0)
+        }
+        for (control in PenControls.commands(context, status)) {
+            session.setting(control.bytes, control.replyLength, control.successStatus)
+        }
+    }
+
+    private fun queueWrite(bytes: ByteArray, opcode: Int, complete: (ByteArray) -> Unit) {
+        if (pendingWrites.size >= 32) {
+            Log.w(TAG, "Pen command queue overflow")
+            closeGatt()
+            return
+        }
+        pendingWrites.add(PenWrite(bytes, opcode, complete))
+        writeNext()
+    }
+
+    private fun writeNext() {
+        if (activeWrite != null || pendingWrites.isEmpty()) return
+        val client = gatt ?: return
+        val command = mippCommand ?: return
+        val write = pendingWrites.removeFirst()
+        activeWrite = write
+        armGattTimeout()
+        if (client.writeCharacteristic(command, write.bytes, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT) !=
+            BluetoothStatusCodes.SUCCESS
+        ) closeGatt()
+    }
+
+    private fun finishWrite() {
+        val write = activeWrite ?: return
+        val reply = write.reply ?: if (write.opcode == -1) byteArrayOf() else return
+        if (!write.written) return
+        handler.removeCallbacks(gattTimeout)
+        activeWrite = null
+        val wasInitialized = mippSession?.initialized == true
+        write.complete(reply)
+        if (!wasInitialized && mippSession?.initialized == true) {
+            gattAttempts = 0
+            if (hibernating) {
+                handler.removeCallbacks(sleepPen)
+                handler.postDelayed(sleepPen, 5_000L)
+            }
+        }
+        writeNext()
     }
 
     private fun armGattTimeout() {
@@ -485,19 +699,19 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
      * it: write 0x50 0x01 <mode> to the "mipp" command characteristic.
      */
     private fun setLaserMode(on: Boolean) {
-        val client = gatt ?: return
-        val command = mippCommand ?: run {
-            Log.w(TAG, "The pen has no laser command characteristic")
-            return
-        }
-        val value = byteArrayOf(0x50, 0x01, if (on) 1 else 0)
-        val result = client.writeCharacteristic(command, value, command.writeType)
-        if (result != BluetoothStatusCodes.SUCCESS) {
-            Log.w(TAG, "Pen laser mode write failed: $result")
-        }
+        mippSession?.laser(on)
     }
 
     private fun closeGatt() {
+        handler.removeCallbacks(reconnectGatt)
+        handler.removeCallbacks(sleepPen)
+        mippSession?.close()
+        mippSession = null
+        status = status.copy(penInitialized = false, features = null)
+        publish()
+        mippReply = null
+        pendingWrites.clear()
+        activeWrite = null
         mippCommand = null
         handler.removeCallbacks(gattTimeout)
         pendingReads.clear()
@@ -509,6 +723,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             } finally {
                 client.close()
             }
+        }
+        if (started && status.state == StylusConnectionState.CONNECTED && gattAttempts < 3) {
+            handler.postDelayed(reconnectGatt, 2_000L)
         }
     }
 
@@ -582,6 +799,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         private val PNP_ID = uuid("2a50")
         private val CLIENT_CONFIG = uuid("2902")
         private val MIPP_SERVICE = UUID.fromString("0000fe10-aa6c-462a-964a-7f2ed5b3e512")
+        private val MIPP_REPLY = UUID.fromString("0000fe12-aa6c-462a-964a-7f2ed5b3e512")
         private val MIPP_COMMAND = UUID.fromString("0000fe11-aa6c-462a-964a-7f2ed5b3e512")
     }
 }

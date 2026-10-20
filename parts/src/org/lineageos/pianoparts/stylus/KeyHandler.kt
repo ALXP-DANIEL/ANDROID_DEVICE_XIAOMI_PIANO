@@ -55,10 +55,18 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
                 StylusSettingsContract.DEFAULT_PINCH_ACTION,
             )
 
+            KeyEvent.KEYCODE_BUTTON_8 -> ButtonSetting(StylusSettingsContract.DOUBLE_TAP_ACTION,
+                StylusSettingsContract.Action.NONE)
+            KeyEvent.KEYCODE_BUTTON_9 -> ButtonSetting(StylusSettingsContract.SLIDE_UP_ACTION,
+                StylusSettingsContract.Action.NONE)
+            KeyEvent.KEYCODE_BUTTON_10 -> ButtonSetting(StylusSettingsContract.SLIDE_DOWN_ACTION,
+                StylusSettingsContract.Action.NONE)
             else -> return event
         }
 
         if (!XiaomiStylusDevice.isStylus(event.device)) return event
+        val touchFilmKey = event.keyCode in KeyEvent.KEYCODE_BUTTON_8..KeyEvent.KEYCODE_BUTTON_10
+        if (touchFilmKey && XiaomiStylusDevice.typeOf(event.device) != 8) return event
 
         // PhoneWindowManager invokes a DeviceKeyHandler once before queueing
         // and again before dispatching. Those callbacks can run on different
@@ -74,11 +82,12 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
             event.downTime,
             event.eventTime,
         )
-        handler.post { handleEventOnMain(eventIdentity, setting) }
+        val stylusType = XiaomiStylusDevice.typeOf(event.device)
+        handler.post { handleEventOnMain(eventIdentity, setting, stylusType) }
         return event
     }
 
-    private fun handleEventOnMain(event: EventIdentity, setting: ButtonSetting) {
+    private fun handleEventOnMain(event: EventIdentity, setting: ButtonSetting, stylusType: Int) {
         if (!rememberEvent(event)) return
         if (!powerManager.isInteractive) {
             cancelPending(event.keyCode)
@@ -108,11 +117,19 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
             return
         }
 
-        if (event.keyCode == KeyEvent.KEYCODE_BUTTON_7) {
+        if (event.keyCode in KeyEvent.KEYCODE_BUTTON_7..KeyEvent.KEYCODE_BUTTON_10) {
             // A squeeze is a single gesture, so act on it at once.
             if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+                val haptic = when (event.keyCode) {
+                    KeyEvent.KEYCODE_BUTTON_7 -> 1
+                    KeyEvent.KEYCODE_BUTTON_8 -> 3
+                    else -> 4
+                }
+                if (stylusType == 8) sendPenHaptic(haptic)
                 executeAction(readAction(setting))
-            }
+            } else if (event.action == KeyEvent.ACTION_UP &&
+                event.keyCode == KeyEvent.KEYCODE_BUTTON_7 && stylusType == 8
+            ) sendPenHaptic(2)
             return
         }
 
@@ -163,6 +180,11 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
             UserHandle.USER_CURRENT,
         )
         return StylusSettingsContract.sanitizeAction(value, setting.defaultValue)
+    }
+
+    private fun sendPenHaptic(type: Int) {
+        context.sendBroadcastAsUser(Intent(StylusSettingsContract.ACTION_HAPTIC)
+            .setPackage(PARTS_PACKAGE).putExtra(StylusSettingsContract.EXTRA_HAPTIC_TYPE, type), UserHandle.SYSTEM)
     }
 
     private fun setLaser(on: Boolean) {
