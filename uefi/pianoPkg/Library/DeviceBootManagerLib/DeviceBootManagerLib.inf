@@ -16,6 +16,7 @@
   PianoMenu.c
   PianoMenu.h
   PianoDtb.c
+  PianoFastboot.c
   PianoReset.c
   PianoTouch.c
   PianoTouchKeys.h
@@ -48,6 +49,7 @@
   gUefiShellFileGuid
   gFdtTableGuid
   gEfiFileInfoGuid
+  gEfiEventExitBootServicesGuid
 
 [Protocols]
   gEfiLoadedImageProtocolGuid
@@ -56,3 +58,4 @@
   gEfiClockProtocolGuid
   gEfiBlockIoProtocolGuid
   gEfiResetNotificationProtocolGuid
+  gEfiUsbDeviceProtocolGuid

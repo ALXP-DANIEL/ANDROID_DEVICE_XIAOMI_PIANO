@@ -95,6 +95,7 @@ DeviceBootManagerAfterConsole ()
   PianoResetHookInstall ();
   PianoTouchStart ();
   PianoDtbInstall ();
+  PianoFastbootStart ();
   StartEspLoader ();
   if (PianoMenuRun () == PianoMenuShell) {
     DeviceBootManagerUnableToBoot ();
