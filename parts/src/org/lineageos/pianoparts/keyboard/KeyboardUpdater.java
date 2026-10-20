@@ -31,6 +31,9 @@ final class KeyboardUpdater {
     private final KeyboardTransport mTransport;
     private final Handler mHandler;
     private volatile KeyboardFirmware mFirmware;
+    // An abort can be requested before its Handler cleanup runs. Ignore
+    // queued ACKs immediately so screen-off cannot advance into flash.
+    private volatile boolean mAbortRequested;
     private Callback mCallback;
     private byte[] mPending;
     private byte mPendingCommand;
@@ -59,6 +62,7 @@ final class KeyboardUpdater {
             Log.i(TAG, "Updating " + (firmware.touchpad ? "touchpad" : "keyboard")
                     + " to " + firmware.version + " from " + firmware.path);
             mFirmware = firmware;
+            mAbortRequested = false;
             mCallback = callback;
             mLastPercent = -1;
             send(firmware.infoPacket());
@@ -67,6 +71,7 @@ final class KeyboardUpdater {
 
     /** Stops an update, for example when the keyboard is detached. */
     void abort() {
+        mAbortRequested = true;
         mHandler.post(() -> {
             if (mFirmware != null) {
                 Log.w(TAG, "Keyboard update aborted");
@@ -79,6 +84,9 @@ final class KeyboardUpdater {
     boolean onReply(byte[] reply) {
         if (mFirmware == null || reply.length < 5) {
             return false;
+        }
+        if (mAbortRequested) {
+            return true;
         }
         byte command = reply[4];
         boolean ack = command == KeyboardProtocol.CMD_UPGRADE_DATA_ACK;
@@ -148,6 +156,7 @@ final class KeyboardUpdater {
     }
 
     private void send(byte[] packet) {
+        if (mAbortRequested) return;
         mHandler.removeCallbacks(mRetry);
         mPending = packet;
         mPendingCommand = packet[8];
@@ -157,7 +166,7 @@ final class KeyboardUpdater {
     }
 
     private void retry() {
-        if (mFirmware == null || mPending == null) {
+        if (mAbortRequested || mFirmware == null || mPending == null) {
             return;
         }
         if (mRetriesLeft-- <= 0) {
