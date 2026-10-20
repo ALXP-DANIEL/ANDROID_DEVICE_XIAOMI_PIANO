@@ -36,20 +36,28 @@ straight to the kernel.
 | Volume and power keys in Visor | Works: volume moves through entries and power icons, power selects |
 | Fastboot / recovery by holding a volume key | Works |
 | Reboot / Shut down from UEFI | Works |
-| Installer ZIP for OrangeFox and TWRP | Works |
+| Real-ESP installer ZIP for OrangeFox and TWRP | Implemented; fresh F2FS shrink not hardware-validated |
 | Debug fastboot in UEFI (`piano-uefi`) | Works: screenshot, log, memory dump, run an EFI app |
 | Linux (Arch) from Visor | Not yet |
 | Touch screen in UEFI | Removed: its SMMU streams keep Android from starting from Visor |
 
 ## Install
 
-Download `piano-uefi-N.zip` from a run of the "UEFI Builder (piano)" action
+Download `piano-uefi-N-installer.zip` from a run of the "UEFI Builder (piano)" action
 (below) and flash it in OrangeFox or TWRP. It:
 
 - puts the selector and UEFI into `boot_a` and `boot_b`, whatever ROM they
   hold, and keeps the old images in `/sdcard/piano-uefi/`
-- puts Visor on the `esp` partition, formatting it if it never held a boot
-  manager (stock leaves it unused)
+- validates an existing GPT ESP and updates Visor files without formatting it
+- if no ESP exists, backs up GPT, shrinks decrypted mounted F2FS `/data`,
+  verifies the shrink, creates a 512 MiB ESP and writes its FAT16 Visor image
+- patches both boot slots only after Visor installation succeeds; no embedded ESP
+
+Missing ESP or loader falls through to Android. Fresh creation aborts if recovery
+cannot expose decrypted mounted F2FS or the kernel rejects online shrinking.
+This fresh-install path is experimental and has not been validated on a tablet.
+Ordinary uninstall leaves ESP and the reduced userdata capacity intact. It does not
+repartition or grow Android data. See [installer details](docs/esp-installer.md).
 
 Flash it again after a ROM update, which replaces the boot image. To take it
 out, flash `piano-uefi-N-uninstall.zip`: both boot images get their original
@@ -60,7 +68,7 @@ kernel back.
 On GitHub, run the "UEFI Builder (piano)" action from the Actions tab of the
 `main` branch. It asks for a wallpaper (a link, or files from
 `tools/esp/wallpapers`), the color style taken from it, the entry selected
-at start, the delay before it starts and a quiet boot, and uploads both
+at start, the delay before it starts and a quiet boot, and uploads installer, uninstall and uninstall-clean
 ZIPs.
 
 Locally, with Docker and Homebrew `llvm` and `lld`:
@@ -145,3 +153,13 @@ Our code is BSD-2-Clause-Patent, except `selector/keys.c`, which is
 GPL-2.0-only because its register layout follows Linux's SPMI PMIC arbiter
 driver. The Qualcomm drivers in `uefi/Binaries/piano` are proprietary files
 from the device's own stock firmware, included so the image can be built.
+
+### Reclaiming ESP space
+
+The ZIP builder also emits `-uninstall-clean.zip`. It requires the ownership
+receipt saved by the new fresh-ESP installer. The first run backs up and removes
+the owned ESP and expands userdata's GPT entry; reboot recovery and flash the
+same ZIP again to grow the unmounted decrypted F2FS filesystem. Legacy or
+pre-existing ESPs without a valid receipt are refused. Fresh install and reclaim
+are experimental and have not been hardware validated. See
+[ESP installer details](docs/esp-installer.md) before using either path.

@@ -20,7 +20,7 @@
 #include <Library/UefiLib.h>
 #include <Protocol/SimpleFileSystem.h>
 
-#include "PianoMenu.h"
+#include "Piano.h"
 
 #define PIANO_DTB_PATH  L"\\EFI\\piano\\piano.dtb"
 #define FDT_MAGIC       0xD00DFEED

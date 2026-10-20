@@ -28,7 +28,7 @@
 #include <Protocol/LoadedImage.h>
 #include <Protocol/ResetNotification.h>
 
-#include "PianoMenu.h"
+#include "Piano.h"
 
 // ResetSystemRuntimeDxe's list entry (ResetSystem.h).
 typedef struct {

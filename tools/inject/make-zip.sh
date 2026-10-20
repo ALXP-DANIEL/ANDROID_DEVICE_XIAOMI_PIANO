@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-2-Clause-Patent
-# Build the recovery ZIPs: one that puts the selector and UEFI into
-# boot_a/boot_b and Visor on the ESP, and one that takes them out again.
+# Build recovery ZIPs: install Visor on a real ESP and patch boot_a/boot_b;
+# ordinary uninstall restores kernels and leaves ESP intact; reclaim is two-stage.
 #
 #   tools/inject/make-zip.sh MU-PIANO.IMG OUT.ZIP [WALLPAPER...]
 #   tools/inject/make-zip.sh --esp DIR MU-PIANO.IMG OUT.ZIP
 #
-# Writes OUT.ZIP and OUT-uninstall.zip. WALLPAPERs go to tools/esp/make-esp.sh;
+# Writes OUT-installer.zip, OUT-uninstall.zip and OUT-uninstall-clean.zip.
+# WALLPAPERs go to tools/esp/make-esp.sh;
 # --esp takes an ESP that make-esp.sh already built (and the caller changed).
 # Needs out/selector.bin (make -C selector). The static arm64 injector is
 # built with $CC when set (an arm64 host), else in the builder image
@@ -23,12 +24,14 @@ shift 2
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
 
-flags="-O2 -static -s -Wall -Wextra -Werror -o out/piano-inject tools/inject/piano-inject.c"
+flags="-O2 -static -s -Wall -Wextra -Werror"
 mkdir -p out
 if [ -n "${CC:-}" ]; then
-	$CC $flags
+	$CC $flags -o out/piano-inject tools/inject/piano-inject.c
+	$CC $flags -o out/piano-esp tools/inject/piano-esp.c
 else
-	docker run --rm -v "$PWD:/p" -w /p piano-uefi-build aarch64-linux-gnu-gcc $flags
+	docker run --rm -v "$PWD:/p" -w /p piano-uefi-build aarch64-linux-gnu-gcc $flags -o out/piano-inject tools/inject/piano-inject.c
+	docker run --rm -v "$PWD:/p" -w /p piano-uefi-build aarch64-linux-gnu-gcc $flags -o out/piano-esp tools/inject/piano-esp.c
 fi
 
 python3 - "$uefi_img" "$stage/uefi.bin" <<'PY'
@@ -43,15 +46,22 @@ if [ -n "$esp" ]; then
 else
 	tools/esp/make-esp.sh "$stage/esp" "$@"
 fi
+# FAT image is written only into a newly created ESP, never into boot.
+python3 tools/esp/make-fat.py "$stage/esp" "$stage/esp.img"
 
 mkdir -p "$stage/META-INF/com/google/android"
 cp tools/inject/update-binary "$stage/META-INF/com/google/android/update-binary"
 echo '#MAGISK' > "$stage/META-INF/com/google/android/updater-script"
-cp out/piano-inject out/selector.bin "$stage/"
+cp out/piano-inject out/piano-esp out/selector.bin "$stage/"
 
-rm -f "$zip_out" "${zip_out%.zip}-uninstall.zip"
-(cd "$stage" && zip -q -r -X "$zip_out" META-INF piano-inject selector.bin uefi.bin esp)
+rm -f "${zip_out%.zip}-installer.zip" "${zip_out%.zip}-uninstall.zip"
+(cd "$stage" && zip -q -r -X "${zip_out%.zip}-installer.zip" META-INF piano-inject piano-esp selector.bin uefi.bin esp esp.img)
 touch "$stage/uninstall"
 (cd "$stage" && zip -q -r -X "${zip_out%.zip}-uninstall.zip" META-INF piano-inject uninstall)
-echo "$zip_out"
+cp tools/inject/reclaim.sh "$stage/"
+touch "$stage/reclaim"
+rm -f "${zip_out%.zip}-uninstall-clean.zip"
+(cd "$stage" && zip -q -r -X "${zip_out%.zip}-uninstall-clean.zip" META-INF piano-inject piano-esp uninstall reclaim reclaim.sh)
+echo "${zip_out%.zip}-uninstall-clean.zip"
+echo "${zip_out%.zip}-installer.zip"
 echo "${zip_out%.zip}-uninstall.zip"

@@ -93,6 +93,8 @@ READ_LOCK_STATUS   = TRUE
   # UEFI Shell
   INF ShellPkg/Application/Shell/Shell.inf
 
+  # Android, started when there is no Visor at all
+  INF pianoPkg/Application/AndroidBoot/AndroidBoot.inf
   # RAM Manager
   INF SiliciumPkg/Drivers/RamManagerDxe/RamManagerDxe.inf
 

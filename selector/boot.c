@@ -59,12 +59,14 @@ struct piano_meta {
 	u64 selector_offset;
 	u32 code1, image_size_lo;
 	u64 image_size, uefi_offset, uefi_size;
+	u64 kernel_size, esp_offset, esp_size;
 };
 
 /*
  * Where ABL left Android, for UEFI to start it later without a restart:
  * the kernel entry and ABL's device tree, which holds the ramdisk and the
- * command line. Kept in the last page of UEFI's reserved Piano_Log region.
+ * command line, and the ESP image UEFI uses when the tablet has none. Kept
+ * in the last page of UEFI's reserved Piano_Log region.
  */
 #define ANDROID_HANDOFF		0xD7FFF000UL
 #define ANDROID_MAGIC		0x444E41504F4E4950UL	/* "PIANOPAND" */
@@ -79,6 +81,8 @@ static void android_handoff(void *fdt, const struct piano_meta *meta, u64 base)
 	h[2] = base + 4 + (u64)(imm * 4);	/* original primary_entry */
 	h[3] = (u64)fdt;
 	h[4] = meta->image_size;
+	h[5] = meta->esp_offset ? base + meta->esp_offset : 0;
+	h[6] = meta->esp_size;
 	h[0] = ANDROID_MAGIC;
 }
 

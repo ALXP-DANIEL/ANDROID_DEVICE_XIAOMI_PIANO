@@ -66,7 +66,7 @@ def kernel_info(kernel):
     return code1, image_size
 
 
-def wrap(kernel, selector, uefi=b''):
+def wrap(kernel, selector, uefi=b'', esp=b''):
     code1, image_size = kernel_info(kernel)
     meta = selector.find(META_MAGIC)
     if meta < 0 or selector.find(META_MAGIC, meta + 1) >= 0:
@@ -75,17 +75,23 @@ def wrap(kernel, selector, uefi=b''):
     sel_off = align(image_size)        # past the kernel's BSS, which Linux clears
     uefi_off = align(sel_off + len(selector) + 16384, 0x10000) if uefi else 0
     end = (uefi_off + len(uefi)) if uefi else sel_off + len(selector) + 16384
+    esp_off = align(end) if esp else 0
+    if esp:
+        end = esp_off + len(esp)
     total = align(end)
     if sel_off - 4 >= BRANCH_RANGE:
         fail('selector out of branch range')
 
-    out = bytearray(uefi_off + len(uefi) if uefi else sel_off + len(selector))
+    out = bytearray(end if esp else uefi_off + len(uefi) if uefi else sel_off + len(selector))
     out[:len(kernel)] = kernel
     out[sel_off:sel_off + len(selector)] = selector
     if uefi:
         out[uefi_off:uefi_off + len(uefi)] = uefi
-    struct.pack_into('<QIIQQQQ', out, sel_off + meta + 16, sel_off, code1,
-                     image_size & 0xffffffff, image_size, uefi_off, len(uefi), len(kernel))
+    if esp:
+        out[esp_off:end] = esp
+    struct.pack_into('<QIIQQQQQQ', out, sel_off + meta + 16, sel_off, code1,
+                     image_size & 0xffffffff, image_size, uefi_off, len(uefi), len(kernel),
+                     esp_off, len(esp))
     struct.pack_into('<I', out, 4, 0x14000000 | ((sel_off - 4) // 4))
     struct.pack_into('<Q', out, 16, total)
 
@@ -150,12 +156,15 @@ def main():
                     'deps', 'avb', 'avbtool.py'))
     ap.add_argument('--uefi', help='Mu-Silicium boot.img whose kernel (BootShim + FD) '
                     'started instead of Android')
+    ap.add_argument('--esp', help='FAT image (tools/esp/make-fat.py) UEFI uses as its ESP '
+                    'when the tablet has none')
     a = ap.parse_args()
 
     data = open(a.boot, 'rb').read()
     boot = {'kernel': data} if a.kernel_only else read_boot(data)
     uefi = read_boot(open(a.uefi, 'rb').read())['kernel'] if a.uefi else b''
-    kernel, sel_off, total = wrap(boot['kernel'], open(a.selector, 'rb').read(), uefi)
+    esp = open(a.esp, 'rb').read() if a.esp else b''
+    kernel, sel_off, total = wrap(boot['kernel'], open(a.selector, 'rb').read(), uefi, esp)
     image = kernel if a.kernel_only else write_boot(boot, kernel)
     if a.kernel_only and a.avb:
         fail('--avb is for boot images; the ROM build signs its own')

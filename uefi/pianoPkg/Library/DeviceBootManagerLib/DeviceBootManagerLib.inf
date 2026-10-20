@@ -1,5 +1,5 @@
 ## @file
-#  Piano boot manager hooks: the Qualcomm ones plus a UEFI Shell fallback.
+#  Piano boot manager hooks: Visor from a real ESP, otherwise Android.
 #
 #  SPDX-License-Identifier: BSD-2-Clause
 ##
@@ -13,8 +13,7 @@
 
 [Sources]
   DeviceBootManager.c
-  PianoMenu.c
-  PianoMenu.h
+  Piano.h
   PianoDtb.c
   PianoFastboot.c
   PianoReset.c
@@ -27,6 +26,8 @@
   QcomPkg/QcomPkg.dec
 
 [LibraryClasses]
+  BaseLib
+  BaseMemoryLib
   PeCoffGetEntryPointLib
   CacheMaintenanceLib
   DebugLib
@@ -43,14 +44,17 @@
   gUsbControllerInitGuid
   gSdCardInitGuid
   gUefiShellFileGuid
+  gEfiPartTypeSystemPartGuid
   gFdtTableGuid
   gEfiFileInfoGuid
   gEfiEventExitBootServicesGuid
 
 [Protocols]
+  gEfiPartitionInfoProtocolGuid
   gEfiLoadedImageProtocolGuid
   gEfiGraphicsOutputProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
   gEfiBlockIoProtocolGuid
   gEfiResetNotificationProtocolGuid
   gEfiUsbDeviceProtocolGuid
+  gEfiDevicePathProtocolGuid

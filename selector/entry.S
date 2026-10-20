@@ -69,6 +69,8 @@ piano_meta:
 	.quad	0			/* 40: uefi_offset, 0 if none */
 	.quad	0			/* 48: uefi_size */
 	.quad	0			/* 56: original kernel file size */
-.size piano_meta, 64
+	.quad	0			/* 64: esp_offset, 0 if none */
+	.quad	0			/* 72: esp_size */
+.size piano_meta, 80
 
 .section .note.GNU-stack,"",%progbits

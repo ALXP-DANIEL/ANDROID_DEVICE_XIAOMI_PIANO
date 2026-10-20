@@ -31,7 +31,7 @@
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 
-#include "PianoMenu.h"
+#include "Piano.h"
 #include "../MemorySerialPortLib/PianoLog.h"
 
 #define FB_EP_RX     0x01      // bulk OUT, host to device

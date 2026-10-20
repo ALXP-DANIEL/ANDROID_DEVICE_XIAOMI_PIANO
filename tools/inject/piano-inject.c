@@ -3,18 +3,21 @@
  * piano-inject: put the selector and UEFI into an Android boot.img, the way
  * tools/pack.py does, on the device (recovery has no Python).
  *
- *   piano-inject BOOT.IMG SELECTOR.BIN UEFI.BIN OUT.IMG
+ *   piano-inject BOOT.IMG SELECTOR.BIN UEFI.BIN ESP.IMG|--no-esp OUT.IMG
  *   piano-inject --remove BOOT.IMG OUT.IMG
  *
  * BOOT.IMG may already carry a selector; it is taken out first, so running
  * this again replaces an older selector or UEFI, and --remove gives back the
  * plain boot.img. UEFI.BIN is the kernel part of the Mu-piano boot image
- * (BootShim + FD). The output has no AVB footer.
+ * (BootShim + FD); ESP.IMG is the FAT image UEFI uses as its ESP when the
+ * tablet has none (legacy). --no-esp embeds no disk. The output gets a fresh unsigned AVB hash footer for an unlocked device.
  */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "piano-avb.h"
 
 #define PAGE           4096u
 #define BRANCH_RANGE   (1u << 27)
@@ -88,7 +91,7 @@ static size_t unwrap(uint8_t *kernel, size_t size)
 
 /* Write the boot image back with KERNEL in place of its kernel. */
 static size_t write_boot(const char *path, const uint8_t *boot, const uint8_t *kernel,
-			 uint64_t kernel_len)
+			 uint64_t kernel_len, size_t partition_size)
 {
 	uint32_t kernel_size = rd32(boot + 8), ramdisk_size = rd32(boot + 12);
 	uint32_t header_size = rd32(boot + 20), version = rd32(boot + 40);
@@ -112,6 +115,8 @@ static size_t write_boot(const char *path, const uint8_t *boot, const uint8_t *k
 	memcpy(img + PAGE, kernel, kernel_len);
 	memcpy(img + PAGE + align(kernel_len, PAGE), ramdisk, ramdisk_size);
 
+	img = piano_avb_footer(img, img_size, partition_size, boot);
+	img_size = partition_size;
 	f = fopen(path, "wb");
 	if (!f || fwrite(img, 1, img_size, f) != img_size || fclose(f))
 		fail(path);
@@ -120,16 +125,16 @@ static size_t write_boot(const char *path, const uint8_t *boot, const uint8_t *k
 
 int main(int argc, char **argv)
 {
-	size_t boot_size, sel_size, uefi_size;
-	uint8_t *boot, *sel, *uefi, *out;
+	size_t boot_size, sel_size, uefi_size, esp_size;
+	uint8_t *boot, *sel, *uefi, *esp, *out;
 	uint32_t kernel_size, ramdisk_size, header_size, version, code1;
-	uint64_t image_size, sel_off, uefi_off, end, total, out_size, kernel_len;
+	uint64_t image_size, sel_off, uefi_off, esp_off, end, total, out_size, kernel_len;
 	const uint8_t *meta;
 	size_t meta_off, img_size;
 	int remove = argc == 4 && !strcmp(argv[1], "--remove");
 
-	if (argc != 5 && !remove)
-		fail("usage: piano-inject BOOT.IMG SELECTOR.BIN UEFI.BIN OUT.IMG\n"
+	if (argc != 6 && !remove)
+		fail("usage: piano-inject BOOT.IMG SELECTOR.BIN UEFI.BIN ESP.IMG|--no-esp OUT.IMG\n"
 		     "       piano-inject --remove BOOT.IMG OUT.IMG");
 	boot = load(argv[1 + remove], &boot_size);
 
@@ -155,13 +160,17 @@ int main(int argc, char **argv)
 		fail("unexpected kernel header");
 
 	if (remove) {
-		img_size = write_boot(argv[3], boot, kernel, kernel_len);
+		img_size = write_boot(argv[3], boot, kernel, kernel_len, boot_size);
 		printf("kernel %llu bytes, boot.img %zu bytes\n",
 		       (unsigned long long)kernel_len, img_size);
 		return 0;
 	}
 	sel = load(argv[2], &sel_size);
 	uefi = load(argv[3], &uefi_size);
+	esp_size = 0;
+	esp = NULL;
+	if (strcmp(argv[4], "--no-esp"))
+		esp = load(argv[4], &esp_size);
 
 	meta = find(sel, sel_size, meta_magic, sizeof(meta_magic));
 	if (!meta || find(meta + 1, sel_size - (size_t)(meta + 1 - sel), meta_magic, sizeof(meta_magic)))
@@ -170,7 +179,10 @@ int main(int argc, char **argv)
 
 	sel_off = align(image_size, PAGE);
 	uefi_off = align(sel_off + sel_size + 16384, 0x10000);
-	end = uefi_off + uefi_size;
+	esp_off = align(uefi_off + uefi_size, PAGE);
+	end = esp_size ? esp_off + esp_size : uefi_off + uefi_size;
+	if (!esp_size)
+		esp_off = 0;
 	total = align(end, PAGE);
 	if (sel_off - 4 >= BRANCH_RANGE)
 		fail("selector out of branch range");
@@ -182,6 +194,8 @@ int main(int argc, char **argv)
 	memcpy(out, kernel, kernel_len);
 	memcpy(out + sel_off, sel, sel_size);
 	memcpy(out + uefi_off, uefi, uefi_size);
+	if (esp_size)
+		memcpy(out + esp_off, esp, esp_size);
 
 	uint8_t *m = out + sel_off + meta_off;
 	wr64(m + 16, sel_off);
@@ -191,10 +205,12 @@ int main(int argc, char **argv)
 	wr64(m + 40, uefi_off);
 	wr64(m + 48, uefi_size);
 	wr64(m + 56, kernel_len);
+	wr64(m + 64, esp_off);
+	wr64(m + 72, esp_size);
 	wr32(out + 4, 0x14000000u | (uint32_t)((sel_off - 4) / 4));
 	wr64(out + 16, total);
 
-	img_size = write_boot(argv[4], boot, out, out_size);
+	img_size = write_boot(argv[5], boot, out, out_size, boot_size);
 	printf("kernel %llu bytes, selector at %#llx, uefi at %#llx, boot.img %zu bytes\n",
 	       (unsigned long long)kernel_len, (unsigned long long)sel_off,
 	       (unsigned long long)uefi_off, img_size);
