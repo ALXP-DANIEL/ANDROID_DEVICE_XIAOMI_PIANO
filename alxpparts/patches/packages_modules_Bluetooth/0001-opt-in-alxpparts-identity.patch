@@ -1,0 +1,74 @@
+diff --git a/android/app/src/com/android/bluetooth/btservice/AdapterService.java b/android/app/src/com/android/bluetooth/btservice/AdapterService.java
+index 242cd8f..251346f 100644
+--- a/android/app/src/com/android/bluetooth/btservice/AdapterService.java
++++ b/android/app/src/com/android/bluetooth/btservice/AdapterService.java
+@@ -118,6 +118,7 @@ import android.os.SystemProperties;
+ import android.os.UserHandle;
+ import android.os.UserManager;
+ import android.provider.DeviceConfig;
++import android.provider.Settings;
+ import android.sysprop.BluetoothProperties;
+ import android.text.TextUtils;
+ import android.util.Log;
+@@ -710,6 +711,32 @@ public class AdapterService extends Service {
+     public void onCreate() {
+         super.onCreate();
+         Log.d(TAG, "onCreate()");
++        // Only Bluetooth writes its own marker, before local SDP records exist.
++        boolean alxpInstalled = false;
++        try {
++            alxpInstalled = (getPackageManager().getApplicationInfo("org.alxp.parts", 0).flags
++                    & android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
++                    && getPackageManager().getComponentEnabledSetting(new android.content.ComponentName(
++                            "org.alxp.parts", "org.alxp.parts.services.AirPodsService"))
++                            == android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
++        } catch (android.content.pm.PackageManager.NameNotFoundException ignored) {
++            // Optional product package is absent: preserve the normal identity.
++        }
++        boolean alxpIdentity = alxpInstalled && Settings.Global.getInt(
++                getContentResolver(), "alxp_airpods_identity_enabled", 0) == 1;
++        java.io.File alxpMarker = new java.io.File("/data/misc/bluedroid/alxp_identity");
++        try {
++            if (alxpIdentity) {
++                alxpMarker.createNewFile();
++            } else {
++                alxpMarker.delete();
++            }
++        } catch (java.io.IOException e) {
++            Log.w(TAG, "Unable to update ALXPParts identity marker", e);
++        }
++        Settings.Global.putInt(getContentResolver(), "alxp_airpods_backend_version", 1);
++        Settings.Global.putInt(getContentResolver(), "alxp_airpods_backend_boot",
++                Settings.Global.getInt(getContentResolver(), Settings.Global.BOOT_COUNT, -1));
+         // OnCreate must perform the minimum of infallible and mandatory initialization
+         // This is the first method call with a context attached
+         mUserManager = requireNonNull(getSystemService(UserManager.class));
+diff --git a/system/bta/dm/bta_dm_api.cc b/system/bta/dm/bta_dm_api.cc
+index 053395f..a76340b 100644
+--- a/system/bta/dm/bta_dm_api.cc
++++ b/system/bta/dm/bta_dm_api.cc
+@@ -28,6 +28,8 @@
+ #include <bluetooth/types/uuid.h>
+ #include <com_android_bluetooth_flags.h>
+ 
++#include <unistd.h>
++
+ #include <vector>
+ 
+ #include "bta/dm/bta_dm_device_search.h"
+@@ -131,6 +133,15 @@ bool BTA_DmGetConnectionState(const RawAddress& bd_addr) {
+ bool BTA_DmSetLocalDiRecord(tSDP_DI_RECORD* p_device_info) {
+   bool status = false;
+ 
++  // Opt-in compatibility identity for ALXPParts. Off unless the user enabled it
++  // before this Bluetooth process started; normal Android identity is preserved.
++  tSDP_DI_RECORD identity = *p_device_info;
++  if (access("/data/misc/bluedroid/alxp_identity", F_OK) == 0) {
++    identity.vendor = 0x004c;
++    identity.vendor_id_source = 0x0001;
++    p_device_info = &identity;
++  }
++
+   if (bta_dm_di_cb.di_num < BTA_DI_NUM_MAX) {
+     uint32_t handle = 0;
+     if (get_legacy_stack_sdp_api()->SDP_SetLocalDiRecord(p_device_info, &handle) ==

@@ -1,0 +1,25 @@
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+//
+
+// AirPods audio switching between Apple devices, trimmed from LibrePods
+// (see UPSTREAM). Built from source with the ROM; installed only when the
+// product sets WITH_ALXP_PARTS (see product.mk).
+android_app {
+    name: "ALXPParts",
+    min_sdk_version: "current",
+    manifest: "AndroidManifest.xml",
+    srcs: ["src/**/*.kt"],
+    resource_dirs: ["res"],
+    static_libs: [
+        "SettingsLib",
+        "androidx.preference_preference",
+    ],
+    certificate: "platform",
+    platform_apis: true,
+    privileged: true,
+    system_ext_specific: true,
+    optimize: {
+        enabled: false,
+    },
+}

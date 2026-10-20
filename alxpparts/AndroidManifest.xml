@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.alxp.parts">
+
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" />
+    <uses-permission android:name="android.permission.LOCAL_MAC_ADDRESS" />
+    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_alxp_features"
+        android:allowBackup="false">
+
+        <!-- Its own entry next to Xiaomi features in Evolution X settings. -->
+        <activity
+            android:name=".AlxpSettingsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SubSettingsBase.Expressive"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data android:name="com.android.settings.category"
+                       android:value="com.android.settings.category.ia.homepage" />
+            <meta-data android:name="com.android.settings.group_key"
+                       android:value="top_level_evolution_category" />
+            <meta-data android:name="com.android.settings.order"
+                       android:value="-149" />
+            <meta-data android:name="com.android.settings.summary"
+                       android:resource="@string/app_summary" />
+            <meta-data android:name="com.android.settings.icon"
+                       android:resource="@drawable/ic_alxp_features" />
+            <meta-data android:name="com.android.settings.icon_color_scheme"
+                       android:value="blue" />
+        </activity>
+
+        <!-- Off until the main switch enables it. The Bluetooth patch checks
+             this exact component before using the Apple identity. -->
+        <service
+            android:name=".services.AirPodsService"
+            android:enabled="false"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="false"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

@@ -10,3 +10,6 @@ PRODUCT_PACKAGES += PianoPencilEngine
 endif
 PRODUCT_COPY_FILES += \
     device/xiaomi/piano-parts/privapp-permissions-pianoparts.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/privapp-permissions-pianoparts.xml
+
+# ALXPParts is excluded unless explicitly selected by the product.
+$(call inherit-product, device/xiaomi/piano-parts/alxpparts/product.mk)

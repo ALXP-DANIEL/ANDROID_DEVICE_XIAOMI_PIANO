@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/app_name">
+
+    <Preference android:key="hero" android:selectable="false"
+        app:layout="@layout/hero_preference"
+        app:allowDividerAbove="false" app:allowDividerBelow="false" />
+
+    <com.android.settingslib.widget.MainSwitchPreference
+        android:key="enabled"
+        android:title="@string/main_switch" />
+
+    <com.android.settingslib.widget.FooterPreference
+        android:key="footer"
+        android:title="@string/footer" />
+</PreferenceScreen>
