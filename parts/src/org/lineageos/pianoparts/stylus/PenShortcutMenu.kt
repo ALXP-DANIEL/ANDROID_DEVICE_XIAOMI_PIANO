@@ -26,7 +26,6 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import org.lineageos.pianoparts.R
-import org.lineageos.pianoparts.StylusSettingsActivity
 
 /** Local system menu; actions use platform roles rather than hard-coded Xiaomi packages. */
 internal class PenShortcutMenu(private val context: Context, private val handler: Handler,
@@ -91,7 +90,8 @@ internal class PenShortcutMenu(private val context: Context, private val handler
             StylusActions.run(context, handler, StylusSettingsContract.Action.SCREENSHOT)
         })
         entries.add(Entry(R.string.stylus_menu_settings, android.R.drawable.ic_menu_manage) {
-            val settings = Intent(context, StylusSettingsActivity::class.java)
+            val settings = Intent(Intent.ACTION_MAIN)
+                .setClassName(context.packageName, "${context.packageName}.StylusSettingsActivity")
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivityAsUser(settings, user)
         })
