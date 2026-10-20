@@ -74,6 +74,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/tablet_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/tablet_core_hardware.xml
 
+# Respect fixed-orientation apps on the internal display.
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/display/display_settings.xml:$(TARGET_COPY_OUT_VENDOR)/etc/display_settings.xml
+
 # Special keys of the keyboard cover
 PRODUCT_COPY_FILES += \
     device/xiaomi/piano/configs/keylayout/Vendor_15d9_Product_00a3.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/Vendor_15d9_Product_00a3.kl
