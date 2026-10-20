@@ -6,17 +6,17 @@ public final class PencilEnginePosturePolicyTest {
     }
     public static void main(String[] args) {
         PencilEnginePosturePolicy p = new PencilEnginePosturePolicy();
-        expect(0, p.transition(false, true, true, false, false));
-        expect(1, p.transition(false, true, true, false, true));
-        expect(-1, p.transition(true, true, true, true, true));
-        expect(-1, p.transition(true, true, true, true, false));
-        expect(0, p.transition(false, true, true, true, false));
-        expect(-1, p.transition(false, false, true, false, true));
-        expect(-1, p.transition(false, true, false, false, true));
-        expect(1, p.transition(false, true, true, false, true));
-        expect(0, p.transition(false, true, false, false, true));
+        expect(0, p.transition(true, true, false));
+        expect(-1, p.transition(true, true, false));
+        expect(1, p.transition(true, true, true));
+        expect(-1, p.transition(true, true, true));
+        expect(0, p.transition(true, true, false));
+        expect(-1, p.transition(false, true, true));
+        expect(-1, p.transition(true, false, true));
+        expect(1, p.transition(true, true, true));
+        expect(0, p.transition(true, false, true));
         p.invalidate();
-        expect(0, p.transition(false, false, true, false, false));
+        expect(0, p.transition(false, true, false));
         System.out.println("10 posture aggregate/lifecycle policy checks passed");
     }
 }
