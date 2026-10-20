@@ -71,31 +71,9 @@ internal class PenShortcutMenu(private val context: Context, private val handler
     private fun show(x: Float, y: Float) {
         if (view != null) { hide(); return }
         if (keyguard.isKeyguardLocked || activities.lockTaskModeState != ActivityManager.LOCK_TASK_MODE_NONE || !canShow()) return
-        val user = UserHandle.of(ActivityManager.getCurrentUser())
-        val userContext = context.createContextAsUser(user, 0)
-        val assistant = Intent(Intent.ACTION_ASSIST).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        val notes = Intent(Intent.ACTION_CREATE_NOTE).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        val entries = mutableListOf<Entry>()
-        if (assistant.resolveActivity(userContext.packageManager) != null) {
-            entries.add(Entry(R.string.stylus_menu_assistant, android.R.drawable.ic_btn_speak_now) {
-                context.startActivityAsUser(assistant, user)
-            })
-        }
-        if (notes.resolveActivity(userContext.packageManager) != null) {
-            entries.add(Entry(R.string.stylus_menu_notes, android.R.drawable.ic_menu_edit) {
-                StylusActions.run(context, handler, StylusSettingsContract.Action.OPEN_NOTES)
-            })
-        }
-        entries.add(Entry(R.string.stylus_menu_screenshot, android.R.drawable.ic_menu_camera) {
-            StylusActions.run(context, handler, StylusSettingsContract.Action.SCREENSHOT)
-        })
-        entries.add(Entry(R.string.stylus_menu_settings, android.R.drawable.ic_menu_manage) {
-            val settings = Intent(Intent.ACTION_MAIN)
-                .setClassName(context.packageName, "${context.packageName}.StylusSettingsActivity")
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivityAsUser(settings, user)
-        })
-        // Laser is added only when its native input bridge can provide interception and cursor hiding.
+        val entries = PenPalette.visible(context)
+        if (entries.isEmpty()) return
+        if (entries.size == 1) { invoke(entries.single()); return }
         val geometry = PenMenuGeometry(entries.size)
         val density = context.resources.displayMetrics.density
         val menu = object : FrameLayout(context) {
@@ -129,8 +107,8 @@ internal class PenShortcutMenu(private val context: Context, private val handler
         menu.setWillNotDraw(false)
         for ((index, entry) in entries.withIndex()) {
             val button = ImageButton(context).apply {
-                setImageResource(entry.icon)
-                contentDescription = context.getString(entry.label)
+                setImageDrawable(entry.icon)
+                contentDescription = entry.label
                 val backgroundId = context.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackgroundBorderless))
                 try { setBackgroundResource(backgroundId.getResourceId(0, 0)) } finally { backgroundId.recycle() }
                 setOnTouchListener { _, event ->
@@ -175,8 +153,8 @@ internal class PenShortcutMenu(private val context: Context, private val handler
         }
     }
 
-    private fun invoke(entry: Entry) {
-        try { entry.action() } catch (exception: RuntimeException) {
+    private fun invoke(entry: PenPalette.Candidate) {
+        try { PenPalette.launch(context, entry) } catch (exception: RuntimeException) {
             Log.w("PianoStylus", "Pen shortcut failed", exception)
         }
     }
@@ -189,5 +167,4 @@ internal class PenShortcutMenu(private val context: Context, private val handler
         if (menu.isAttachedToWindow) windows.removeViewImmediate(menu)
     }
 
-    private data class Entry(val label: Int, val icon: Int, val action: () -> Unit)
 }
