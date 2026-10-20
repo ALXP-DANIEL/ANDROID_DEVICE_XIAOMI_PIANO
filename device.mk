@@ -102,6 +102,11 @@ $(call inherit-product, vendor/xiaomi/piano-miuicamera/miuicamera.mk)
 $(call inherit-product, vendor/xiaomi/piano-notes/notes.mk)
 PRODUCT_SOONG_NAMESPACES += vendor/xiaomi/piano-notes
 
+# Focus Pen 3: its touch-film buttons must not type characters, like stock.
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/keychars/Vendor_0022_Product_5081.kcm:$(TARGET_COPY_OUT_VENDOR)/usr/keychars/Vendor_0022_Product_5081.kcm \
+    $(LOCAL_PATH)/configs/idc/Vendor_0022_Product_5081.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/Vendor_0022_Product_5081.idc
+
 # Keyboard cover: do not rotate the arrow keys with the display.
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/idc/Vendor_15d9_Product_00a3.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/Vendor_15d9_Product_00a3.idc
