@@ -1,4 +1,4 @@
-# Xiaomi Pad 8 Pro PianoParts (Android 17)
+# Xiaomi Pad 8 Pro PianoParts (Android 16 and 17)
 
 This shared tree is checked out at `device/xiaomi/piano-parts` from the
 `pianopart` branch of `ALXP-DANIEL/android_device_xiaomi_piano`.
@@ -14,8 +14,17 @@ Xiaomi Settings near the top of connectivity; EvoX keeps its Evolution group.
 
 The device trees continue to own hardware policies and Lineage SDK
 key-handler overlays. No extra opt-in is required after the `pianopart`
-checkout has been synced. This branch tracks the newest Android 17 Parts
-code for all ROMs; Android 16 compilation requires separate validation.
+checkout has been synced. PianoParts and PianoPencilEngine are shared by
+Android 16 (SDK 36) and Android 17 (SDK 37). The capture bridge handles the
+older Android 16 WindowManager capture ABI and the newer asynchronous API.
+Secure/protected content is never requested by the legacy path; newer APIs
+reject it explicitly. Unsupported platform APIs cancel the picker.
+
+PencilEngine and the pen Java/Kotlin sources compile against Android 16 and
+17 framework jars. Resource/Settings fixtures are used for the Parts host
+compile. These checks do not prove a complete Android 16 ROM or physical pen
+operation. Native laser still requires matching ROM framework patches and
+its current-boot readiness marker; installing this app alone cannot enable it.
 
 Run the host checks from this tree's root using `bash tests/run-mipp-tests.sh`
 and `python3 tests/check-devauth-policy.py`. The full Android build and

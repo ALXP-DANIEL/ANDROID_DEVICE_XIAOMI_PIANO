@@ -12,6 +12,7 @@ filegroup {
 // The sync helper selects one of the two reviewed Settings placements.
 android_app {
     name: "PianoParts",
+    min_sdk_version: "36",
     manifest: "@PIANO_PARTS_MANIFEST@",
     srcs: [
         "src/**/*.java",
