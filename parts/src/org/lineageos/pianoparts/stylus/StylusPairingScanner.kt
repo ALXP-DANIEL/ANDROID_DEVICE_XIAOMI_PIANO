@@ -20,6 +20,7 @@ internal class StylusPairingScanner(
     private val onResult: (String?) -> Unit,
 ) : AutoCloseable {
     private var activeCallback: ScanCallback? = null
+    private var activeAddress: String? = null
     private val timeout = Runnable {
         if (activeCallback != null) {
             close()
@@ -28,6 +29,9 @@ internal class StylusPairingScanner(
     }
 
     fun start(address: String) {
+        // Charger uevents may repeat while the same pen stays attached. Do not
+        // abort a live scan and lose its advertisements on every notification.
+        if (isScanning(address)) return
         close()
         val scanner = adapter.bluetoothLeScanner
         if (scanner == null) {
@@ -63,6 +67,7 @@ internal class StylusPairingScanner(
             }
         }
         activeCallback = callback
+        activeAddress = address
         try {
             scanner.startScan(
                 listOf(ScanFilter.Builder().setDeviceAddress(address).build()),
@@ -81,12 +86,16 @@ internal class StylusPairingScanner(
         handler.removeCallbacks(timeout)
         val callback = activeCallback ?: return
         activeCallback = null
+        activeAddress = null
         try {
             adapter.bluetoothLeScanner?.stopScan(callback)
         } catch (exception: RuntimeException) {
             Log.w(TAG, "Could not stop pen scan", exception)
         }
     }
+
+    fun isScanning(address: String): Boolean =
+        activeCallback != null && activeAddress.equals(address, ignoreCase = true)
 
     companion object {
         private const val TAG = "PianoStylusScanner"

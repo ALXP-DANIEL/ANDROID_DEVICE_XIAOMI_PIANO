@@ -129,13 +129,23 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
     private val sleepPen = Runnable { mippSession?.sleep(true) }
     private val pendingReads = ArrayDeque<BluetoothGattCharacteristic>()
+    // The MAC and charging-state uevents can be delivered separately. Never
+    // auto-pair a persisted address unless this dock session reports its MAC.
+    private var chargerAddress: String? = null
+    private var pairingTarget: String? = null
+    private var pairingAttempts = 0
+    private val pairingRetry = Runnable {
+        if (started && chargeState == PAIRING_CHARGE_STATE && pairingTarget == status.address) {
+            startPenPairing()
+        }
+    }
 
     private val chargingObserver = PenUEventObserver { event -> dispatch { onChargingEvent(event) } }
     private val scanner = adapter?.let {
         StylusPairingScanner(it, this.handler) { address ->
             if (started) {
                 if (address == null) {
-                    updateState(StylusConnectionState.CONNECTION_FAILED)
+                    onPairingFailure("BLE scan did not find the charger-matched pen")
                 } else {
                     pairScannedPen(address)
                 }
@@ -145,7 +155,12 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     private val connectionTimeout = Runnable {
         if (started && status.state in PENDING_STATES) {
             scanner?.close()
-            updateState(StylusConnectionState.CONNECTION_FAILED)
+            if (chargeState == PAIRING_CHARGE_STATE &&
+                currentDevice()?.bondState == BluetoothDevice.BOND_NONE) {
+                onPairingFailure("Pen connection timed out")
+            } else {
+                updateState(StylusConnectionState.CONNECTION_FAILED)
+            }
         }
     }
     private val gattTimeout = Runnable {
@@ -216,12 +231,25 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 when (intent.action) {
                     BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
                         when (intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, -1)) {
-                            BluetoothDevice.BOND_BONDED -> connect(device)
+                            BluetoothDevice.BOND_BONDED -> {
+                                handler.removeCallbacks(pairingRetry)
+                                scanner?.close()
+                                Log.i(TAG, "Pen bonded; connecting HID profile")
+                                connect(device)
+                            }
                             BluetoothDevice.BOND_BONDING -> updateState(StylusConnectionState.PAIRING)
                             BluetoothDevice.BOND_NONE -> {
                                 scanner?.close()
                                 closeGatt()
-                                updateState(StylusConnectionState.DISCONNECTED)
+                                val previous = intent.getIntExtra(
+                                    BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.BOND_NONE,
+                                )
+                                if (previous == BluetoothDevice.BOND_BONDING &&
+                                    chargeState == PAIRING_CHARGE_STATE) {
+                                    onPairingFailure("LE bonding failed")
+                                } else {
+                                    updateState(StylusConnectionState.DISCONNECTED)
+                                }
                             }
                         }
                     }
@@ -461,6 +489,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 }
                 shortcutMenu.start()
                 chargingObserver.start()
+                Log.i(TAG, "Pen charger observer active; Bluetooth enabled=${adapter?.isEnabled == true}")
                 if (adapter?.isEnabled == true) {
                     requestProfile()
                     reconnect()
@@ -485,6 +514,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             firmwareAdapter?.cancel()
             if (firmwareAdapter != null || firmwareVerifying) finishFirmware("failed")
             handler.removeCallbacks(connectionTimeout)
+            handler.removeCallbacks(pairingRetry)
+            chargerAddress = null
             shortcutMenu.close()
             chargingObserver.close()
             context.contentResolver.unregisterContentObserver(controlObserver)
@@ -499,6 +530,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 receiverRegistered = false
             }
             scanner?.close()
+            pairingTarget = null
+            pairingAttempts = 0
             closeGatt()
             closeProfile()
             status = status.copy(state = StylusConnectionState.DISCONNECTED, battery = null, docked = false)
@@ -519,12 +552,28 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun onChargingEvent(event: PenChargingEvent) {
+        val enteredPairing = event.chargeState == PAIRING_CHARGE_STATE &&
+            chargeState != PAIRING_CHARGE_STATE
+        event.address?.let { chargerAddress = it }
         if (event.chargeState != null && event.chargeState != chargeState) {
             chargeState = event.chargeState
-            if (chargeState != PAIRING_CHARGE_STATE) scanner?.close()
+            Log.i(TAG, "Pen charger state=$chargeState")
+            if (chargeState != PAIRING_CHARGE_STATE) {
+                scanner?.close()
+                handler.removeCallbacks(pairingRetry)
+                chargerAddress = null
+                pairingTarget = null
+                pairingAttempts = 0
+                if (status.state in PENDING_STATES &&
+                    currentDevice()?.bondState == BluetoothDevice.BOND_NONE) {
+                    updateState(StylusConnectionState.DISCONNECTED)
+                }
+            }
         }
-        if (event.address != null && chargeState == PAIRING_CHARGE_STATE) {
-            onPenAddress(event.address)
+        if (chargeState == PAIRING_CHARGE_STATE && (event.address != null || enteredPairing)) {
+            // A charger-state event may arrive after the MAC event. Only use
+            // a MAC seen in this dock session, never an older saved address.
+            (event.address ?: chargerAddress)?.let(::onPenAddress)
         }
         event.docked?.let(::setDocked)
         if (chargeState == PAIRING_CHARGE_STATE) event.battery?.let(::setBattery)
@@ -540,6 +589,12 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun onPenAddress(address: String) {
+        if (pairingTarget != address) {
+            Log.i(TAG, "Pen charger supplied a valid MAC; preparing LE pairing")
+            handler.removeCallbacks(pairingRetry)
+            pairingTarget = address
+            pairingAttempts = 0
+        }
         if (firmwareAdapter != null && address != firmwareAddress) {
             firmwareAdapter?.cancel()
             finishFirmware("failed")
@@ -560,8 +615,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         if (adapter?.isEnabled == true && device != null) {
             status = status.copy(name = device.name)
             if (device.bondState == BluetoothDevice.BOND_NONE) {
-                updateState(StylusConnectionState.CONNECTING)
-                scanner?.start(device.address)
+                startPenPairing()
             } else {
                 connect(device)
             }
@@ -608,10 +662,18 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
 
     private fun onAdapterState(state: Int) {
         if (state == BluetoothAdapter.STATE_ON) {
+            Log.i(TAG, "Bluetooth ready; resuming charger-matched pen connection")
+            // A previous Bluetooth-off state must not stick when no pen address
+            // is known: reconnect() returns early in that case.
+            if (status.state == StylusConnectionState.BLUETOOTH_OFF) {
+                updateState(StylusConnectionState.DISCONNECTED)
+            }
             requestProfile()
             reconnect()
         } else if (state == BluetoothAdapter.STATE_OFF || state == BluetoothAdapter.STATE_TURNING_OFF) {
             scanner?.close()
+            handler.removeCallbacks(pairingRetry)
+            pairingAttempts = 0
             closeGatt()
             gattAttempts = 0
             closeProfile()
@@ -635,8 +697,53 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         val device = currentDevice() ?: return
         if (device.bondState != BluetoothDevice.BOND_NONE) {
             connect(device)
+        } else if (chargeState == PAIRING_CHARGE_STATE && pairingTarget == device.address) {
+            startPenPairing()
         } else {
             updateState(StylusConnectionState.DISCONNECTED)
+        }
+    }
+
+    private fun startPenPairing() {
+        val address = status.address ?: return
+        if (adapter?.isEnabled != true || chargeState != PAIRING_CHARGE_STATE ||
+            pairingTarget != address || scanner?.isScanning(address) == true ||
+            handler.hasCallbacks(pairingRetry)) return
+        val device = currentDevice() ?: return
+        when (device.bondState) {
+            BluetoothDevice.BOND_BONDED -> { connect(device); return }
+            BluetoothDevice.BOND_BONDING -> {
+                updateState(StylusConnectionState.PAIRING)
+                return
+            }
+        }
+        if (pairingAttempts >= MAX_PAIRING_ATTEMPTS) {
+            updateState(StylusConnectionState.CONNECTION_FAILED)
+            return
+        }
+        pairingAttempts++
+        Log.i(TAG, "Scanning for pen ($pairingAttempts/$MAX_PAIRING_ATTEMPTS)")
+        updateState(StylusConnectionState.CONNECTING)
+        // A new 20-second scan needs its own connection deadline. Repeated
+        // charger uevents cannot extend it or consume the retry budget.
+        handler.removeCallbacks(connectionTimeout)
+        handler.postDelayed(connectionTimeout, 30_000L)
+        scanner?.start(address) ?: onPairingFailure("Bluetooth LE scanner unavailable")
+    }
+
+    private fun onPairingFailure(reason: String) {
+        if (!started || chargeState != PAIRING_CHARGE_STATE ||
+            pairingTarget != status.address || adapter?.isEnabled != true) return
+        if (currentDevice()?.bondState != BluetoothDevice.BOND_NONE) return
+        handler.removeCallbacks(connectionTimeout)
+        if (pairingAttempts >= MAX_PAIRING_ATTEMPTS) {
+            Log.w(TAG, "$reason; retry limit reached, redock to retry")
+            updateState(StylusConnectionState.CONNECTION_FAILED)
+        } else {
+            Log.w(TAG, "$reason; retrying discovery after $PAIRING_RETRY_MS ms")
+            updateState(StylusConnectionState.CONNECTING)
+            handler.removeCallbacks(pairingRetry)
+            handler.postDelayed(pairingRetry, PAIRING_RETRY_MS)
         }
     }
 
@@ -644,10 +751,11 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         if (address != status.address || chargeState != PAIRING_CHARGE_STATE) return
         val device = currentDevice() ?: return
         if (device.bondState == BluetoothDevice.BOND_NONE) {
+            Log.i(TAG, "Pen advertisement matched; requesting LE bond")
             if (device.createBond(BluetoothDevice.TRANSPORT_LE)) {
                 updateState(StylusConnectionState.PAIRING)
             } else {
-                updateState(StylusConnectionState.CONNECTION_FAILED)
+                onPairingFailure("LE createBond request failed")
             }
         } else {
             connect(device)
@@ -679,6 +787,10 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun onConnected(device: BluetoothDevice) {
+        handler.removeCallbacks(pairingRetry)
+        scanner?.close()
+        pairingAttempts = 0
+        Log.i(TAG, "Pen HID connected; starting GATT initialization")
         status = status.copy(name = device.name)
         updateState(StylusConnectionState.CONNECTED)
         if (status.battery == null) setBattery(device.batteryLevel)
@@ -1065,6 +1177,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         private const val HALL_STATUS_UNDOCKED = 1
         private const val MAC_MAX = 0xFFFFFFFFFFFFL
         private const val PEN_BOND_REMOVE_COOLDOWN_MS = 5_000L
+        private const val MAX_PAIRING_ATTEMPTS = 3
+        private const val PAIRING_RETRY_MS = 1_500L
         private const val HID_STATE_CHANGED = "android.bluetooth.input.profile.action.CONNECTION_STATE_CHANGED"
         private val PENDING_STATES = setOf(StylusConnectionState.CONNECTING, StylusConnectionState.PAIRING)
         private fun uuid(value: String) = UUID.fromString("0000$value-0000-1000-8000-00805f9b34fb")
