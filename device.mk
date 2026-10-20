@@ -44,6 +44,10 @@ PRODUCT_VENDOR_PROPERTIES += \
 # Minimal tablet values traced to the pinned stock framework overlay.
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
+# Pixel Launcher with a translucent gesture handle that hides after 10 s.
+PRODUCT_PACKAGES += \
+    NexusLauncherPiano
+
 # Show the boot animation in landscape, the way the tablet is normally held.
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.bootanim.set_orientation_logical_0=ORIENTATION_90
