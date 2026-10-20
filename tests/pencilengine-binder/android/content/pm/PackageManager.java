@@ -1,0 +1,1 @@
+package android.content.pm; public abstract class PackageManager { public static final int SIGNATURE_MATCH=0; public abstract int checkSignatures(int a,int b); public abstract String[] getPackagesForUid(int uid); }
