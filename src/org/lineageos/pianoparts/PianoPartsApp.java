@@ -271,6 +271,10 @@ public class PianoPartsApp extends Application {
     }
 
     void setDisplayFeature(int feature, int value) {
+        setDisplayFeature(feature, value, 255);
+    }
+
+    void setDisplayFeature(int feature, int value, int cookie) {
         IBinder binder = ServiceManager.waitForDeclaredService(DISPLAY_FEATURE_SERVICE);
         if (binder == null) {
             Log.e(TAG, "DisplayFeature service is not available");
@@ -283,7 +287,7 @@ public class PianoPartsApp extends Application {
             data.writeInt(Display.DEFAULT_DISPLAY);
             data.writeInt(feature);
             data.writeInt(value);
-            data.writeInt(255);
+            data.writeInt(cookie);
             binder.transact(TRANSACTION_SET_FEATURE, data, reply, 0);
             reply.readException();
         } catch (RemoteException | RuntimeException e) {

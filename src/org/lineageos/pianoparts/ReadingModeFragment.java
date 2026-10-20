@@ -9,6 +9,9 @@ import static org.lineageos.pianoparts.ReadingModeController.LEVEL;
 import static org.lineageos.pianoparts.ReadingModeController.LEVEL_DEFAULT;
 import static org.lineageos.pianoparts.ReadingModeController.LEVEL_MAX;
 import static org.lineageos.pianoparts.ReadingModeController.LEVEL_MIN;
+import static org.lineageos.pianoparts.ReadingModeController.MODE_CLASSIC;
+import static org.lineageos.pianoparts.ReadingModeController.MODE_RHYTHMIC;
+import static org.lineageos.pianoparts.ReadingModeController.MODE_TYPE;
 import static org.lineageos.pianoparts.ReadingModeController.TEXTURE;
 import static org.lineageos.pianoparts.ReadingModeController.TEXTURE_DEFAULT;
 import static org.lineageos.pianoparts.ReadingModeController.TEXTURE_MAX;
@@ -34,6 +37,7 @@ public class ReadingModeFragment extends SettingsBasePreferenceFragment {
     private SeekBarPreference mLevel;
     private SeekBarPreference mTexture;
     private ListPreference mColors;
+    private ListPreference mMode;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -45,6 +49,13 @@ public class ReadingModeFragment extends SettingsBasePreferenceFragment {
         mSwitch.addOnSwitchChangeListener((view, checked) -> {
             mController.setEnabled(checked);
             updateEnabled(checked);
+        });
+
+        mMode = findPreference("reading_mode_type");
+        mMode.setOnPreferenceChangeListener((p, value) -> {
+            putInt(MODE_TYPE, Integer.parseInt((String) value));
+            updateEnabled(mController.isEnabled());
+            return true;
         });
 
         mLevel = findPreference("reading_level");
@@ -82,12 +93,16 @@ public class ReadingModeFragment extends SettingsBasePreferenceFragment {
         mLevel.setValue(getInt(LEVEL, LEVEL_DEFAULT));
         mTexture.setValue(getInt(TEXTURE, TEXTURE_DEFAULT));
         mColors.setValue(String.valueOf(getInt(COLOR_TYPE, 0)));
+        mMode.setValue(String.valueOf(getInt(MODE_TYPE, MODE_CLASSIC)));
         updateEnabled(enabled);
     }
 
     // Like stock, the effect can only be adjusted while reading mode is on.
     private void updateEnabled(boolean enabled) {
-        findPreference("reading_effect").setEnabled(enabled);
+        mMode.setEnabled(enabled);
+        // The classic adjustments do not apply to the rhythmic mode.
+        findPreference("reading_effect").setEnabled(enabled
+                && getInt(MODE_TYPE, MODE_CLASSIC) != MODE_RHYTHMIC);
     }
 
     private int getInt(String key, int def) {
