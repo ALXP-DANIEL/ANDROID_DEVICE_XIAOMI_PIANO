@@ -86,7 +86,8 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         val effectiveSetting = if (event.keyCode == KeyEvent.KEYCODE_BUTTON_7 && stylusType != 8)
             setting.copy(defaultValue = StylusSettingsContract.Action.RECENTS) else setting
         handler.post { handleEventOnMain(eventIdentity, effectiveSetting, stylusType) }
-        return event
+        return if (readAction(setting) == StylusSettingsContract.Action.LASER &&
+            stylusType in setOf(3, 8) && PenLaserController.isAvailable(context)) null else event
     }
 
     private fun handleEventOnMain(event: EventIdentity, setting: ButtonSetting, stylusType: Int) {
@@ -110,11 +111,10 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         }
 
         if (readAction(setting) == StylusSettingsContract.Action.LASER) {
-            // Like the stock P81C laser key: laser while the button is held.
-            if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
-                setLaser(true)
-            } else if (event.action != KeyEvent.ACTION_DOWN) {
-                setLaser(false)
+            if (stylusType in setOf(3, 8) && PenLaserController.isAvailable(context)) {
+                context.sendBroadcastAsUser(Intent(PenLaserController.KEY).setPackage(PARTS_PACKAGE)
+                    .putExtra("device", event.deviceId).putExtra("action", event.action)
+                    .putExtra("repeat", event.repeatCount), UserHandle.SYSTEM)
             }
             return
         }

@@ -54,6 +54,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     private var mippCommand: BluetoothGattCharacteristic? = null
     private var mippReply: BluetoothGattCharacteristic? = null
     private var mippSession: MippSession? = null
+    private val laserPresentation = PenLaserController(this.context, this.handler,
+        { mode -> mippSession?.laser(mode) },
+        { started && screenOn && status.penInitialized && firmwareAdapter == null })
     private var firmwareAdapter: SuotaGatt? = null
     private var firmwareImage: FirmwareImage? = null
     private val firmwareLoader = Executors.newSingleThreadExecutor()
@@ -488,6 +491,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                     context.contentResolver.registerContentObserver(Settings.System.getUriFor(it), false, controlObserver)
                 }
                 shortcutMenu.start()
+                laserPresentation.start()
                 chargingObserver.start()
                 Log.i(TAG, "Pen charger observer active; Bluetooth enabled=${adapter?.isEnabled == true}")
                 if (adapter?.isEnabled == true) {
@@ -517,6 +521,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             handler.removeCallbacks(pairingRetry)
             chargerAddress = null
             shortcutMenu.close()
+            laserPresentation.close()
             chargingObserver.close()
             context.contentResolver.unregisterContentObserver(controlObserver)
             handler.removeCallbacks(controlsChanged)
@@ -959,6 +964,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun closeGatt() {
+        laserPresentation.closePresentation()
         firmwareCheckGeneration++
         freshPenIdentity = false
         freshPenRevision = false
@@ -1065,6 +1071,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         handler.removeCallbacks(controlsChanged)
         shortcutMenu.hide()
         mippSession?.close(); mippSession = null
+        laserPresentation.closePresentation()
         status = status.copy(penInitialized = false, updateState = "updating", updateProgress = 0)
         publish()
         firmwareWakeLock.acquire(240_000L)
