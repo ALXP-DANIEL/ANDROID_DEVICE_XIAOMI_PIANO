@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <color name="features_hero_surface">#222738</color>
+    <color name="features_icon_surface">#2C3246</color>
+    <color name="features_device_frame">#7A859E</color>
+    <color name="features_device_screen">#303C5D</color>
+    <color name="features_device_wave">#6577B0</color>
+    <color name="features_device_light">#A7B6E3</color>
+    <color name="features_device_keys">#46516B</color>
+</resources>

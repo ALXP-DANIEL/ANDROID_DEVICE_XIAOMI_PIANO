@@ -34,7 +34,7 @@
     <string name="true_tone_title">Adaptive colors</string>
     <string name="bypass_charging_title">Bypass charging</string>
     <string name="keyboard_settings_title">Keyboard cover</string>
-    <string name="keyboard_settings_summary">Backlight, touchpad and firmware</string>
+    <string name="keyboard_settings_summary">Connection, shortcuts and updates</string>
     <string name="stylus_not_connected">Attach the Focus Pen to the tablet to change these settings</string>
     <string name="keyboard_not_connected">Attach the keyboard cover to change these settings</string>
     <string name="keyboard_backlight_auto_title">Automatic backlight</string>
@@ -94,7 +94,7 @@
     <string name="stylus_buttons_title">Pen buttons</string>
     <string name="stylus_buttons_summary">Use the pen buttons for shortcuts such as opening the notes app</string>
     <string name="pencil_engine_posture_title">Drawing app pen posture (experimental)</string>
-    <string name="pencil_engine_posture_summary">Use Xiaomi's posture touch mode while a supported drawing app is in front and your Focus Pen Pro is ready. No proprietary handwriting recognition. Off by default.</string>
+    <string name="pencil_engine_posture_summary">Use Xiaomi\'s posture touch mode while a supported drawing app is in front and your Focus Pen Pro is ready. No proprietary handwriting recognition. Off by default.</string>
     <string name="stylus_device_info_title">Device information</string>
     <string name="stylus_connection_title">Connection</string>
     <string name="stylus_battery_title">Battery</string>
