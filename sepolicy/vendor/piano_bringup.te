@@ -1,0 +1,33 @@
+# Bring-up rules from the build 9 permissive boot.
+binder_call(hal_hypsys_vendor, hal_misyscore_default)
+binder_call(hal_idmanager_default, vendor_hal_keymint_qti)
+allow hal_hypsys_vendor blackbox_block_device:blk_file { getattr open read write };
+allow hal_hypsys_vendor minidump_block_device:blk_file { getattr open read };
+allow hal_hypsys_vendor minidump_data_file:dir { add_name open read remove_name search write };
+allow hal_hypsys_vendor minidump_data_file:file { create open setattr unlink write };
+allow hal_hypsys_vendor self:netlink_kobject_uevent_socket { bind create read };
+allow hal_hypsys_vendor vendor_bsp_data_log_file:dir { add_name getattr open read remove_name search write };
+allow hal_hypsys_vendor vendor_bsp_data_log_file:file { append create getattr open read setattr unlink write };
+allow hal_hypsys_vendor vendor_camera_sensor_prop:file { getattr map open read };
+allow hal_hypsys_vendor vendor_sysfs_xm_power:dir { search };
+allow hal_hypsys_vendor vendor_sysfs_xm_power:file { getattr open read write };
+hal_client_domain(hal_idmanager_default, hal_keymint)
+allow hal_misyscore_default self:capability { fowner };
+allow hal_mtdservice_default mnt_vendor_file:dir { getattr search };
+allow hal_mtdservice_default vendor_persist_data_file:dir { search };
+allow vendor_location_lowi_server vendor_location:fd { use };
+allow vendor_modprobe self:capability { sys_nice };
+allow vendor_modprobe self:key { write };
+userdebug_or_eng(`
+  allow vendor_subsystem_ramdump self:capability { net_admin };
+  allow vendor_subsystem_ramdump vendor_bsp_data_log_file:dir { getattr };
+')
+allow vendor_wcnss_service vendor_persist_bluetooth_file:file { open read };
+binder_call(bootanim, vendor_hal_qspmhal_default)
+binder_call(surfaceflinger, vendor_hal_qspmhal_default)
+allow servicemanager vendor_hal_poweroptservice_qti:binder call;
+
+# Denials seen on build 11.
+binder_use(hal_minetaidlservice_default)
+wakelock_use(hal_hypsys_vendor)
+r_dir_file(hal_hypsys_vendor, vendor_sysfs_battery_supply)
