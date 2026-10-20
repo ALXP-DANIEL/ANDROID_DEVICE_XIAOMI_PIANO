@@ -24,6 +24,10 @@
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
 
     <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
         <intent><action android:name="android.intent.action.CREATE_NOTE" /></intent>
         <intent><action android:name="android.intent.action.ASSIST" /></intent>
     </queries>

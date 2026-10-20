@@ -1,0 +1,197 @@
+--- a/services/core/java/com/android/server/input/InputManagerService.java
++++ b/services/core/java/com/android/server/input/InputManagerService.java
+@@ -222,6 +222,7 @@
+ 
+     private final Context mContext;
+     private final InputManagerHandler mHandler;
++    private final PianoPenLaserBridge mPenLaserBridge;
+     private DisplayManagerInternal mDisplayManagerInternal;
+ 
+     private final File mDoubleTouchGestureEnableFile;
+@@ -570,6 +571,7 @@
+ 
+         mContext = injector.getContext();
+         mHandler = new InputManagerHandler(injector.getLooper());
++        mPenLaserBridge = new PianoPenLaserBridge(mContext, mHandler);
+         mNative = injector.getNativeService(this);
+         mSettingsObserver = new InputSettingsObserver(mContext, mHandler, this, mNative);
+         mKeyboardLayoutManager = new KeyboardLayoutManager(mContext, mNative, mDataStore,
+@@ -2912,6 +2914,12 @@
+ 
+     // Native callback.
+     @SuppressWarnings("unused")
++    final void notifyPenLaserBridgeAvailable() { mPenLaserBridge.markAvailable(); }
++
++    final boolean filterPenLaserMotion(int deviceId, float dx, float dy, int displayId) {
++        return mPenLaserBridge.filter(deviceId, dx, dy, displayId);
++    }
++
+     final float[] filterPointerMotion(float dx, float dy, float currentX, float currentY,
+             int displayId) {
+         // This call happens on the input hot path and it is extremely performance sensitive.
+--- a/services/core/jni/com_android_server_input_InputManagerService.cpp
++++ b/services/core/jni/com_android_server_input_InputManagerService.cpp
+@@ -129,6 +129,8 @@
+     jmethodID notifyVibratorState;
+     jmethodID filterInputEvent;
+     jmethodID filterPointerMotion;
++    jmethodID filterPenLaserMotion;
++    jmethodID notifyPenLaserBridgeAvailable;
+     jmethodID interceptKeyBeforeQueueing;
+     jmethodID interceptMotionBeforeQueueingNonInteractive;
+     jmethodID interceptKeyBeforeDispatching;
+@@ -496,12 +498,16 @@
+     virtual PointerIconStyle getDefaultStylusIconId();
+     virtual PointerIconStyle getCustomPointerIconId();
+ 
++    void notifyPenLaserBridgeAvailable();
++
+     /* --- PointerChoreographerPolicyInterface implementation --- */
+     std::shared_ptr<PointerControllerInterface> createPointerController(
+             PointerControllerInterface::ControllerType type) override;
+     void notifyPointerDisplayIdChanged(ui::LogicalDisplayId displayId,
+                                        const vec2& position) override;
+     void notifyMouseCursorFadedOnTyping() override;
++    bool filterPenLaserMotion(int32_t deviceId, const vec2& delta,
++                              ui::LogicalDisplayId displayId) override;
+     std::optional<vec2> filterPointerMotionForAccessibility(
+             const vec2& current, const vec2& delta, const ui::LogicalDisplayId& displayId) override;
+ 
+@@ -1054,6 +1060,21 @@
+     env->CallVoidMethod(mServiceObj, gServiceClassInfo.notifyStickyModifierStateChanged,
+                         modifierState, lockedModifierState);
+     checkAndClearExceptionFromCallback(env, "notifyStickyModifierStateChanged");
++}
++
++void NativeInputManager::notifyPenLaserBridgeAvailable() {
++    JNIEnv* env = jniEnv();
++    env->CallVoidMethod(mServiceObj, gServiceClassInfo.notifyPenLaserBridgeAvailable);
++    checkAndClearExceptionFromCallback(env, "notifyPenLaserBridgeAvailable");
++}
++
++bool NativeInputManager::filterPenLaserMotion(int32_t deviceId, const vec2& delta,
++                                             ui::LogicalDisplayId displayId) {
++    JNIEnv* env = jniEnv();
++    const jboolean handled = env->CallBooleanMethod(mServiceObj,
++            gServiceClassInfo.filterPenLaserMotion, deviceId, delta.x, delta.y, displayId.val());
++    if (checkAndClearExceptionFromCallback(env, "filterPenLaserMotion")) return false;
++    return handled;
+ }
+ 
+ std::optional<vec2> NativeInputManager::filterPointerMotionForAccessibility(
+@@ -2498,7 +2519,9 @@
+     status_t result = im->getInputManager()->start();
+     if (result) {
+         jniThrowRuntimeException(env, "Input manager could not be started.");
+-    }
++        return;
++    }
++    im->notifyPenLaserBridgeAvailable();
+ }
+ 
+ static void nativeSetDisplayViewports(JNIEnv* env, jobject nativeImplObj,
+@@ -3900,6 +3923,9 @@
+     GET_METHOD_ID(gServiceClassInfo.filterInputEvent, clazz,
+             "filterInputEvent", "(Landroid/view/InputEvent;I)Z");
+ 
++    GET_METHOD_ID(gServiceClassInfo.notifyPenLaserBridgeAvailable, clazz,
++                  "notifyPenLaserBridgeAvailable", "()V");
++    GET_METHOD_ID(gServiceClassInfo.filterPenLaserMotion, clazz, "filterPenLaserMotion", "(IFFI)Z");
+     GET_METHOD_ID(gServiceClassInfo.filterPointerMotion, clazz, "filterPointerMotion", "(FFFFI)[F");
+ 
+     GET_METHOD_ID(gServiceClassInfo.interceptKeyBeforeQueueing, clazz,
+--- /dev/null
++++ b/services/core/java/com/android/server/input/PianoPenLaserBridge.java
+@@ -0,0 +1,79 @@
++/* SPDX-License-Identifier: Apache-2.0 */
++package com.android.server.input;
++
++import android.content.BroadcastReceiver;
++import android.content.Context;
++import android.content.Intent;
++import android.content.IntentFilter;
++import android.database.ContentObserver;
++import android.os.Handler;
++import android.os.SystemClock;
++import android.os.UserHandle;
++import android.provider.Settings;
++
++/** Native input hot path posts bounded/coalesced pen deltas; never calls native recursively. */
++final class PianoPenLaserBridge {
++    static final String CONTROL = "org.lineageos.pianoparts.action.LASER_CONTROL";
++    static final String MOTION = "org.lineageos.pianoparts.action.LASER_MOTION";
++    private final Context mContext;
++    private final Handler mHandler;
++    private final Object mLock = new Object();
++    private int mDevice = -1;
++    private boolean mActive, mPosted;
++    private long mGeneration;
++    private volatile boolean mNativeReady;
++    private float mDx, mDy;
++    private long mHeartbeat;
++    PianoPenLaserBridge(Context context, Handler handler) {
++        mContext = context; mHandler = handler;
++        Settings.Global.putInt(context.getContentResolver(), "piano_pen_laser_bridge", -1);
++        context.getContentResolver().registerContentObserver(Settings.Global.getUriFor(Settings.Global.BOOT_COUNT), false,
++                new ContentObserver(handler) {
++                    @Override public void onChange(boolean selfChange) { publishAvailability(); }
++                });
++        context.registerReceiver(new BroadcastReceiver() {
++            @Override public void onReceive(Context c, Intent intent) {
++                synchronized (mLock) {
++                    boolean active = intent.getBooleanExtra("active", false);
++                    int device = intent.getIntExtra("device", -1);
++                    if (active != mActive || device != mDevice) {
++                        mGeneration++; mDx = mDy = 0; mPosted = false;
++                    }
++                    mActive = active; mDevice = device;
++                    mHeartbeat = SystemClock.uptimeMillis();
++                    if (!mActive) { mDx = mDy = 0; }
++                }
++            }
++        }, new IntentFilter(CONTROL), null, handler, Context.RECEIVER_NOT_EXPORTED);
++    }
++    boolean filter(int device, float dx, float dy, int display) {
++        if (display != 0 || !Float.isFinite(dx) || !Float.isFinite(dy)) return false;
++        synchronized (mLock) {
++            // Parts death/missing teardown must never leave an accessory swallowing app input.
++            if (!PianoPenLaserLease.accepts(mActive, mDevice, device, SystemClock.uptimeMillis(), mHeartbeat)) return false;
++            mDx += dx; mDy += dy;
++            if (!mPosted) { mPosted = true; long generation = mGeneration; mHandler.postDelayed(() -> flush(generation), 16); }
++            return true;
++        }
++    }
++    void markAvailable() {
++        mNativeReady = true;
++        mHandler.post(this::publishAvailability);
++    }
++    private void publishAvailability() {
++        if (!mNativeReady) return;
++        int bootCount = Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.BOOT_COUNT, -1);
++        Settings.Global.putInt(mContext.getContentResolver(), "piano_pen_laser_bridge", bootCount);
++    }
++    private void flush(long generation) {
++        float dx, dy; int device;
++        synchronized (mLock) {
++            if (generation != mGeneration) return;
++            mPosted = false;
++            if (!PianoPenLaserLease.accepts(mActive, mDevice, mDevice, SystemClock.uptimeMillis(), mHeartbeat)) { mDx = mDy = 0; return; }
++            dx = mDx; dy = mDy; device = mDevice; mDx = mDy = 0;
++        }
++        mContext.sendBroadcastAsUser(new Intent(MOTION).setPackage("org.lineageos.pianoparts")
++                .putExtra("device", device).putExtra("dx", dx).putExtra("dy", dy), UserHandle.SYSTEM);
++    }
++}
+--- /dev/null
++++ b/services/core/java/com/android/server/input/PianoPenLaserLease.java
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: Apache-2.0 */
++package com.android.server.input;
++
++/** Fail-open monotonic heartbeat lease for the native pen interception hot path. */
++final class PianoPenLaserLease {
++    static boolean accepts(boolean active, int selectedDevice, int incomingDevice, long now, long heartbeat) {
++        return active && selectedDevice >= 0 && selectedDevice == incomingDevice &&
++                now >= heartbeat && now - heartbeat <= 5000;
++    }
++}
