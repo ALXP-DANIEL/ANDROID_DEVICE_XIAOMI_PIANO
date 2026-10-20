@@ -38,6 +38,12 @@
         android:persistent="true"
         android:directBootAware="true">
 
+        <!-- Same-UID, non-exported low-latency motion transport from system_server. -->
+        <service
+            android:name=".stylus.PenLaserMotionService"
+            android:exported="false"
+            android:directBootAware="true" />
+
         <service
             android:name=".ThermalProfileTileService"
             android:icon="@drawable/ic_thermal_tile"

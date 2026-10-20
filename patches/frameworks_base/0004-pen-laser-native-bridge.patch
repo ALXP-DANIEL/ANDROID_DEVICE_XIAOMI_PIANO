@@ -101,17 +101,25 @@
  
      GET_METHOD_ID(gServiceClassInfo.interceptKeyBeforeQueueing, clazz,
 --- /dev/null
+--- /dev/null
 +++ b/services/core/java/com/android/server/input/PianoPenLaserBridge.java
-@@ -0,0 +1,79 @@
+@@ -0,0 +1,186 @@
 +/* SPDX-License-Identifier: Apache-2.0 */
 +package com.android.server.input;
 +
 +import android.content.BroadcastReceiver;
++import android.content.ComponentName;
++import android.content.ServiceConnection;
 +import android.content.Context;
 +import android.content.Intent;
 +import android.content.IntentFilter;
 +import android.database.ContentObserver;
++import android.os.Bundle;
 +import android.os.Handler;
++import android.os.IBinder;
++import android.os.Message;
++import android.os.Messenger;
++import android.os.RemoteException;
 +import android.os.SystemClock;
 +import android.os.UserHandle;
 +import android.provider.Settings;
@@ -120,6 +128,10 @@
 +final class PianoPenLaserBridge {
 +    static final String CONTROL = "org.lineageos.pianoparts.action.LASER_CONTROL";
 +    static final String MOTION = "org.lineageos.pianoparts.action.LASER_MOTION";
++    private static final ComponentName MOTION_SERVICE = new ComponentName(
++            "org.lineageos.pianoparts",
++            "org.lineageos.pianoparts.stylus.PenLaserMotionService");
++    private static final int MSG_MOTION = 1;
 +    private final Context mContext;
 +    private final Handler mHandler;
 +    private final Object mLock = new Object();
@@ -129,6 +141,30 @@
 +    private volatile boolean mNativeReady;
 +    private float mDx, mDy;
 +    private long mHeartbeat;
++    // Stock consumes registered laser motion even when its view is hidden.
++    // Bound that behavior to a short shutdown window, so a crashed Parts
++    // process cannot permanently block normal pen or mouse input.
++    private int mStoppedDevice = -1;
++    private long mStoppedAt;
++    private boolean mBinding;
++    private Messenger mMotionMessenger;
++    private final ServiceConnection mMotionConnection = new ServiceConnection() {
++        @Override public void onServiceConnected(ComponentName name, IBinder binder) {
++            synchronized (mLock) {
++                if (mBinding) mMotionMessenger = new Messenger(binder);
++            }
++        }
++        @Override public void onServiceDisconnected(ComponentName name) {
++            synchronized (mLock) { mMotionMessenger = null; }
++        }
++        @Override public void onNullBinding(ComponentName name) {
++            // The Parts renderer is not ready yet; let the next 2s heartbeat retry.
++            mHandler.post(() -> setMotionServiceBound(false));
++        }
++        @Override public void onBindingDied(ComponentName name) {
++            mHandler.post(() -> setMotionServiceBound(false));
++        }
++    };
 +    PianoPenLaserBridge(Context context, Handler handler) {
 +        mContext = context; mHandler = handler;
 +        Settings.Global.putInt(context.getContentResolver(), "piano_pen_laser_bridge", -1);
@@ -138,9 +174,15 @@
 +                });
 +        context.registerReceiver(new BroadcastReceiver() {
 +            @Override public void onReceive(Context c, Intent intent) {
++                final boolean active = intent.getBooleanExtra("active", false);
++                final int device = intent.getIntExtra("device", -1);
 +                synchronized (mLock) {
-+                    boolean active = intent.getBooleanExtra("active", false);
-+                    int device = intent.getIntExtra("device", -1);
++                    if (!active && mActive && mDevice >= 0) {
++                        mStoppedDevice = mDevice;
++                        mStoppedAt = SystemClock.uptimeMillis();
++                    } else if (active) {
++                        mStoppedDevice = -1;
++                    }
 +                    if (active != mActive || device != mDevice) {
 +                        mGeneration++; mDx = mDy = 0; mPosted = false;
 +                    }
@@ -148,6 +190,8 @@
 +                    mHeartbeat = SystemClock.uptimeMillis();
 +                    if (!mActive) { mDx = mDy = 0; }
 +                }
++                // Binding is triggered by control/heartbeat, never from input threads.
++                setMotionServiceBound(active);
 +            }
 +        }, new IntentFilter(CONTROL), null, handler, Context.RECEIVER_NOT_EXPORTED);
 +    }
@@ -155,9 +199,24 @@
 +        if (display != 0 || !Float.isFinite(dx) || !Float.isFinite(dy)) return false;
 +        synchronized (mLock) {
 +            // Parts death/missing teardown must never leave an accessory swallowing app input.
-+            if (!PianoPenLaserLease.accepts(mActive, mDevice, device, SystemClock.uptimeMillis(), mHeartbeat)) return false;
++            final long now = SystemClock.uptimeMillis();
++            if (!PianoPenLaserLease.accepts(mActive, mDevice, device, now, mHeartbeat)) {
++                // Never deliver post-close air-pointer movement to applications
++                // while the firmware is still leaving laser mode.
++                return PianoPenLaserLease.suppressesRecentlyStopped(
++                        mStoppedDevice, device, now, mStoppedAt);
++            }
 +            mDx += dx; mDy += dy;
-+            if (!mPosted) { mPosted = true; long generation = mGeneration; mHandler.postDelayed(() -> flush(generation), 16); }
++            if (!mPosted) {
++                mPosted = true;
++                final long generation = mGeneration;
++                // The system-server handler coalesces bursts without an added 16ms timer.
++                if (!mHandler.post(() -> flush(generation))) {
++                    mPosted = false;
++                    mDx = mDy = 0;
++                    return false;
++                }
++            }
 +            return true;
 +        }
 +    }
@@ -170,6 +229,35 @@
 +        int bootCount = Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.BOOT_COUNT, -1);
 +        Settings.Global.putInt(mContext.getContentResolver(), "piano_pen_laser_bridge", bootCount);
 +    }
++    private void setMotionServiceBound(boolean active) {
++        final boolean changed;
++        synchronized (mLock) {
++            changed = mBinding != active;
++            if (!changed) return;
++            mBinding = active;
++            if (!active) mMotionMessenger = null;
++        }
++        if (active) {
++            boolean bound = false;
++            try {
++                bound = mContext.bindServiceAsUser(
++                        new Intent().setComponent(MOTION_SERVICE), mMotionConnection,
++                        Context.BIND_AUTO_CREATE, UserHandle.SYSTEM);
++            } catch (RuntimeException ignored) {
++                // Continue using the existing system-only broadcast fallback.
++            }
++            if (!bound) {
++                synchronized (mLock) { mBinding = false; mMotionMessenger = null; }
++            }
++        } else {
++            try {
++                mContext.unbindService(mMotionConnection);
++            } catch (IllegalArgumentException ignored) {
++                // The service connection may have already died.
++            }
++        }
++    }
++
 +    private void flush(long generation) {
 +        float dx, dy; int device;
 +        synchronized (mLock) {
@@ -178,13 +266,33 @@
 +            if (!PianoPenLaserLease.accepts(mActive, mDevice, mDevice, SystemClock.uptimeMillis(), mHeartbeat)) { mDx = mDy = 0; return; }
 +            dx = mDx; dy = mDy; device = mDevice; mDx = mDy = 0;
 +        }
++        if (!Float.isFinite(dx) || !Float.isFinite(dy)) return;
++        Messenger sink;
++        synchronized (mLock) { sink = mMotionMessenger; }
++        if (sink != null) {
++            Message message = Message.obtain(null, MSG_MOTION);
++            Bundle data = new Bundle();
++            data.putInt("device", device);
++            data.putFloat("dx", dx);
++            data.putFloat("dy", dy);
++            message.setData(data);
++            try {
++                sink.send(message);
++                return;
++            } catch (RemoteException ignored) {
++                synchronized (mLock) {
++                    if (mMotionMessenger == sink) mMotionMessenger = null;
++                }
++            }
++        }
++        // Startup, restart or binder failure: keep laser motion functional.
 +        mContext.sendBroadcastAsUser(new Intent(MOTION).setPackage("org.lineageos.pianoparts")
 +                .putExtra("device", device).putExtra("dx", dx).putExtra("dy", dy), UserHandle.SYSTEM);
 +    }
 +}
 --- /dev/null
 +++ b/services/core/java/com/android/server/input/PianoPenLaserLease.java
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,17 @@
 +/* SPDX-License-Identifier: Apache-2.0 */
 +package com.android.server.input;
 +
@@ -193,5 +301,12 @@
 +    static boolean accepts(boolean active, int selectedDevice, int incomingDevice, long now, long heartbeat) {
 +        return active && selectedDevice >= 0 && selectedDevice == incomingDevice &&
 +                now >= heartbeat && now - heartbeat <= 5000;
++    }
++
++    /** Short, device-specific drain after explicit laser shutdown; never permanent. */
++    static boolean suppressesRecentlyStopped(int stoppedDevice, int incomingDevice,
++            long now, long stoppedAt) {
++        return stoppedDevice >= 0 && stoppedDevice == incomingDevice &&
++                now >= stoppedAt && now - stoppedAt <= 1500;
 +    }
 +}

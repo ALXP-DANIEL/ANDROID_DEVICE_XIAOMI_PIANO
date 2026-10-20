@@ -1,0 +1,43 @@
+--- a/services/inputflinger/include/InputReaderBase.h
++++ b/services/inputflinger/include/InputReaderBase.h
+@@ -443,6 +443,9 @@
+     virtual ~InputReaderPolicyInterface() { }
+ 
+ public:
++    // Native policy passes drawing state directly to input reader; no JNI in hot path.
++    virtual bool isPenLaserDrawingDevice(int32_t /*deviceId*/) { return false; }
++
+     /* Gets the input reader configuration. */
+     virtual void getReaderConfiguration(InputReaderConfiguration* outConfig) = 0;
+ 
+--- a/services/inputflinger/reader/mapper/CursorInputMapper.cpp
++++ b/services/inputflinger/reader/mapper/CursorInputMapper.cpp
+@@ -282,10 +282,24 @@
+     mWheelYVelocityControl.move(when, nullptr, &vscroll);
+     mWheelXVelocityControl.move(when, &hscroll, nullptr);
+ 
+-    if (mEnableNewMousePointerBallistics) {
+-        mNewPointerVelocityControl.move(when, &deltaX, &deltaY);
+-    } else {
+-        mOldPointerVelocityControl.move(when, &deltaX, &deltaY);
++    // HyperOS .44 bypasses POINTER acceleration only while the selected
++    // gen3/gen8 Xiaomi air-pen is drawing. Wheel controls above stay unchanged.
++    const auto& identifier = getDeviceContext().getDeviceIdentifier();
++    const bool isXiaomiLaserMouse = identifier.vendor == 34 &&
++            (identifier.product == 19840 || identifier.product == 12928 ||
++             identifier.product == 20609 || identifier.product == 12929) &&
++            mParameters.mode == Parameters::Mode::POINTER && mSource == AINPUT_SOURCE_MOUSE;
++    // Xiaomi's separate mirrored-input HID is always in the stock velocity
++    // bypass device set, independent of the pen laser drawing state.
++    const bool stockMirrorHid = identifier.vendor == 10007 && identifier.product == 25975;
++    const bool bypassLaserAcceleration = stockMirrorHid || (isXiaomiLaserMouse &&
++            getContext()->getPolicy()->isPenLaserDrawingDevice(getDeviceId()));
++    if (!bypassLaserAcceleration) {
++        if (mEnableNewMousePointerBallistics) {
++            mNewPointerVelocityControl.move(when, &deltaX, &deltaY);
++        } else {
++            mOldPointerVelocityControl.move(when, &deltaX, &deltaY);
++        }
+     }
+ 
+     float xCursorPosition = AMOTION_EVENT_INVALID_CURSOR_POSITION;
