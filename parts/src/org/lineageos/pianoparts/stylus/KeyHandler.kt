@@ -83,7 +83,9 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
             event.eventTime,
         )
         val stylusType = XiaomiStylusDevice.typeOf(event.device)
-        handler.post { handleEventOnMain(eventIdentity, setting, stylusType) }
+        val effectiveSetting = if (event.keyCode == KeyEvent.KEYCODE_BUTTON_7 && stylusType != 8)
+            setting.copy(defaultValue = StylusSettingsContract.Action.RECENTS) else setting
+        handler.post { handleEventOnMain(eventIdentity, effectiveSetting, stylusType) }
         return event
     }
 
@@ -211,6 +213,12 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
     }
 
     private fun executeAction(action: String) {
+        if (action == StylusSettingsContract.Action.MENU) {
+            context.sendBroadcastAsUser(Intent(StylusSettingsContract.ACTION_SHOW_MENU)
+                .setPackage(PARTS_PACKAGE).putExtra("x", stylusTouchMonitor.hoverX)
+                .putExtra("y", stylusTouchMonitor.hoverY), UserHandle.SYSTEM)
+            return
+        }
         try {
             StylusActions.run(context, handler, action)
         } catch (exception: RuntimeException) {
@@ -224,6 +232,11 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
     ) {
         private val inputManager = context.getSystemService(InputManager::class.java)
 
+        var hoverX = -1f
+            private set
+        var hoverY = -1f
+            private set
+        init { handler.post { ensureMonitor() } }
         private var inputMonitor: InputMonitor? = null
         private var inputReceiver: InputEventReceiver? = null
         private var armedKeyCode = KeyEvent.KEYCODE_UNKNOWN
@@ -277,6 +290,14 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         }
 
         private fun handleMotionEvent(event: MotionEvent) {
+            if (event.isFromSource(InputDevice.SOURCE_STYLUS) && event.displayId == Display.DEFAULT_DISPLAY) {
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_HOVER_EXIT -> { hoverX = -1f; hoverY = -1f }
+                    MotionEvent.ACTION_HOVER_ENTER, MotionEvent.ACTION_HOVER_MOVE, MotionEvent.ACTION_MOVE -> {
+                        hoverX = event.x; hoverY = event.y
+                    }
+                }
+            }
             if (armedAction == null || event.actionMasked != MotionEvent.ACTION_DOWN ||
                 !event.isFromSource(InputDevice.SOURCE_STYLUS) ||
                 event.getToolType(event.actionIndex) != MotionEvent.TOOL_TYPE_STYLUS

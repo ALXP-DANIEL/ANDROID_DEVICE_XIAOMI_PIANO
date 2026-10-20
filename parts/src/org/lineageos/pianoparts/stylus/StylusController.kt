@@ -21,12 +21,18 @@ import android.content.IntentFilter
 import android.os.Handler
 import android.os.SystemClock
 import android.os.PowerManager
+import android.hardware.input.InputManager
 import android.database.ContentObserver
 import android.provider.Settings
 import android.util.Log
 import java.util.ArrayDeque
 import java.util.Locale
 import java.util.UUID
+import java.util.concurrent.Executors
+import org.lineageos.pianoparts.stylus.firmware.FirmwareImage
+import org.lineageos.pianoparts.stylus.firmware.PenFirmwareRepository
+import org.lineageos.pianoparts.stylus.firmware.SuotaGatt
+import org.lineageos.pianoparts.stylus.firmware.SuotaV1
 
 /** Magnetic charger pairing, MIPP touch initialization and Bluetooth information. */
 class StylusController(context: Context, handler: Handler) : AutoCloseable {
@@ -48,10 +54,62 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     private var mippCommand: BluetoothGattCharacteristic? = null
     private var mippReply: BluetoothGattCharacteristic? = null
     private var mippSession: MippSession? = null
+    private var firmwareAdapter: SuotaGatt? = null
+    private var firmwareImage: FirmwareImage? = null
+    private val firmwareLoader = Executors.newSingleThreadExecutor()
+    private var firmwareCheckGeneration = 0
+    private var freshPenIdentity = false
+    private var freshPenRevision = false
+    private var freshPenBattery = false
+    private var firmwareBeginPending = false
+    private var firmwareImageRevision: String? = null
+    private var firmwareVerifying = false
+    private var firmwareAddress: String? = null
+    private val firmwareWakeLock = context.getSystemService(PowerManager::class.java)
+        .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PianoStylus:firmware")
+    private val firmwareVerifyTimeout = Runnable { finishFirmware("failed") }
+    private val firmwareReconnect = object : Runnable {
+        override fun run() {
+            if (!started || !firmwareVerifying) return
+            if (adapter?.isEnabled == true && gatt == null && status.address == firmwareAddress) {
+                gattAttempts = 0
+                currentDevice()?.let { connect(it); if (gatt == null) openGatt(it) }
+            }
+            handler.postDelayed(this, 2_000L)
+        }
+    }
+    private val firmwareReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) { dispatch {
+            if (!started || closed) return@dispatch
+            when (intent.action) {
+                ACTION_CHECK_FIRMWARE -> checkFirmware()
+                ACTION_UPDATE_FIRMWARE -> beginFirmware()
+            }
+        } }
+    }
+    private val shortcutMenu = PenShortcutMenu(this.context, this.handler) {
+        started && screenOn && status.penInitialized
+    }
     private val touchClient = PenTouchClient()
     private var screenOn = context.getSystemService(PowerManager::class.java).isInteractive
+    private val inputManager = context.getSystemService(InputManager::class.java)
+    private val penInputs = mutableMapOf<Int, Int>()
+    private val controlsChanged = Runnable { applyPenControls() }
+    private val inputListener = object : InputManager.InputDeviceListener {
+        override fun onInputDeviceAdded(id: Int) = updatePenInput(id)
+        override fun onInputDeviceChanged(id: Int) = updatePenInput(id)
+        override fun onInputDeviceRemoved(id: Int) {
+            penInputs.remove(id)?.let {
+                touchClient.setMode(20, it)
+                Settings.Secure.putInt(context.contentResolver, "setting_stylus_version", 0)
+            }
+        }
+    }
     private val controlObserver = object : ContentObserver(this.handler) {
-        override fun onChange(selfChange: Boolean) { dispatch { applyPenControls() } }
+        override fun onChange(selfChange: Boolean) {
+            handler.removeCallbacks(controlsChanged)
+            handler.postDelayed(controlsChanged, 100L)
+        }
     }
     private var gattAttempts = 0
     private var hibernating = false
@@ -234,6 +292,11 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         override fun onDescriptorWrite(client: BluetoothGatt, descriptor: BluetoothGattDescriptor, result: Int) {
             dispatch {
                 if (client !== gatt || descriptor.uuid != CLIENT_CONFIG) return@dispatch
+                firmwareAdapter?.takeUnless { firmwareVerifying }?.let {
+                    it.onDescriptorWrite(descriptor.characteristic.uuid, result)
+                    if (it.isPrepared) it.start()
+                    return@dispatch
+                }
                 if (descriptor.characteristic.uuid == MIPP_REPLY) {
                     if (result != BluetoothGatt.GATT_SUCCESS || !client.requestMtu(512)) {
                         closeGatt()
@@ -245,6 +308,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         override fun onMtuChanged(client: BluetoothGatt, mtu: Int, result: Int) {
             dispatch {
                 if (client !== gatt) return@dispatch
+                firmwareAdapter?.takeUnless { firmwareVerifying }?.let {
+                    it.onMtuChanged(mtu, result); return@dispatch
+                }
                 handler.removeCallbacks(gattTimeout)
                 if (result != BluetoothGatt.GATT_SUCCESS || mtu < 35) closeGatt()
                 else startMipp()
@@ -255,7 +321,11 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             client: BluetoothGatt, characteristic: BluetoothGattCharacteristic, result: Int,
         ) {
             dispatch {
-                if (client !== gatt || characteristic.uuid != MIPP_COMMAND) return@dispatch
+                if (client !== gatt) return@dispatch
+                firmwareAdapter?.takeUnless { firmwareVerifying }?.let {
+                    it.onCharacteristicWrite(characteristic.uuid, result); return@dispatch
+                }
+                if (characteristic.uuid != MIPP_COMMAND) return@dispatch
                 val write = activeWrite ?: return@dispatch
                 if (result != BluetoothGatt.GATT_SUCCESS) {
                     Log.w(TAG, "Pen write failed: $result")
@@ -274,20 +344,40 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             result: Int,
         ) {
             dispatch {
-                if (client !== gatt || pendingReads.peek()?.uuid != characteristic.uuid) return@dispatch
+                if (client !== gatt) return@dispatch
+                firmwareAdapter?.takeUnless { firmwareVerifying }?.let {
+                    it.onCharacteristicRead(characteristic.uuid, value, result); return@dispatch
+                }
+                if (firmwareBeginPending && characteristic.uuid == BATTERY) {
+                    firmwareBeginPending = false
+                    handler.removeCallbacks(gattTimeout)
+                    val battery = value.firstOrNull()?.toInt()?.and(0xff)
+                    freshPenBattery = result == BluetoothGatt.GATT_SUCCESS && battery != null && battery in 0..100
+                    if (freshPenBattery) { setBattery(battery!!); checkFirmware(true) }
+                    else { status = status.copy(updateState = "not_ready"); publish() }
+                    writeNext()
+                    return@dispatch
+                }
+                if (pendingReads.peek()?.uuid != characteristic.uuid) return@dispatch
                 if (result == BluetoothGatt.GATT_SUCCESS) {
                     when (characteristic.uuid) {
-                        BATTERY -> value.firstOrNull()?.let { setBattery(it.toInt() and 0xff) }
+                        BATTERY -> value.firstOrNull()?.let {
+                            val level = it.toInt() and 0xff
+                            if (level in 0..100) { freshPenBattery = true; setBattery(level) }
+                        }
                         FIRMWARE -> {
                             status = status.copy(
                                 firmwareRevision = value.toString(Charsets.UTF_8)
                                     .trimEnd('\u0000').takeIf(String::isNotBlank),
                             )
+                            freshPenRevision = status.firmwareRevision != null
                         }
                         PNP_ID -> if (value.size >= 7) {
                             status = status.copy(vendorId = value.unsignedShort(1), productId = value.unsignedShort(3))
+                            freshPenIdentity = true
                         }
                     }
+                    verifyFirmwareIdentity()
                     publish()
                 }
                 pendingReads.removeFirst()
@@ -302,6 +392,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         ) {
             dispatch {
                 if (client !== gatt) return@dispatch
+                firmwareAdapter?.takeUnless { firmwareVerifying }?.let {
+                    it.onNotification(characteristic.uuid, value); return@dispatch
+                }
                 if (characteristic.uuid == BATTERY) {
                     value.firstOrNull()?.let { setBattery(it.toInt() and 0xff) }
                 } else if (characteristic.uuid == MIPP_REPLY) {
@@ -348,6 +441,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                     Context.RECEIVER_EXPORTED,
                 )
                 receiverRegistered = true
+                context.registerReceiver(firmwareReceiver, IntentFilter().apply {
+                    addAction(ACTION_CHECK_FIRMWARE); addAction(ACTION_UPDATE_FIRMWARE)
+                }, null, handler, Context.RECEIVER_NOT_EXPORTED)
                 context.registerReceiver(
                     laserReceiver,
                     IntentFilter(StylusSettingsContract.ACTION_LASER_MODE).apply {
@@ -357,9 +453,13 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                     handler,
                     Context.RECEIVER_NOT_EXPORTED,
                 )
+                touchClient.setMode(20, -1)
+                inputManager.registerInputDeviceListener(inputListener, handler)
+                inputManager.inputDeviceIds.forEach(::updatePenInput)
                 PenControls.keys.forEach {
                     context.contentResolver.registerContentObserver(Settings.System.getUriFor(it), false, controlObserver)
                 }
+                shortcutMenu.start()
                 chargingObserver.start()
                 if (adapter?.isEnabled == true) {
                     requestProfile()
@@ -380,12 +480,22 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             if (closed) return@post
             closed = true
             started = false
+            firmwareCheckGeneration++
+            firmwareLoader.shutdownNow()
+            firmwareAdapter?.cancel()
+            if (firmwareAdapter != null || firmwareVerifying) finishFirmware("failed")
             handler.removeCallbacks(connectionTimeout)
+            shortcutMenu.close()
             chargingObserver.close()
             context.contentResolver.unregisterContentObserver(controlObserver)
+            handler.removeCallbacks(controlsChanged)
+            inputManager.unregisterInputDeviceListener(inputListener)
+            penInputs.clear()
+            touchClient.setMode(20, -1)
             if (receiverRegistered) {
                 context.unregisterReceiver(receiver)
                 context.unregisterReceiver(laserReceiver)
+                context.unregisterReceiver(firmwareReceiver)
                 receiverRegistered = false
             }
             scanner?.close()
@@ -430,6 +540,15 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun onPenAddress(address: String) {
+        if (firmwareAdapter != null && address != firmwareAddress) {
+            firmwareAdapter?.cancel()
+            finishFirmware("failed")
+        }
+        if (address != status.address) {
+            firmwareCheckGeneration++
+            firmwareImage = null
+            firmwareImageRevision = null
+        }
         if (address != status.address) gattAttempts = 0
         removePreviousPenBond(address)
         if (address != status.address) {
@@ -567,6 +686,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun openGatt(device: BluetoothDevice) {
+        freshPenIdentity = false
+        freshPenBattery = false
+        freshPenRevision = false
         if (gattAttempts >= 3) {
             Log.w(TAG, "Pen initialization retry limit reached; dock again to retry")
             return
@@ -603,6 +725,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun startMipp() {
+        // Retry generation notification if the touch HAL was unavailable at Parts startup.
+        inputManager.inputDeviceIds.forEach(::updatePenInput)
         val address = PenUEventObserver.normalizeAddress(adapter?.address)
         if (address == null || address == "02:00:00:00:00:00") {
             Log.w(TAG, "Cannot initialize pen without the tablet Bluetooth address")
@@ -618,6 +742,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 publish()
                 if (PenControls.isTouchFilm(status)) mippSession?.screen(screenOn)
                 applyPenControls()
+                if (firmwareAdapter == null && status.updateState != "complete") checkFirmware()
             },
             onDocked = { setDocked(it); publish() },
             onError = { status = status.copy(penError = it); publish() },
@@ -638,6 +763,18 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         return true
     }
 
+    private fun updatePenInput(id: Int) {
+        val type = XiaomiStylusDevice.typeOf(inputManager.getInputDevice(id))
+        if (type == 0) {
+            penInputs.remove(id)?.let { touchClient.setMode(20, it) }
+            return
+        }
+        if (type != 0 && penInputs[id] != type) {
+            if (touchClient.setMode(20, type or 16)) penInputs[id] = type
+            Settings.Secure.putInt(context.contentResolver, "setting_stylus_version", type)
+        }
+    }
+
     private fun applyPenControls() {
         val session = mippSession ?: return
         if (!session.initialized) return
@@ -650,6 +787,11 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun queueWrite(bytes: ByteArray, opcode: Int, complete: (ByteArray) -> Unit) {
+        if (firmwareAdapter != null && !firmwareVerifying) return
+        if (mippSession?.initialized == true && bytes.isNotEmpty()) {
+            // Stock replaces queued runtime settings by opcode; never alter the initializer.
+            pendingWrites.removeIf { it.bytes.firstOrNull() == bytes[0] }
+        }
         if (pendingWrites.size >= 32) {
             Log.w(TAG, "Pen command queue overflow")
             closeGatt()
@@ -660,7 +802,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun writeNext() {
-        if (activeWrite != null || pendingWrites.isEmpty()) return
+        if (firmwareBeginPending || activeWrite != null || pendingWrites.isEmpty()) return
         val client = gatt ?: return
         val command = mippCommand ?: return
         val write = pendingWrites.removeFirst()
@@ -703,8 +845,20 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun closeGatt() {
+        firmwareCheckGeneration++
+        freshPenIdentity = false
+        freshPenRevision = false
+        freshPenBattery = false
+        firmwareBeginPending = false
+        if (!firmwareVerifying) {
+            firmwareAdapter?.let { adapter ->
+                firmwareAdapter = null
+                adapter.disconnected()
+            }
+        }
         handler.removeCallbacks(reconnectGatt)
         handler.removeCallbacks(sleepPen)
+        shortcutMenu.hide()
         mippSession?.close()
         mippSession = null
         status = status.copy(penInitialized = false, features = null)
@@ -730,6 +884,124 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun currentDevice(): BluetoothDevice? = status.address?.let { adapter?.getRemoteDevice(it) }
+
+    private fun checkFirmware(startUpdate: Boolean = false) {
+        if (!started || firmwareAdapter != null) return
+        val generation = ++firmwareCheckGeneration
+        val client = gatt
+        val snapshot = status
+        firmwareImage = null
+        firmwareLoader.execute {
+            var image: FirmwareImage? = null
+            val state = if (snapshot.vendorId != 34 || snapshot.productId != 20609) "unsupported" else {
+                try {
+                    image = PenFirmwareRepository.find(34, 20609, snapshot.firmwareRevision)
+                    if (image == null) "unavailable" else "available"
+                } catch (exception: Exception) {
+                    Log.w(TAG, "Bundled pen firmware validation failed", exception)
+                    "invalid"
+                }
+            }
+            handler.post {
+                if (!started || generation != firmwareCheckGeneration || client !== gatt ||
+                    snapshot.address != status.address || snapshot.firmwareRevision != status.firmwareRevision ||
+                    snapshot.vendorId != status.vendorId || snapshot.productId != status.productId) return@post
+                firmwareImage = image
+                firmwareImageRevision = snapshot.firmwareRevision
+                status = status.copy(updateState = state, updateVersion = image?.manifest?.targetVersion, updateProgress = 0)
+                publish()
+                if (startUpdate) startFirmware()
+            }
+        }
+    }
+
+    private fun beginFirmware() {
+        if (firmwareAdapter != null || firmwareBeginPending || firmwareImage == null) return
+        val client = gatt ?: return
+        if (!freshPenIdentity || !freshPenRevision || !status.penInitialized ||
+            activeWrite != null || pendingWrites.isNotEmpty() || pendingReads.isNotEmpty()) return
+        val battery = client.getService(BATTERY_SERVICE)?.getCharacteristic(BATTERY) ?: return
+        freshPenBattery = false
+        firmwareBeginPending = true
+        handler.postDelayed(gattTimeout, 15_000L)
+        if (!client.readCharacteristic(battery)) {
+            firmwareBeginPending = false
+            handler.removeCallbacks(gattTimeout)
+            status = status.copy(updateState = "not_ready"); publish()
+        }
+    }
+
+    private fun startFirmware() {
+        if (firmwareAdapter != null) return
+        val image = firmwareImage ?: return
+        val client = gatt ?: return
+        if (status.state != StylusConnectionState.CONNECTED || !status.penInitialized ||
+            status.vendorId != 34 || status.productId != 20609 || (status.battery ?: -1) < 20 ||
+            status.penError != 0 ||
+            !freshPenIdentity || !freshPenBattery || !freshPenRevision ||
+            status.firmwareRevision != firmwareImageRevision ||
+            activeWrite != null || pendingWrites.isNotEmpty() || pendingReads.isNotEmpty()
+        ) {
+            status = status.copy(updateState = "not_ready"); publish(); return
+        }
+        firmwareAddress = status.address
+        firmwareVerifying = false
+        handler.removeCallbacks(gattTimeout)
+        handler.removeCallbacks(sleepPen)
+        handler.removeCallbacks(controlsChanged)
+        shortcutMenu.hide()
+        mippSession?.close(); mippSession = null
+        status = status.copy(penInitialized = false, updateState = "updating", updateProgress = 0)
+        publish()
+        firmwareWakeLock.acquire(240_000L)
+        val update = SuotaGatt(client, handler, image, object : SuotaV1.Listener {
+            override fun progress(percent: Int) {
+                status = status.copy(updateProgress = percent); publish()
+            }
+            override fun finished(state: SuotaV1.State, reason: String) {
+                Log.i(TAG, "Pen firmware $state: $reason")
+                when (state) {
+                    SuotaV1.State.VERIFY_REVISION -> {
+                        firmwareVerifying = true
+                        status = status.copy(updateState = "verifying"); publish()
+                        handler.postDelayed(firmwareVerifyTimeout, 60_000L)
+                        gattAttempts = 0
+                        closeGatt()
+                        handler.postDelayed(firmwareReconnect, 2_000L)
+                    }
+                    SuotaV1.State.COMPLETE -> finishFirmware("complete")
+                    else -> {
+                        finishFirmware("failed")
+                        handler.post { if (started) { gattAttempts = 0; closeGatt() } }
+                    }
+                }
+            }
+        })
+        firmwareAdapter = update
+        try { update.prepare(34, 20609, status.battery ?: -1, true) }
+        catch (exception: RuntimeException) {
+            Log.w(TAG, "Pen firmware preparation failed", exception)
+            firmwareAdapter = null; finishFirmware("failed"); closeGatt()
+        }
+    }
+
+    private fun finishFirmware(state: String) {
+        firmwareAdapter = null
+        firmwareVerifying = false
+        firmwareAddress = null
+        handler.removeCallbacks(firmwareVerifyTimeout)
+        handler.removeCallbacks(firmwareReconnect)
+        if (firmwareWakeLock.isHeld) firmwareWakeLock.release()
+        status = status.copy(updateState = state)
+        publish()
+    }
+
+    private fun verifyFirmwareIdentity() {
+        if (!firmwareVerifying || !freshPenIdentity || !freshPenRevision || !freshPenBattery) return
+        if (status.address != firmwareAddress || status.vendorId != 34 || status.productId != 20609) {
+            finishFirmware("failed")
+        } else firmwareAdapter?.verifyRevision(status.firmwareRevision)
+    }
 
     private fun updateState(state: StylusConnectionState) {
         if (status.state != state) {
@@ -780,6 +1052,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         (this[offset].toInt() and 0xff) or ((this[offset + 1].toInt() and 0xff) shl 8)
 
     companion object {
+        const val ACTION_CHECK_FIRMWARE = "org.lineageos.pianoparts.stylus.CHECK_FIRMWARE"
+        const val ACTION_UPDATE_FIRMWARE = StylusSettingsContract.ACTION_UPDATE_FIRMWARE
         private const val TAG = "PianoStylus"
         private const val PAIRING_CHARGE_STATE = 4
         private const val PEN_ADDRESS_SETTING = "miui_bluetooth_store_pen_address"
