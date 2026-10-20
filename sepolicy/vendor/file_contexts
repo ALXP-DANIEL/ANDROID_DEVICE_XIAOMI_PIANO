@@ -1,0 +1,79 @@
+# Qualcomm TEE / SMC Invoke
+/dev/smcinvoke    u:object_r:tee_device:s0
+
+# Qualcomm secure-storage SSD partition
+/dev/block/platform/soc/1d84000\.ufshc/by-name/ssd    u:object_r:vendor_ssd_block_device:s0
+
+# Qualcomm UFS / SCSI secure-storage devices — stock piano labels.
+/dev/sg[0-9]+          u:object_r:vendor_sg_device:s0
+/dev/ufs-bsg.*         u:object_r:vendor_bsg_device:s0
+/dev/0:0:0:4           u:object_r:vendor_ufs_lun4_bsg_device:s0
+/dev/0:0:0:49476       u:object_r:vendor_bsg_device:s0
+
+# HyperOS 3 Android 16 compatibility libraries used only by stock qseecomd
+
+# Stock qseecomd packaged for recovery
+/piano/bin/piano-qseecomd    u:object_r:tee_exec:s0
+
+# Stock KeyMint HAL packaged for recovery. The AOSP default KeyMint exec
+# type is reused so init performs the standard domain transition into
+# hal_keymint_default, whose rules and service labels already exist.
+
+# Qualcomm QSEE DMA heap — stock piano label
+/dev/dma_heap/qcom,qseecom    u:object_r:vendor_dmabuf_qseecom_heap_device:s0
+
+# QSEE TA DMA heap. Stock piano label (vendor_file_contexts:1309).
+/dev/dma_heap/qcom,qseecom-ta    u:object_r:vendor_dmabuf_qseecom_ta_heap_device:s0
+
+
+# Stock Xiaomi Weaver HAL packaged for recovery. The exec type is declared
+# by the device policy because AOSP has no default Weaver implementation.
+
+# Stock KeyMint HAL. The AOSP hal_keymint_default_exec type is reused so init
+# performs the standard domain transition into hal_keymint_default, whose
+# rules and the four service labels already exist in the platform policy.
+/piano/bin/piano-keymint    u:object_r:hal_keymint_default_exec:s0
+
+# Stock Gatekeeper HAL. Reuses the AOSP hal_gatekeeper_default domain.
+/piano/bin/piano-gatekeeper    u:object_r:hal_gatekeeper_default_exec:s0
+
+# Stock Xiaomi Weaver HAL. hal_weaver_default and its exec type are declared
+# by system/sepolicy/vendor/hal_weaver_default.te in the platform policy.
+/piano/bin/piano-weaver-hos3    u:object_r:hal_weaver_default_exec:s0
+/piano/bin/piano-weaver-hos4    u:object_r:hal_weaver_default_exec:s0
+
+# Qualcomm GlobalPlatform TA loader, packaged from the stock vendor image.
+# The AOSP tee_exec type is reused so init performs the standard transition into
+# u:r:tee:s0, which already has the smcinvoke, DMA-heap, wakelock and UFS access
+# this daemon needs — it talks to the same secure world qseecomd does.
+/piano/bin/piano-ssgtzd    u:object_r:tee_exec:s0
+
+# HLOS Mink opener. Same domain: it is a client of the same secure world, and
+# the tee domain already carries the smcinvoke and DMA-heap access it needs.
+/piano/bin/piano-minkdaemon    u:object_r:tee_exec:s0
+
+# Qualcomm secure-world persistent storage on userdata. Stock piano label,
+# declared so the existing on-disk label resolves instead of unlabeled.
+/data/vendor/tzstorage(/.*)?   u:object_r:vendor_data_tzstorage_file:s0
+
+# Stock persist, mounted read-only in recovery. Only the two labels the TEE
+# domain actually traverses are declared; the rest of persist keeps whatever
+# label the filesystem carries.
+/mnt/vendor/persist                    u:object_r:vendor_persist_file:s0
+/mnt/vendor/persist/data(/.*)?          u:object_r:vendor_persist_data_file:s0
+
+/system/bin/hw/android\.hardware\.boot-service\.qti\.recovery    u:object_r:hal_bootctl_default_exec:s0
+/dev/block/by-name/misc    u:object_r:misc_block_device:s0
+/piano/bin/piano-qwesd    u:object_r:tee_exec:s0
+/data/vendor/qwes(/.*)?    u:object_r:vendor_qwes_data_file:s0
+# Every whole-disk UFS LUN node. The boot control HAL rewrites the slot
+# attributes in each LUN's partition table, and A/B pairs live on all of
+# them - xbl_a and xbl_b alone are on sdb and sdc, tz and boot on sdf. Only
+# sda and sde used to be labelled, so a slot switch failed on the rest:
+#   avc: denied { read write } name="sdf" scontext=u:r:hal_bootctl_default:s0
+#        tcontext=u:object_r:block_device:s0 permissive=0
+#   bootcontrolhal: update_slot_attribute: Failed to get disk info for xbl_b
+#   bootcontrolhal: set_active_boot_slot: Failed to set active slot
+# and an OTA installed in TWRP failed with kPostinstallRunnerError. The pattern
+# is anchored, so it labels whole disks only, never their partitions.
+/dev/block/sd[a-z]    u:object_r:piano_bootctrl_gpt_block_device:s0

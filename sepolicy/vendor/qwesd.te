@@ -1,0 +1,36 @@
+# Recovery-only QWES data label.
+#
+# qwesd deliberately runs in the existing tee domain for this isolated
+# validation candidate. qseecomd, ssgtzd and minkdaemon already use this
+# domain successfully in recovery.
+type vendor_qwes_data_file, file_type, data_file_type;
+
+# Stock policy grants both qwesd and ssgtzd access to /data/vendor/qwes.
+# In recovery both processes are hosted in the tee domain.
+allow tee vendor_qwes_data_file:dir {
+    ioctl
+    read
+    write
+    getattr
+    setattr
+    lock
+    open
+    search
+    add_name
+    remove_name
+};
+
+allow tee vendor_qwes_data_file:file {
+    ioctl
+    read
+    write
+    create
+    getattr
+    setattr
+    lock
+    append
+    map
+    unlink
+    rename
+    open
+};
