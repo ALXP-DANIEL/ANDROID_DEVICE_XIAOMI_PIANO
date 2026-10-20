@@ -1,10 +1,9 @@
-# Optional Xiaomi Notes experiment (Android 17)
+# Xiaomi Notes integration (Android 17, build default)
 
-This is an **opt-in integration hook**, not a ready-to-ship Xiaomi Notes port.
-The standard product does not include Xiaomi Notes or RtMiCloudSDK. The hook
-becomes active only with `PIANO_EXPERIMENTAL_XIAOMI_NOTES=true` **and** a
-separate local `vendor/xiaomi/piano-notes` package. Do not enable the flag
-until the Soong issue below is resolved and validated.
+This is a **build-default integration of the original signed APK pair**, not a
+claim that every stock Notes feature runs on AOSP. Android 17 piano products
+require the separately staged `vendor/xiaomi/piano-notes` inputs and fail
+closed if either APK or the required Soong extension is missing or altered.
 
 ## Stock inputs
 
@@ -25,10 +24,9 @@ The EvoX image built on 2026-10-14 was separately reported to have API 37;
 verify again for every tested build. Do not treat the Canvas/Etar
 `sdk_version: "36.1"` build patches as a runtime SDK property.
 
-## Opt-in build boundary
+## Required Android 17 build inputs
 
-Once the missing Soong dependency representation has been solved, prepare a
-**separate local** `vendor/xiaomi/piano-notes` directory with its own
+Prepare a **separate local** `vendor/xiaomi/piano-notes` directory with its own
 `Android.bp`, both hash-verified APKs and a `notes.mk` containing:
 
 ```make
@@ -46,29 +44,34 @@ partition and class. Notes should declare `required: ["RtMiCloudSDK"]`
 for installation ordering; that alone does *not* resolve its manifest
 `<uses-library android:name="micloud-sdk">` dependency.
 
-Then set `PIANO_EXPERIMENTAL_XIAOMI_NOTES=true` during product evaluation.
-`device.mk` explicitly inherits `vendor/xiaomi/piano-notes/notes.mk`
-and exposes that external Soong namespace only with this flag. An enabled
-flag without `notes.mk` is deliberately an error. Do not add the APKs to
+`device.mk` always inherits `vendor/xiaomi/piano-notes/notes.mk`
+and exposes the external Soong namespace. There is **no opt-in flag**;
+missing `notes.mk` or verified APKs is deliberately a build error. Do not add the APKs to
 `proprietary-files.txt`: the existing extraction generator automatically
 enables generated app modules in the default `piano-vendor.mk`.
 
-## Current Soong blocker
+## Soong shared-APK bridge (experimental)
 
 The stock SDK exposes its library from an **APK manifest `<library>` tag**,
-not a system Java JAR. AOSP Soong's `android_app_import` performs
-`<uses-library>` verification; its class-loader dependency handling expects
-a Java library with `JavaInfoProvider`. A second `android_app_import` for
-`RtMiCloudSDK` has not been shown to satisfy that model. A
-`PRODUCT_PACKAGES` dependency or renaming the imported SDK module to
-`micloud-sdk` does not establish correct class-loader verification.
+not a system Java JAR. Standard Soong `android_app_import` does not publish
+`JavaInfoProvider` for such an imported APK, but Notes requires a genuine
+`micloud-sdk` class-loader dependency. The separate local
+`vendor/xiaomi/piano-notes` package carries a narrowly scoped opt-in Soong
+provider patch publishing the **real original SDK APK** and installed path.
+It supplies no fake JAR or replacement manifest.
+
+The public Android 17 `android-17.0.0_r1` Go tests passed for this extension
+on 2026-10-15 after fixing nested conditional compatibility class-loader
+contexts; the target ROM builder branch, APK verification actions, installed
+system image, and `micloud-sdk` registration on boot remain unverified.
+The device patch script invokes the local `apply-soong.py` helper on every
+Android 17 build without any flag. It refuses unknown/partially patched Soong
+revisions without resetting or cleaning checkout contents. See the vendor
+package README for exact tests.
 
 **Do not** set `enforce_uses_libs: false`, relax global dexpreopt checks,
-patch either signed manifest, or create a fake Java library to make the build
-pass. Before supplying the final `Android.bp`, test a genuine representation
-of this dynamic shared application library against the exact ROM's Soong and
-verify the Notes manifest uses-library check completes without relaxation.
-No Soong build has been run for this experimental path.
+patch either signed manifest, or create a fake Java library. The proof still
+requires building the opt-in APK pair and checking actual runtime registration.
 
 ## Runtime boundaries
 
