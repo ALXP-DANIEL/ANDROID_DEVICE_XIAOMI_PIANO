@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<display-settings>
+    <!-- Match the internal panel by its physical port, independent of display ID. -->
+    <config identifier="1" />
+    <display name="port:147" ignoreOrientationRequest="false" />
+</display-settings>
