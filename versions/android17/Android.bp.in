@@ -18511,3 +18511,274 @@ prebuilt_etc_xml {
     sub_dir: "vintf/manifest",
     device_specific: true,
 }
+
+cc_prebuilt_library_shared {
+    name: "vendor.xiaomi.hardware.batteryantiaging-V1-ndk",
+    owner: "xiaomi",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/vendor.xiaomi.hardware.batteryantiaging-V1-ndk.so",
+            ],
+            shared_libs: [
+                "libbinder_ndk",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libbaa_common",
+    owner: "xiaomi",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libbaa_common.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libutils",
+                "libcutils",
+                "libbase",
+                "libbinder_ndk",
+                "libjsoncpp",
+                "libcrypto",
+                "vendor.xiaomi.hardware.batteryantiaging-V1-ndk",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libbaa_BasedOnCC_VolDown",
+    owner: "xiaomi",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libbaa_BasedOnCC_VolDown.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libbase",
+                "libcutils",
+                "libutils",
+                "libbinder_ndk",
+                "libjsoncpp",
+                "libmisight",
+                "vendor.xiaomi.hardware.batteryantiaging-V1-ndk",
+                "libbaa_common",
+                "libcrypto",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libbaa_ChargeInfo",
+    owner: "xiaomi",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libbaa_ChargeInfo.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libbase",
+                "libcutils",
+                "libutils",
+                "libbinder_ndk",
+                "libjsoncpp",
+                "libmisight",
+                "vendor.xiaomi.hardware.batteryantiaging-V1-ndk",
+                "libbaa_common",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libbaa_ChargerModeProtect",
+    owner: "xiaomi",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libbaa_ChargerModeProtect.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libbase",
+                "libcutils",
+                "libutils",
+                "libbinder_ndk",
+                "libjsoncpp",
+                "libmisight",
+                "vendor.xiaomi.hardware.batteryantiaging-V1-ndk",
+                "libbaa_common",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libbaa_FreqChgFvDown",
+    owner: "xiaomi",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libbaa_FreqChgFvDown.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libbase",
+                "libcutils",
+                "libutils",
+                "libbinder_ndk",
+                "libjsoncpp",
+                "libmisight",
+                "vendor.xiaomi.hardware.batteryantiaging-V1-ndk",
+                "libbaa_common",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libbaa_LowSohFvDown",
+    owner: "xiaomi",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/lib64/libbaa_LowSohFvDown.so",
+            ],
+            shared_libs: [
+                "liblog",
+                "libbase",
+                "libcutils",
+                "libutils",
+                "libbinder_ndk",
+                "libjsoncpp",
+                "libmisight",
+                "vendor.xiaomi.hardware.batteryantiaging-V1-ndk",
+                "libbaa_common",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    soc_specific: true,
+}
+
+cc_prebuilt_binary {
+    name: "vendor.xiaomi.hardware.batteryantiaging-service",
+    owner: "xiaomi",
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/vendor/bin/hw/vendor.xiaomi.hardware.batteryantiaging-service",
+            ],
+            shared_libs: [
+                "liblog",
+                "libbase",
+                "libcutils",
+                "libutils",
+                "libbinder_ndk",
+                "libjsoncpp",
+                "libcrypto",
+                "vendor.xiaomi.hardware.batteryantiaging-V1-ndk",
+                "libbaa_common",
+                "libbaa_LowSohFvDown",
+                "libbaa_ChargeInfo",
+                "libbaa_BasedOnCC_VolDown",
+                "libbaa_FreqChgFvDown",
+                "libbaa_ChargerModeProtect",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    strip: {
+        none: true,
+    },
+    prefer: true,
+    relative_install_path: "hw",
+    soc_specific: true,
+}
+
+prebuilt_etc_xml {
+    name: "vendor.xiaomi.hardware.batteryantiaging.xml",
+    owner: "xiaomi",
+    src: "proprietary/vendor/etc/vintf/manifest/vendor.xiaomi.hardware.batteryantiaging.xml",
+    filename_from_src: true,
+    sub_dir: "vintf/manifest",
+    soc_specific: true,
+}

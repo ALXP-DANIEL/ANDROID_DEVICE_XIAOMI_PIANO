@@ -1496,3 +1496,12 @@ PRODUCT_PACKAGES += \
     libmidevauth \
     midevauthd \
     manifest_vendor.xiaomi.hardware.aidl.midevauth.xml
+
+# Battery anti-aging: lowers the charge voltage as the battery wears.
+PRODUCT_COPY_FILES += \
+    vendor/xiaomi/piano/proprietary/odm/etc/charger/BAA_config_common.json:$(TARGET_COPY_OUT_ODM)/etc/charger/BAA_config_common.json \
+    vendor/xiaomi/piano/proprietary/odm/etc/charger/BAA_config_piano.json:$(TARGET_COPY_OUT_ODM)/etc/charger/BAA_config_piano.json
+
+PRODUCT_PACKAGES += \
+    vendor.xiaomi.hardware.batteryantiaging-service \
+    vendor.xiaomi.hardware.batteryantiaging.xml
