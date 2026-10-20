@@ -18,7 +18,10 @@ python_binary_host {
     srcs: ["append-compat.py"],
 }
 
-genrule {
+// A plain genrule requests an empty-variant dependency and cannot consume
+// PianoNotesCompat's android_common Java output. Keep the APK appender in the
+// Android Java variant so $(location :PianoNotesCompat) is its DEX JAR.
+java_genrule {
     name: "piano-notes-compatible-apk",
     srcs: ["prebuilt/MIUINotes.apk", ":PianoNotesCompat", "compat/device_features/piano.xml"],
     tools: ["piano-notes-append-compat"],
