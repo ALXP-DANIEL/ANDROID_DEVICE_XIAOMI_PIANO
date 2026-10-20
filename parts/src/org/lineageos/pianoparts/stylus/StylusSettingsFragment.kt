@@ -8,6 +8,8 @@ package org.lineageos.pianoparts.stylus
 import android.content.SharedPreferences
 import android.content.Intent
 import android.app.AlertDialog
+import android.widget.Toast
+import android.bluetooth.BluetoothManager
 import android.os.Bundle
 import android.provider.Settings
 import androidx.preference.ListPreference
@@ -16,6 +18,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreferenceCompat
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
 import org.lineageos.pianoparts.R
+import org.lineageos.pianoparts.AccessoryConnectionPreference
 
 /**
  * Connection, battery and firmware come from [StylusStatusStore]; the button
@@ -23,10 +26,11 @@ import org.lineageos.pianoparts.R
  */
 class StylusSettingsFragment : SettingsBasePreferenceFragment() {
 
-    private lateinit var connection: Preference
+    private lateinit var connection: AccessoryConnectionPreference
     private lateinit var battery: Preference
     private lateinit var notConnected: Preference
     private lateinit var buttonsCategory: PreferenceCategory
+    private lateinit var deviceInfoCategory: PreferenceCategory
     private lateinit var firmware: Preference
     private lateinit var firmwareCheck: Preference
     private lateinit var firmwareUpdate: Preference
@@ -41,7 +45,23 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
         val resources = context.resources
         preferenceScreen = preferenceManager.createPreferenceScreen(context)
 
+        preferenceScreen.addPreference(Preference(context).apply {
+            layoutResource = R.layout.accessory_pen_hero_preference
+            order = 0
+            setIcon(R.drawable.accessory_stylus_show_icon)
+            setTitle(R.string.pen_category_title)
+            setSummary(R.string.stylus_attach_guide)
+            isSelectable = false
+            isIconSpaceReserved = false
+        })
+        preferenceScreen.addPreference(Preference(context).apply {
+            order = 30
+            setTitle(R.string.stylus_palette_title)
+            setSummary(R.string.stylus_palette_summary)
+            setOnPreferenceClickListener { showPaletteEditor(); true }
+        })
         notConnected = Preference(context).apply {
+            order = 10
             summary = getString(R.string.stylus_not_connected)
             isSelectable = false
             isIconSpaceReserved = false
@@ -49,11 +69,13 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
         preferenceScreen.addPreference(notConnected)
 
         buttonsCategory = PreferenceCategory(context).apply {
+            order = 40
             title = getString(R.string.stylus_button_actions_title)
         }
         preferenceScreen.addPreference(buttonsCategory)
 
         penControls = PreferenceCategory(context).apply {
+            order = 50
             title = getString(R.string.stylus_pen_controls)
         }
         preferenceScreen.addPreference(penControls)
@@ -147,12 +169,13 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
             },
         )
 
-        val deviceInfoCategory = PreferenceCategory(context).apply {
+        deviceInfoCategory = PreferenceCategory(context).apply {
+            order = 20
             title = getString(R.string.stylus_device_info_title)
         }
         preferenceScreen.addPreference(deviceInfoCategory)
 
-        connection = Preference(context).apply {
+        connection = AccessoryConnectionPreference(context).apply {
             key = KEY_CONNECTION
             title = getString(R.string.stylus_connection_title)
             isSelectable = false
@@ -165,11 +188,12 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
             isSelectable = false
         }
         deviceInfoCategory.addPreference(battery)
+        battery.isVisible = false
 
         firmware = Preference(context).apply {
             key = KEY_FIRMWARE
             title = getString(R.string.stylus_firmware_title)
-            isSelectable = false
+            intent = Intent().setClassName(context.packageName, "${context.packageName}.StylusFirmwareActivity")
         }
         deviceInfoCategory.addPreference(firmware)
         firmwareCheck = Preference(context).apply {
@@ -196,6 +220,9 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
             }
         }
         deviceInfoCategory.addPreference(firmwareUpdate)
+        // The stock-style detail page owns check/update actions.
+        firmwareCheck.isVisible = false
+        firmwareUpdate.isVisible = false
     }
 
     override fun onResume() {
@@ -271,6 +298,12 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
         value = PenControls.value(requireContext(), key, defaultValue)
             .coerceIn(range.first, range.last).toString()
         updateSummary(this, value)
+        if (key == StylusSettingsContract.PRIMARY_BUTTON_ACTION || key == StylusSettingsContract.SECONDARY_BUTTON_ACTION) {
+            layoutResource = R.layout.accessory_action_preference
+            setIcon(if (key == StylusSettingsContract.PRIMARY_BUTTON_ACTION)
+                R.drawable.accessory_stylus_shortcut_actions_icon else R.drawable.accessory_stylus_screen_shot)
+            isIconSpaceReserved = false
+        }
         setOnPreferenceChangeListener { preference, newValue ->
             val number = (newValue as? String)?.toIntOrNull()
             if (number == null || number !in range ||
@@ -332,13 +365,24 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
     private fun refreshStatus() {
         val status = StylusStatusStore.snapshot(requireContext())
         refreshActionPreference(StylusSettingsContract.PINCH_ACTION, defaultPinchAction())
-        val connected = status.state == StylusConnectionState.CONNECTED
+        // Unlike pen state persisted across process/device restarts, the
+        // Bluetooth adapter is live. Never tell the user Bluetooth is off
+        // merely because the pen controller has an old state snapshot.
+        val bluetoothEnabled = requireContext()
+            .getSystemService(BluetoothManager::class.java)?.adapter?.isEnabled == true
+        val connectionState = when {
+            !bluetoothEnabled -> StylusConnectionState.BLUETOOTH_OFF
+            status.state == StylusConnectionState.BLUETOOTH_OFF -> StylusConnectionState.DISCONNECTED
+            else -> status.state
+        }
+        val connected = connectionState == StylusConnectionState.CONNECTED
+        deviceInfoCategory.isVisible = connected
         notConnected.isVisible = !connected
         buttonsCategory.isEnabled = connected
         penControls.isVisible = PenControls.isTouchFilm(status)
         penControls.isEnabled = status.penInitialized
         connection.summary = getString(
-            when (status.state) {
+            when (connectionState) {
                 StylusConnectionState.CONNECTED -> R.string.stylus_connected
                 StylusConnectionState.CONNECTING -> R.string.stylus_connecting
                 StylusConnectionState.PAIRING -> R.string.stylus_pairing
@@ -352,6 +396,7 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
             status.docked -> getString(R.string.stylus_charging_battery, status.battery)
             else -> getString(R.string.stylus_battery_percent, status.battery)
         }
+        connection.setBattery(status.battery, battery.summary, connected && !status.penInitialized)
         firmware.summary = status.firmwareRevision ?: getString(R.string.stylus_unavailable)
         val busy = status.updateState in setOf("updating", "verifying")
         firmwareCheck.isEnabled = connected && !busy
@@ -382,6 +427,34 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
 
     private fun getSecure(key: String): String? =
         Settings.Secure.getString(requireContext().contentResolver, key)
+
+    private fun showPaletteEditor() {
+        val context = requireContext()
+        val choices = PenPalette.candidates(context)
+        val available = choices.map { it.id }.toSet()
+        val selected = PenPalette.selected(context).filter(available::contains).toMutableList()
+        val checked = BooleanArray(choices.size) { choices[it].id in selected }
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(R.string.stylus_palette_title)
+            .setMultiChoiceItems(choices.map { it.label }.toTypedArray(), checked) { dialog, index, enabled ->
+                val id = choices[index].id
+                if (enabled && selected.size >= PenPalette.MAX_ENTRIES) {
+                    (dialog as AlertDialog).listView.setItemChecked(index, false)
+                    Toast.makeText(context, R.string.stylus_palette_limit, Toast.LENGTH_SHORT).show()
+                } else if (enabled) selected.add(id) else selected.remove(id)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .setNeutralButton(R.string.stylus_palette_reset) { _, _ -> PenPalette.reset(context) }
+            .setPositiveButton(android.R.string.ok, null)
+            .create()
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                if (selected.isEmpty()) Toast.makeText(context, R.string.stylus_palette_empty, Toast.LENGTH_SHORT).show()
+                else if (PenPalette.save(context, selected)) dialog.dismiss()
+            }
+        }
+        dialog.show()
+    }
 
     private fun defaultPinchAction(): String =
         if (PenControls.isTouchFilm(StylusStatusStore.snapshot(requireContext())))
