@@ -39,7 +39,8 @@ java_genrule {
 android_app_import {
     name: "MIUINotes",
     apk: ":piano-notes-compatible-apk",
-    certificate: "platform",
+    // Default ROM app key: closed-source Notes must not get platform permissions.
+    default_dev_cert: true,
     product_specific: true,
     optional_uses_libs: [
         "org.apache.http.legacy",

@@ -16,7 +16,7 @@ This verifies the exact original APK, removes **only** the required
 invalidated original v1 signing files, and writes an ignored, repackaged
 `prebuilt/MIUINotes.apk`. The build then appends an app-local compatibility DEX
 and pinned piano hardware metadata before `android_app_import` signs the result
-with the ROM platform key. No MiCloud SDK is included. The package identity
+with the ROM default app key, never the platform key. No MiCloud SDK is included. The package identity
 remains `com.miui.notes` and the original minSdk remains 29.
 
 This is an APK repackage, not a full source recompilation. The DEX code may

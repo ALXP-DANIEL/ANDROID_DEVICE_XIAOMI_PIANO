@@ -120,7 +120,7 @@ def main():
         record = {"original_sha256": STOCK_HASH,
                   "repackaged_sha256": sha256(targetdir / APK),
                   "package": "com.miui.notes", "min_sdk": 29,
-                  "cloud_library_removed": True, "signing": "ROM platform key at build time"}
+                  "cloud_library_removed": True, "signing": "ROM default app key at build time"}
         (ROOT / "staged-inputs.json").write_text(json.dumps(record, indent=2) + "\n")
         (ROOT / "Android.bp").write_bytes((ROOT / "Android.bp.in").read_bytes())
         print(json.dumps(record, indent=2))
