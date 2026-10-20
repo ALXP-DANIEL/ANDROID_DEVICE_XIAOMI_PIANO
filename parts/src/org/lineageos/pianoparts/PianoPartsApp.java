@@ -110,7 +110,7 @@ public class PianoPartsApp extends Application {
         new VolumeBoostNotifier(this);
         new TouchpadFlickManager(this).start();
         new StylusController(this, new Handler(Looper.getMainLooper())).start();
-        new StylusAppModeController(new Handler(Looper.getMainLooper()),
+        new StylusAppModeController(this, new Handler(Looper.getMainLooper()),
                 this::setTouchMode).start();
         PadKeyboardManager.get(this).start();
         mReadingModeController = new ReadingModeController(this);
