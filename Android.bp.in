@@ -1,0 +1,23 @@
+// The stock Notes APK is repackaged solely to remove its mandatory MiCloud
+// shared-library tag. Platform signing is performed by the ROM build.
+soong_namespace {}
+
+android_app_import {
+    name: "MIUINotes",
+    apk: "prebuilt/MIUINotes.apk",
+    certificate: "platform",
+    product_specific: true,
+    optional_uses_libs: [
+        "org.apache.http.legacy",
+        "com.miui.system",
+        "com.android.extensions.appfunctions",
+        "androidx.window.extensions",
+        "androidx.window.sidecar",
+        "libtflite_interface_wrap.touch.so",
+        "libestimate_interface.touch.so",
+        "libbrushstroke_interface.touch.so",
+        "librecognize_interface.touch.so",
+    ],
+    enforce_uses_libs: true,
+    dex_preopt: { enabled: false },
+}

@@ -1,0 +1,19 @@
+{
+  "MIUINotes.apk": [
+    {
+      "file": "MIUINotes.apk.part00",
+      "size": 83886080,
+      "sha256": "9c6022334ca8affb4fc8288b363d9d50a35ced11ed15ceacca0df5f3fa5288b4"
+    },
+    {
+      "file": "MIUINotes.apk.part01",
+      "size": 83886080,
+      "sha256": "11d0e00df3c8274560ae4222a16176076e079134cf9d6e9d3dddcb64f8e69194"
+    },
+    {
+      "file": "MIUINotes.apk.part02",
+      "size": 10113722,
+      "sha256": "1c9b3812dacf4316817b6864ae128dbd457e8a90e44e2ea6772928b3e71ac182"
+    }
+  ]
+}
