@@ -1,0 +1,109 @@
+#!/sbin/sh
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+# Piano UEFI installer, for OrangeFox and TWRP.
+#
+# Install: puts the selector and UEFI into boot_a and boot_b, whatever ROM
+# they hold, and puts Visor on the esp partition. Flash it again after a ROM
+# update; it replaces an older install.
+# Uninstall (the ZIP holds a file named "uninstall"): takes the selector and
+# UEFI back out of both boot images. The ESP is left as it is.
+
+OUTFD=$2
+ZIP=$3
+TMP=/tmp/piano-uefi
+ESP_DEV=/dev/block/by-name/esp
+ESP=$TMP/esp-mnt
+
+ui_print() {
+	echo "ui_print $1" > /proc/self/fd/$OUTFD
+	echo "ui_print" > /proc/self/fd/$OUTFD
+}
+
+abort() {
+	ui_print "Error: $1"
+	umount $ESP 2>/dev/null
+	rm -rf $TMP
+	exit 1
+}
+
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP || abort "no /tmp"
+unzip -o "$ZIP" -x 'META-INF/*' >/dev/null || abort "cannot unpack the zip"
+chmod 755 $TMP/piano-inject
+
+mode=install
+[ -f $TMP/uninstall ] && mode=uninstall
+ui_print "Piano UEFI: $mode"
+
+device=$(getprop ro.product.device)
+[ -z "$device" ] && device=$(getprop ro.build.product)
+case "$device" in
+piano) ;;
+*) abort "this is for the Xiaomi Pad 8 Pro (piano), not '$device'" ;;
+esac
+
+# Both slots, so the UEFI stays after a slot switch.
+done_any=0
+for slot in _a _b; do
+	dev=/dev/block/by-name/boot$slot
+	[ -e "$dev" ] || continue
+	size=$(blockdev --getsize64 "$dev")
+
+	dd if="$dev" of=$TMP/boot$slot.img bs=1M 2>/dev/null || abort "cannot read boot$slot"
+	if ! head -c 8 $TMP/boot$slot.img | grep -q 'ANDROID!'; then
+		ui_print "boot$slot: empty, skipped"
+		continue
+	fi
+
+	if [ $mode = install ]; then
+		$TMP/piano-inject $TMP/boot$slot.img $TMP/selector.bin $TMP/uefi.bin \
+			$TMP/new$slot.img > $TMP/log 2>&1
+	else
+		$TMP/piano-inject --remove $TMP/boot$slot.img $TMP/new$slot.img > $TMP/log 2>&1
+	fi || abort "boot$slot: $(cat $TMP/log)"
+	new=$(wc -c < $TMP/new$slot.img)
+	[ "$new" -le "$size" ] || abort "boot$slot: the new image does not fit"
+
+	# The image as it was, where the user finds it after a reboot.
+	if [ -d /sdcard ] && mkdir -p /sdcard/piano-uefi 2>/dev/null; then
+		cp $TMP/boot$slot.img /sdcard/piano-uefi/boot$slot-before-$mode.img
+	fi
+
+	dd if=$TMP/new$slot.img of="$dev" bs=1M conv=fsync 2>/dev/null || abort "cannot write boot$slot"
+	[ "$(head -c "$new" "$dev" | md5sum | cut -d' ' -f1)" = \
+	  "$(md5sum < $TMP/new$slot.img | cut -d' ' -f1)" ] || abort "boot$slot: verify failed"
+	ui_print "boot$slot: done"
+	done_any=1
+done
+[ $done_any = 1 ] || abort "no Android boot image found"
+
+if [ $mode = install ]; then
+	[ -e $ESP_DEV ] || abort "no esp partition"
+	mkdir -p $ESP
+	# The stock esp is unused. A FAT that has never held a boot manager is
+	# formatted again: stock's has clusters too few for UEFI's FAT driver.
+	if ! mount -t vfat $ESP_DEV $ESP 2>/dev/null || [ ! -d $ESP/EFI ]; then
+		umount $ESP 2>/dev/null
+		ui_print "esp: formatting"
+		mkfs.fat -F 32 -S 4096 -s 1 -n ESP $ESP_DEV >/dev/null 2>&1 ||
+			abort "cannot format esp (mkfs.fat missing?)"
+		mount -t vfat $ESP_DEV $ESP || abort "cannot mount esp"
+	fi
+	# Our files only: other systems' entries and kernels stay.
+	cp -r $TMP/esp/. $ESP/ || abort "cannot write esp"
+	sync
+	umount $ESP
+	ui_print "esp: Visor installed"
+fi
+
+cd /
+rm -rf $TMP
+if [ $mode = install ]; then
+	ui_print "Done. Reboot: Visor starts. Hold volume down at the Mi logo"
+	ui_print "for fastboot, volume up for recovery."
+else
+	ui_print "Done. Old boot images are in /sdcard/piano-uefi."
+fi
+exit 0
