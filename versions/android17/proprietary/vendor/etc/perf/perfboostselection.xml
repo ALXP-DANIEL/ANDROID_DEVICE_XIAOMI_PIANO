@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+ /*:)
+  *temp example:
+  1. temp < 25000 select 25000;
+  2. 25000 <= temp <40000 select 25000
+  3. 40000 <= temp <44000 select 40000
+  5. 44000 <= temp <48000 select 44000
+  6. 48000 <= temp  select 48000
+  */
+-->
+
+<BoostConfigs>
+    <PerfBoost>
+
+        <!-- LL Lite Base boost-->
+            <!-- SCHEDBOOST resource opcode, value-->
+            <!-- CPUBOOST_MIN_FREQ BIG Core resource opcode, value-->
+            <!-- CPUBOOST_MIN_FREQ PRIME Core resource opcode, value-->
+            <!-- CPU_LLCC_BW_MAX_FREQ_V2 resource opcode, value-->
+            <!-- CPU_LLCC_BW_MIN_FREQ_V2 resource opcode, value-->
+            <!-- STORAGE CLK SCALING resource opcode, value-->
+            <!-- LLCC DDR LAT GOLD MIN FREQ resource opcode, value-->
+            <!-- GPU_TOUCH_WAKEUP resource opcode, value-->
+            <!-- CPU_CORE_CONTROL_CPU_NOT_PREFERRED resource opcode, value-->
+            <!-- STORAGE_BOOST_MIN_THRESHOLD resource opcode, value-->
+            <!-- STORAGE_BOOST_MAX_THRESHOLD resource opcode, value-->
+            <!-- MPCTLV3_XIAOMI_KSWAPD_AFFINITY resource opcode, value-->
+            <!-- MPCTLV3_GPU_MIN_POWER_LEVEL resource opcode, value-->
+            <!-- MPCTLV3_GPU_MAX_POWER_LEVEL resource opcode, value-->
+            <!-- MPCTLV3_XIAOMI_SFUI_AFFINITY resource opcode, value-->
+            <!-- MPCTLV3_XIAOMI_SFRE_AFFINITY resource opcode, value-->
+            <!-- MPCTLV3_SCHED_MIGT_EXCLUSIVE_ENABLE -->
+            <!-- Type="1", main launch of 2sec -->
+        <Config
+            Id="0x00001081" Type="1" Enable="true" Timeout="2000" Target="sun" Temp="25000"
+            Resources="0x40C00000, 0x1, 0x40800000, 2227, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x42834000, 1, 0x4100C000, 0x3, 0x42C50000, 0x3FF, 0x42C54000, 0x400,
+                       0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FC30000, 0x3f, 0x5FC34000, 0x3f, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001081" Type="1" Enable="true" Timeout="2000" Target="sun" Temp="40000"
+            Resources="0x40C00000, 0x1, 0x40800000, 2227, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x42834000, 1, 0x4100C000, 0x3, 0x42C50000, 0x3FF, 0x42C54000, 0x400,
+                       0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FC30000, 0x3f, 0x5FC34000, 0x3f, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001081" Type="1" Enable="true" Timeout="2000" Target="sun" Temp="44000"
+            Resources="0x40C00000, 0x1, 0x40800000, 1996, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x42834000, 1, 0x4100C000, 0x3, 0x42C50000, 0x3FF, 0x42C54000, 0x400,
+                       0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FC30000, 0x3f, 0x5FC34000, 0x3f, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001081" Type="1" Enable="true" Timeout="2000" Target="sun" Temp="48000"
+            Resources="0x40C00000, 0x1, 0x40800000, 1552, 0x40800200, 1401, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x42834000, 1, 0x4100C000, 0x3, 0x42C50000, 0x3FF, 0x42C54000, 0x400,
+                       0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FC30000, 0x3f, 0x5FC34000, 0x3f, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <!-- SCHEDBOOST resource opcode, value-->
+        <!-- CPUBOOST_MIN_FREQ BIG Core resource opcode, value-->
+        <!-- CPUBOOST_MIN_FREQ PRIME Core resource opcode, value-->
+        <!-- GPU_DISABLE_GPU_NAP resource opcode, value-->
+        <!-- MPCTLV3_GPU_MAX_POWER_LEVEL resource opcode, value-->
+        <!-- MPCTLV3_SCHED_MIGT_EXCLUSIVE_ENABLE -->
+        <!-- Type="2", main launch of 2sec -->
+        <Config
+            Id="0x00001081" Type="2" Enable="true" Timeout="10000" Target="sun"
+            Resources=""
+            ResourcesCust="0x40C00000, 0x2, 0x40800000, 1536, 0x40800200, 1632, 0x4281C000, 2000, 0X42808000, 0x2"
+            Applist="com.tencent.mm, com.ss.android.article.news,  com.taobao.taobao, com.sina.weibo, com.smile.gifmaker, com.ss.android.ugc.aweme,
+	    com.kuaishou.nebula, com.ss.android.ugc.aweme.lite, com.ss.android.article.lite"/>
+
+
+        <!--app resume boost-->
+            <!-- SCHEDBOOST resource opcode, value-->
+            <!-- CPUBOOST_MIN_FREQ BIG Core resource opcode, value-->
+            <!-- CPUBOOST_MIN_FREQ PRIME Core resource opcode, value-->
+            <!-- CPU_LLCC_BW_MAX_FREQ_V2 resource opcode, value-->
+            <!-- CPU_LLCC_BW_MIN_FREQ_V2 resource opcode, value-->
+            <!-- STORAGE CLK SCALING resource opcode, value-->
+            <!-- LLCC DDR LAT GOLD MIN FREQ resource opcode, value-->
+            <!-- GPU_DISABLE_GPU_NAP resource opcode, value-->
+            <!-- CPU_CORE_CONTROL_CPU_NOT_PREFERRED resource opcode, value-->
+            <!-- MPCTLV3_XIAOMI_KSWAPD_AFFINITY resource opcode, value-->
+            <!-- MPCTLV3_GPU_MIN_POWER_LEVEL resource opcode, value-->
+            <!-- MPCTLV3_GPU_MAX_POWER_LEVEL resource opcode, value-->
+            <!-- MPCTLV3_SCHED_MIGT_EXCLUSIVE_ENABLE -->
+            <!-- Type="1", app resume of 400ms -->
+
+        <Config
+            Id="0x00001082" Type="1" Enable="true" Timeout="800" Target="sun" Temp="25000"
+            Resources="0x40C00000, 0x1, 0x40800000, 2227, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x4281C000, 2000, 0x4100C000, 0x3, 0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist="com.android.camera"/>
+
+        <Config
+            Id="0x00001082" Type="1" Enable="true" Timeout="800" Target="sun" Temp="40000"
+            Resources="0x40C00000, 0x1, 0x40800000, 2227, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x4281C000, 2000, 0x4100C000, 0x3, 0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist="com.android.camera"/>
+
+        <Config
+            Id="0x00001082" Type="1" Enable="true" Timeout="800" Target="sun" Temp="44000"
+            Resources="0x40C00000, 0x1, 0x40800000, 1996, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x4281C000, 2000, 0x4100C000, 0x3, 0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist="com.android.camera"/>
+
+        <Config
+            Id="0x00001082" Type="1" Enable="true" Timeout="800" Target="sun" Temp="48000"
+            Resources="0x40C00000, 0x1, 0x40800000, 1996, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x4281C000, 2000, 0x4100C000, 0x3, 0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist="com.android.camera"/>
+
+        <Config
+            Id="0x00001082" Type="2" Enable="true" Timeout="800" Target="sun" Temp="25000"
+            Resources="0x40C00000, 0x1, 0x40800000, 2227, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x4281C000, 2000, 0x4100C000, 0x3, 0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001082" Type="2" Enable="true" Timeout="800" Target="sun" Temp="40000"
+            Resources="0x40C00000, 0x1, 0x40800000, 2227, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x4281C000, 2000, 0x4100C000, 0x3, 0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001082" Type="2" Enable="true" Timeout="800" Target="sun" Temp="44000"
+            Resources="0x40C00000, 0x1, 0x40800000, 1996, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x4281C000, 2000, 0x4100C000, 0x3, 0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001082" Type="2" Enable="true" Timeout="800" Target="sun" Temp="48000"
+            Resources="0x40C00000, 0x1, 0x40800000, 1996, 0x40800200, 2246, 0x41848000, 0x127A78,
+                       0x41844000, 0x127A78, 0x42C10000, 0x1, 0x43488000, 0x47B760,
+                       0x4281C000, 2000, 0x4100C000, 0x3, 0x5FC00000, 0x3f, 0X42804000, 9, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <!--Activity lauch boost-->
+            <!-- SCHEDBOOST resource opcode, value-->
+            <!-- CPUBOOST_MIN_FREQ BIG Core resource opcode, value-->
+            <!-- CPUBOOST_MIN_FREQ PRIME Core resource opcode, value-->
+            <!-- CPU_LLCC_BW_MAX_FREQ_V2 resource opcode, value-->
+            <!-- CPU_LLCC_BW_MIN_FREQ_V2 resource opcode, value-->
+            <!-- STORAGE CLK SCALING resource opcode, value-->
+            <!-- LLCC DDR LAT GOLD MIN FREQ resource opcode, value-->
+            <!-- GPU_TOUCH_WAKEUP resource opcode, value-->
+            <!-- CPU_CORE_CONTROL_CPU_NOT_PREFERRED resource opcode, value-->
+            <!-- SCHED_TASK_BOOST resource opcode, value-->
+            <!-- STORAGE_BOOST_MIN_THRESHOLD resource opcode, value-->
+            <!-- STORAGE_BOOST_MAX_THRESHOLD resource opcode, value-->
+            <!-- MPCTLV3_GPU_MAX_POWER_LEVEL , value-->
+            <!-- MPCTLV3_SCHED_MIGT_EXCLUSIVE_ENABLE -->
+
+            <!-- Type="10", main launch boost of 2sec -->
+        <Config
+            Id="0x00001081" Type="10" Enable="true" Timeout="600" Target="sun" Temp="25000"
+            Resources="0x40C00000, 0x1, 0x40800000, 2227, 0x40800200, 2246,
+                       0x41848000, 0x127A78, 0x41844000, 0x127A78,
+                       0x42C10000, 0x1, 0x43488000, 0x48A5A8,
+                       0x42834000, 1, 0x4100C000, 0x3, 0x40C80000, 0x0,
+                       0x42C50000, 0x3FF, 0x42C54000, 0x400, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001081" Type="10" Enable="true" Timeout="600" Target="sun" Temp="40000"
+            Resources="0x40C00000, 0x1, 0x40800000, 2227, 0x40800200, 2246,
+                       0x41848000, 0x127A78, 0x41844000, 0x127A78,
+                       0x42C10000, 0x1, 0x43488000, 0x48A5A8,
+                       0x42834000, 1, 0x4100C000, 0x3, 0x40C80000, 0x0,
+                       0x42C50000, 0x3FF, 0x42C54000, 0x400, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001081" Type="10" Enable="true" Timeout="600" Target="sun" Temp="44000"
+            Resources="0x40C00000, 0x1, 0x40800000, 1996, 0x40800200, 2246,
+                       0x41848000, 0x127A78, 0x41844000, 0x127A78,
+                       0x42C10000, 0x1, 0x43488000, 0x48A5A8,
+                       0x42834000, 1, 0x4100C000, 0x3, 0x40C80000, 0x0,
+                       0x42C50000, 0x3FF, 0x42C54000, 0x400, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001081" Type="10" Enable="true" Timeout="600" Target="sun" Temp="48000"
+            Resources="0x40C00000, 0x1, 0x40800000, 1552, 0x40800200, 1401,
+                       0x41848000, 0x127A78, 0x41844000, 0x127A78,
+                       0x42C10000, 0x1, 0x43488000, 0x48A5A8,
+                       0x42834000, 1, 0x4100C000, 0x3, 0x40C80000, 0x0,
+                       0x42C50000, 0x3FF, 0x42C54000, 0x400, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <!--Animation boost -->
+        <!-- CPUBOOST_MIN_FREQ BIG Core resource opcode, value-->
+        <!-- CPUBOOST_MIN_FREQ PRIME Core resource opcode, value-->
+        <!-- MPCTLV3_XIAOMI_KSWAPD_AFFINITY , value-->
+        <!-- MPCTLV3_GPU_MAX_POWER_LEVEL , value-->
+        <!-- MPCTLV3_SCHED_MIGT_EXCLUSIVE_ENABLE -->
+        <Config
+            Id="0x00001083" Enable="true" Timeout="400" Target="sun" Temp="25000"
+            Resources="0x40800000, 2227, 0x40800200, 2246, 0x5FC00000, 0x3f, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001083" Enable="true" Timeout="400" Target="sun" Temp="40000"
+            Resources="0x40800000, 2227, 0x40800200, 2246, 0x5FC00000, 0x3f, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001083" Enable="true" Timeout="400" Target="sun" Temp="44000"
+            Resources="0x40800000, 1996, 0x40800200, 2246, 0x5FC00000, 0x3f, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+        <Config
+            Id="0x00001083" Enable="true" Timeout="400" Target="sun" Temp="48000"
+            Resources="0x40800000, 1552, 0x40800200, 1401, 0x5FC00000, 0x3f, 0X42808000, 0x2, 0x5FCC0000, 0"
+            ResourcesCust=""
+            Applist=""/>
+
+    </PerfBoost>
+</BoostConfigs>
+
