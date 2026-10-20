@@ -1,18 +1,17 @@
-# Xiaomi Pad 8 Pro unified device-common tree
+# Common device tree for Xiaomi Pad 8 Pro (piano)
 
-One branch supports both Android 16 and Android 17. **Do not mix**
-firmware, kernel modules, library imports or vendor binaries.
+Build settings shared by every SM8750 (Snapdragon 8 Elite) build: partitions, HALs, SELinux and system properties.
 
-The versioned directories preserve the original files from:
+Goes in `device/xiaomi/sm8750-common`. The sync script on the [main branch](../../tree/main) checks
+it out and prepares it for you.
 
-- Android 16: `device-common-16` at `fc97d2e2f1c2`
-- Android 17: `device-common-17` at `0262fbefa2c3`
+## Android 16 and Android 17 in one branch
 
-`sync-device.sh` runs `python3 select-version.py 16` or `17`
-after syncing. The selector stages the matching files at the
-original build paths and checks for collisions. The generated
-root files are ignored by Git; sources under `versions/` are
-immutable. Android.bp/Android.mk are stored as `.in` to avoid
-duplicate Soong/Make modules in the inactive version.
+| Folder | Used for |
+| --- | --- |
+| `versions/android17` | Android 17 builds (from HyperOS 4 China) |
+| `versions/android16` | Android 16 builds (from HyperOS 3 Global) |
 
-A complete ROM build and device smoke tests remain necessary.
+After syncing, `select-version.py 16` or `17` copies the matching set into
+place. The copied files are ignored by Git. Edit files under `versions/`,
+never the copied ones. The two sets are never mixed.
