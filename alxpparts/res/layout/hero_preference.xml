@@ -8,8 +8,8 @@
         android:orientation="vertical" android:gravity="center_horizontal"
         android:background="@drawable/hero_background"
         android:paddingHorizontal="24dp" android:paddingTop="28dp" android:paddingBottom="26dp">
-        <ImageView android:layout_width="match_parent" android:layout_height="112dp"
-            android:src="@drawable/airpods" android:scaleType="fitCenter"
+        <ImageView android:layout_width="match_parent" android:layout_height="96dp"
+            android:src="@drawable/ic_alxp_features" android:scaleType="fitCenter"
             android:tint="?android:attr/colorAccent"
             android:importantForAccessibility="no" />
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"

@@ -5,6 +5,10 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.LOCAL_MAC_ADDRESS" />
     <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -42,7 +46,7 @@
                        android:value="blue" />
         </activity>
 
-        <!-- Off until the main switch enables it. The Bluetooth patch checks
+        <!-- Off until the AirPods switch enables it. The Bluetooth patch checks
              this exact component before using the Apple identity. -->
         <service
             android:name=".services.AirPodsService"
@@ -50,9 +54,15 @@
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />
 
+        <!-- Off until the iPhone notifications switch enables it. -->
+        <service
+            android:name=".services.AncsService"
+            android:enabled="false"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
         <receiver
             android:name=".BootReceiver"
-            android:enabled="false"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -2,16 +2,28 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <resources>
     <string name="app_name" translatable="false">ALXP Features</string>
-    <string name="app_summary">AirPods audio switching with your Apple devices</string>
+    <string name="app_summary">AirPods switching, iPhone notifications and more</string>
 
-    <string name="hero_title">AirPods on your Pad</string>
-    <string name="hero_summary">Audio moves between the Pad, your iPhone and your Mac the way it does between Apple devices</string>
+    <string name="hero_title">ALXP Features</string>
+    <string name="hero_summary">Extras that make the Pad work with the rest of your devices</string>
 
-    <string name="main_switch">Automatic switching</string>
+    <string name="category_apple">Apple devices</string>
 
-    <string name="footer">Playing media or taking a call on the Pad moves the AirPods to it, and playing on another Apple device moves them back. Turning this on or off restarts Bluetooth, because the Pad shows the AirPods an Apple Bluetooth identity while it is on.\n\nNeeds the ALXP Bluetooth patch in this ROM. Based on LibrePods.</string>
+    <string name="airpods_title">AirPods automatic switching</string>
+    <string name="airpods_summary">Playing or calling on the Pad moves your AirPods to it, and playing on your iPhone or Mac moves them back. Restarts Bluetooth when changed.</string>
+    <string name="airpods_unavailable">Needs the ALXP Bluetooth patch in this ROM</string>
+
+    <string name="iphone_title">iPhone notifications</string>
+    <string name="iphone_summary">Shows your iPhone notifications on the Pad. Pair once from the iPhone: Settings &gt; Bluetooth &gt; %1$s.</string>
+
+    <string name="footer">AirPods switching is based on LibrePods.</string>
 
     <string name="notification_channel">AirPods switching</string>
     <string name="notification_connected">Connected to %1$s</string>
     <string name="notification_waiting">Waiting for AirPods</string>
+
+    <string name="ancs_service_channel">iPhone connection</string>
+    <string name="ancs_channel">iPhone notifications</string>
+    <string name="ancs_waiting">Waiting for your iPhone</string>
+    <string name="ancs_connected">Connected to %1$s</string>
 </resources>

@@ -1,8 +1,14 @@
 # ALXPParts (ALXP Features)
 
-AirPods audio switching between the Pad and your Apple devices, as its own
-app with its own **ALXP Features** entry in Evolution X settings, next to
-Xiaomi features. GPL-3.0-or-later; trimmed from LibrePods (see UPSTREAM),
+Personal extras for the Pad, as its own app with its own **ALXP Features**
+entry in Evolution X settings, next to Xiaomi features. Each feature is one
+switch on that page:
+
+- **AirPods automatic switching** with iPhone and Mac.
+- **iPhone notifications** on the Pad through Apple Notification Center
+  Service (ANCS), the way a smartwatch gets them.
+
+The app is GPL-3.0-or-later. AirPods switching is trimmed from LibrePods (see UPSTREAM),
 with the original copyright notices kept in the source.
 
 Only the switching part of LibrePods is kept: the AACP control channel,

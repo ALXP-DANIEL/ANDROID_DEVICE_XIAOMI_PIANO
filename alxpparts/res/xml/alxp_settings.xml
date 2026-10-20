@@ -8,9 +8,22 @@
         app:layout="@layout/hero_preference"
         app:allowDividerAbove="false" app:allowDividerBelow="false" />
 
-    <com.android.settingslib.widget.MainSwitchPreference
-        android:key="enabled"
-        android:title="@string/main_switch" />
+    <PreferenceCategory android:title="@string/category_apple">
+        <SwitchPreferenceCompat android:key="airpods_switching"
+            android:persistent="false"
+            app:layout="@layout/feature_card"
+            app:allowDividerAbove="false" app:allowDividerBelow="false"
+            android:icon="@drawable/ic_feature_airpods"
+            android:title="@string/airpods_title"
+            android:summary="@string/airpods_summary" />
+        <SwitchPreferenceCompat android:key="iphone_notifications"
+            android:persistent="false"
+            app:layout="@layout/feature_card"
+            app:allowDividerAbove="false" app:allowDividerBelow="false"
+            android:icon="@drawable/ic_feature_iphone"
+            android:title="@string/iphone_title"
+            android:summary="@string/iphone_summary" />
+    </PreferenceCategory>
 
     <com.android.settingslib.widget.FooterPreference
         android:key="footer"
