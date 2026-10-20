@@ -7,7 +7,7 @@
 +    {
 +        std::scoped_lock _l(getLock());
 +        const InputDeviceInfo* device = findInputDeviceLocked(args.deviceId);
-+        if (device != nullptr && args.pointerCount == 1 &&
++        if (device != nullptr && args.getPointerCount() == 1 &&
 +            isFromMouse(args.source, args.pointerProperties[0].toolType)) {
 +            const auto& id = device->getIdentifier();
 +            if (id.vendor == 34 && (id.product == 19840 || id.product == 12928 ||
