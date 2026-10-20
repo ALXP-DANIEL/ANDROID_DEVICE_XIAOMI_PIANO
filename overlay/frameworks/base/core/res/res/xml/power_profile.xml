@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Power profile from the piano Global OS3.0.304.0.WPYMIXM firmware. -->
+<device name="Android">
+    <item name="screen.on">119.66</item>
+    <item name="screen.full">1251.53</item>
+    <item name="bluetooth.active">1.8</item>
+    <item name="bluetooth.on">0.32</item>
+    <item name="wifi.on">0.18</item>
+    <item name="wifi.active">162.65</item>
+    <item name="wifi.scan">68.53</item>
+    <item name="audio">25.87</item>
+    <item name="video">53.07</item>
+    <item name="camera.flashlight">82.01</item>
+    <item name="camera.avg">525.19</item>
+    <item name="gps.on">61.47</item>
+    <array name="cpu.active">
+        <value>17.01</value>
+    </array>
+    <array name="cpu.clusters.cores">
+        <value>6</value>
+        <value>2</value>
+    </array>
+    <array name="cpu.core_speeds.cluster0">
+        <value>384000</value>
+        <value>556800</value>
+        <value>748800</value>
+        <value>960000</value>
+        <value>1152000</value>
+        <value>1363200</value>
+        <value>1555200</value>
+        <value>1785600</value>
+        <value>1996800</value>
+        <value>2227200</value>
+        <value>2400000</value>
+        <value>2745600</value>
+        <value>2918400</value>
+        <value>3072000</value>
+        <value>3321600</value>
+        <value>3532800</value>
+    </array>
+    <array name="cpu.core_power.cluster0">
+        <value>62.87</value>
+        <value>70.18</value>
+        <value>80.79</value>
+        <value>92.39</value>
+        <value>105.37</value>
+        <value>121.32</value>
+        <value>137.28</value>
+        <value>161.87</value>
+        <value>187.13</value>
+        <value>217.12</value>
+        <value>253.51</value>
+        <value>317.64</value>
+        <value>388.51</value>
+        <value>480.90</value>
+        <value>573.83</value>
+        <value>670.69</value>
+    </array>
+    <array name="cpu.core_speeds.cluster1">
+        <value>1017600</value>
+        <value>1209600</value>
+        <value>1401600</value>
+        <value>1689600</value>
+        <value>1958400</value>
+        <value>2246400</value>
+        <value>2438400</value>
+        <value>2649600</value>
+        <value>2841600</value>
+        <value>3072000</value>
+        <value>3283200</value>
+        <value>3513600</value>
+        <value>3801600</value>
+        <value>4089600</value>
+        <value>4204800</value>
+        <value>4320000</value>
+    </array>
+    <array name="cpu.core_power.cluster1">
+        <value>147.74</value>
+        <value>171.36</value>
+        <value>199.31</value>
+        <value>249.36</value>
+        <value>295.81</value>
+        <value>363.04</value>
+        <value>419.38</value>
+        <value>490.85</value>
+        <value>554.72</value>
+        <value>669.45</value>
+        <value>792.46 </value>
+        <value>978.79</value>
+        <value>1267.32</value>
+        <value>1497.48</value>
+        <value>1556.63</value>
+        <value>1568.52</value>
+    </array>
+    <item name="wifi.controller.idle">1.61</item>
+    <item name="wifi.controller.rx">122.60</item>
+    <item name="wifi.controller.tx">202.70</item>
+    <array name="wifi.controller.tx_levels">
+        <value>1</value>
+    </array>
+    <item name="wifi.controller.voltage">3700</item>
+    <array name="wifi.batchedscan">
+        <value>.0001</value>
+        <value>.001</value>
+        <value>.01</value>
+        <value>.1</value>
+        <value>1</value>
+    </array>
+    <item name="cpu.idle">7.11</item>
+    <item name="battery.capacity">9200</item>
+</device>
