@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 /** A digest proves identity against the supplied manifest, not publisher authenticity. */
 public final class FirmwareImage {
     public static final String PROFILE = "p81c-suota-v1";
+    public static final String PROFILE_V2 = "mipp-suota-v2";
     public static final int MAX_BYTES = 16 * 1024 * 1024;
     public static final class Manifest {
         public final int vendorId, productId;
@@ -22,9 +23,10 @@ public final class FirmwareImage {
         this.manifest = manifest; this.image = image.clone();
     }
     public static FirmwareImage validate(Manifest manifest, byte[] image, int vendorId, int productId) {
-        if (manifest == null || vendorId != 34 || productId != 20609 ||
+        if (manifest == null || !supports(vendorId, productId) ||
                 manifest.vendorId != vendorId || manifest.productId != productId ||
-                !PROFILE.equals(manifest.profile)) throw new IllegalArgumentException("Unsupported pen/profile");
+                !(productId == 20609 ? PROFILE.equals(manifest.profile)
+                        : PROFILE_V2.equals(manifest.profile))) throw new IllegalArgumentException("Unsupported pen/profile");
         if (manifest.targetVersion == null || !manifest.targetVersion.matches("[0-9]+\\.[0-9]+\\.[0-9]+"))
             throw new IllegalArgumentException("Missing target revision");
         if (manifest.sha256 == null || !manifest.sha256.matches("[0-9a-fA-F]{64}"))
@@ -43,5 +45,9 @@ public final class FirmwareImage {
         byte[] data = java.util.Arrays.copyOf(image, image.length + 1);
         byte xor = 0; for (byte value : image) xor ^= value;
         data[image.length] = xor; return data;
+    }
+    public byte[] rawBytes() { return image.clone(); }
+    public static boolean supports(int vendor, int product) {
+        return vendor == 34 && (product == 20609 || MippV2Protocol.supports(vendor, product));
     }
 }
