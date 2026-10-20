@@ -19,6 +19,15 @@
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
     <uses-permission android:name="android.permission.MANAGE_NOTIFICATIONS" />
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+    <queries>
+        <intent><action android:name="android.intent.action.CREATE_NOTE" /></intent>
+        <intent><action android:name="android.intent.action.ASSIST" /></intent>
+    </queries>
+
     <application
         android:name=".PianoPartsApp"
         android:label="@string/app_name"
