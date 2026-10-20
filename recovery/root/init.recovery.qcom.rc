@@ -1,0 +1,547 @@
+# Xiaomi Pad 8 Pro (piano) — TWRP 16 recovery init
+#
+# Minimal first image. Only what is needed to boot, light the panel, bring up
+# USB and load the touch stack. None of the TWRP14 QSEE compatibility
+# machinery is present: no stock vendor/odm mounts, no compatibility island,
+# no binder symlinks, no secure-world services. Those return one at a time,
+# each justified by an observed dependency.
+
+on early-init
+    # Maintainer tag, visible in getprop and in the property dump of every log.
+    setprop ro.orangefox.maintainer ALXP
+
+    # Stock vendor init mounts tracefs and makes its root searchable here.
+    # Working stock qcrosvm holds trace_marker open for its default logger;
+    # recovery otherwise has no trace_marker. No disk partition is involved.
+    mount tracefs tracefs /sys/kernel/tracing
+    chmod 0755 /sys/kernel/tracing
+
+on init
+    # Panel range is 0-4095, not 0-255. 200 here was ~5% and left the
+    # splash barely visible before TWRP applies TW_DEFAULT_BRIGHTNESS.
+    write /sys/class/backlight/panel0-backlight/brightness 2048
+    setprop sys.usb.configfs 1
+    # Mirrored from stock vendor build.prop. The secure services read these at
+    # startup: is_security_level_spu selects the TrustZone-backed
+    # implementation over SPU, retry_timer is the KeyMint startup retry
+    # interval. Needed by phases 5 and 6, harmless before then.
+    setprop vendor.gatekeeper.is_security_level_spu 0
+    setprop vendor.keymint.retry_timer 5
+    # Recovery-owned H3 Novatek firmware. Avoid /odm/firmware symlink loop.
+    write /sys/module/firmware_class/parameters/path /piano/firmware/o8
+    start piano_touch
+
+on property:ro.boot.usbcontroller=*
+    setprop sys.usb.controller ${ro.boot.usbcontroller}
+    wait /sys/bus/platform/devices/${ro.boot.usb.dwc3_msm:-a600000.ssusb}/mode
+    write /sys/bus/platform/devices/${ro.boot.usb.dwc3_msm:-a600000.ssusb}/mode peripheral
+    wait /sys/class/udc/${ro.boot.usbcontroller} 1
+
+on boot
+    setprop sys.usb.config adb
+
+
+# Load the H3 touch stack before recovery later mounts stock /vendor over the
+# recovery-owned vendor tree. The script is idempotent and exits after both
+# modules are present.
+service piano_touch /system/bin/sh /piano/bin/piano-load-touch.sh
+    class core
+    user root
+    group root system input
+    seclabel u:r:recovery:s0
+    oneshot
+    disabled
+
+
+# Starts the ADSP so recovery can detect USB and charge. See the script for why
+# nothing else starts it.
+service vendor.piano_boot_adsp /system/bin/sh /piano/bin/piano-boot-adsp.sh
+    class core
+    user root
+    group root system
+    seclabel u:r:recovery:s0
+    oneshot
+    disabled
+
+# Stock Android starts batterysecret after boot. It authenticates the battery
+# with the charger firmware; without its success event the kernel holds the
+# input current at 100 mA even after the ADSP and USB PD are online.
+service vendor.piano_batterysecret /piano/vendor-stock/bin/batterysecret
+    class core
+    user root
+    group system wakelock
+    seclabel u:r:recovery:s0
+    setenv LD_LIBRARY_PATH /piano/vendor-stock/lib64:/piano/vendor-stock/lib64/hw:/piano/odm-stock/lib64:/system/lib64
+    disabled
+
+on property:init.svc.vendor.piano_boot_adsp=stopped
+    start vendor.piano_batterysecret
+
+# Reads the installed ROM's security patch levels and applies them to the
+# recovery's own properties. Started with exec_start from the stock-runtime
+# action so that it has finished before qseecomd and KeyMint are created.
+service vendor.piano_prepdecrypt /system/bin/sh /piano/bin/piano-prepdecrypt.sh
+    class core
+    user root
+    group root system
+    seclabel u:r:recovery:s0
+    oneshot
+    disabled
+
+# Ramdisk files arrive labelled u:object_r:rootfs:s0. Apply the device
+# file_contexts so init can perform the domain transition into u:r:tee:s0 when
+# qseecomd is started; without this the binary stays rootfs-labelled and
+# "ctl.start vendor.qseecomd" fails with PROP_ERROR_HANDLE_CONTROL_MESSAGE.
+#
+# task_profiles.json is restored for the same reason it is packaged: recovery
+# ships cgroups.json but not task_profiles.json, so logd aborts in
+# libprocessgroup, logcat stays empty, and every userspace SELinux denial
+# becomes invisible - including the ones raised by servicemanager.
+# The secure-stack binaries and the binder symlink live under /piano, not
+# /vendor. OrangeFox mounts stock /vendor at startup to read the ROM
+# fingerprint, and the /vendor/firmware_mnt bind below then lands inside it
+# and pins it ("Device or resource busy"), hiding anything the recovery
+# ships under /vendor for the whole session:
+#   init: Could not ctl.start for 'vendor.keymint' ... Cannot find
+#         '/vendor/bin/hw/piano-keymint': No such file or directory
+# /piano is recovery-owned and nothing mounts over it, so the secure stack
+# starts whatever TWRP or OrangeFox does with /vendor.
+on early-fs
+    # The ramdisk packer assigns file modes from fs_config, which knows
+    # /vendor/bin but not /piano/bin, so these arrive 0644 and init's execv
+    # fails with "Permission denied". Make them executable before any secure
+    # service can start.
+    chmod 0755 /piano/bin/piano-qseecomd
+    chmod 0755 /piano/bin/piano-minkdaemon
+    chmod 0755 /piano/bin/piano-ssgtzd
+    chmod 0755 /piano/bin/piano-qwesd
+    chmod 0755 /piano/bin/piano-keymint
+    chmod 0755 /piano/bin/piano-gatekeeper
+    chmod 0755 /piano/bin/piano-weaver-hos3
+    chmod 0755 /piano/bin/piano-weaver-hos4
+
+    restorecon /system/etc/task_profiles.json
+    restorecon_recursive /system/etc/vintf
+    restorecon /piano/bin/piano-prepdecrypt.sh
+    restorecon /piano/bin/piano-boot-adsp.sh
+    restorecon /piano/bin/piano-minkdaemon
+    restorecon /piano/bin/piano-ssgtzd
+    restorecon /piano/bin/piano-qwesd
+    restorecon_recursive /vendor/etc/ssg
+    restorecon /piano/bin/piano-qseecomd
+    restorecon /piano/bin/piano-keymint
+    restorecon /piano/bin/piano-gatekeeper
+    restorecon /piano/bin/piano-weaver-hos3
+    restorecon /piano/bin/piano-weaver-hos4
+
+    # Everything the stock binaries link must carry its real label, not the
+    # rootfs label ramdisk files arrive with. u:r:tee:s0 cannot map or read a
+    # rootfs file, which produced first
+    #   avc: denied { map } path="/system/bin/linker64"   -> SIGSEGV
+    # and then
+    #   avc: denied { read } name="liblog.so"             -> exit status 1
+    #
+    # Listing individual libraries is guesswork - the set is whatever the stock
+    # binaries happen to need. Relabel the directories wholesale instead.
+    restorecon_recursive /system/bin
+
+    # Apply labels to all packaged vendor runtime files. This makes every
+    # recovery-owned prebuilt transition deterministically from the live policy.
+    restorecon_recursive /vendor/bin
+    restorecon_recursive /vendor/lib64
+    restorecon_recursive /vendor/etc
+    restorecon_recursive /system/lib64
+    restorecon /system/etc/ld.config.txt
+
+# Xiaomi Pad 8 Pro host-touch stack.
+#
+# H3 modules live under /piano so they remain available after stock /vendor
+# is mounted. The loader starts during init; touch_report retains its normal
+# lifecycle and is not moved earlier.
+# Recovery-only /dev/block/bootdevice alias. Stock QSEE expects this path, and
+# so does the QTI boot control HAL, which recovery does not create for either.
+#
+# It used to be created late, in the stock-runtime action below. The boot
+# control HAL starts earlier than that and probes the path once at startup:
+#   bootcontrolhal: get_number_slots: Failed to open bootdev dir
+# after which every slot write it was asked for failed -
+#   bootcontrolhal: update_slot_attribute: Failed to get disk info for vm-bootsys_a
+#   bootcontrolhal: set_active_boot_slot: Failed to set active slot
+# - so an OTA installed in TWRP wrote the whole payload to the inactive slot
+# and then failed with kPostinstallRunnerError when it could not switch to it.
+# Creating it in "on fs", as the thales (SM8750) tree does, puts it in place
+# before the HAL looks.
+on fs
+    wait /dev/block/platform/soc/1d84000.ufshc
+    symlink /dev/block/platform/soc/1d84000.ufshc /dev/block/bootdevice
+
+on post-fs
+    start odm.touch_report
+
+    # persist, read-only, long before the secure stack starts.
+    #
+    # Shortly after qseecomd starts, the secure world asks its file-system
+    # listener for a file on persist. If persist is not mounted yet, qseecomd
+    # retries for about 360 ms and then crashes in its own give-up path:
+    #   DrmLibFs: persist partition is not mounted, dispatch failed
+    #   DrmLibFs: Partition not mounted, retry : 11
+    #   F libc: Fatal signal 11 (SIGSEGV) ... (piano-qseecomd)
+    # qseecomd is oneshot, so it stays dead and the credential decrypt fails
+    # with it - about one boot in ten while persist was mounted only after
+    # metadata decryption.
+    #
+    # It is mounted here rather than in the stock-runtime action because that
+    # action is timing-critical: mounting persist there, just before the
+    # secure services, delayed ssgtzd until after TWRP had mounted stock
+    # /vendor over /vendor/firmware_mnt, and every boot then failed with
+    #   ssgtzd: Failed to open file /vendor/firmware_mnt/image/haventkn.mbn
+    #   mi_weaver-impl: TEEC_OpenSession() failed : 0xFFFF0007
+    # persist does not depend on /data or on the logical partitions, so it can
+    # be mounted this early, with the same read-only options as before.
+    mkdir /mnt/vendor/persist 0771 root system
+    wait /dev/block/by-name/persist 5
+    mount ext4 /dev/block/by-name/persist /mnt/vendor/persist ro noatime nosuid nodev
+
+# Phase 3: read-only stock vendor and ODM views.
+#
+# The stock secure-world stack lives on the vendor and odm logical partitions.
+# Both are mounted READ-ONLY so the recovery can link against them without any
+# possibility of modifying the installed ROM. Unlike TWRP14, /vendor is
+# writable in this recovery, so the mountpoints sit there rather than in /tmp.
+#
+# TWRP creates the logical-partition mapper links and then sets
+# twrp.super.symlinks_created. The one-shot guard prevents a second mount
+# attempt if the property is re-triggered.
+#
+# Nothing here writes persist, userdata or metadata; persist is mounted
+# read-only below, before the secure stack starts.
+on init
+    setprop vendor.piano.stock.mounted 0
+
+    # OrangeFox packages the recovery build of servicemanager, whose rc only
+    # declares the service. The system build it replaced started itself from
+    # its own rc; TWRP starts it from its init.rc. Nothing did here, so
+    # keystore2 and KeyMint waited forever for servicemanager.ready and the
+    # metadata decrypt hung on the splash screen.
+    start servicemanager
+    # The boot HAL is in the early_hal class, which OrangeFox never starts.
+    start vendor.boot-qti
+
+on property:vendor.piano.partitions_ready=1 && property:vendor.piano.stock.mounted=0
+    setprop vendor.piano.stock.mounted 1
+    mkdir /piano/vendor-stock 0755 root root
+    mkdir /piano/odm-stock 0755 root root
+    wait /dev/block/mapper/vendor${ro.boot.slot_suffix} 5
+    mount erofs /dev/block/mapper/vendor${ro.boot.slot_suffix} /piano/vendor-stock ro
+    # Custom ROMs such as LineageOS build vendor as ext4. The erofs mount
+    # fails on them without a word, and the secure stack then had nothing to
+    # link against. Only one of the two can succeed.
+    mount ext4 /dev/block/mapper/vendor${ro.boot.slot_suffix} /piano/vendor-stock ro
+    wait /dev/block/mapper/odm${ro.boot.slot_suffix} 5
+    mount erofs /dev/block/mapper/odm${ro.boot.slot_suffix} /piano/odm-stock ro
+    # Custom ROMs such as LineageOS build odm as ext4. The erofs mount
+    # fails on them without a word, and the secure stack then had nothing to
+    # link against. Only one of the two can succeed.
+    mount ext4 /dev/block/mapper/odm${ro.boot.slot_suffix} /piano/odm-stock ro
+
+    # Binder pair consistency.
+    #
+    # The stock vendor partition ships libbinder.so but NOT libbinder_ndk.so.
+    # With the stock path first on LD_LIBRARY_PATH the linker therefore takes
+    # libbinder.so from stock and libbinder_ndk.so from the recovery, pairing
+    # two different builds, and qseecomd dies loading its listener manager:
+    #
+    #   dlopen(libops.so) failed: cannot locate symbol
+    #     "_ZN7android6binder2os22get_trace_enabled_tagsEv"
+    #     referenced by "/system/lib64/libbinder_ndk.so"
+    #
+    # One symlink placed ahead of the stock path makes both halves come from
+    # the recovery build. Everything else still resolves from stock vendor.
+    # This is the TWRP16 equivalent of the TWRP14 binder-ABI finding, but it
+    # needs a single library rather than a compatibility island.
+    mkdir /piano/binder 0755 root root
+    mkdir /piano/binder/lib64 0755 root root
+    symlink /system/lib64/libbinder.so /piano/binder/lib64/libbinder.so
+
+    # /dev/block/bootdevice is created in "on fs" above, before the boot
+    # control HAL starts; see the comment there.
+
+    # Secure stack start-up.
+    #
+    # These were started by hand through the Phase 4-7 bring-up. That stopped
+    # being workable once crypto was enabled: metadata decryption happens inside
+    # TWRP's Setup_Fstab_Partitions(), and on a clean boot KeyMint was simply not
+    # running when it was asked for the key -
+    #   Service android.hardware.security.keymint.IKeyMintDevice/default didn't start
+    #   keystore2: failed to get interface ... Retry 4/5: NAME_NOT_FOUND
+    # so decryption failed for want of a HAL rather than for any crypto reason.
+    #
+    # qseecomd is started here, at the END of this block, and not earlier: it
+    # needs the stock vendor mount AND the binder symlink above. Started before
+    # the symlink exists it loads stock's libbinder against the recovery's
+    # libbinder_ndk and dies immediately, leaving init.svc.vendor.qseecomd
+    # "stopped" with no listeners.
+    #
+    # No property gate is needed for the OS version and patch levels: they are
+    # stamped at build time by PLATFORM_SECURITY_PATCH and friends in
+    # BoardConfig.mk, so they are already correct before init starts anything.
+    # The modem partition carries the GlobalPlatform trusted applications, and
+    # Weaver is one of them. /firmware/image holds 57 TAs named by
+    # UUID. SSGTZD loads the required application from this mount. Without it
+    # the Weaver HAL comes up and registers, but its first real call fails:
+    # its first real call dies:
+    #
+    #   mi_weaver-impl: TEEC_InitializeContext() 0x00000000
+    #   mi_weaver-impl: openSession ... Weaver GP TA : 0xFFFF0000
+    #   mi_weaver-impl: TEEC_OpenSession() failed : 0xFFFF0000
+    #   recovery: Failed to get weaver key size / Failed to decrypt user 0
+    #
+    # Read-only, and the modem partition is never written.
+    mkdir /firmware 0771 system system
+    wait /dev/block/by-name/modem${ro.boot.slot_suffix} 5
+    # Stock mounts this partition with the dedicated firmware_file label
+    # (stock fstab: context=u:object_r:firmware_file:s0). Until this option
+    # was applied the recovery mount fell back to the generic vfat label and
+    # the tee domain could not traverse or read a trusted application:
+    #   denied { search } name="/" dev="sdd7" tcontext=u:object_r:vfat:s0
+    # firmware_file is contextmount_type: init may mount it, nothing may
+    # write it (platform neverallow), init is denied chown/chmod on it.
+    mount vfat /dev/block/by-name/modem${ro.boot.slot_suffix} /firmware ro shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337,context=u:object_r:firmware_file:s0
+
+    # The same tree, also at the path the Xiaomi secure stack hardcodes.
+    #
+    # ssgtzd loads trusted applications at STARTUP, not only at credential
+    # time: tzsc.mbn and haventkn.mbn are read while it brings up its TZD
+    # interface. It looks for them under /vendor/firmware_mnt, and its
+    # fallback resolves into the stock vendor view, which this policy sees
+    # as unlabeled and denies at permissive=0:
+    #
+    #   ssgtzd: Failed to open file /vendor/firmware_mnt/image/haventkn.mbn:
+    #           No such file or directory (2)
+    #   ssgtzd: Failed to open file /vendor/firmware/image/haventkn.mbn:
+    #           Permission denied (13)
+    #   avc: denied { search } name="firmware" dev="dm-5"
+    #        scontext=u:r:tee:s0 tcontext=u:object_r:unlabeled:s0
+    #
+    # When that load loses its race, qseecomd never publishes
+    # vendor.sys.listeners.registered and recovery abandons the metadata
+    # layer outright:
+    #
+    #   piano: QSEE listeners did not register within 30s
+    #   Unable to decrypt metadata encryption
+    #
+    # which happened on roughly one boot in five. The credential-time hook
+    # cannot cover this: it runs long after the failure.
+    #
+    # A bind of the mount above, so one filesystem is mounted from the modem
+    # partition and there is no second vfat mount to keep in step. TWRP may
+    # still unmount this path during its own partition lifecycle;
+    # /system/bin/twrp-pre-decrypt restores it before credential decrypt,
+    # which is the reason that hook exists.
+    mkdir /vendor/firmware_mnt 0771 system system
+    mount none /firmware /vendor/firmware_mnt bind
+
+    # The ADSP runs the charger and USB detection. It loads from the modem
+    # partition mounted just above, so it can only start from here.
+    start vendor.piano_boot_adsp
+
+    # Firmware-matched security patch levels.
+    #
+    # KeyMint caches the OS version and the system and vendor patch levels
+    # when it starts, and the TEE refuses to upgrade a key blob bound to a
+    # different level. Stamping them at build time works but pins one image
+    # to one firmware: 307 was system 2026-07-01 with vendor 2026-02-01,
+    # 308 is 2026-08-01 for both.
+    #
+    # The stock vendor view is mounted above and nothing secure has started
+    # yet, so this is the one window where the installed ROM's values can be
+    # read and applied.
+    #
+    # The secure stack is NOT started from this action. exec_start was tried
+    # and is not safe here: it suspends the action until the service exits,
+    # and the action only resumed when resetprop happened to generate a
+    # property-change event. On a firmware whose values already match the
+    # build-time fallback nothing changes, no event is generated, and the
+    # action never resumes - qseecomd is never created at all and decryption
+    # fails with \"QSEE listeners did not register\". The script therefore ends
+    # by setting vendor.piano.prepdecrypt.done.
+    #
+    # Only KeyMint depends on the patch levels: the HAL reads them in its
+    # constructor and hands them to the TA. qseecomd, Mink, SSGTZD, Gatekeeper
+    # and Weaver never read them, so they start here as they always have, and
+    # KeyMint alone is started by the script once the values are in place.
+    # This follows the split used by the thales (SM8750) recovery tree.
+    #
+    # Two earlier designs gated every secure service on the script and both
+    # failed: exec_start never resumed this action when no property changed,
+    # and a separate property-triggered action stopped after its second start.
+    # Neither failure mode can reach services that do not wait on the script.
+
+    # persist is already mounted read-only, from "on post-fs"; see there.
+
+    # QSEE/KeyMint fast path.
+    #
+    # vendor.sys.listeners.registered is emitted by qseecomd when its listener
+    # topology is usable.
+    start vendor.qseecomd
+    start vendor.minkdaemon
+
+    # These services do not need the credential-encrypted /data tree.
+    #
+    # Weaver itself does not open its GP TA session until the first actual
+    # credential operation, giving Mink/SSGTZD time to become ready.
+    start vendor.ssgtzd
+    start vendor.gatekeeper_default
+
+    # Reads the installed ROM's patch levels, then starts vendor.keymint
+    # itself with ctl.start. piano-keymint has its own retry path for QSEE
+    # readiness, so it is not gated on vendor.sys.listeners.registered.
+    start vendor.piano_prepdecrypt
+
+
+
+
+# Credential-encrypted FBE support.
+#
+# KeyMint stays on the early QSEE fast path above. Once metadata encryption
+# publishes the userdata mapper, prepare the remaining stock secure services
+# required by a Weaver-backed synthetic password.
+on property:ro.crypto.fs_crypto_blkdev=*
+    # /mnt/vendor/persist is mounted in the stock-runtime action, before
+    # qseecomd starts; see the comment there.
+
+    mkdir /data/vendor/qwes 0755 system system
+    restorecon_recursive /data/vendor/qwes
+
+    # QWES needs the decrypted metadata-backed /data view prepared above.
+    # SSGTZD, Gatekeeper and Weaver are already brought up deterministically
+    # from vendor.sys.listeners.registered.
+    start vendor.qwesd
+
+# Phase 4: stock Qualcomm TEE daemon.
+#
+# Packaged unmodified from HyperOS 3 (SHA-256
+# dc1ccdd0a32891f0f38048383499e8849e071840ef5bb210eefa1b0e3b2c369f). Both this
+# recovery and the stock binary are Android 16, so no compatibility island is
+# packaged: the point of the TWRP16 migration is that none should be needed.
+# If an exact missing symbol proves otherwise, that evidence justifies adding
+# one library, not a wholesale port of the TWRP14 stack.
+#
+# Kept "disabled" so that only the vendor.piano.stock.mounted trigger above
+# starts it, exactly once per recovery boot, after the stock vendor mount.
+service vendor.qseecomd /piano/bin/piano-qseecomd
+    class core
+    user root
+    group root drmrpc
+    socket notify-topology stream 0660 system drmrpc
+    disabled
+    oneshot
+    setenv LD_LIBRARY_PATH /piano/binder/lib64:/piano/vendor-stock/lib64:/piano/vendor-stock/lib64/hw:/system/lib64
+
+
+# Phase 5: stock piano KeyMint HAL.
+#
+# One process hosts IKeyMintDevice, IRemotelyProvisionedComponent,
+# ISecureClock and ISharedSecret. It needs the stock vendor mount and a
+# running qseecomd, so it stays "disabled" and is started by the
+# vendor.sys.listeners.registered trigger above, which is qseecomd's own
+# announcement that its listeners are up.
+#
+# Same LD_LIBRARY_PATH as qseecomd, including the binder symlink directory:
+# this binary links libbinder_ndk too, so the pair must match for the same
+# reason qseecomd's did.
+service vendor.keymint /piano/bin/piano-keymint
+    class hal
+    user system
+    group system drmrpc
+    disabled
+    setenv LD_LIBRARY_PATH /piano/binder/lib64:/piano/vendor-stock/lib64:/piano/vendor-stock/lib64/hw:/system/lib64
+
+
+# Phase 6: stock piano Gatekeeper HAL.
+#
+# Stock enables this when vendor.gatekeeper.is_security_level_spu=0, which
+# init sets above. Started only after QSEE listeners are confirmed healthy, by
+# the vendor.sys.listeners.registered trigger.
+service vendor.gatekeeper_default /piano/bin/piano-gatekeeper
+    class early_hal
+    user system
+    group system
+    disabled
+    setenv LD_LIBRARY_PATH /piano/binder/lib64:/piano/vendor-stock/lib64:/piano/vendor-stock/lib64/hw:/system/lib64
+
+# Phase 7: Xiaomi Weaver HAL selected from the installed Android generation.
+#
+# prepdecrypt reads ro.build.version.release from the installed system before
+# credential decryption, then starts the matching service with ctl.start and
+# waits for init to report it running. A property-triggered start did not run
+# reliably before TWRP requested Weaver.
+#
+# Android 16 / HyperOS 3 -> legacy miweaver HAL.
+# Android 17 / HyperOS 4 -> new miauthsecretd/oldcredential HAL.
+
+service vendor.weaver_hos3 /piano/bin/piano-weaver-hos3
+    class hal
+    user system
+    group system drmrpc
+    disabled
+    setenv LD_LIBRARY_PATH /piano/binder/lib64:/piano/odm-stock/lib64:/piano/vendor-stock/lib64:/piano/vendor-stock/lib64/hw:/system/lib64
+
+service vendor.weaver_hos4 /piano/bin/piano-weaver-hos4
+    class hal
+    user system
+    group system drmrpc
+    disabled
+    setenv LD_LIBRARY_PATH /piano/binder/lib64:/piano/odm-stock/lib64:/piano/vendor-stock/lib64:/piano/vendor-stock/lib64/hw:/system/lib64
+
+# Qualcomm's GlobalPlatform trusted-application loader.
+#
+# Weaver is a GP TA, not a QSEE listener, so qseecomd alone is not enough: the TA
+# has to be loaded from the modem partition mounted above, and ssgtzd is what
+# loads it. Without it TEEC_OpenSession fails and the credential can never be
+# checked - TWRP reports "Failed to get weaver key size" and gives up before it
+# ever looks at the PIN, which is why no retry attempt was consumed by the
+# failures.
+#
+# Definition copied from the stock /vendor/etc/init/ssgtzd.rc, including the
+# capabilities and both sockets. Stock starts it from an early-boot trigger; here
+# it starts with the rest of the secure stack, after qseecomd's listeners are up.
+service vendor.ssgtzd /piano/bin/piano-ssgtzd
+    class late_start
+    user system
+    group system oem_2912 wakelock
+    capabilities WAKE_ALARM BLOCK_SUSPEND
+    disabled
+    socket ssgtzd stream 0660 system oem_2912
+    socket ssgtzd_opener stream 0660 system system
+    setenv LD_LIBRARY_PATH /piano/binder/lib64:/piano/vendor-stock/lib64:/piano/vendor-stock/lib64/hw:/system/lib64
+
+
+# Stock HLOS Mink daemon. The opener is required by the GlobalPlatform
+# transport used by the recovery secure stack.
+#
+# The socket name is the one the daemon looks for: it logs
+#   Did not find env var with sock fd for ANDROID_SOCKET_hlos_mink_opener
+#   Using file /dev/socket/hlos_mink_opener
+# and falls back to the file, so init creates it under that exact name.
+#
+# Runs in the tee domain like the other secure daemons — it is a client of the
+# same secure world.
+
+# Stock Qualcomm QWES daemon. Stock HyperOS starts this at boot while SSGTZD
+# starts at early-boot. Recovery starts it only after metadata /data exists.
+service vendor.qwesd /piano/bin/piano-qwesd
+    class late_start
+    user system
+    group system inet
+    disabled
+    setenv LD_LIBRARY_PATH /piano/binder/lib64:/piano/vendor-stock/lib64:/piano/vendor-stock/lib64/hw:/system/lib64
+
+
+service vendor.minkdaemon /piano/bin/piano-minkdaemon
+    class core
+    user system
+    group system drmrpc
+    disabled
+    socket hlos_mink_opener stream 0660 system drmrpc
+    setenv LD_LIBRARY_PATH /piano/binder/lib64:/piano/vendor-stock/lib64:/piano/vendor-stock/lib64/hw:/system/lib64
