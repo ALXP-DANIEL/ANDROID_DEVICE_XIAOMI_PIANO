@@ -1,0 +1,371 @@
+/*
+device:ishtar
+some quick reference:
+
+stream format: (for complete list, refer to: system/core/include/system/graphics-base-vx.x.h)
+HAL_PIXEL_FORMAT_RGBA_8888 = 1,
+HAL_PIXEL_FORMAT_RGBX_8888 = 2,
+HAL_PIXEL_FORMAT_RGB_888 = 3,
+HAL_PIXEL_FORMAT_RGB_565 = 4,
+HAL_PIXEL_FORMAT_BGRA_8888 = 5,
+HAL_PIXEL_FORMAT_YCBCR_422_SP = 16,
+HAL_PIXEL_FORMAT_YCRCB_420_SP = 17,
+HAL_PIXEL_FORMAT_YCBCR_422_I = 20,
+HAL_PIXEL_FORMAT_RGBA_FP16 = 22,
+HAL_PIXEL_FORMAT_RAW16 = 32,
+HAL_PIXEL_FORMAT_BLOB = 33,
+HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED = 34,
+HAL_PIXEL_FORMAT_YCBCR_420_888 = 35,
+HAL_PIXEL_FORMAT_RAW_OPAQUE = 36,
+HAL_PIXEL_FORMAT_RAW10 = 37,
+HAL_PIXEL_FORMAT_RAW12 = 38,
+HAL_PIXEL_FORMAT_RGBA_1010102 = 43,
+HAL_PIXEL_FORMAT_Y8 = 538982489,
+HAL_PIXEL_FORMAT_Y16 = 540422489,
+HAL_PIXEL_FORMAT_YV12 = 842094169,
+
+stream dataspace: (for complete list, refer to: system/core/include/system/graphics-base-vx.x.h)
+HAL_DATASPACE_JFIF = 257,
+HAL_DATASPACE_V0_JFIF = 146931712,  // ((STANDARD_BT601_625 | TRANSFER_SMPTE_170M) | RANGE_FULL)
+*/
+
+{
+    "isSupportExtCamera": true,
+    "ignoreV4L2DevicesByExtCamera": [0, 1],
+    "supportDownCapture": true,
+    "supportSortResult": true,
+    "supportSortNotify": true,
+    "supportFrameDrop": false,
+    "maxPendingFrameNum": 10,
+    "maxTotalPendingFrameNum": 20,
+    "setQRstreamUsecase": 524545,
+    // When APP supports DownCapture, mihal needs to discard the useless snapshot request front Burst.
+    "InternalPreviewBufferQueueSize": 30,
+    "QuickviewBufferQueueSizeMax": 26,
+    "MockCameraFwkStreamMaxBufferQueueSize": 30,
+    // when mihal allocate a stream's GraBuffer, it will refresh a timer.
+    // If no one else request the stream's GraBuffer for "BufferReclaimWaitMilliseconds",
+    // then the idle buffers of that stream will be reclaimed to save memory
+    "BufferReclaimWaitMilliseconds": 3000,
+    // this is the time you wait for some buffers to get released when all the buffers of the
+    // stream you are requesting are busy
+    "RequestGraBufferTimeOutMilliseconds": 300,
+    "InternalSnapshotStreamProperty": {
+        "UpScaleSizeFactor": 2,
+        "InternalRawStreamAspectRatio": 1.33,
+        // NOTE: the sensor supported yuv output resolution
+        // resolution of streams sent by framework should be in this option list with ± tolerance
+        "YuvStreamResolutionOptions": {
+            "AspectRatioList": [1, 1.12851, 1.33333, 1.5, 1.77777, 2.16666, 2.22222, 2.333, 1.118],
+            // the tolerance shouldn't be too small. otherwise, mihal will choose the wrong
+            // resolution. for example, in L2, when do Sr+Hdr, if you change frame ratio as 3:4,
+            // then Qcom expects ouput stream size as 4080X3072, but 4080/3072=1.328125
+            // which is not 4/3=1.33333. Therefore, we need some tolerance
+            "Tolerance": 0.0095
+        },
+        "RawStreamResolutionOptions": {
+            "AspectRatioList": [1, 1.33, 1.50, 1.60, 1.77, 2.22],
+            "Tolerance": 0.1
+        }
+    },
+    "supportZSLQ": true,
+    "ZSLSelectorPriority": {
+        "ZSLSelectorAiHighLight": 10,
+        "ZSLSelectorBokehRawHDR": 20,
+        "ZSLSelectorBokehForSmartAE": 30,
+        "ZSLSelectorELL": 40,
+        "ZSLSelectorHDR": 50,
+        "ZSLSelectorLeica": 60,
+        "ZSLSelectorMotion": 70,
+        "ZSLSelectorNightMotion": 80,
+        "ZSLSelectorNightMotionZSLBanding": 90,
+        "ZSLSelectorSR": 100,
+        "ZSLSelectorMFNR": 200,
+        "ZSLSelectorSingle": 300,
+        "ZSLSelectorDefault": 400,
+        "ZSLSelectorDsac": 500
+    },
+    "supportStreaming": true,
+    "supportStreamingMode":{
+        "AllModes": false,
+        "supportOpModes": [0, 36868, 36872, 36878, 36871, 36876, 36877, 36875, 37632, 36867, 32778, 36866, 36865, 32777, 36869, 36864, 32793],
+        "controlPreviewOpModes": [36867, 36864, 37632]
+         // StreamConfigModeNormal 0  StreamConfigModeQCFALite 36865
+        // StreamConfigModeAlgoDualSAT 36866  StreamConfigModeMiuiVideoBeautyWithEIS 32793
+        // StreamConfigModeAlgoSingleRTB 36867 StreamConfigModeAlgoDualBokeh 36864
+        //StreamConfigModeMiuiSuperNight 32778 StreamConfigModeAlgoQCFAMFNR 36868
+        //StreamConfigModeAlgoManual 36872 StreamConfigModeAlgoManualHdRaw 36878 StreamConfigModeAlgoManualSuperHD 36871
+        //StreamConfigModeAlgoManualHdUltraRaw 36876 StreamConfigModeAlgoManualRaw 36877
+        //StreamConfigModeAlgoUltraRaw 36875  StreamConfigModeAlgoNormal 36869
+        //StreamConfigModeMiuiVideoBeauty 32777 StreamConfigModeCinelook 32819
+        //StreamConfigModeMiuiCineModeWithBokeh 32818
+    },
+    "supportSmartAE": false,
+    "SuperResolutionImageRatio": [1.33333, 1.77778],
+    "FeatureList": {
+        "FeatureSmartAE": {
+            "HDREVCheck": [1, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+            "DOL2ZSLHDRNum": 10,
+            "NZSLHDREVCheck": [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0],
+            "DOL2NZSLHDRNum": 10
+        },
+        "FeatureMihalMFNR": {
+            "wideMfnrUseRaw16": true
+        },
+        "FeatureHDR": {
+            // in normal hdr mode(not stagger hdr), we need to send mutiple requests
+            // to vendor and merge these requests in mialgoengine, this variable sets
+            // the minimum number of requests needed by mialgoengine to do
+            // HDR processing, if the number of ev values returned by hdr checker is
+            // less than this value, then this HDR snapshot is problematic
+            "MinNumOfSnapshotRequiredByYuvHDR": 3,
+            "MinNumOfSnapshotRequiredByRawHDR": 2,
+            // please refer to function applyHdrParameter in:
+            // packages/apps/MiuiCamera/src/com/android/camera2/MiCamera2ShotParallelBurst.java
+            "shouldApplyAElock": true,
+            "isMihalMFNRYuvHdr": true,
+            "MFNRFrameNum": 5,
+            "priorityHdrNotMFNR": true
+        },
+        "FeatureSR": {
+            "SupportRawSr": false,
+            "NumOfSnapshotRequiredBySR": 8,
+            "NumOfSnapshotRequiredByRemosaicSR": 4,
+            "NumOfQuadBayerSRSnapshotCustom": true,
+            "NumOfSnapshotRequiredByQUADBayerSR": 6
+        },
+        "FeatureSRHDR": {
+            "SupportRawSrHdr": false,
+            "NumOfSnapshotRequiredBySRHDR": 10,
+            "NumOfExpandedEvZeroBySRHDR": [8, 4],
+            "DefaultExpValuesOfSRHDR": [0, 0, 0, 0, 0, 0, 0, 0, -6, 6]
+        },
+        "FeatureSN": {
+            "supportMfnrForSn": false
+        },
+        "FeatureAINR": {
+            "NumOfSnapshotRequiredByAINR": 6,
+            "LimitTimeByHDUltrRawUpper": 7000,
+            "LimitTimeByHDUltrRawLower": 4000
+        },
+        "FeatureFusion": {
+            "SrFusionZoomRegion": {
+                "lowerBound": 3.0,
+                "upperBound": 5.0
+            },
+            "MfnrFusionZoomRegion": {
+                "lowerBound": 0.6,
+                "upperBound": 1.0
+            }
+        },
+        "FeatureHD": {
+            // in K1, under superHD mode we want to use mfnr to get a high quality image
+            // but if we set exposure time to a large value, it will take very long time to
+            // snapshot, so we need to disable mfnr when we set a long exposure time.
+            // this variable is the max exposure time to allow mfnr. the unit is nano second.
+            "MfnrMaxExpTime": 250000000,
+            "SupportRawHD": true,
+            "NumOfSnapshotRequiredByRemosaicHD": 3
+        },
+        "FeatureDepthExtend": {
+            "MinNumOfSnapshotRequiredByDepthExtend": 5
+        },
+        "FeatureManual": {
+            "B2YLongExposureTime": 250000000
+        }
+    },
+    "AttachPreview": {
+        /**
+        *Bit[0] - Support HD mode
+        *Bit[1] - Support SAT mode
+        **/
+        "AttachPreviewSupportMask": 3
+    },
+    "MialgolowMemB2Y":{
+        // MemAvailable < 800MB
+        "isEnable": true,
+        "limitFreeRam": 800000
+    },
+    "MialgoBypassAlgo":{
+        "isEnable": true,
+        "limitFreeRam": 800000,
+        // define in mivifwk/mialgoengine/MiaPipelinePruner.cpp ---> gPluginNameToNodeMask
+        // ldc, portraitrepair, hdr
+        // 4096, 34359738368, 2
+        "algoMask": 34359742464
+    },
+    "MialgoSigTask":{
+        "isEnable": false,
+        "limitFreeRam": 2000000
+    },
+    "MialgoBanShutter":{
+        "isEnable": true,
+        "limitFreeRam": 400000
+    },
+    // you can't just keep sending tasks to mialgoengine, we need to confine the num
+    // of task in process, (one task means one photographer)
+    "MialgoCapacity": 10,        // the total resource in mialgo
+    "MialgoTaskConsumption": {
+        // the entries below show the reources cost by various photographer per snapshot.
+        // If the sum of these resource reaches "MialgoCapacity", we will stop the app
+        // "Photographer": 1,
+        // "B2YRawUpPhotographer": 1,
+        // "BokehPhotographer": 2,
+        // "MDBokehPhotographer": 2,
+        // "HdrBokehPhotographer": 2,
+        // "DSACBokehPhotographer": 2,
+        // "SEBokehPhotographer": 2,
+        // "HdrPhotographer": 3,
+        // "HwmfPhotographer": 1,
+        // "SupernightPhotographer": 4,
+        // "RawSupernightPhotographer": 4,
+        // "SrPhotographer": 4,
+        // "SrHdrPhotographer": 5,
+        // "FusionPhotographer": 3,
+        // "ProfessionalPhotographer": 1,
+        // "BurstPhotographer": 0,
+        // "AINRPhotographer": 4,
+        // "HdAINRPhotographer": 6,
+        // "ManualRawPhotographer": 2,
+        // "ManualHdRawPhotographer": 4,
+        // "DepthExtendPhotographer": 3,
+        // "MihalMfnrBokehPhotographer":2,
+        // "MihalMFNRPhotographer":1
+
+
+        "0": [3,1], // {Photographer_SIMPLE, "B2YRawUpPhotographer"},
+        "1": 4, // {Photographer_HDR, "HdrPhotographer"},
+        "2": 4, // {Photographer_SR, "SrPhotographer"},
+        "3": 4, // {Photographer_SN, "SupernightPhotographer"},
+        "4": 0, // {Photographer_BURST, "BurstPhotographer"},
+        "5": 4, // {Photographer_HDRSR, "SrHdrPhotographer"},
+        "6": 3, // {Photographer_FUSION, "FusionPhotographer"},
+        "7": 3, // {Photographer_SR_FUSION, "FusionPhotographer"},
+        "8": 1, // {Photographer_VENDOR_MFNR, "MFNRPhotographer"},
+        "9": 2, // {Photographer_MIHAL_MFNR, "MihalMFNRPhotographer"},
+        "10": 2, // {Photographer_BOKEH, "BokehPhotographer"},
+        "11": 2, // {Photographer_BOKEH_MD, "MDBokehPhotographer"},
+        "12": 4, // {Photographer_BOKEH_HDR, "HdrBokehPhotographer"},
+        "13": 4, // {Photographer_BOKEH_SE, "SEBokehPhotographer"},
+        "14": 2, // {Photographer_BOKEH_MD_SN, "SEBokehPhotographer"},
+        "15": 2, // {Photographer_BOKEH_MD_HDR, "HdrBokehPhotographer"},
+        "16": 2, // {Photographer_BOKEH_MIHAL_MFNR, "MihalMfnrDualBokehPhotographer"},
+        "17": 2, // {Photographer_BOKEH_VENDOR_MFNR, "VendorMfnrDualBokehPhotographer"},
+        "18": [6,2], // {Photographer_SINGLE_BOKEH_MIHAL_MFNR, "MihalMFNRPhotographer"},
+        "19": 1, // {Photographer_SINGLE_BOKEH_VENDOR_MFNR, "SinglePhotographer"},
+        "20": 1, // {Photographer_SINGLE_BOKEH, "SinglePhotographer"},
+        "21": 1, // {Photographer_MANUAL, "ProfessionalPhotographer"},
+        "22": 3, // {Photographer_AINR, "AINRPhotographer"},
+        "23": 6, // {Photographer_HD_AINR, "HdAINRPhotographer"},
+        "24": 2, // {Photographer_HD_UPSCALE, "RemosaicMfnrPhotographer"},
+        "25": 1, // {Photographer_HD_MFNR, "HdMFNRPhotographer"},
+        "26": 2, // {Photographer_HD_REMOSAIC_MFNR, "RemosaicMfnrPhotographer"},
+        "27": 1, // {Photographer_HD_REMOSAIC_MFNR_HDR, "RemosaicHdrMfnrPhotographer"},
+        "28": 3, // {Photographer_DEPTH_EXTEND, "DepthExtendPhotographer"},
+        "29": 1, // {Photographer_MANUALRAW, "SinglePhotographer"},
+        "30": 1, // {Photographer_HD_MANUALRAW, "SinglePhotographer"},
+        "31": 3, // {Photographer_HDR_RAW,"RawHdrPhotographer"},
+        "32": 3, // {Photographer_HDR_STAGGER_RAW, "StaggerRawHdrPhotographer"},
+        "33": 3, // {Photographer_HD_REMOSAIC_HDR, "RemosaicRawHdrPhotographer"},
+        "34": [6,3], // {Photographer_SINGLE_BOKEH_HDR, "RawHdrPhotographer"},
+        "35": 2, // {Photographer_DSAC_BOKEH, "Photographer_DSAC_BOKEH"},
+        "36": 4, // {Photographer_AINR_FLASH, "AinrFlashPhotographer"},
+        "37": 1, // {Photographer_QUAD_RAW_SR, "SrQuadRawPhotographer"},
+        "38": 3, // {Photographer_HD_HDR_RAW, "HdRawHdrPhotographer"},
+        "39": 1, // {PHOTOGRAPHER_HD_REMOSAIC_SINGLE, "RemosaicSinglePhotographer"},
+        "40": 1, // {Photographer_SmartAE_AllInOne, "SmartAEPhotographer"},
+        "41": 1, // {Photographer_SmartAE_AllInOne_Bokeh, "BokehSmartAEPhotographer"},
+        "42": 3, // {Photographer_DOL2, "DOL2Photographer"},
+        "43": 4, // {Photographer_BOKEH_AINR, "Photographer_BOKEH_AINR"},
+        "44": 4, // {Photographer_BOKEH_SR, "Photographer_BOKEH_SR"},
+        "45": 4, // {Photographer_BOKEH_SNSC, "Photographer_BOKEH_SNSC"},
+        "46": 4, // {Photographer_BOKEH_HDSR, "Photographer_BOKEH_HDSR"},
+        "47": 1 // {Photographer_ASTRAL, "AstralPhotographer"},
+    },
+    "BokehStaticRemosaicSwitch": {
+        "35mm": {
+            "masterEnable": false,
+            "slaveEnable": false
+        },
+        "50mm": {
+            "masterEnable": false,
+            "slaveEnable": false
+        },
+        "75mm": {
+            "masterEnable": false,
+            "slaveEnable": false
+        },
+        "90mm": {
+            "masterEnable": false,
+            "slaveEnable": false
+        },
+        "Bokeh1X": {
+            "masterEnable": false,
+            "slaveEnable": false
+        },
+        "Bokeh1_5X": {
+            "masterEnable": false,
+            "slaveEnable": false
+        },
+        "Bokeh2X": {
+            "masterEnable": false,
+            "slaveEnable": false
+        },
+        "Bokeh3X": {
+            "masterEnable": false,
+            "slaveEnable": false
+        },
+        "duration": 30000
+    },
+    "BokehStaticFallback": {
+        "35mm": {
+            "enable": false
+        },
+        "50mm": {
+            "enable": true
+        },
+        "75mm": {
+            "enable": true
+        },
+        "90mm": {
+            "enable": true
+        },
+        "Bokeh1X": {
+            "enable": false
+        },
+        "Bokeh1_5X": {
+            "enable": false
+        },
+        "Bokeh2X": {
+            "enable": true
+        },
+        "Bokeh3X": {
+            "enable": true
+        },
+        "duration": 30000
+    },
+    "OverrideRequestedConfiguration":{
+        "opModes": [32779]
+    },
+    "UltraHdrSupported": true,
+    "supportFrontBokehDepthScale": true,
+    "halHeicSupported": true,
+    "DoRotationOnImage": {
+        "jpeg": true,
+        "heif": true
+    },
+    "BugHunter":{
+        "allinoneAlgoNoncriticalErrorCode": [0, 1023200]
+    },
+
+    "supportDignostician": {
+        "diagnosticianEnable": 1,
+        "snapshotLogPrintEnable": 0,
+        "snapshotDumpEnable": 0,
+        "moduleDiagEnable": 0,
+        "miviDumpEnable": 1
+    },
+    "BugHunter":{
+        "allinoneAlgoNoncriticalErrorCode": [0, 1023200]
+    }
+}

@@ -1,0 +1,50 @@
+{
+    "description":" 版本信息",
+    "dictVersion":1,
+    "description":"Log 加密开关信息",
+    "encryption": 1,
+    "description":"Qcom平台信息",
+    "qcom":
+    [
+        {
+            "description":"三方无法对焦/对焦模糊",
+            "tagid":1001,
+            "config":
+            [
+               {"module":"CAMX_LOG", "loglevel":3, "modulemask":"0x8000002"}
+            ]
+        },
+        {
+            "description":"前置AE跳变（预览忽明忽暗的变化）",
+            "tagid":1003,
+            "config":
+            [
+               {"module":"CAMX_LOG", "loglevel":3, "modulemask":"0x2000003"}
+            ]
+        },
+        {
+            "description":"后置AE跳变（预览忽明忽暗的变化）",
+            "tagid":1011,
+            "config":
+            [
+               {"module":"CAMX_LOG", "loglevel":3, "modulemask":"0x2000003"}
+            ]
+        },
+        {
+            "description":"对焦不清晰/对不上焦",
+            "tagid":1021,
+            "config":
+            [
+               {"module":"CAMX_LOG", "loglevel":3, "modulemask":"0x8000002"}
+            ]
+        },
+        {
+            "description":"防抖效果差",
+            "tagid":1025,
+            "config":
+            [
+               {"module":"CAMX_LOG", "loglevel":3, "modulemask":"0x8000002"}
+            ]
+        }
+    ]
+}

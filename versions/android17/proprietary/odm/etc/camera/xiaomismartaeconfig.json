@@ -1,0 +1,2015 @@
+{
+    "Description": "Xiaomi SmartAE config file",
+    "phone_code": "O10U",
+    "jsonVersion": "Vibrant_V2.0-20241218-ea7ca55b",
+    "DAYLIGHT_TRIGGER": {
+        "daylight_thres": 310
+    },
+    "HDR_TRIGGER": {
+        "Description": "HDR Trigger config",
+        "max_valid_zoom": 20.0,
+        "BOKEH": {
+            "NON-MOTION": {
+                "WIDE": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "Description": "bokeh outdoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "Description": "bokeh indoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+                        }
+
+                    }
+
+                },
+                "UW": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 445,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 445,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    }
+
+
+                },
+                "TELE": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 415,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.01,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 415,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.01,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+
+                    }
+                }
+            },
+
+            "MOTION": {
+                "WIDE": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+
+                    }
+                },
+                "UW": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 320,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 320,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    }
+
+                },
+                "TELE": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 290,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.01,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 290,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.01,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    }
+
+                }
+            }
+
+        },
+        "NORMAL": {
+            "NON-MOTION": {
+                "WIDE": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5, 1.4 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "Description": "normal outdoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                },
+                                {
+                                    "Description": "normal outdoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5, 1.4 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "Description": "normal outdoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                },
+                                {
+                                    "Description": "normal outdoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5, 1.4 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "Description": "normal indoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                },
+                                {
+                                    "Description": "normal indoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5, 1.4 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "Description": "normal indoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                },
+                                {
+                                    "Description": "normal indoor parameters",
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 435,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+                        }
+                    }
+
+                },
+                "UW": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 445,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 445,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 445,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 445,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.05,
+                                    "hdr_over_exp_ratio_thres": 0.004,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    }
+
+
+                },
+                "TELE": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 415,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 415,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 415,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 415,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    }
+                }
+            },
+
+            "MOTION": {
+                "WIDE": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5, 1.4 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.06,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                },
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5, 1.4 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.06,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                },
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5, 1.4 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.06,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                },
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5, 1.4 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.06,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+                                },
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 310,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 0.3,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.5,
+                                    "hdr_dead_dark_scene_thres": 300
+
+                                }
+                            ]
+
+                        }
+                    }
+                },
+                "UW": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 320,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.06,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 320,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.06,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 320,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.06,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 320,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.06,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+
+                                }
+                            ]
+
+                        }
+                    }
+
+                },
+                "TELE": {
+                    "OUTDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 290,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 290,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    },
+                    "INDOOR": {
+                        "FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 290,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        },
+                        "NON-FACE": {
+                            "zoom_ratio": [ 0.5 ],
+                            "ZOOM_SECTION": [
+                                {
+                                    "hdr_force_trigger_adrc": 4.5,
+                                    "hdr_valid_luxindex": 290,
+                                    "hdr_dead_dark_thres": 10,
+                                    "hdr_over_exp_thres": 254,
+                                    "hdr_dead_dark_ratio_thres": 0.063,
+                                    "hdr_over_exp_ratio_thres": 0.015,
+                                    "hdr_adrc_thres": 1.5,
+                                    "hdr_real_darkboost_thres": 1.5,
+                                    "hdr_center_over_exp_ratio_thres": 1.1,
+                                    "hdr_center_dead_dark_ratio_thres": 1.1,
+                                    "hdr_center_real_adrc_thres": 1.1,
+                                    "hdr_dead_dark_scene_thres": 300
+                                }
+                            ]
+
+                        }
+                    }
+
+                }
+            }
+
+        }
+    },
+    "SE_TRIGGER": {
+        "Description": "SE Trigger config",
+        "BOKEH": {
+            "NON-MOTION": {
+                "WIDE": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 410, 410 ],
+                    "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 325,
+                            "light_thres": 25,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.07,
+                            "middle_ratio_thres": 0.61,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 360,
+                            "light_thres": 20,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.68,
+                            "bright_ratio_thres": 0.002
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 25,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.13,
+                            "middle_ratio_thres": 0.55,
+                            "bright_ratio_thres": 0.014
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 345,
+                            "light_thres": 22,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.13,
+                            "middle_ratio_thres": 0.64,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 390,
+                            "light_thres": 20,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.14,
+                            "middle_ratio_thres": 0.6,
+                            "bright_ratio_thres": 0.002
+                        }
+                    ]
+                },
+                "UW": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 415, 415 ],
+                    "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 21,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.6,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 340,
+                            "light_thres": 17,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.64,
+                            "bright_ratio_thres": 0.004
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 375,
+                            "light_thres": 14,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.68,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 310,
+                            "light_thres": 26,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.23,
+                            "middle_ratio_thres": 0.59,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 340,
+                            "light_thres": 12,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.28,
+                            "middle_ratio_thres": 0.55,
+                            "bright_ratio_thres": 0.003
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 395,
+                            "light_thres": 10,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.14,
+                            "middle_ratio_thres": 0.5,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ]
+                },
+                "TELE": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 415, 415 ],
+                    "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 320,
+                            "light_thres": 21,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.5,
+                            "bright_ratio_thres": 0.01
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 360,
+                            "light_thres": 15,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.1,
+                            "middle_ratio_thres": 0.65,
+                            "bright_ratio_thres": 0.005
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 310,
+                            "light_thres": 26,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.21,
+                            "middle_ratio_thres": 0.52,
+                            "bright_ratio_thres": 0.01
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 345,
+                            "light_thres": 16,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.2,
+                            "middle_ratio_thres": 0.52,
+                            "bright_ratio_thres": 0.008
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 385,
+                            "light_thres": 10,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.24,
+                            "middle_ratio_thres": 0.46,
+                            "bright_ratio_thres": 0.006
+                        }
+                    ]
+                }
+    
+            },
+    
+            "MOTION": {
+                "WIDE": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 410, 410 ],
+                    "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 325,
+                            "light_thres": 25,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.07,
+                            "middle_ratio_thres": 0.61,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 360,
+                            "light_thres": 20,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.68,
+                            "bright_ratio_thres": 0.002
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 25,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.13,
+                            "middle_ratio_thres": 0.55,
+                            "bright_ratio_thres": 0.014
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 345,
+                            "light_thres": 22,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.13,
+                            "middle_ratio_thres": 0.64,
+                            "bright_ratio_thres": 0.006
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 390,
+                            "light_thres": 20,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.14,
+                            "middle_ratio_thres": 0.6,
+                            "bright_ratio_thres": 0.002
+                        }
+                    ]
+                },
+                "UW": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 415, 415 ],
+                    "indoor_thres": 390,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 21,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.6,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 340,
+                            "light_thres": 17,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.64,
+                            "bright_ratio_thres": 0.004
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 375,
+                            "light_thres": 14,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.68,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 310,
+                            "light_thres": 26,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.23,
+                            "middle_ratio_thres": 0.59,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 340,
+                            "light_thres": 12,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.28,
+                            "middle_ratio_thres": 0.55,
+                            "bright_ratio_thres": 0.003
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 395,
+                            "light_thres": 10,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.14,
+                            "middle_ratio_thres": 0.5,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ]
+                },
+                "TELE": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 415, 415 ],
+                     "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 320,
+                            "light_thres": 21,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.5,
+                            "bright_ratio_thres": 0.01
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 360,
+                            "light_thres": 15,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.1,
+                            "middle_ratio_thres": 0.65,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 26,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.21,
+                            "middle_ratio_thres": 0.52,
+                            "bright_ratio_thres": 0.01
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 345,
+                            "light_thres": 16,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.2,
+                            "middle_ratio_thres": 0.52,
+                            "bright_ratio_thres": 0.008
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 385,
+                            "light_thres": 10,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.24,
+                            "middle_ratio_thres": 0.46,
+                            "bright_ratio_thres": 0.006
+                        }
+                    ]
+                }
+            }
+        },
+        "NORMAL": {
+            "NON-MOTION": {
+                "WIDE": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 410, 410 ],
+                    "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 325,
+                            "light_thres": 25,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.07,
+                            "middle_ratio_thres": 0.61,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 360,
+                            "light_thres": 20,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.68,
+                            "bright_ratio_thres": 0.002
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 25,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.13,
+                            "middle_ratio_thres": 0.55,
+                            "bright_ratio_thres": 0.014
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 345,
+                            "light_thres": 22,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.13,
+                            "middle_ratio_thres": 0.64,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 390,
+                            "light_thres": 20,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.14,
+                            "middle_ratio_thres": 0.6,
+                            "bright_ratio_thres": 0.002
+                        }
+                    ]
+                },
+                "UW": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 415, 415 ],
+                    "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 21,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.6,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 340,
+                            "light_thres": 17,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.64,
+                            "bright_ratio_thres": 0.004
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 375,
+                            "light_thres": 14,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.68,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 310,
+                            "light_thres": 26,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.23,
+                            "middle_ratio_thres": 0.59,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 340,
+                            "light_thres": 12,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.28,
+                            "middle_ratio_thres": 0.55,
+                            "bright_ratio_thres": 0.003
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 395,
+                            "light_thres": 10,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.14,
+                            "middle_ratio_thres": 0.5,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ]
+                },
+                "TELE": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 415, 415 ],
+                    "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 320,
+                            "light_thres": 21,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.5,
+                            "bright_ratio_thres": 0.01
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 360,
+                            "light_thres": 15,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.1,
+                            "middle_ratio_thres": 0.65,
+                            "bright_ratio_thres": 0.005
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 310,
+                            "light_thres": 26,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.21,
+                            "middle_ratio_thres": 0.52,
+                            "bright_ratio_thres": 0.01
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 345,
+                            "light_thres": 16,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.2,
+                            "middle_ratio_thres": 0.52,
+                            "bright_ratio_thres": 0.008
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 385,
+                            "light_thres": 10,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.24,
+                            "middle_ratio_thres": 0.46,
+                            "bright_ratio_thres": 0.006
+                        }
+                    ]
+                }
+    
+            },
+    
+            "MOTION": {
+                "WIDE": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 410, 410 ],
+                    "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 325,
+                            "light_thres": 25,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.07,
+                            "middle_ratio_thres": 0.61,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 360,
+                            "light_thres": 20,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.68,
+                            "bright_ratio_thres": 0.002
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 25,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.13,
+                            "middle_ratio_thres": 0.55,
+                            "bright_ratio_thres": 0.014
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 345,
+                            "light_thres": 22,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.13,
+                            "middle_ratio_thres": 0.64,
+                            "bright_ratio_thres": 0.006
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 390,
+                            "light_thres": 20,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.14,
+                            "middle_ratio_thres": 0.6,
+                            "bright_ratio_thres": 0.002
+                        }
+                    ]
+                },
+                "UW": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 415, 415 ],
+                    "indoor_thres": 390,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 21,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.6,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 340,
+                            "light_thres": 17,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.64,
+                            "bright_ratio_thres": 0.004
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 375,
+                            "light_thres": 14,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.68,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 310,
+                            "light_thres": 26,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.23,
+                            "middle_ratio_thres": 0.59,
+                            "bright_ratio_thres": 0.005
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 340,
+                            "light_thres": 12,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.28,
+                            "middle_ratio_thres": 0.55,
+                            "bright_ratio_thres": 0.003
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 395,
+                            "light_thres": 10,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.14,
+                            "middle_ratio_thres": 0.5,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ]
+                },
+                "TELE": {
+                    "extreme_dark_zoom": [ 0.6, 10 ],
+                    "extreme_dark_lux_index_thres": [ 415, 415 ],
+                     "indoor_thres": 380,
+                    "face_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 320,
+                            "light_thres": 21,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.08,
+                            "middle_ratio_thres": 0.5,
+                            "bright_ratio_thres": 0.01
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 360,
+                            "light_thres": 15,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.1,
+                            "middle_ratio_thres": 0.65,
+                            "bright_ratio_thres": 0.003
+                        }
+                    ],
+                    "nonface_check": [
+                        {
+                            "Description": "range 0",
+                            "force_trigger_adrc": 32,
+                            "lux_index_thres": 315,
+                            "light_thres": 26,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.21,
+                            "middle_ratio_thres": 0.52,
+                            "bright_ratio_thres": 0.01
+                        },
+                        {
+                            "Description": "range 1",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 345,
+                            "light_thres": 16,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.2,
+                            "middle_ratio_thres": 0.52,
+                            "bright_ratio_thres": 0.008
+                        },
+                        {
+                            "Description": "range 2",
+                            "force_trigger_adrc": 3,
+                            "lux_index_thres": 385,
+                            "light_thres": 10,
+                            "real_adrc_thres": 0.9,
+                            "dead_dark_thres": 40,
+                            "mid_tone_thres0": 80,
+                            "mid_tone_thres1": 200,
+                            "over_exp_thres": 234,
+                            "dark_ratio_thres": 0.24,
+                            "middle_ratio_thres": 0.46,
+                            "bright_ratio_thres": 0.006
+                        }
+                    ]
+                }
+            }
+        }
+
+    },
+    "ELL_TRIGGER": {
+        "Description": "ELL Trigger config",
+
+        "WIDE": {
+            "lux_index_thres": 590
+        },
+        "UW": {
+            "lux_index_thres": 560
+        },
+        "TELE": {
+            "lux_index_thres": 600
+        },
+        "ULTRATELE": {
+            "lux_index_thres": 540
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

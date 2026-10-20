@@ -1,0 +1,282 @@
+/*
+注释:
+    Source:输入参数:
+        SdkOpMode: SDK下发的operation mode，定义在def.h的StreamConfigMode中,
+        RoleId: 当前配置的roleid
+    Target:输出参数:
+        VendorOpMode: 转换到高通vendor的operation mode，定义在def.h的VendorOperation中,
+        TargetRoleId: 转换后的roleid,
+        FeatureMask : 该场景打开功能的bit位集合，bit位含义定义在def.h的FeatureMask和VideoFeatureMask中,
+        Signature: 场景名称字符串,
+        VideoMode: video场景标识,
+        AllowStreamsMask: 该video场景允许的流配置，流配置定义在defensecmpt.h的enableStreamCombination中，
+        AppModuleId: xiaomi.app.module tag对应的id值，定义在：
+        vendor/qcom/proprietary/chi-cdk/core/chiutils/chxdefs.h（enum class MiuiCameraAppModule）
+*/
+{
+    "ModeList":
+    {
+        "Mode": [
+            {
+                "Source":{
+                    "SdkOpMode": "0xff01",
+                    "RoleId": 64
+                },
+                "Target":{
+                    "VendorOpMode": "0x9002",
+                    "FeatureMask" : "0x200000",
+                    "Signature": "ThirdJpegr",
+                    "AppModuleId":"0xA3",
+                    "ZoomRatios":[
+                        {
+                            "PhysicalId":3,
+                            "ZoomMin":0.6,
+                            "ZoomMax":1.0
+                        },
+                        {
+                            "PhysicalId":2,
+                            "ZoomMin":1.0,
+                            "ZoomMax":2.6
+                        },
+                        {
+                            "PhysicalId":4,
+                            "ZoomMin":2.6,
+                            "ZoomMax":100.0
+                        }
+                    ]
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff01",
+                    "RoleId": 1
+                },
+                "Target":{
+                    "VendorOpMode": "0x9001",
+                    "FeatureMask" : "0x200000",
+                    "Signature": "ThirdJpegrFront",
+                    "AppModuleId":"0xA3"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff0a",
+                    "RoleId": [60, 64]
+                },
+                "Target":{
+                    "VendorOpMode": "0x9002",
+                    "FeatureMask" : "0x2821d3",
+                    "Signature": "Normal",
+                    "AppModuleId":"0xA3"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff0a",
+                    "RoleId": [0,20,21,23]
+                },
+                "Target":{
+                    "VendorOpMode": "0x9008",
+                    "FeatureMask" : "0x200002",
+                    "Signature": "Professional"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff0a",
+                    "RoleId": 1
+                },
+                "Target":{
+                    "VendorOpMode": "0x9001",
+                    "FeatureMask" : "0x302022",
+                    "Signature": "Normal"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff0c",
+                    "RoleId": [0,20,21]
+                },
+                "Target":{
+                    "VendorOpMode": "0x800a",
+                    "FeatureMask" : "0x200006",
+                    "Signature": "SuperNight",
+                    "AppModuleId":"0xAD"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff0c",
+                    "RoleId": 64
+                },
+                "Target":{
+                    "VendorOpMode": "0x800a",
+                    "FeatureMask" : "0x200006",
+                    "Signature": "SuperNight",
+                    "AppModuleId":"0xAD"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff0c",
+                    "RoleId": 1
+                },
+                "Target":{
+                    "VendorOpMode": "0x800a",
+                    "FeatureMask" : "0x28200a",
+                    "Signature": "SuperNight"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff12",
+                    "RoleId":  [60, 64]
+                },
+                "Target":{
+                    "VendorOpMode": "0x9000",
+                    "FeatureMask" : "0x282214",
+                    "Signature": "Bokeh",
+                    "AppModuleId":"0xAB"
+                }
+            },
+            {
+                 "Source":{
+                    "SdkOpMode": "0xff15",
+                    "RoleId":  [60, 64]
+                 },
+                 "Target":{
+                    "VendorOpMode": "0x9000",
+                    "FeatureMask" : "0x282414",
+                    "Signature": "Bokeh2x",
+                    "AppModuleId":"0xAB"
+                 }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff12",
+                    "RoleId": 1
+                },
+                "Target":{
+                    "VendorOpMode": "0x9003",
+                    "FeatureMask" : "0x302820",
+                    "Signature": "FrontBokeh"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff11",
+                    "RoleId": 0
+                },
+                "Target":{
+                    "VendorOpMode": "0x8031",
+                    "FeatureMask" : "0x12",
+                    "VideoMode": true,
+                    "Signature": "VideoNight",
+                    "AllowStreamsMask": [124,123],
+                    "AppModuleId":"0xd6"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff0d",
+                    "RoleId": 60
+                },
+                "Target":{
+                    "VendorOpMode": "0x9206",
+                    "FeatureMask" : "0x10",
+                    "VideoMode": true,
+                    "Signature": "SdkVideoEIS",
+                    "AllowStreamsMask": [124,123,1,13,12,14]
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff16",
+                    "RoleId": 60
+                },
+                "Target":{
+                    "VendorOpMode": "0x8004",
+                    "FeatureMask" : "0x40",
+                    "VideoMode": true,
+                    "Signature": "SdkVideoEISV3",
+                    "AllowStreamsMask": [124,123]
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff0d",
+                    "RoleId": [0,21,20]
+                },
+                "Target":{
+                    "VendorOpMode": "0x9206",
+                    "FeatureMask" : "0x10",
+                    "VideoMode": true,
+                    "Signature": "SdkVideoEIS",
+                    "AllowStreamsMask": [124,123]
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff10",
+                    "RoleId": 60
+                },
+                "Target":{
+                    "VendorOpMode": "0x8004",
+                    "FeatureMask" : "0x11",
+                    "VideoMode": true,
+                    "Signature": "VideoHDR",
+                    "AppModuleId":"0x7FFFFFFF",
+                    "AllowStreamsMask": [124,123]
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff13",
+                    "RoleId": [0,21,60]
+                },
+                "Target":{
+                    "VendorOpMode": "0x8019",
+                    "FeatureMask" : "0x34",
+                    "VideoMode": true,
+                    "Signature": "VideoNormal",
+                    "AllowStreamsMask": [124,123]
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff13",
+                    "RoleId": 1
+                },
+                "Target":{
+                    "VendorOpMode": "0x8019",
+                    "FeatureMask" : "0xb0",
+                    "VideoMode": true,
+                    "Signature": "VideoNormal",
+                    "AllowStreamsMask": [124,123]
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff17",
+                    "RoleId": 64
+                },
+                "Target":{
+                    "VendorOpMode": "0x9002",
+                    "FeatureMask" : "0x154",
+                    "Signature": "SdkAuto"
+                }
+            },
+            {
+                "Source":{
+                    "SdkOpMode": "0xff17",
+                    "RoleId": 1
+                },
+                "Target":{
+                    "VendorOpMode": "0x9001",
+                    "FeatureMask" : "0x22",
+                    "Signature": "SingleFront"
+                }
+            }
+        ]
+    }
+}

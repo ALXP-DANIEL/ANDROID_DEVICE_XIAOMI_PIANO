@@ -1,0 +1,22 @@
+{
+    "version":"1.0",
+    "enable":"true",
+
+    "gameWhiteList": [
+       "com.happyelements.AndroidAnimal",
+       "com.tencent.jkchess"
+    ],
+
+    "paintWhiteList": [
+        "com.miui.creation",
+        "com.miui.notes",
+        "com.newskyer.draw",
+        "com.jideos.jnotes",
+        "com.topstack.kilonotes.pad",
+        "net.huanci.hsjpro",
+        "com.orion.notein",
+        "com.aige.hipaint",
+        "com.freenotes.freenotes",
+        "net.huanci.hsj"
+     ]
+ }

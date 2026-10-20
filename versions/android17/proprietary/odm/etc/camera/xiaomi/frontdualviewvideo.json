@@ -1,0 +1,40 @@
+{
+    "PipelineName": "FrontDualViewVideo",
+    "NodesList": {
+        "Node": [
+            {
+                "NodeName": "com.xiaomi.plugin.srcskinbeautifierpreview",
+                "NodeInstance": "SkinBeautifierInstance0"
+            }
+        ]
+    },
+      "PortLinkages": {
+          "Link": [
+            {
+                "SrcPort": {
+                    "PortId": 0,
+                    "NodeInstance": "SourceBuffer0"
+                },
+                "DstPort": {
+                    "PortId": 0,
+                    "NodeInstance": "SkinBeautifierInstance0",
+                    "PortFormat": "YUV420_NV12",
+                    "BufferType": "Gralloc"
+                }
+            },
+            {
+                "SrcPort": {
+                    "PortId": 0,
+                    "NodeInstance": "SkinBeautifierInstance0",
+                    "PortFormat": "YUV420_NV12",
+                    "BufferType": "Gralloc"
+                },
+                    "DstPort": {
+                    "PortId": 0,
+                    "NodeInstance": "SinkBuffer0"
+                }
+            }
+          ]
+      }
+  }
+  

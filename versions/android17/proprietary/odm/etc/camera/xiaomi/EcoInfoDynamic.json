@@ -1,0 +1,1148 @@
+{
+  "versionDynamic": "25072401",
+  "devicePolicy": [
+    "haotian",
+    "dada",
+    "bixi",
+    "muyu",
+    "uke",
+    "miro",
+    "dijun",
+    "jinghu",
+    "xuanyuan",
+    "rodin",
+    "onyx",
+    "violin",
+    "luming",
+    "turner",
+    "dali",
+    "goya",
+    "klimt",
+    "popsicle",
+    "pudding",
+    "pandora",
+    "yupei",
+    "piano"
+  ],
+  "packagePolicy": [
+    {
+      "packageName": "com.tencent.mm",
+      "allowList": [
+        {
+          "versionCode": "2380+",
+          "activityName": "com.tencent.mm.plugin.profile.ui.ContactInfoUI",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2380+",
+          "activityName": "com.tencent.mm.plugin.multitalk.ui.MultiTalkMainUI",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2380+",
+          "activityName": "com.tencent.mm.ui.LauncherUI",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2380+",
+          "activityName": "com.tencent.mm.ui.chatting.ChattingUI",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2380+",
+          "activityName": "com.tencent.mm.plugin.voip.ui.VideoActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2380+",
+          "activityName": "com.tencent.mm.plugin.recordvideo.activity.MMRecordUI",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2380+",
+          "activityName": "com.tencent.mm.plugin.sns.ui.improve.ImproveSnsTimelineUI",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.tencent.mobileqq",
+      "allowList": [
+        {
+          "versionCode": "4108+",
+          "activityName": "com.tencent.av.ui.AVActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "4108+",
+          "activityName": "com.tencent.av.smallscreen.SmallScreenDialogActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "4108+",
+          "activityName": "com.tencent.aelight.camera.aebase.QIMCameraCaptureActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.ss.android.lark",
+      "allowList": [
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.vc.meeting.module.multi.ByteRTCMeetingActivityInstance",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.vc.meeting.module.preview.facade.MeetingPreviewActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.lark.main.app.MainActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.lark.chatwindow.ChatWindowActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.lark.ck.camera.record.LarkRecordTemplateActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.vc.meeting.module.multi.ByteRTCMeetingActivityAffinity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.lark.cameraview.VECameraActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.alibaba.android.rimet",
+      "allowList": [
+        {
+          "versionCode": "1062+",
+          "activityName": "com.alibaba.android.teleconf.mozi.activity.TeleVideoConfActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "1062+",
+          "activityName": "com.alibaba.android.teleconf.mozi.activity.TeleVideoConfEasygoActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "1062+",
+          "activityName": "com.taobao.taopai.business.record.fragment.SocialRecordVideoActivity_Module_FullScreen",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.tencent.wemeet.app",
+      "allowList": [
+        {
+          "versionCode": "2023480451+",
+          "activityName": "com.tencent.wemeet.sdk.meeting.inmeeting.InMeetingActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2023480451+",
+          "activityName": "com.tencent.wemeet.sdk.meeting.premeeting.home.HomeActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2023480451+",
+          "activityName": "com.tencent.wemeet.components.webcore.activity.GestureBrowserActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2023480451+",
+          "activityName": "com.tencent.wemeet.module.schedulemeeting.activity.ScheduleActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2023480451+",
+          "activityName": "com.tencent.wemeet.module.schedulemeeting.activity.MeetingDetailInfoActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2023480451+",
+          "activityName": "com.tencent.wemeet.module.meetingdashboard.activity.MeetingDashboardActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.sina.weibo",
+      "allowList": [
+        {
+          "versionCode": "6865+",
+          "activityName": "com.sina.weibo.mediaproducer.activity.StoryCameraIndependentActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "6865+",
+          "activityName": "com.sina.weibo.wblive.activity.WBLivePublishActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.ss.android.lark.kami",
+      "allowList": [
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.vc.meeting.module.preview.facade.MeetingPreviewActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.vc.meeting.module.multi.ByteRTCMeetingActivityInstance",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.lark.chatwindow.ChatWindowActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.lark.ck.camera.record.LarkRecordTemplateActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5221250+",
+          "activityName": "com.ss.android.vc.meeting.module.multi.ByteRTCMeetingActivityAffinity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.xingin.xhs",
+      "allowList": [
+        {
+          "versionCode": "7940017+",
+          "activityName": "com.xingin.capa.lib.entrance.CapaEntranceActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "7940017+",
+          "activityName": "com.xingin.capa.lib.newcapa.camerahub.CameraHubActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+
+        {
+          "versionCode": "7940017+",
+          "activityName": "com.xingin.alioth.imagesearch.active.container.ActiveImageSearchActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "7940017+",
+          "activityName": "com.xingin.alpha.emcee.AlphaEmceeActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.smile.gifmaker",
+      "allowList": [
+        {
+          "versionCode": "6592+",
+          "activityName": "com.yxcorp.gifshow.camera.record.CameraActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "6592+",
+          "activityName": "com.kuaishou.live.anchor.basic.activity.LivePushActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "net.sourceforge.opencamera",
+      "allowList": [
+        {
+          "versionCode": "85",
+          "activityName": "net.sourceforge.opencamera.MainActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.ss.android.ugc.aweme",
+      "allowList": [
+        {
+          "versionCode": "300501+",
+          "activityName": "com.ss.android.ugc.aweme.shortvideo.ui.VideoRecordNewActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "300501+",
+          "activityName": "com.ss.android.ugc.aweme.live.TransparentLiveBroadcastActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "300501+",
+          "activityName": "com.ss.android.ugc.aweme.live.LiveBroadcastActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.ss.android.ugc.aweme.lite",
+      "allowList": [
+        {
+          "versionCode": "300501+",
+          "activityName": "com.ss.android.ugc.aweme.shortvideo.ui.VideoRecordNewActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "300501+",
+          "activityName": "com.ss.android.ugc.aweme.live.LiveBroadcastActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.tencent.wework",
+      "allowList": [
+        {
+          "versionCode": "28159+",
+          "activityName": "com.tencent.wemeet.sdk.meeting.inmeeting.InMeetingActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "28159+",
+          "activityName": "com.tencent.wework.meeting.ilink.flutter.ILinkMeetingActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "28159+",
+          "activityName": "com.tencent.wework.multitalk.controller.VoipCallActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.example.cameraconfigure",
+      "allowList": [
+        {
+          "versionCode": "__ignore__",
+          "activityName": "com.example.cameraconfigure.MainActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "tv.danmaku.bili",
+      "allowList": [
+        {
+          "versionCode": "6560400+",
+          "activityName": "com.bilibili.bilibililive.ui.room.BlinkRoomActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "6560400+",
+          "activityName": "com.bilibili.bilibililive.ui.room.BlinkRoomActivityV2",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "6560400+",
+          "activityName": "com.bilibili.studio.centerplus.ui.CenterPlusMainActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "6560400+",
+          "activityName": "com.bilibili.bilibililive.ui.livestreaming.streaming.web.LiveStreamingCommWebActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.duowan.kiwi",
+      "allowList": [
+        {
+          "versionCode": "92052+",
+          "activityName": "com.duowan.liveroom.LiveRoomActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "air.tv.douyu.android",
+      "allowList": [
+        {
+          "versionCode": "10776003+",
+          "activityName": "com.dy.liveV2.living.RecorderCameraActivityV2Portrait",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.whatsapp.w4b",
+      "allowList": [
+        {
+          "versionCode": "241377003+",
+          "activityName": "com.whatsapp.voipcalling.VoipActivityV2",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "241377003+",
+          "activityName": "com.whatsapp.calling.ui.VoipActivityV2",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "241377003+",
+          "activityName": "com.whatsapp.calling.ui.VoipActivityV3",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.microsoft.teams",
+      "allowList": [
+        {
+          "versionCode": "2024122323+",
+          "activityName": "com.microsoft.skype.teams.views.activities.InCallActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2024122323+",
+          "activityName": "com.microsoft.skype.teams.views.activities.PreJoinActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.google.android.apps.tachyon",
+      "allowList": [
+        {
+          "versionCode": "5179541+",
+          "activityName": "com.google.android.libraries.communications.conference.ui.greenroom.GreenroomActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "5179541+",
+          "activityName": "com.google.android.libraries.communications.conference.ui.callui.SingleCallActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout-port": [
+              [
+                3
+              ]
+            ],
+            "layout-land": [
+              [
+                1
+              ],
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.cisco.wx2.android",
+      "allowList": [
+        {
+          "versionCode": "4102775+",
+          "activityName": "com.webex.teams.ui.calls.incall.InCallActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "4102775+",
+          "activityName": "com.webex.teams.ui.calls.interstitial.MeetingInterstitialActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.facebook.orca",
+      "allowList": [
+        {
+          "versionCode": "323007135+",
+          "activityName": "com.facebook.messaging.rtc.incall.activity.InCallActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.whatsapp",
+      "allowList": [
+        {
+          "versionCode": "241377003+",
+          "activityName": "com.whatsapp.voipcalling.VoipActivityV2",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "241377003+",
+          "activityName": "com.whatsapp.calling.ui.VoipActivityV2",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "241377003+",
+          "activityName": "com.whatsapp.calling.ui.VoipActivityV3",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.ss.android.ugc.trill",
+      "allowList": [
+        {
+          "versionCode": "350404+",
+          "activityName": "com.ss.android.ugc.aweme.adaptation.saa.SAAActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "350404+",
+          "activityName": "com.ss.android.ugc.aweme.ftc.FTCVideoRecordNewActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.zhiliaoapp.musically",
+      "allowList": [
+        {
+          "versionCode": "2023405000+",
+          "activityName": "com.ss.android.ugc.aweme.adaptation.saa.SAAActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "2023405000+",
+          "activityName": "com.ss.android.ugc.aweme.ftc.FTCVideoRecordNewActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "packageName": "com.instagram.android",
+      "allowList": [
+        {
+          "versionCode": "373911284+",
+          "activityName": "com.instagram.creation.activity.MediaCaptureActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "373911284+",
+          "activityName": "com.instagram.rtc.activity.RtcCallActivity",
+          "data": {
+            "supportedFeatures": 2,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "versionCode": "373911284+",
+          "activityName": "com.instagram.modal.ModalActivity",
+          "data": {
+            "supportedFeatures": 3,
+            "layout": [
+              [
+                3
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

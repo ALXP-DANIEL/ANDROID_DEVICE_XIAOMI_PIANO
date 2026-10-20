@@ -1,0 +1,171 @@
+<XML>
+<!--
+Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+All rights reserved.
+Confidential and Proprietary - Qualcomm Technologies, Inc.
+-->
+
+<XRFixedPipeSettings>
+  <Topology value="2LM">
+    <CacVersion value="LoopBack">
+      <DedicatedPipes>
+        "VIG0, VIG2, VIG4, VIG6, DMA2"
+      </DedicatedPipes>
+      <DedicatedPipes>
+        "VIG1, VIG3, VIG5, VIG7, DMA3"
+      </DedicatedPipes>
+    </CacVersion>
+
+    <CacVersion value="V2">
+      <DedicatedPipes>
+        "VIG0, VIG2, DMA0, DMA2"
+      </DedicatedPipes>
+      <DedicatedPipes>
+        "VIG1, VIG3, DMA1, DMA3"
+      </DedicatedPipes>
+    </CacVersion>
+
+    <Usecase value="LoopbackCAC">
+      <PipesConfig>
+        <Pipe value="VIG4Rect0">
+          <TunnelPipesConfig>"VIG0Rect0, DMA2Rect0, VIG0Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG4Rect1">
+          <TunnelPipesConfig>"VIG2Rect0, DMA2Rect1, VIG2Rect1"</TunnelPipesConfig>
+        </Pipe>
+      </PipesConfig>
+      <PipesConfig>
+        <Pipe value="VIG5Rect0">
+          <TunnelPipesConfig>"VIG1Rect0, DMA3Rect0, VIG1Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG5Rect1">
+          <TunnelPipesConfig>"VIG3Rect0, DMA3Rect1, VIG3Rect1"</TunnelPipesConfig>
+        </Pipe>
+      </PipesConfig>
+    </Usecase>
+
+    <Usecase value="AnamorphicFoveation">
+      <PipesConfig>
+        <Pipe value="VIG4Rect0" />
+        <Pipe value="VIG6Rect0" />
+      </PipesConfig>
+      <PipesConfig>
+        <Pipe value="VIG5Rect0" />
+        <Pipe value="VIG7Rect0" />
+      </PipesConfig>
+    </Usecase>
+
+    <Usecase value="AnamorphicFoveationWithCAC">
+      <PipesConfig>
+        <Pipe value="VIG4Rect0">
+          <TunnelPipesConfig>"VIG0Rect0, DMA2Rect0, VIG0Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG6Rect0">
+          <TunnelPipesConfig>"VIG2Rect0, DMA2Rect1, VIG2Rect1"</TunnelPipesConfig>
+        </Pipe>
+      </PipesConfig>
+      <PipesConfig>
+        <Pipe value="VIG5Rect0">
+          <TunnelPipesConfig>"VIG1Rect0, DMA3Rect0, VIG1Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG7Rect0">
+          <TunnelPipesConfig>"VIG3Rect0, DMA3Rect1, VIG3Rect1"</TunnelPipesConfig>
+        </Pipe>
+      </PipesConfig>
+    </Usecase>
+
+    <Usecase value="CACV2">
+      <PipesConfig>
+        <Pipe value="DMA0Rect0">
+          <TunnelPipesConfig>"VIG0Rect0, DMA2Rect0, VIG0Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="DMA0Rect1">
+          <TunnelPipesConfig>"VIG2Rect0, DMA2Rect1, VIG2Rect1"</TunnelPipesConfig>
+        </Pipe>
+      </PipesConfig>
+      <PipesConfig>
+        <Pipe value="DMA1Rect0">
+          <TunnelPipesConfig>"VIG1Rect0, DMA3Rect0, VIG1Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="DMA1Rect1">
+          <TunnelPipesConfig>"VIG3Rect0, DMA3Rect1, VIG3Rect1"</TunnelPipesConfig>
+        </Pipe>
+      </PipesConfig>
+    </Usecase>
+  </Topology>
+
+  <Topology value="4LM">
+    <CacVersion value="LoopBack">
+      <DedicatedPipes>
+        "VIG0, VIG1, VIG2, VIG3, VIG4, VIG5, VIG6, VIG7, DMA2, DMA3"
+      </DedicatedPipes>
+    </CacVersion>
+
+    <CacVersion value="V2">
+      <DedicatedPipes>
+        "VIG0, VIG1, VIG2, VIG3, DMA0, DMA1, DMA2, DMA3"
+      </DedicatedPipes>
+    </CacVersion>
+
+    <Usecase value="LoopbackCAC">
+      <PipesConfig>
+        <Pipe value="VIG4Rect0">
+          <TunnelPipesConfig>"VIG0Rect0, DMA2Rect0, VIG0Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG4Rect1">
+          <TunnelPipesConfig>"VIG2Rect0, DMA2Rect1, VIG2Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG5Rect0">
+          <TunnelPipesConfig>"VIG1Rect0, DMA3Rect0, VIG1Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG5Rect1">
+          <TunnelPipesConfig>"VIG3Rect0, DMA3Rect1, VIG3Rect1"</TunnelPipesConfig>
+        </Pipe>
+      </PipesConfig>
+    </Usecase>
+
+    <Usecase value="AnamorphicFoveation">
+      <PipesConfig>
+        <Pipe value="VIG4Rect0" />
+        <Pipe value="VIG6Rect0" />
+        <Pipe value="VIG5Rect0" />
+        <Pipe value="VIG7Rect0" />
+      </PipesConfig>
+    </Usecase>
+
+    <Usecase value="AnamorphicFoveationWithCAC">
+      <PipesConfig>
+        <Pipe value="VIG4Rect0">
+          <TunnelPipesConfig>"VIG0Rect0, DMA2Rect0, VIG0Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG6Rect0">
+          <TunnelPipesConfig>"VIG2Rect0, DMA2Rect1, VIG2Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG5Rect0">
+          <TunnelPipesConfig>"VIG1Rect0, DMA3Rect0, VIG1Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="VIG7Rect0">
+          <TunnelPipesConfig>"VIG3Rect0, DMA3Rect1, VIG3Rect1"</TunnelPipesConfig>
+        </Pipe>
+      </PipesConfig>
+    </Usecase>
+
+    <Usecase value="CACV2">
+      <PipesConfig>
+        <Pipe value="DMA0Rect0">
+          <TunnelPipesConfig>"VIG0Rect0, DMA2Rect0, VIG0Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="DMA0Rect1">
+          <TunnelPipesConfig>"VIG2Rect0, DMA2Rect1, VIG2Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="DMA1Rect0">
+          <TunnelPipesConfig>"VIG1Rect0, DMA3Rect0, VIG1Rect1"</TunnelPipesConfig>
+        </Pipe>
+        <Pipe value="DMA1Rect1">
+          <TunnelPipesConfig>"VIG3Rect0, DMA3Rect1, VIG3Rect1"</TunnelPipesConfig>
+        </Pipe>
+      </PipesConfig>
+    </Usecase>
+  </Topology>
+</XRFixedPipeSettings>
+</XML>

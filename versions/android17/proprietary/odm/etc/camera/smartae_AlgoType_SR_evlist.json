@@ -1,0 +1,120 @@
+{
+    "Description": "Xiaomi SmartAE config file - Arbitrator",
+    "phone_code": "O10U",
+    "jsonVersion": "SR-V2.0-20241202",
+
+    "QUICKSHOT_CHECK": {
+        "CHANGE_ALGO": {
+            "counts": 1,
+            "CONDITIONS": null
+        },
+        "CHANGE_CAPTURE_MODE": {
+            "hard_change": false,
+            "ev_index": [ 0 ],
+            "counts": 1,
+            "CONDITIONS": null
+        },
+        "CHANGE_FRAMES": {
+            "min_ev0_cnt": [ 4 ],
+            "counts": 1,
+            "CONDITIONS": null
+        },
+        "CHANGE_SENSOR": null
+
+    },
+    "AlgoType_SR": {
+        "CHECKER": {
+            "UW": {
+                "Description": "EV list",
+                "counts": null,
+                "ev_index": null,
+                "CONDITIONS": null
+            },
+            "WIDE": {
+                "Description": "EV list",
+                "counts": 3,
+                "ev_index": [ 0, 1, 2 ],
+                "CONDITIONS": [
+                    {
+                        "condition": "camera_mode",
+                        "operator": "=",
+                        "value": [ 2049, 2049, 2049 ]
+                    },
+                    {
+                        "condition": "sensor_mode",
+                        "operator": "=",
+                        "value": [ 1, 32768, 32768 ]
+                    },
+                    {
+                        "condition": "realzoom",
+                        "operator": ">=",
+                        "value": [ -1, -1, 2 ]
+                    },
+                    {
+                        "condition": "realzoom",
+                        "operator": "<",
+                        "value": [ -1, 2, -1 ]
+                    },
+                    {
+                        "condition": "luxindex",
+                        "operator": ">",
+                        "value": [ -1, -1, -1 ]
+                    },
+                    {
+                        "condition": "luxindex",
+                        "operator": "<=",
+                        "value": [ -1, -1, -1 ]
+                    }
+                ]
+            }
+        },
+        "LIST": [
+            {
+                "Description": "V_0: binning zsl 8ev0",
+                "frames": 8,
+                "ev_value": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+                "capture_mode": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+                "adrc_on": [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+                "sensor_mode": [ -1, -1, -1, -1, -1, -1, -1, -1 ],
+                "motion_exp_type": [ -1, -1, -1, -1, -1, -1, -1, -1 ],
+                "min_exp_check": false,
+                "change_to_index": null
+            },
+            {
+                "Description": "V_1: iszquad zsl 4ev0",
+                "frames": 4,
+                "ev_value": [ 0, 0, 0, 0 ],
+                "capture_mode": [ 0, 0, 0, 0 ],
+                "adrc_on": [ 1, 1, 1, 1 ],
+                "sensor_mode": [ -1, -1, -1, -1 ],
+                "motion_exp_type": [ -1, -1, -1, -1 ],
+                "min_exp_check": false,
+                "change_to_index": null
+            },
+            {
+                "Description": "V_2: iszquad zsl 6ev0",
+                "frames": 6,
+                "ev_value": [ 0, 0, 0, 0, 0, 0 ],
+                "capture_mode": [ 0, 0, 0, 0, 0, 0 ],
+                "adrc_on": [ 1, 1, 1, 1, 1, 1 ],
+                "sensor_mode": [ -1, -1, -1, -1, -1, -1 ],
+                "motion_exp_type": [ -1, -1, -1, -1, -1, -1 ],
+                "min_exp_check": false,
+                "change_to_index": null
+            }
+        ]
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+}

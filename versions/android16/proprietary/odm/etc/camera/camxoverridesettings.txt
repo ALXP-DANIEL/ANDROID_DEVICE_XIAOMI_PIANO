@@ -1,0 +1,198 @@
+multiCameraLogicalXMLFile=piano.xml
+
+# Camera Log
+logInfoMask=0
+logWarningMask=0
+logConfigMask=0
+logVerboseMask=0
+logCoreCfgMask=0
+logRequestMapping=FALSE
+systemLogEnable=TRUE
+enableAsciiLogging=0
+enableTxtLogging=0
+enableBinaryLogging=0
+enableXiaomiBinLogging=0
+offlineLoggerEnableBackupLog=FALSE
+enableCameraCoreDumpBinary=FALSE
+enableCameraCoreDumpText=FALSE
+chiLogWarningMask=0
+chiLogCoreCfgMask=0
+numConsecutiveRecovery=5
+SDK_LOG_LEVEL=5
+enableSignal35Tombstone=FALSE
+
+# flicker sensor
+enableBackFlicker=TRUE
+enableBackCCT = FALSE
+enableSpectralSensor=TRUE
+enableNCSService=TRUE
+enableNCSQSEE2=TRUE
+
+# Back Spectral Sensor: sip1328
+MiBackSpectralSensorName=None
+
+# Enable ALS Light Info From Sensor
+enableALSLightSensor=TRUE
+
+#Enable earlyPCR
+numPCRsBeforeStreamOn=1
+
+#Value of Lux Index threshold for flicker
+luxIndexThreasholdForFlicker=360
+
+#For 3rdEISV2
+is3rdEISV2Enabled=TRUE
+
+# Meta Buffer PreAlloc
+MetaBufferPreAllocMask=0x0a0701
+
+# temp disable driver switch
+enableAONUsecase=TRUE
+#enableHealthMonitor
+enableHealthMonitor=FALSE
+#Enable Hwc
+EnableHwBinary = TRUE
+#override Flash Current
+overrideFlashTorchCurrent=70
+overrideFlashVideoLightCurrent=70
+overrideFlashSnapshotLightCurrent=230
+overrideFlashPreviewLightCurrent=70
+overrideTorchScanCurrent=70
+FlashTorchCurrentSwitch=TRUE
+FlashTorchTemperatureLevels=1@25|2@50
+overrideFlashSnapshotLightDuration=5000
+raiserecoverysigabrt=FALSE
+#enable crash with crc error
+#we should set enableForceFullRecoveryForCRC=FALSE with the user-release version
+crcErrorDivisor=100
+enableInternalKMDRecovery=TRUE
+enableForceFullRecoveryForCRC=FALSE
+#ZoomRatio to Start SR
+enableZoomRatioToStartSr=true
+zoomRatioToStartSr_Ultra=0.0
+zoomRatioToStartSr_Wide=1.4
+zoomRatioToStartSr_Tele=1.4
+zoomRatioToStartSr_Tele4x=1.4
+#video dataspace=BT709
+overrideVideoDataspace=2
+#enablemimovie
+isVideoMimovieSupported=TRUE
+#Res1@FPS1|Res2@FPS2 ...,5--720P,6--1080P,8--4K,3001--8K
+vsquality=5@30|6@30|6@60|8@30|8@60
+is60fpseisSupported=TRUE
+#Dynamic Fps Support
+is30fpsDynamicSupported=TRUE
+is60fpsDynamicSupported=TRUE
+dynamicFpsSupported=0@30|0@60|1@30
+#TSskinbeautifier
+isBeautyVersion=71
+enableEGLCache=TRUE
+isBeautyOptionConfigSupported=1
+isBeautyRemoveNevusSupported=0
+isBeautyMakeupGenderSupported=0
+#beautyalgo manufactor: 0:arcsoft;1:truesight;2:other
+isBeautyManufactorAlgo=0
+#video skinbeautifier
+isVideoFilterSupported=TRUE
+isVideoBeautifierSupported=TRUE
+isVideoBeautyEISSupported=TRUE
+isVideoBeautyScreenshotSupported=TRUE
+
+#Enable MiuiBeautyPriviewUp
+isMiuiBeautyPriviewUp=TRUE
+
+# Video EIS
+iseispreviewSupported=TRUE
+enableDMEbasedMCTF=1
+
+# 0000 0001 rear default enable
+# 0000 0010 front default enable
+# 0000 0100 rear support flash
+# 0000 1000 front support flash
+# 0001 0000 rear remove icon and default enable
+# 0010 0000 front remove icon and default enable
+VideoHDRSupportFeature=0x30
+
+# portrait repair
+#Bit[0] - UI SAT support default not support
+#Bit[1] - algo SAT support default on
+#Bit[2] - UI Bokeh support default not support
+#Bit[3] - algo Bokeh support default on
+#Bit[4] - UI SuperNight support default not support
+#Bit[5] - algo SuperNight support default on
+isPortraitRepairSupportMask=0x26
+isLargeRamPortraitRepairSupportMask=0x26
+
+#disable FD manager threading
+enableFDManagerThreading=FALSE
+
+xiaomi3AFeaturesMask=0x7
+
+#mmf ml
+mlshortGain=10000.0
+nofacemlEnable=0
+drcThreshold=10000.0
+
+#supernight
+MIVISuperNightSupportMask=0x3C130313
+SupernightSEManualEVMask=0x010113F1
+SupernightManualEVMask=0x010113F1
+
+#disable depthaf
+disableFocusIndication=TRUE
+#All In One project use true
+isAllInOne = FALSE
+#Enable GPU rotate
+enableGPURotation=TRUE
+
+# Front fps
+reduceFrontFPS=TRUE
+
+#actuator parklens
+xiaomiAFParklensAsync=TRUE
+
+#qcom eis
+isQcomEISEnable=TRUE
+#set ThirdMFNRTuningmode if true
+ThirdMFNRTuningmode=TRUE
+#DisableUVGinSR if true
+DisableUVGinSR = TRUE
+
+#not support dgain
+isSupportispDgain = FALSE
+
+#set FD
+isVEGAFD = TRUE
+
+# isJpegRSupported
+isJpegRSupported=FALSE
+
+#set aicamera for not
+enableAI=0
+
+#enable MiMotion
+isMiMotionSupported=TRUE
+
+#setting maxNonHfrFps
+maxNonHfrFps=30
+
+# not support sat
+isSATSupported=FALSE
+
+#fix cmd buffer crash
+enableCmdBufferOptimization=FALSE
+
+#Enable atmosphere enhancement
+enableAtmosphereEnhanced=FALSE
+
+#Disable low light for 3Part
+disable3PartLowLight=TRUE
+
+#Enable VideoCall
+is3rdVideoCallSupported=TRUE
+
+#Exposure Compensation in MCTF
+enableECinMCTFProcessing=FALSE
+
+#eis3 set Frame delay
+EISv3FrameDelay=20

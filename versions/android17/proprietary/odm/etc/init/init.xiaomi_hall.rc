@@ -1,0 +1,3 @@
+on boot
+    chown system system /dev/xiaomi_hall
+    chmod 0664 /dev/xiaomi_hall

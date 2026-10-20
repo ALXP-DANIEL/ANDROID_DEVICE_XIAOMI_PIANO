@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+    <param name="paramPixelSize" value="0.07368" type="float"/>
+    <param name="paramFriction" value="2.017" type="float"/>
+    <param name="paramFlickStopVelThreshold" value="1.934728" type="float"/>
+    <param name="paramFlickStartVelThreshold" value="40.0" type="float"/>
+</parameters>
