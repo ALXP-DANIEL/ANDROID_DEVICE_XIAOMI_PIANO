@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/keyboard_settings_title">
+
+    <Preference
+        android:key="keyboard_not_connected"
+        android:summary="@string/keyboard_not_connected"
+        android:selectable="false"
+        app:iconSpaceReserved="false" />
+
+    <SwitchPreferenceCompat
+        android:key="keyboard_backlight_auto"
+        android:title="@string/keyboard_backlight_auto_title"
+        android:summary="@string/keyboard_backlight_auto_summary"
+        android:defaultValue="true"
+        app:iconSpaceReserved="false" />
+
+    <SeekBarPreference
+        android:key="keyboard_backlight_level"
+        android:title="@string/keyboard_backlight_title"
+        android:max="100"
+        android:defaultValue="50"
+        app:min="0"
+        app:showSeekBarValue="true"
+        app:updatesContinuously="false"
+        app:iconSpaceReserved="false" />
+
+    <SwitchPreferenceCompat
+        android:key="keyboard_touchpad"
+        android:title="@string/keyboard_touchpad_title"
+        android:summary="@string/keyboard_touchpad_summary"
+        android:defaultValue="true"
+        app:iconSpaceReserved="false" />
+
+    <Preference
+        android:key="keyboard_shortcuts"
+        android:title="@string/keyboard_layout_title"
+        android:summary="@string/keyboard_layout_summary"
+        app:iconSpaceReserved="false">
+        <intent android:action="android.settings.HARD_KEYBOARD_SETTINGS" />
+    </Preference>
+
+    <PreferenceCategory
+        android:key="keyboard_about"
+        android:title="@string/keyboard_about_title"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="keyboard_model"
+            android:title="@string/keyboard_model_title"
+            android:selectable="false"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="keyboard_version"
+            android:title="@string/keyboard_version_title"
+            android:selectable="false"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="touchpad_version"
+            android:title="@string/touchpad_version_title"
+            android:selectable="false"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="mcu_version"
+            android:title="@string/mcu_version_title"
+            android:selectable="false"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="keyboard_update"
+            android:title="@string/keyboard_update_title"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="touchpad_update"
+            android:title="@string/touchpad_update_title"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
