@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 # Build the ESP contents: Visor as the boot manager, plus the UEFI Shell.
 #
-#   tools/esp/make-esp.sh OUT_DIR WALLPAPER...
+#   tools/esp/make-esp.sh OUT_DIR [WALLPAPER...]
 #
-# Each WALLPAPER (any image, cropped to the 1600x1068 UEFI screen with sips)
-# becomes a Visor theme named after the file. The first is the default; to
+# Each WALLPAPER (any image, cropped to the 1600x1068 UEFI screen with sips
+# on macOS or ImageMagick elsewhere) becomes a Visor theme named after the
+# file. Without one, Visor's own look is kept. The first is the default; to
 # swap, set theme= in \EFI\visor\boot.conf to another name, or to random or
 # cycle. A new wallpaper can be added on the ESP the same way by hand.
 # Copy OUT_DIR/EFI and OUT_DIR/loader to the root of the esp partition, which
@@ -22,9 +23,9 @@ GNU_EFI_TAG=3.0.18
 REFIND_ZIP=https://sourceforge.net/projects/refind/files/0.14.2/refind-bin-0.14.2.zip/download
 REFIND_SHA256=410c7828c4fec2f2179bd956073522415831d27c00416381b8f71153c190a311
 
+[ $# -ge 1 ] || { echo "usage: make-esp.sh OUT_DIR [WALLPAPER...]"; exit 1; }
 out=$1
 shift
-[ $# -ge 1 ] || { echo "usage: make-esp.sh OUT_DIR WALLPAPER..."; exit 1; }
 src=deps/visor
 shell=deps/Mu-Silicium/Build/pianoPkg/RELEASE_CLANGPDB/AARCH64/Shell.efi
 
@@ -61,18 +62,31 @@ cp "$shell" "$out/EFI/tools/shellaa64.efi"
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 first=
-for wallpaper in "$@"; do
-	name=$(basename "${wallpaper%.*}" | tr -c 'A-Za-z0-9_-\n' '-')
-	w=$(sips -g pixelWidth "$wallpaper" | awk '/pixelWidth/ {print $2}')
-	h=$(sips -g pixelHeight "$wallpaper" | awk '/pixelHeight/ {print $2}')
-	if [ $((w * 1068)) -gt $((h * 1600)) ]; then
-		sips -s format png --resampleHeightWidth 1068 $(((w * 1068 + h - 1) / h)) "$wallpaper" --out "$tmp/s.png" >/dev/null
+# Scale WALLPAPER to cover 1600x1068, crop the centre, write PNG to OUT.
+fit() {
+	if command -v sips >/dev/null; then
+		w=$(sips -g pixelWidth "$1" | awk '/pixelWidth/ {print $2}')
+		h=$(sips -g pixelHeight "$1" | awk '/pixelHeight/ {print $2}')
+		if [ $((w * 1068)) -gt $((h * 1600)) ]; then
+			sips -s format png --resampleHeightWidth 1068 $(((w * 1068 + h - 1) / h)) "$1" --out "$tmp/s.png" >/dev/null
+		else
+			sips -s format png --resampleHeightWidth $(((h * 1600 + w - 1) / w)) 1600 "$1" --out "$tmp/s.png" >/dev/null
+		fi
+		sips --cropToHeightWidth 1068 1600 "$tmp/s.png" --out "$2" >/dev/null
 	else
-		sips -s format png --resampleHeightWidth $(((h * 1600 + w - 1) / w)) 1600 "$wallpaper" --out "$tmp/s.png" >/dev/null
+		convert "$1" -resize 1600x1068^ -gravity center -extent 1600x1068 "$2"
 	fi
-	sips --cropToHeightWidth 1068 1600 "$tmp/s.png" --out "$out/EFI/visor/backgrounds/$name.png" >/dev/null
+}
+
+for wallpaper in "$@"; do
+	case $wallpaper in *.md) continue ;; esac
+	name=$(basename "${wallpaper%.*}" | tr -c 'A-Za-z0-9_\n-' '-')
+	fit "$wallpaper" "$out/EFI/visor/backgrounds/$name.png"
 	printf 'background=\\EFI\\visor\\backgrounds\\%s.png\n' "$name" > "$out/EFI/visor/themes/$name.conf"
 	first=${first:-$name}
 done
-sed -i '' "s/^theme=.*/theme=$first/" "$out/EFI/visor/boot.conf"
-echo "$out (theme $first)"
+if [ -n "$first" ]; then
+	sed "s/^theme=.*/theme=$first/" "$out/EFI/visor/boot.conf" > "$tmp/boot.conf"
+	cp "$tmp/boot.conf" "$out/EFI/visor/boot.conf"
+fi
+echo "$out (theme ${first:-default})"
