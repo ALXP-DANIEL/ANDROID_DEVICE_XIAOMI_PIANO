@@ -1,0 +1,637 @@
+piano defaults: Dark theme style, on-screen navigation buttons instead of
+gestures (gesture back/console off). The user can still change both in
+Settings > Customization. (The splash menu_text fix that was here is now
+upstream as OrangeFox commit c239fc5.)
+
+diff --git a/gui/theme/portrait_hdpi/resources/vars.xml b/gui/theme/portrait_hdpi/resources/vars.xml
+index 8678f38..9b599b9 100644
+--- a/gui/theme/portrait_hdpi/resources/vars.xml
++++ b/gui/theme/portrait_hdpi/resources/vars.xml
+@@ -74,9 +74,9 @@
+ 		<variable name="ota_new_screen" value="1" persist="1"/>
+ 		<variable name="floating_panel" value="1" persist="1"/>
+ 
+-		<variable name="gst_back_left" value="1" persist="1"/>
+-		<variable name="gst_back_right" value="1" persist="1"/>
+-		<variable name="gst_console" value="1" persist="1"/>
++		<variable name="gst_back_left" value="0" persist="1"/>
++		<variable name="gst_back_right" value="0" persist="1"/>
++		<variable name="gst_console" value="0" persist="1"/>
+ 
+ 		<!-- Other... -->
+ 		<variable name="of_hide_data_hint" value="0" persist="1"/>
+diff --git a/gui/theme/portrait_hdpi/themes/navbar.xml b/gui/theme/portrait_hdpi/themes/navbar.xml
+index bd96477..6b97729 100644
+--- a/gui/theme/portrait_hdpi/themes/navbar.xml
++++ b/gui/theme/portrait_hdpi/themes/navbar.xml
+@@ -1,9 +1,9 @@
+-<?xml version="1.0"?>
+-<recovery>
+-	<variables>
+-		<variable name="navbar_disable" value="1"/>
+-		<variable name="navbar_disable_add" value="96"/>
+-		<variable name="screen_h" value="%screen_original_h%+96"/>
+-		<variable name="real_gestures_enable" value="1"/>
+-	</variables>
+-</recovery>
+\ No newline at end of file
++<?xml version="1.0"?>
++<recovery>
++	<variables>
++		<variable name="navbar_disable" value="0"/>
++		<variable name="navbar_disable_add" value="0"/>
++		<variable name="screen_h" value="%screen_original_h%"/>
++		<variable name="real_gestures_enable" value="0"/>
++	</variables>
++</recovery>
+diff --git a/gui/theme/portrait_hdpi/themes/style.xml b/gui/theme/portrait_hdpi/themes/style.xml
+index 123c940..be18b65 100644
+--- a/gui/theme/portrait_hdpi/themes/style.xml
++++ b/gui/theme/portrait_hdpi/themes/style.xml
+@@ -1,293 +1,293 @@
+-<?xml version="1.0"?>
+-<recovery>
+-	<resources>
+-		<!-- Battery -->
+-		<image name="bolt" filename="SVG/Icons/bolt.svg" retainaspect="1" scale="1.00" tint="#413327"/>
+-		
+-		<image name="check" filename="SVG/Icons/check.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		
+-
+-		<image name="battery100" filename="Light/Battery/battery100" retainaspect="1"/>
+-		<image name="battery75" filename="Light/Battery/battery75" retainaspect="1"/>
+-		<image name="battery50" filename="Light/Battery/battery50" retainaspect="1"/>
+-		<image name="battery25" filename="Light/Battery/battery25" retainaspect="1"/>
+-		<image name="battery15_good" filename="Light/Battery/battery15_good" retainaspect="1"/>
+-		<!-- Pie -->
+-		<image name="battery_p" filename="Light/Battery/battery_p" retainaspect="1"/>
+-		<!-- New -->
+-		<image name="battery_android_0" filename="SVG/Icons/battery_android_0.svg" retainaspect="1" scale="2.60" tint="#413327"/>
+-		<image name="battery_android_1" filename="SVG/Icons/battery_android_1.svg" retainaspect="1" scale="2.60" tint="#413327"/>
+-		<image name="battery_android_2" filename="SVG/Icons/battery_android_2.svg" retainaspect="1" scale="2.60" tint="#413327"/>
+-		<image name="battery_android_3" filename="SVG/Icons/battery_android_3.svg" retainaspect="1" scale="2.60" tint="#413327"/>
+-		<image name="battery_android_4" filename="SVG/Icons/battery_android_4.svg" retainaspect="1" scale="2.60" tint="#413327"/>
+-		<image name="battery_android_5" filename="SVG/Icons/battery_android_5.svg" retainaspect="1" scale="2.60" tint="#413327"/>
+-		<image name="battery_android_6" filename="SVG/Icons/battery_android_6.svg" retainaspect="1" scale="2.60" tint="#413327"/>
+-		<image name="battery_android_full" filename="SVG/Icons/battery_android_full.svg" retainaspect="1" scale="2.60" tint="#413327"/>
+-		<image name="battery_android_alert" filename="SVG/Icons/battery_android_alert.svg" retainaspect="1" scale="2.60" tint="#FFA244"/>
+-
+-		<!-- Fullscreen Icons -->
+-		<image name="fs_usb" filename="Light/FullscreenIcons/usb" retainaspect="1"/>
+-		<image name="unlock_icon" filename="Light/FullscreenIcons/unlock_icon" retainaspect="1"/>
+-
+-		<!-- Keyboard -->
+-		<image name="keyback" filename="SVG/Keyboard/key_butts_cream.svg"/>
+-		<image name="keyback_num" filename="SVG/Keyboard/key_num_cream.svg"/>
+-
+-		<!-- Progress -->
+-		<animation name="progress" filename="Light/Progress/indeterminate"/>
+-		<image name="progress_empty" filename="Light/Progress/progress_empty"/>
+-		<image name="progress_fill" filename="Light/Progress/progress_fill"/>
+-		<image name="progress_empty_small" filename="Light/Progress/progress_empty_small"/>
+-
+-		<!-- Controls -->
+-		<image name="switch_off" filename="SVG/Controls/switch_off.svg" retainaspect="1" tint="#3c3125"/>
+-		<image name="switch_on" filename="SVG/Controls/switch_on.svg" retainaspect="1" tint="#F9F1E7"/>
+-		<image name="checkbox_false" filename="SVG/Controls/checkbox_false_d.svg" retainaspect="1" tint="#413327"/>
+-		<image name="radio_false" filename="SVG/Controls/radio_false_d.svg" retainaspect="1" tint="#413327"/>
+-		<image name="slider_classic" filename="SVG/Controls/slider_classic.svg" retainaspect="1" tint="#eedfc8"/>
+-		<image name="quick_arrow" filename="SVG/Controls/qa_arrow.svg" retainaspect="1" tint="#413327"/>
+-
+-		<!-- Dialogs -->
+-		<image name="arrow" filename="SVG/Dialog/arrow.svg" tint="#413327"/>
+-		<image name="arrow_d" filename="SVG/Dialog/arrow_d.svg" tint="#413327"/>
+-		<image name="sort_select" filename="Default/FAB/accept"/>
+-		<image name="dialog_bg" filename="SVG/Dialog/dialog_bg.svg" tint="#F9F1E7"/>
+-		<image name="menu_sort" filename="SVG/Dialog/menu_sort.svg" tint="#F9F1E7"/>
+-		<image name="snackbar" filename="SVG/Dialog/snackbar.svg" tint="#F9F1E7"/>
+-		<image name="fm_sort" filename="SVG/Dialog/fm_sort.svg" tint="#F9F1E7"/>
+-
+-		<!-- OTA -->
+-		<image name="ota_icon" filename="Light/FullscreenIcons/ota_icon" retainaspect="1"/>
+-		<image name="progress_fill_small" filename="Light/Progress/progress_fill_small"/>
+-
+-		<!-- About -->
+-		<image name="card" filename="SVG/About/card.svg" retainaspect="1" tint="#FFF8F2"/>
+-		<image name="logo_about" filename="SVG/Logos/logo_o.svg" retainaspect="1"/>
+-
+-		<!-- Accents -->
+-		<image name="accent_black" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#413327"/>
+-		<image name="accent_fox" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#D86100"/>
+-		<image name="accent_google" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#1A73E8"/>
+-		<image name="accent_cinnamon" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#AF6050"/>
+-		<image name="accent_ocean" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#0C80A7"/>
+-		<image name="accent_orchid" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#C42CC9"/>
+-		<image name="accent_purple" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#725AFF"/>
+-		<image name="accent_lollipop" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#009788"/>
+-		<image name="accent_space" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#47618A"/>
+-		<image name="accent_red" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#E53935"/>
+-		<image name="accent_green" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#1B873B"/>
+-		<image name="accent_yellow" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#E6AF05"/>
+-		<image name="accent_apply" filename="SVG/Workshop/apply.svg" retainaspect="1" tint="#000000"/>
+-
+-		<image name="fab_accept" filename="Light/FAB/accept" retainaspect="1"/>
+-		<image name="fab_close" filename="Light/FAB/close" retainaspect="1"/>
+-		<image name="fab_add" filename="Light/FAB/add" retainaspect="1"/>
+-		<image name="fab_usb" filename="Light/FAB/usb" retainaspect="1"/>
+-		<image name="fab_credits" filename="Light/FAB/credits" retainaspect="1"/>
+-
+-		<!-- NavBar -->
+-		<image name="nb_slideout" filename="SVG/NavBar/slideout.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nb_slideout_pie" filename="SVG/NavBar/slideout_pie.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nb_home" filename="SVG/NavBar/home.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nb_home_pie" filename="SVG/NavBar/home_pie.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nb_back" filename="SVG/NavBar/back.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nb_back_pie" filename="SVG/NavBar/back_pie.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nb_hide" filename="SVG/NavBar/hide.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nb_hide_pie" filename="SVG/NavBar/hide_pie.svg" retainaspect="1" tint="#413327"/>
+-
+-		<!-- NavPanel -->
+-		<image name="nav_menu" filename="SVG/NavPanel/menu.svg" retainaspect="1" tint="#F9F1E7"/>
+-		<image name="nav_wipe" filename="SVG/NavPanel/wipe.svg" retainaspect="1" tint="#F9F1E7"/>
+-		<image name="nav_files" filename="SVG/NavPanel/files.svg" retainaspect="1" tint="#F9F1E7"/>
+-		<image name="nav_backup" filename="SVG/NavPanel/bup.svg" retainaspect="1" tint="#F9F1E7"/>
+-		<image name="nav_menu_d" filename="SVG/NavPanel/menu.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nav_wipe_d" filename="SVG/NavPanel/wipe_d.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nav_files_d" filename="SVG/NavPanel/files_d.svg" retainaspect="1" tint="#413327"/>
+-		<image name="nav_backup_d" filename="SVG/NavPanel/bup.svg" retainaspect="1" tint="#413327"/>
+-
+-		<!-- File Manager -->
+-		<shape name="fs_bg_big" color="#FFF8F2" radius="-1" w="130" h="130" />
+-
+-		<image name="folder_icon" filename="SVG/Icons/folder.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="folder_icon_small" filename="SVG/Icons/folder.svg"  retainaspect="1" scale="3.25" tint="#413327"/>
+-		
+-		<image name="up_icon" filename="SVG/Icons/arrow_up.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="up_icon_small" filename="SVG/Icons/arrow_up.svg"  retainaspect="1" scale="3.25" tint="#413327"/>
+-		
+-		<image name="module_icon_small" filename="SVG/Icons/cube.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="module_icon" filename="SVG/Icons/cube.svg"  retainaspect="1" scale="3.25" tint="#413327"/>
+-		
+-		<image name="file_icon_small" filename="SVG/Icons/file.svg"  retainaspect="1" scale="3.25" tint="#1FC2E1"/>
+-		<image name="file_icon" filename="SVG/Icons/file.svg"  retainaspect="1" scale="3.25" tint="#1FC2E1"/>
+-		
+-		<image name="bkp_icon_small" filename="SVG/Icons/cloud.svg"  retainaspect="1" scale="3.25" tint="#31A952"/>
+-		<image name="bkp_icon" filename="SVG/Icons/cloud.svg"  retainaspect="1" scale="3.25" tint="#31A952"/>
+-		
+-		<image name="zip_icon_small" filename="SVG/Icons/archive.svg"  retainaspect="1" scale="3.25" tint="#FA7B2A"/>
+-		<image name="zip_icon" filename="SVG/Icons/archive.svg"  retainaspect="1" scale="3.25" tint="#FA7B2A"/>
+-		
+-		<image name="img_icon_small" filename="SVG/Icons/floppy.svg"  retainaspect="1" scale="3.25" tint="#1A73E8"/>
+-		<image name="img_icon" filename="SVG/Icons/floppy.svg"  retainaspect="1" scale="3.25" tint="#1A73E8"/>
+-		
+-		<image name="txt_icon_small" filename="SVG/Icons/text.svg"  retainaspect="1" scale="3.25" tint="#1FC2E1"/>
+-		<image name="txt_icon" filename="SVG/Icons/text.svg"  retainaspect="1" scale="3.25" tint="#1FC2E1"/>
+-		
+-		<image name="png_icon_small" filename="SVG/Icons/photo.svg"  retainaspect="1" scale="3.25" tint="#EC4435"/>
+-		<image name="png_icon" filename="SVG/Icons/photo.svg"  retainaspect="1" scale="3.25" tint="#EC4435"/>
+-		
+-		<image name="block_icon_small" filename="SVG/Icons/chip.svg"  retainaspect="1" scale="3.25" tint="#A142F4"/>
+-		<image name="block_icon" filename="SVG/Icons/chip.svg"  retainaspect="1" scale="3.25" tint="#A142F4"/>
+-		
+-		<image name="link_icon_small" filename="SVG/Icons/link.svg" retainaspect="1" scale="3.25" tint="#FBBC34"/>
+-		<image name="link_icon" filename="SVG/Icons/link.svg" retainaspect="1" scale="3.25" tint="#FBBC34"/>
+-		<!-- Advanced -->
+-		<image name="arrow_r" filename="SVG/Dialog/arrow_r.svg" retainaspect="1" tint="#413327"/>
+-
+-		<!-- Icons -->
+-		<image name="addons" filename="SVG/Icons/addons.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="apps_box" filename="SVG/Icons/apps.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="mount_list" filename="SVG/Icons/check_list.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="other" filename="SVG/Icons/other.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="partitions" filename="SVG/Icons/partitions.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="repartition" filename="SVG/Icons/repartition.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="wrench" filename="SVG/Icons/wrench.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="wand_shine" filename="SVG/Icons/wand_shine.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="overview" filename="SVG/Icons/overview.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="build" filename="SVG/Icons/build.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="terminal" filename="SVG/Icons/terminal.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="restart" filename="SVG/Icons/restart.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="devices" filename="SVG/Icons/devices.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="hard_disk" filename="SVG/Icons/hard_disk.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="key" filename="SVG/Icons/key.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="files" filename="SVG/Icons/files.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="archive" filename="SVG/Icons/archive.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="unarchive" filename="SVG/Icons/unarchive.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="new_folder" filename="SVG/Icons/new_folder.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="done_all" filename="SVG/Icons/done_all.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="format_color" filename="SVG/Icons/format_color.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="image" filename="SVG/Icons/image.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="hide_image" filename="SVG/Icons/hide_image.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="category" filename="SVG/Icons/category.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="style" filename="SVG/Icons/style.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="gesture" filename="SVG/Icons/gesture.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="keyboard" filename="SVG/Icons/keyboard.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="brand_family" filename="SVG/Icons/brand_family.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="usb" filename="SVG/Icons/usb.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="backup" filename="SVG/Icons/backup.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="open_in_browser" filename="SVG/Icons/open_in_browser.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="file_copy" filename="SVG/Icons/file_copy.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="drive_file_move" filename="SVG/Icons/drive_file_move.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="shield_toggle" filename="SVG/Icons/shield_toggle.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="home_repair_service" filename="SVG/Icons/home_repair_service.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="delete" filename="SVG/Icons/delete.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="edit" filename="SVG/Icons/edit.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="floppy" filename="SVG/Icons/floppy.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="text_snippet" filename="SVG/Icons/text_snippet.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="info" filename="SVG/Icons/info.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="text_compare" filename="SVG/Icons/text_compare.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="mobile" filename="SVG/Icons/mobile.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="group" filename="SVG/Icons/group.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="bookmark" filename="SVG/Icons/bookmark.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="sd_card" filename="SVG/Icons/sd_card.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="link" filename="SVG/Icons/link.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="reset_wrench" filename="SVG/Icons/reset_wrench.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="calendar_add_on" filename="SVG/Icons/calendar_add_on.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="chat_add_on" filename="SVG/Icons/chat_add_on.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="keyboard_arrow_up" filename="SVG/Icons/keyboard_arrow_up.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="developer_board" filename="SVG/Icons/developer_board.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="mobile_wrench" filename="SVG/Icons/mobile_wrench.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="power_off" filename="SVG/Icons/power_off.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="alpha-a-box-outline" filename="SVG/Icons/alpha-a-box-outline.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="alpha-a-box" filename="SVG/Icons/alpha-a-box.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="alpha-b-box-outline" filename="SVG/Icons/alpha-b-box-outline.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="alpha-b-box" filename="SVG/Icons/alpha-b-box.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="folder_managed" filename="SVG/Icons/folder_managed.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="dialpad" filename="SVG/Icons/dialpad.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-		<image name="pattern" filename="SVG/Icons/pattern.svg" retainaspect="1" scale="3.25" tint="#413327"/>
+-
+-		<!-- Custom icons -->
+-		<image name="fox" filename="SVG/Icons/fox.svg" retainaspect="1" tint="#413327" scale="3.25"/>
+-		<image name="kernelsu" filename="SVG/Icons/kernelsu.svg" retainaspect="1" tint="#413327" scale="2.00"/>
+-		<image name="android" filename="SVG/Icons/apatch.svg" retainaspect="1" tint="#413327" scale="2.00"/>
+-		<image name="statusbar" filename="SVG/Icons/statusbar.svg" retainaspect="1" tint="#413327" scale="1.00"/>
+-		<image name="lockscreen" filename="SVG/Icons/lockscreen.svg" retainaspect="1" tint="#413327" scale="1.00"/>
+-		<image name="boot_splash" filename="SVG/Icons/boot_splash.svg" retainaspect="1" tint="#413327" scale="1.00"/>
+-		<image name="reboot_fastboot" filename="SVG/Icons/reboot_fastboot.svg" retainaspect="1" scale="1.30" tint="#413327"/>
+-		<image name="reboot_bootloader" filename="SVG/Icons/reboot_bootloader.svg" retainaspect="1" scale="1.30" tint="#413327"/>
+-
+-		<!-- Action Bar -->
+-		<image name="actionbar_back" filename="SVG/ActionBar/back.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_cancel" filename="SVG/ActionBar/cancel.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_delete" filename="SVG/ActionBar/delete.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_edit" filename="SVG/ActionBar/edit.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_encr_dis" filename="SVG/ActionBar/encr_dis.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_encr_ena" filename="SVG/ActionBar/encr_ena.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_flash" filename="SVG/ActionBar/flashlight_off.svg" retainaspect="1" tint="#413327" scale="2.75"/>
+-		<image name="actionbar_flash_on" filename="SVG/ActionBar/flashlight_on.svg" retainaspect="1" tint="#413327" scale="2.75"/>
+-		<image name="actionbar_reset" filename="SVG/ActionBar/reset.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_settings" filename="SVG/ActionBar/settings.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_sort" filename="SVG/ActionBar/sort.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_power_off" filename="SVG/ActionBar/power_off.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_storage" filename="SVG/ActionBar/storage.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_search" filename="SVG/ActionBar/search.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_menu" filename="SVG/ActionBar/menu.svg" retainaspect="1" tint="#413327"/>
+-		<image name="actionbar_help" filename="SVG/Icons/help.svg" retainaspect="1" tint="#413327" scale="2.25"/>
+-
+-		<!-- Info -->
+-		<image name="icon_info" filename="SVG/Info/icon_info.svg" retainaspect="1" tint="#413327"/>
+-	</resources>
+-	<variables>
+-		<!-- Pallete-->
+-		<variable name="primary_50" value="#fff3e1" />
+-		<variable name="primary_100" value="#ffe0b0" />
+-		<variable name="primary_200" value="#ffcc7e" />
+-		<variable name="primary_300" value="#ffb74d" />
+-		<variable name="primary_400" value="#ffa726" />
+-		<variable name="primary_500" value="#ed7002" />
+-		<variable name="primary_600" value="#e65c00" />
+-		<variable name="primary_700" value="#d84c00" />
+-		<variable name="primary_800" value="#c73e00" />
+-		<variable name="primary_900" value="#ae3200" />
+-		<variable name="neutral_100" value="#f9f2e8" />
+-		<variable name="neutral_200" value="#eedfc8" />
+-		<variable name="neutral_300" value="#c4a68b" />
+-		<variable name="neutral_400" value="#c4a68b" />
+-		<variable name="neutral_500" value="#957a63" />
+-		<variable name="neutral_600" value="#5a4a38" />
+-		<variable name="neutral_700" value="#3c3125" />
+-		<variable name="neutral_800" value="#271f17" />
+-		<variable name="neutral_900" value="#130e0b" />
+-
+-		<variable name="background" value="#F9F1E7"/>
+-
+-		<variable name="power_bg" value="#F9F1E7"/>
+-		<variable name="power_hl" value="#E9E9E944"/>
+-		<variable name="highlight_color" value="#eedfc8"/>
+-		<variable name="highlight_color_full" value="#eedfc8"/>
+-
+-		<variable name="text" value="#413327"/>
+-		<variable name="text_secondary" value="#5F6368"/>
+-		<variable name="text_action" value="#413327"/>
+-		<variable name="text_status" value="#413327"/>
+-		<variable name="text_menu" value="#271f17"/>
+-		<variable name="text_light" value="#413327"/>
+-		<variable name="text_hl_btn" value="#F9F1E7"/>
+-		<variable name="text_dark" value="%neutral_800%"/>
+-
+-		<variable name="disabled_bg" value="%neutral_200%"/>
+-		<variable name="disabled_text" value="%neutral_700%"/>
+-
+-		<variable name="linecolor" value="#5F636844"/>
+-		<variable name="darktransparent" value="#F9F1E7BB"/>
+-		<variable name="theme_style" value="Cream"/>
+-		<variable name="theme_style_act" value="Black"/>
+-		<variable name="groupitems_clr" value="#FFF8F2"/>
+-		<variable name="actbar_color" value="%text%"/>
+-		<variable name="neutral_light" value="%neutral_200%"/>
+-
+-		<variable name="cards_bg" value="#FFF8F2"/>
+-
+-		<variable name="keyboard_bg" value="#F0E1CC"/>
+-		<variable name="keyboard_hl" value="#F0E1CC66"/>
+-	</variables>
+-</recovery>
++<?xml version="1.0"?>
++<recovery>
++	<resources>
++		<image name="bolt" filename="SVG/Icons/bolt.svg" retainaspect="1" scale="1.00" tint="#FFFFFF"/>
++
++		<!-- Battery -->
++		<image name="battery100" filename="Default/Battery/battery100" retainaspect="1"/>
++		<image name="battery75" filename="Default/Battery/battery75" retainaspect="1"/>
++		<image name="battery50" filename="Default/Battery/battery50" retainaspect="1"/>
++		<image name="battery25" filename="Default/Battery/battery25" retainaspect="1"/>
++		<image name="battery15_good" filename="Default/Battery/battery15_good" retainaspect="1"/>
++		<!-- Pie -->
++		<image name="battery_p" filename="Default/Battery/battery_p" retainaspect="1"/>
++		<!-- New -->
++		<image name="battery_android_0" filename="SVG/Icons/battery_android_0.svg" retainaspect="1" scale="2.60" tint="#FFFFFF"/>
++		<image name="battery_android_1" filename="SVG/Icons/battery_android_1.svg" retainaspect="1" scale="2.60" tint="#FFFFFF"/>
++		<image name="battery_android_2" filename="SVG/Icons/battery_android_2.svg" retainaspect="1" scale="2.60" tint="#FFFFFF"/>
++		<image name="battery_android_3" filename="SVG/Icons/battery_android_3.svg" retainaspect="1" scale="2.60" tint="#FFFFFF"/>
++		<image name="battery_android_4" filename="SVG/Icons/battery_android_4.svg" retainaspect="1" scale="2.60" tint="#FFFFFF"/>
++		<image name="battery_android_5" filename="SVG/Icons/battery_android_5.svg" retainaspect="1" scale="2.60" tint="#FFFFFF"/>
++		<image name="battery_android_6" filename="SVG/Icons/battery_android_6.svg" retainaspect="1" scale="2.60" tint="#FFFFFF"/>
++		<image name="battery_android_full" filename="SVG/Icons/battery_android_full.svg" retainaspect="1" scale="2.60" tint="#FFFFFF"/>
++		<image name="battery_android_alert" filename="SVG/Icons/battery_android_alert.svg" retainaspect="1" scale="2.60" tint="#FFA244"/>
++
++		<!-- Fullscreen Icons -->
++		<image name="fs_usb" filename="Default/FullscreenIcons/usb" retainaspect="1"/>
++		<image name="unlock_icon" filename="Default/FullscreenIcons/unlock_icon" retainaspect="1"/>
++
++		<!-- Keyboard -->
++		<image name="keyback" filename="SVG/Keyboard/key_butts_dark.svg"/>
++		<image name="keyback_num" filename="SVG/Keyboard/key_num_dark.svg"/>
++
++		<!-- Progress -->
++		<animation name="progress" filename="Default/Progress/indeterminate"/>
++		<image name="progress_empty" filename="Default/Progress/progress_empty"/>
++		<image name="progress_fill" filename="Default/Progress/progress_fill"/>
++		<image name="progress_empty_small" filename="Default/Progress/progress_empty_small"/>
++
++		<!-- Controls -->
++		<image name="switch_off" filename="SVG/Controls/switch_off.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="switch_on" filename="SVG/Controls/switch_on.svg" retainaspect="1" tint="#100E0D"/>
++		<image name="checkbox_false" filename="SVG/Controls/checkbox_false_d.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="radio_false" filename="SVG/Controls/radio_false_d.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="slider_classic" filename="SVG/Controls/slider_classic.svg" retainaspect="1" tint="#1f1811"/>
++		<image name="quick_arrow" filename="SVG/Controls/qa_arrow.svg" retainaspect="1" tint="#ffe2bd"/>
++
++		<!-- Dialogs -->
++		<image name="arrow" filename="SVG/Dialog/arrow.svg" tint="#ffe2bd"/>
++		<image name="arrow_d" filename="SVG/Dialog/arrow_d.svg" tint="#ffe2bd"/>
++		<image name="sort_select" filename="Light/FAB/accept"/>
++		<image name="dialog_bg" filename="SVG/Dialog/dialog_bg.svg" tint="#100E0D"/>
++		<image name="menu_sort" filename="SVG/Dialog/menu_sort.svg" tint="#100E0D"/>
++		<image name="snackbar" filename="SVG/Dialog/snackbar.svg" tint="#100E0D"/>
++		<image name="fm_sort" filename="SVG/Dialog/fm_sort.svg" tint="#100E0D"/>
++
++		<!-- OTA -->
++		<image name="ota_icon" filename="Default/FullscreenIcons/ota_icon" retainaspect="1"/>
++		<image name="progress_fill_small" filename="Default/Progress/progress_fill_small"/>
++
++		<!-- About -->
++		<image name="card" filename="SVG/About/card.svg" retainaspect="1" tint="#1f1811"/>
++		<image name="logo_about" filename="SVG/Logos/logo_w.svg" retainaspect="1"/>
++
++		<!-- Accents -->
++		<image name="accent_black" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#D7DEE6"/>
++		<image name="accent_fox" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#ED6F02"/>
++		<image name="accent_google" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#8AB4F8"/>
++		<image name="accent_cinnamon" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#C3A6A2"/>
++		<image name="accent_ocean" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#28BDD7"/>
++		<image name="accent_orchid" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#E68AED"/>
++		<image name="accent_purple" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#B5A9FC"/>
++		<image name="accent_lollipop" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#93BBBA"/>
++		<image name="accent_space" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#99ACCC"/>
++		<image name="accent_red" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#FF5252"/>
++		<image name="accent_green" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#84C188"/>
++		<image name="accent_yellow" filename="SVG/Workshop/selector.svg" retainaspect="1" tint="#E6E68C"/>
++		<image name="accent_apply" filename="SVG/Workshop/apply.svg" retainaspect="1" tint="#ffe2bd"/>
++
++		<image name="fab_accept" filename="Default/FAB/accept" retainaspect="1"/>
++		<image name="fab_close" filename="Default/FAB/close" retainaspect="1"/>
++		<image name="fab_add" filename="Default/FAB/add" retainaspect="1"/>
++		<image name="fab_usb" filename="Default/FAB/usb" retainaspect="1"/>
++		<image name="fab_credits" filename="Default/FAB/credits" retainaspect="1"/>
++
++		<!-- NavBar -->
++		<image name="nb_slideout" filename="SVG/NavBar/slideout.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nb_slideout_pie" filename="SVG/NavBar/slideout_pie.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nb_home" filename="SVG/NavBar/home.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nb_home_pie" filename="SVG/NavBar/home_pie.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nb_back" filename="SVG/NavBar/back.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nb_back_pie" filename="SVG/NavBar/back_pie.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nb_hide" filename="SVG/NavBar/hide.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nb_hide_pie" filename="SVG/NavBar/hide_pie.svg" retainaspect="1" tint="#ffe2bd"/>
++
++		<!-- NavPanel -->
++		<image name="nav_menu" filename="SVG/NavPanel/menu.svg" retainaspect="1" tint="#100E0D"/>
++		<image name="nav_wipe" filename="SVG/NavPanel/wipe.svg" retainaspect="1" tint="#100E0D"/>
++		<image name="nav_files" filename="SVG/NavPanel/files.svg" retainaspect="1" tint="#100E0D"/>
++		<image name="nav_backup" filename="SVG/NavPanel/bup.svg" retainaspect="1" tint="#100E0D"/>
++		<image name="nav_menu_d" filename="SVG/NavPanel/menu.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nav_wipe_d" filename="SVG/NavPanel/wipe_d.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nav_files_d" filename="SVG/NavPanel/files_d.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="nav_backup_d" filename="SVG/NavPanel/bup.svg" retainaspect="1" tint="#ffe2bd"/>
++
++		<!-- File Manager -->
++		<shape name="fs_bg_big" color="#1f1811" radius="-1" w="130" h="130" />
++
++		<image name="folder_icon" filename="SVG/Icons/folder.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="folder_icon_small" filename="SVG/Icons/folder.svg"  retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++
++		<image name="up_icon" filename="SVG/Icons/arrow_up.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="up_icon_small" filename="SVG/Icons/arrow_up.svg"  retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++
++		<image name="module_icon_small" filename="SVG/Icons/cube.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="module_icon" filename="SVG/Icons/cube.svg"  retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++
++		<image name="file_icon_small" filename="SVG/Icons/file.svg"  retainaspect="1" scale="3.25" tint="#1FC2E1"/>
++		<image name="file_icon" filename="SVG/Icons/file.svg"  retainaspect="1" scale="3.25" tint="#1FC2E1"/>
++
++		<image name="bkp_icon_small" filename="SVG/Icons/cloud.svg"  retainaspect="1" scale="3.25" tint="#31A952"/>
++		<image name="bkp_icon" filename="SVG/Icons/cloud.svg"  retainaspect="1" scale="3.25" tint="#31A952"/>
++
++		<image name="zip_icon_small" filename="SVG/Icons/archive.svg"  retainaspect="1" scale="3.25" tint="#FA7B2A"/>
++		<image name="zip_icon" filename="SVG/Icons/archive.svg"  retainaspect="1" scale="3.25" tint="#FA7B2A"/>
++
++		<image name="img_icon_small" filename="SVG/Icons/floppy.svg"  retainaspect="1" scale="3.25" tint="#1A73E8"/>
++		<image name="img_icon" filename="SVG/Icons/floppy.svg"  retainaspect="1" scale="3.25" tint="#1A73E8"/>
++
++		<image name="txt_icon_small" filename="SVG/Icons/text.svg"  retainaspect="1" scale="3.25" tint="#1FC2E1"/>
++		<image name="txt_icon" filename="SVG/Icons/text.svg"  retainaspect="1" scale="3.25" tint="#1FC2E1"/>
++
++		<image name="png_icon_small" filename="SVG/Icons/photo.svg"  retainaspect="1" scale="3.25" tint="#EC4435"/>
++		<image name="png_icon" filename="SVG/Icons/photo.svg"  retainaspect="1" scale="3.25" tint="#EC4435"/>
++
++		<image name="block_icon_small" filename="SVG/Icons/chip.svg"  retainaspect="1" scale="3.25" tint="#A142F4"/>
++		<image name="block_icon" filename="SVG/Icons/chip.svg"  retainaspect="1" scale="3.25" tint="#A142F4"/>
++
++		<image name="link_icon_small" filename="SVG/Icons/link.svg" retainaspect="1" scale="3.25" tint="#FBBC34"/>
++		<image name="link_icon" filename="SVG/Icons/link.svg" retainaspect="1" scale="3.25" tint="#FBBC34"/>
++
++		<!-- Action Bar -->
++		<image name="actionbar_back" filename="SVG/ActionBar/back.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_cancel" filename="SVG/ActionBar/cancel.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_delete" filename="SVG/ActionBar/delete.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_edit" filename="SVG/ActionBar/edit.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_encr_dis" filename="SVG/ActionBar/encr_dis.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_encr_ena" filename="SVG/ActionBar/encr_ena.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_flash" filename="SVG/ActionBar/flashlight_off.svg" retainaspect="1" tint="#ffe2bd" scale="2.75"/>
++		<image name="actionbar_flash_on" filename="SVG/ActionBar/flashlight_on.svg" retainaspect="1" tint="#ffe2bd" scale="2.75"/>
++		<image name="actionbar_reset" filename="SVG/ActionBar/reset.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_settings" filename="SVG/ActionBar/settings.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_sort" filename="SVG/ActionBar/sort.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_power_off" filename="SVG/ActionBar/power_off.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_storage" filename="SVG/ActionBar/storage.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_search" filename="SVG/ActionBar/search.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_menu" filename="SVG/ActionBar/menu.svg" retainaspect="1" tint="#ffe2bd"/>
++		<image name="actionbar_help" filename="SVG/Icons/help.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++
++		<!-- Advanced -->
++		<image name="arrow_r" filename="SVG/Dialog/arrow_r.svg" retainaspect="1" tint="#ffe2bd"/>
++
++		<!-- Icons -->
++		<image name="addons" filename="SVG/Icons/addons.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="apps_box" filename="SVG/Icons/apps.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="mount_list" filename="SVG/Icons/check_list.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="other" filename="SVG/Icons/other.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="partitions" filename="SVG/Icons/partitions.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="repartition" filename="SVG/Icons/repartition.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="wrench" filename="SVG/Icons/wrench.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="wand_shine" filename="SVG/Icons/wand_shine.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="overview" filename="SVG/Icons/overview.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="build" filename="SVG/Icons/build.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="terminal" filename="SVG/Icons/terminal.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="restart" filename="SVG/Icons/restart.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="devices" filename="SVG/Icons/devices.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="hard_disk" filename="SVG/Icons/hard_disk.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="key" filename="SVG/Icons/key.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="files" filename="SVG/Icons/files.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="archive" filename="SVG/Icons/archive.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="unarchive" filename="SVG/Icons/unarchive.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="kernelsu" filename="SVG/Icons/kernelsu.svg" retainaspect="1" tint="#ffe2bd" scale="2.00"/>
++		<image name="android" filename="SVG/Icons/apatch.svg" retainaspect="1" tint="#ffe2bd" scale="2.00"/>
++		<image name="new_folder" filename="SVG/Icons/new_folder.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="done_all" filename="SVG/Icons/done_all.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="format_color" filename="SVG/Icons/format_color.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="image" filename="SVG/Icons/image.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="hide_image" filename="SVG/Icons/hide_image.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="fox" filename="SVG/Icons/fox.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="category" filename="SVG/Icons/category.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="style" filename="SVG/Icons/style.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="gesture" filename="SVG/Icons/gesture.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="keyboard" filename="SVG/Icons/keyboard.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="brand_family" filename="SVG/Icons/brand_family.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="usb" filename="SVG/Icons/usb.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="backup" filename="SVG/Icons/backup.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="open_in_browser" filename="SVG/Icons/open_in_browser.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="file_copy" filename="SVG/Icons/file_copy.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="drive_file_move" filename="SVG/Icons/drive_file_move.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="shield_toggle" filename="SVG/Icons/shield_toggle.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="home_repair_service" filename="SVG/Icons/home_repair_service.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="delete" filename="SVG/Icons/delete.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="edit" filename="SVG/Icons/edit.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="floppy" filename="SVG/Icons/floppy.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="text_snippet" filename="SVG/Icons/text_snippet.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="info" filename="SVG/Icons/info.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="text_compare" filename="SVG/Icons/text_compare.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="mobile" filename="SVG/Icons/mobile.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="group" filename="SVG/Icons/group.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="bookmark" filename="SVG/Icons/bookmark.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="sd_card" filename="SVG/Icons/sd_card.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="link" filename="SVG/Icons/link.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="reset_wrench" filename="SVG/Icons/reset_wrench.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="calendar_add_on" filename="SVG/Icons/calendar_add_on.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="chat_add_on" filename="SVG/Icons/chat_add_on.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="keyboard_arrow_up" filename="SVG/Icons/keyboard_arrow_up.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="developer_board" filename="SVG/Icons/developer_board.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="mobile_wrench" filename="SVG/Icons/mobile_wrench.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="power_off" filename="SVG/Icons/power_off.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="alpha-a-box-outline" filename="SVG/Icons/alpha-a-box-outline.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="alpha-a-box" filename="SVG/Icons/alpha-a-box.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="alpha-b-box-outline" filename="SVG/Icons/alpha-b-box-outline.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="alpha-b-box" filename="SVG/Icons/alpha-b-box.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="folder_managed" filename="SVG/Icons/folder_managed.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="dialpad" filename="SVG/Icons/dialpad.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		<image name="pattern" filename="SVG/Icons/pattern.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++
++		<!-- Custom icons -->
++		<image name="fox" filename="SVG/Icons/fox.svg" retainaspect="1" tint="#ffe2bd" scale="3.25"/>
++		<image name="kernelsu" filename="SVG/Icons/kernelsu.svg" retainaspect="1" tint="#ffe2bd" scale="2.00"/>
++		<image name="android" filename="SVG/Icons/apatch.svg" retainaspect="1" tint="#ffe2bd" scale="2.00"/>
++		<image name="statusbar" filename="SVG/Icons/statusbar.svg" retainaspect="1" tint="#ffe2bd" scale="1.00"/>
++		<image name="lockscreen" filename="SVG/Icons/lockscreen.svg" retainaspect="1" tint="#ffe2bd" scale="1.00"/>
++		<image name="boot_splash" filename="SVG/Icons/boot_splash.svg" retainaspect="1" tint="#ffe2bd" scale="1.00"/>
++		<image name="reboot_fastboot" filename="SVG/Icons/reboot_fastboot.svg" retainaspect="1" scale="1.30" tint="#ffe2bd"/>
++		<image name="reboot_bootloader" filename="SVG/Icons/reboot_bootloader.svg" retainaspect="1" scale="1.30" tint="#ffe2bd"/>
++		<image name="check" filename="SVG/Icons/check.svg" retainaspect="1" scale="3.25" tint="#ffe2bd"/>
++		
++		<!-- Info -->
++		<image name="icon_info" filename="SVG/Info/icon_info.svg" retainaspect="1" tint="#ffe2bd"/>
++	</resources>
++	<variables>
++		<!-- Pallete-->
++		<variable name="primary_50" value="#fff3e1" />
++		<variable name="primary_100" value="#ffe0b0" />
++		<variable name="primary_200" value="#ffcc7e" />
++		<variable name="primary_300" value="#ffb74d" />
++		<variable name="primary_400" value="#ffa726" />
++		<variable name="primary_500" value="#ed7002" />
++		<variable name="primary_600" value="#e65c00" />
++		<variable name="primary_700" value="#d84c00" />
++		<variable name="primary_800" value="#712300" />
++		<variable name="primary_900" value="#601e00" />
++		<variable name="neutral_100" value="#ffe2bd" />
++		<variable name="neutral_200" value="#ffe2bd" />
++		<variable name="neutral_300" value="#c4a68b" />
++		<variable name="neutral_400" value="#c4a68b" />
++		<variable name="neutral_500" value="#957a63" />
++		<variable name="neutral_600" value="#5a4a38" />
++		<variable name="neutral_700" value="#3c3125" />
++
++		<variable name="background" value="#100E0D"/>
++
++		<variable name="power_bg" value="#000000"/>
++		<variable name="power_hl" value="#1B1C1F"/>
++		<variable name="highlight_color" value="#100E0D66"/>
++		<variable name="highlight_color_full" value="#12121444"/>
++		<variable name="text" value="#ffe2bd"/>
++		<variable name="text_secondary" value="#807463"/>
++		<variable name="text_action" value="#ffe2bd"/>
++		<variable name="text_status" value="#FFFFFF"/>
++		<variable name="text_menu" value="#ffe2bd"/>
++		<variable name="text_light" value="#ffe2bd"/>
++		<variable name="text_hl_btn" value="#100E0D"/>
++		<variable name="text_dark" value="%neutral_300%"/>
++
++		<variable name="disabled_bg" value="#1f1811"/>
++		<variable name="disabled_text" value="%neutral_200%"/>
++
++		<variable name="linecolor" value="#5F636844"/>
++		<variable name="darktransparent" value="#000000BB"/>
++		<variable name="theme_style" value="Dark"/>
++		<variable name="theme_style_act" value="Default"/>
++		<variable name="groupitems_clr" value="#1f1811"/>
++		<variable name="actbar_color" value="%text%"/>
++		<variable name="neutral_light" value="#1f1811"/>
++		<variable name="text_dark" value="#ffe2bd"/>
++
++		<variable name="cards_bg" value="#1f1811"/>
++
++		<variable name="keyboard_bg" value="#1f1811"/>
++		<variable name="keyboard_hl" value="#1f181166"/>
++	</variables>
++</recovery>

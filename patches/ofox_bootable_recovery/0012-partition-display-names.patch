@@ -1,0 +1,25 @@
+Give /system_dlkm and /mnt/vendor/persist display names
+
+OrangeFox names /vendor_dlkm and /odm_dlkm but not these two, so the Mount
+and Backup pages showed raw paths. Naming persist through twrp.flags does
+not work: an entry for a mount point outside the v2 fstab match creates a
+second, writable persist partition.
+
+diff --git a/partition.cpp b/partition.cpp
+--- a/partition.cpp
++++ b/partition.cpp
+@@ -566,6 +566,14 @@
+ 			Display_Name = "Vendor DLKM";
+ 			Backup_Display_Name = Display_Name;
+ 			Storage_Name = Display_Name;
++		} else if (Mount_Point == "/system_dlkm") {
++			Display_Name = "System DLKM";
++			Backup_Display_Name = Display_Name;
++			Storage_Name = Display_Name;
++		} else if (Mount_Point == "/mnt/vendor/persist") {
++			Display_Name = "Persist";
++			Backup_Display_Name = Display_Name;
++			Storage_Name = Display_Name;
+ 		}
+ #ifdef TW_EXTERNAL_STORAGE_PATH
+ 		if (Mount_Point == EXPAND(TW_EXTERNAL_STORAGE_PATH)) {

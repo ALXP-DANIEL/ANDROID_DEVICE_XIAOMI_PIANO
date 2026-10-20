@@ -1,0 +1,24 @@
+Fix the recovery checksum used by the auto-reflash after a ROM/OTA install.
+Get_Partition_Checksums() appended _a/_b to Primary_Block_Device, which on
+this device is already resolved to the real node (/dev/block/sde26), so both
+checksums were empty ("IsRecoveryOverwritten: Cannot get checksums") and
+OrangeFox never reflashed itself over the stock recovery an OTA installs.
+
+diff --git a/partitionmanager.cpp b/partitionmanager.cpp
+--- a/partitionmanager.cpp	2026-09-27 18:24:13.726359497 +0000
++++ b/partitionmanager.cpp	2026-09-27 18:24:13.729154938 +0000
+@@ -4981,8 +4981,12 @@
+ 		return res;
+ 
+ 	if (twrpPart->Is_SlotSelect()) {
+-		TWFunc::Exec_Cmd(command + "_a", res.first);
+-		TWFunc::Exec_Cmd(command + "_b", res.second);
++		// Primary_Block_Device may already be resolved to the real node
++		// (e.g. /dev/block/sde26), where appending a slot suffix names nothing.
++		// Use the by-name links for both slots instead.
++		string by_name = "/system/bin/sha256sum -b /dev/block/by-name/" + twrpPart->Get_Mount_Point().substr(1);
++		TWFunc::Exec_Cmd(by_name + "_a", res.first);
++		TWFunc::Exec_Cmd(by_name + "_b", res.second);
+ 	} else {
+ 		TWFunc::Exec_Cmd(command, res.first);
+ 	}

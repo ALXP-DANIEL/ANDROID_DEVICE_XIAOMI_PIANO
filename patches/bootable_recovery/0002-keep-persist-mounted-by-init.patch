@@ -1,0 +1,25 @@
+diff --git a/partition.cpp b/partition.cpp
+index 50e6cec..d0022a0 100755
+--- a/partition.cpp
++++ b/partition.cpp
+@@ -746,10 +746,18 @@ void TWPartition::Apply_Twrp_Flags_File(int fstab_version, bool Display_Error,
+ 
+ void TWPartition::Mount_Persist_Root_If_Needed() {
+     if (Mount_Point == TW_PERSIST_ROOT && Can_Be_Mounted) {
+-        bool mounted = Mount(false);
++        // Leave persist mounted if something else mounted it first. A device
++        // may mount it from init because its secure stack needs it before
++        // TWRP starts: on piano, qseecomd crashes if the secure world asks
++        // for a persist file while it is absent, and the Weaver trusted app
++        // cannot open without it. Unmounting such a mount here, once per
++        // fstab pass, left persist missing for the rest of the session.
++        bool was_mounted = Is_Mounted();
++        bool mounted = was_mounted || Mount(false);
+         if (mounted) {
+             TWFunc::Fixup_Time_On_Boot(TW_PERSIST_ROOT "/time/");
+-            UnMount(false);
++            if (!was_mounted)
++                UnMount(false);
+         }
+     }
+ }
