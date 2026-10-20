@@ -23,7 +23,7 @@ public class BypassChargingTileService extends TileService {
     private static final String TAG = "PianoPartsBypass";
 
     private static final String SMART_CHG_PATH =
-            "/sys/class/xm_power/charger/smart_charge/smart_chg";
+            "/sys/devices/platform/soc/soc:smart_charge/smart_chg";
     private static final int CMD_BYPASS = 0x400;
     private static final int STATE_BYPASS = 0x400;
 

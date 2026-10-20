@@ -1,0 +1,21 @@
+From: MUHAMMAD ALIF DANIEL BIN MOHD HAIRUL HEZZELIN <alifdaniel.personalspace@gmail.com>
+Subject: [PATCH] LiveDisplay: Hide reading mode
+
+Reading mode is switched from the piano Xiaomi page and its tile.
+
+---
+ src/org/lineageos/lineageparts/livedisplay/LiveDisplaySettings.java | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+--- a/src/org/lineageos/lineageparts/livedisplay/LiveDisplaySettings.java
++++ b/src/org/lineageos/lineageparts/livedisplay/LiveDisplaySettings.java
+@@ -182,8 +182,5 @@
+         mReadingMode = findPreference(KEY_LIVE_DISPLAY_READING_ENHANCEMENT);
+-        if (liveDisplayPrefs != null && mReadingMode != null &&
+-                !mHardware.isSupported(LineageHardwareManager.FEATURE_READING_ENHANCEMENT)) {
++        if (liveDisplayPrefs != null && mReadingMode != null) {
+             liveDisplayPrefs.removePreference(mReadingMode);
+             mReadingMode = null;
+-        } else {
+-            mReadingMode.setOnPreferenceChangeListener(this);
+         }
