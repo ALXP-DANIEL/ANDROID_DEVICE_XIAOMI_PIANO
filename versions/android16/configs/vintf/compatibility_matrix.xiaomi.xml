@@ -1,0 +1,249 @@
+<compatibility-matrix version="8.0" type="framework">
+    <hal format="aidl" optional="true">
+        <name>com.android.ozoaudio.notify</name>
+        <interface>
+            <name>IOzoNotify</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.dolby.dms</name>
+        <interface>
+            <name>IDms</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.qti.hardware.qasr</name>
+        <version>1-2</version>
+        <interface>
+            <name>IQasr</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.qti.sla.service</name>
+        <interface>
+            <name>ISlaAIDLService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.aidl.minet</name>
+        <interface>
+            <name>IMiNetAIDLService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.aidl.miwill</name>
+        <interface>
+            <name>IMiwillAIDLService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.aidl.intentaware</name>
+        <interface>
+            <name>IIntentAwareService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.aidl.mtdservice</name>
+        <interface>
+            <name>IMTService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.aidl.tidaservice</name>
+        <interface>
+            <name>ITidaService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.aidlbgservice</name>
+        <interface>
+            <name>IBGService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.aon</name>
+        <interface>
+            <name>IAlwaysOn</name>
+            <instance>miaonservicehal</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.batteryantiaging</name>
+        <interface>
+            <name>IBatteryAntiAging</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.blackbox</name>
+        <version>1-2</version>
+        <interface>
+            <name>IBlackboxImpl</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.camera.synthetic</name>
+        <interface>
+            <name>IVirtualCameraRegistrar</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.display.mihwcextension</name>
+        <interface>
+            <name>IMiHwcExtension</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.displayfeature_aidl</name>
+        <version>2</version>
+        <interface>
+            <name>IDisplayFeature</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.fingerprintextension</name>
+        <interface>
+            <name>IXiaomiFingerprint</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+   <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.framecapturemanager</name>
+        <interface>
+            <name>IFrameCaptureManager</name>
+            <instance>default</instance>
+        </interface>
+   </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.fx.tunnel</name>
+        <interface>
+            <name>IMiFxTunnel</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.idmanager</name>
+        <interface>
+            <name>IIdManagerService</name>
+            <instance>default</instance>
+        </interface>
+        <interface>
+            <name>ISecidService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.mediaeventgatherservice</name>
+        <version>1</version>
+        <interface>
+            <name>IMediaGather</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.mfidoca</name>
+        <interface>
+            <name>IFidoService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.micharge</name>
+        <version>1-2</version>
+        <interface>
+            <name>IMiCharge</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.mlipay</name>
+        <interface>
+            <name>IMlipayService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.misys.core</name>
+        <version>1</version>
+        <interface>
+            <name>IMiSysCore</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.misys.common</name>
+        <version>3</version>
+        <interface>
+            <name>IHypSysIntl</name>
+            <instance>default</instance>
+        </interface>
+        <interface>
+            <name>IMiSysImpl</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.quickcamera</name>
+        <interface>
+            <name>IQuickCameraService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hardware.seaaudio</name>
+        <version>1</version>
+        <interface>
+            <name>ISeaAudio</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.hw.touchfeature</name>
+        <interface>
+            <name>ITouchFeature</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.sensor.camera</name>
+        <interface>
+            <name>IMiCam</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.xiaomi.sensor.citsensorservice</name>
+        <interface>
+            <name>ICitSensorService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>xiaomi.system.hypsys.common</name>
+        <interface>
+            <name>IHypSysSsi</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>xiaomi.system.hypsys.common</name>
+        <interface>
+            <name>IHypSysSsiIntl</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+</compatibility-matrix>

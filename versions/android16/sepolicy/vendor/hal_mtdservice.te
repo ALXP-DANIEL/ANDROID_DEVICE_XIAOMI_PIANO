@@ -1,0 +1,46 @@
+type hal_mtdservice_default, domain;
+type hal_mtdservice_default_exec, exec_type, file_type, vendor_file_type;
+type hal_mtdservice_service, hal_service_type, protected_service, service_manager_type;
+
+init_daemon_domain(hal_mtdservice_default)
+hal_server_domain(hal_mtdservice_default, hal_mtdservice)
+hal_attribute_service(hal_mtdservice, hal_mtdservice_service)
+binder_use(hal_mtdservice_default)
+
+hal_client_domain(platform_app, hal_mtdservice)
+hal_client_domain(system_app, hal_mtdservice)
+hal_client_domain(system_server, hal_mtdservice)
+hal_client_domain(hal_secure_element_default, hal_mtdservice)
+
+hal_client_domain(hal_mtdservice_default, hal_mfidoca)
+hal_client_domain(hal_mtdservice_default, hal_mlipay)
+hal_client_domain(hal_mtdservice_default, hal_idmanager)
+
+r_dir_file(hal_mtdservice_default, firmware_file)
+r_dir_file(hal_mtdservice_default, vendor_persist_file)
+allow hal_mtdservice_default block_device:dir r_dir_perms;
+allow hal_mtdservice_default ion_device:chr_file rw_file_perms;
+allow hal_mtdservice_default nfc_device:chr_file rw_file_perms;
+allow hal_mtdservice_default proc:file r_file_perms;
+allow hal_mtdservice_default self:qipcrtr_socket { create getattr read setopt write };
+allow hal_mtdservice_default sysfs:dir { open read };
+allow hal_mtdservice_default sysfs:file { open read write };
+allow hal_mtdservice_default system_data_file:dir getattr;
+allow hal_mtdservice_default ta_data_file:dir create_dir_perms;
+allow hal_mtdservice_default ta_data_file:file create_file_perms;
+allow hal_mtdservice_default tee_device:chr_file rw_file_perms;
+allow hal_mtdservice_default vendor_custom_ab_block_device:dir r_dir_perms;
+allow hal_mtdservice_default vendor_dmabuf_qseecom_heap_device:chr_file r_file_perms;
+allow hal_mtdservice_default vendor_dmabuf_qseecom_ta_heap_device:chr_file r_file_perms;
+allow hal_mtdservice_default vendor_ese_gpio_device:chr_file rw_file_perms;
+allow hal_mtdservice_default vendor_persist_data_file:dir getattr;
+allow hal_mtdservice_default vendor_persist_drm_file:dir create_dir_perms;
+allow hal_mtdservice_default vendor_persist_drm_file:file create_file_perms;
+allow hal_mtdservice_default vendor_qce_device:chr_file rw_file_perms;
+allow hal_mtdservice_default vendor_sg_device:chr_file { ioctl open read write };
+
+get_prop(hal_mtdservice_default, vendor_cpuid_prop)
+get_prop(hal_mtdservice_default, vendor_deviceid_prop)
+get_prop(hal_mtdservice_default, vendor_system_prop)
+get_prop(hal_mtdservice_default, vendor_tee_listener_prop)
+set_prop(hal_mtdservice_default, vendor_payment_security_prop)

@@ -1,0 +1,31 @@
+# Xiaomi camera feature detection reads these vendor-owned properties.
+get_prop(platform_app, vendor_camera_prop)
+get_prop(platform_app, vendor_camera_p3enable_prop)
+get_prop(platform_app, vendor_camera_sensor_prop)
+get_prop(platform_app, vendor_camera_xdrversion_prop)
+get_prop(platform_app, vendor_display_prop)
+get_prop(platform_app, vendor_displayfeature_prop)
+get_prop(platform_app, vendor_fp_prop)
+get_prop(platform_app, vendor_panel_info_prop)
+
+# Xiaomi Camera uses MiSys common for its vendor-side camera data handoff.
+allow platform_app hal_hypsys_vendor_service:service_manager find;
+binder_call(platform_app, hal_hypsys_vendor)
+
+# AIDL BGService and QuickCamera are registered by the stock camera provider.
+# Binder traffic is covered by the hal_camera_default rules below; these finds
+# are the missing client-side half of the service registration contract.
+allow platform_app hal_aidlbgservice_service:service_manager find;
+allow platform_app hal_quickcamera_service:service_manager find;
+
+# Xiaomi Camera (not shipped in Lineage) opened vendor_xdsp_device from the app
+# process; Qualcomm's sepolicy_vndr neverallows that for platform_app.
+allow platform_app adsprpcd_file:dir { getattr search };
+
+# Camera's heap manager samples PSI to shed caches before memory pressure turns
+# into capture failures.
+allow platform_app proc_pressure_mem:file r_file_perms;
+allow platform_app proc_pressure_cpu:file r_file_perms;
+
+# Qigsaw extracts on-demand camera feature libraries into the app data dir.
+allow platform_app app_data_file:file execute;

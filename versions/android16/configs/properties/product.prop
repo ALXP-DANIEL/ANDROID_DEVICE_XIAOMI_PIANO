@@ -1,0 +1,23 @@
+# Bluetooth
+# Advertise the FDK software encoder's VBR capability to the AOSP A2DP stack.
+# The similarly named Qualcomm vendor property controls only the offload path.
+persist.bluetooth.a2dp_aac.vbr_supported=true
+persist.bluetooth.opus.enabled=true
+persist.bluetooth.disable.mihc=false
+persist.vendor.qcom.bluetooth.aptxadaptiver2_2_support=true
+persist.vendor.qcom.bluetooth.aptx_adaptive_le.enabled=true
+# Query the Audio HAL for per-ASE vendor codec configurations.
+bluetooth.core.le_audio.codec_extension_aidl.enabled=true
+bluetooth.profile.a2dp.source.enabled=true
+bluetooth.profile.avrcp.target.enabled=true
+bluetooth.profile.avrcp.controller.enabled=true
+bluetooth.profile.hfp.ag.enabled=true
+bluetooth.profile.gatt.enabled=true
+bluetooth.profile.hid.host.enabled=true
+bluetooth.profile.hid.device.enabled=true
+bluetooth.profile.map.server.enabled=true
+bluetooth.profile.opp.enabled=true
+bluetooth.profile.pan.nap.enabled=true
+bluetooth.profile.pan.panu.enabled=true
+bluetooth.profile.pbap.server.enabled=true
+bluetooth.profile.bas.client.enabled=true

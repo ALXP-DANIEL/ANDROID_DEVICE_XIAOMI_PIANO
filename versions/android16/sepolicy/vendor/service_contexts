@@ -1,0 +1,60 @@
+# Audio
+vendor.xiaomi.hardware.seaaudio.ISeaAudio/default                       u:object_r:hal_seaaudio_service:s0
+
+# Camera
+vendor.xiaomi.hardware.aidl.intentaware.IIntentAwareService/default u:object_r:aidlintentaware_service:s0
+vendor.xiaomi.hardware.aidlbgservice.IBGService/default           u:object_r:hal_aidlbgservice_service:s0
+vendor.xiaomi.hardware.aon.IAlwaysOn/miaonservicehal           u:object_r:hal_camera_aon_service:s0
+vendor.xiaomi.hardware.camera.injection.ICameraInjectionService/default         u:object_r:hal_dynamic_camera_service:s0
+vendor.xiaomi.hardware.camera.synthetic.IVirtualCameraRegistrar/default         u:object_r:hal_dynamic_camera_service:s0
+vendor.xiaomi.hardware.quickcamera.IQuickCameraService/default u:object_r:hal_quickcamera_service:s0
+vendor.xiaomi.sensor.camera.IMiCam/default  u:object_r:vendor_hal_misensor_camera_service:s0
+
+# Charge
+vendor.xiaomi.hardware.micharge.IMiCharge/default   u:object_r:hal_micharge_service:s0
+
+# Citsensor
+vendor.xiaomi.sensor.citsensorservice.ICitSensorService/default   u:object_r:vendor_hal_citsensorservice_xiaomi_service:s0
+
+# Displayfeature
+vendor.xiaomi.hardware.display.mihwcextension.IMiHwcExtension/default       u:object_r:vendor_hal_hwcextension_xiaomi_service:s0
+vendor.xiaomi.hardware.displayfeature_aidl.IDisplayFeature/default       u:object_r:vendor_hal_displayfeature_xiaomi_service:s0
+
+# Dolby
+android.hardware.media.c2.IComponentStore/default9                   u:object_r:hal_codec2_service:s0
+android.hardware.media.c2.IComponentStore/vendor0_software           u:object_r:hal_codec2_service:s0
+vendor.dolby.dms.IDms/default    u:object_r:hal_aidl_dms_service:s0
+vendor.dolby.dvs.IDvs/default u:object_r:dvs_aidl_service:s0
+
+# Fingerprint
+vendor.xiaomi.hardware.fx.tunnel.IMiFxTunnel/default                    u:object_r:vendor_hal_fingerprint_service_xiaomi:s0
+vendor.xiaomi.hardware.fingerprintextension.IXiaomiFingerprint/default u:object_r:vendor_hal_fingerprint_service_xiaomi:s0
+
+# HypSys
+xiaomi.system.hypsys.common.IHypSysSsi/default            u:object_r:hal_hypsys_vendor_service:s0
+xiaomi.system.hypsys.common.IHypSysSsiIntl/default            u:object_r:hal_hypsys_vendor_service:s0
+vendor.xiaomi.hardware.blackbox.IBlackboxImpl/default     u:object_r:hal_hypsys_vendor_service:s0
+vendor.xiaomi.hardware.misys.common.IHypSysIntl/default   u:object_r:hal_hypsys_vendor_service:s0
+vendor.xiaomi.hardware.misys.common.IMiSysImpl/default    u:object_r:hal_hypsys_vendor_service:s0
+
+# Media
+android.hardware.media.c2.IComponentStore/xiaomi                   u:object_r:hal_codec2_service:s0
+com.android.ozoaudio.notify.IOzoNotify/default                     u:object_r:hal_ozonotify_service:s0
+vendor.xiaomi.hardware.mediaeventgatherservice.IMediaGather/default                       u:object_r:hal_mediaeventgatherservice_service:s0
+
+# Mlipay
+vendor.xiaomi.hardware.mlipay.IMlipayService/default        u:object_r:hal_mlipay_service:s0
+
+# Xiaomi security services
+vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default u:object_r:hal_mtdservice_service:s0
+vendor.xiaomi.hardware.aidl.tidaservice.ITidaService/default u:object_r:hal_tidaservice_service:s0
+vendor.xiaomi.hardware.idmanager.IIdManagerService/default u:object_r:hal_idmanager_service:s0
+vendor.xiaomi.hardware.idmanager.ISecidService/default u:object_r:hal_idmanager_service:s0
+vendor.xiaomi.hardware.mfidoca.IFidoService/default u:object_r:hal_mfidoca_service:s0
+vendor.xiaomi.hardware.misys.core.IMiSysCore/default u:object_r:hal_misyscore_service:s0
+
+# SLA
+vendor.qti.sla.service.ISlaAIDLService/default u:object_r:hal_slaaidlservice_service:s0
+
+# Touchfeature
+vendor.xiaomi.hw.touchfeature.ITouchFeature/default          u:object_r:hal_touchfeature_xiaomi_service:s0

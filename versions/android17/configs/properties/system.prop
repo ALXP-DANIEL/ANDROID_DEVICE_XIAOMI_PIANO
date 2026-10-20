@@ -1,0 +1,33 @@
+# CNE
+persist.vendor.cne.feature=1
+
+# FW Detect
+ro.vendor.qti.va_aosp.support=1
+
+# IMS
+# Keep Qualcomm IMS capabilities exposed even when a carrier is absent from
+# Xiaomi's CarrierConfig overlay. This matches the working sm8550-common setup.
+persist.dbg.volte_avail_ovr=1
+persist.dbg.vt_avail_ovr=1
+persist.dbg.wfc_avail_ovr=1
+
+# Media
+media.aac_51_output_enabled=true
+media.settings.xml=/vendor/etc/media_profiles_piano.xml
+ro.mediaserver.64b.enable=true
+
+# NFC
+ro.nfc.port=I2C
+
+# Radio VoNR Calling
+
+# SSR
+persist.vendor.ssr.enable_ramdumps=1
+
+# WiFi display
+persist.debug.wfd.enable=1
+persist.sys.wfd.virtual=0
+
+# RKPD
+remote_provisioning.enable_rkpd=true
+remote_provisioning.hostname=remoteprovisioning.googleapis.com
