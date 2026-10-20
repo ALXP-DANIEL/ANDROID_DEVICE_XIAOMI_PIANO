@@ -26,6 +26,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import org.lineageos.pianoparts.R
+import org.lineageos.pianoparts.StylusSettingsActivity
 
 /** Local system menu; actions use platform roles rather than hard-coded Xiaomi packages. */
 internal class PenShortcutMenu(private val context: Context, private val handler: Handler,
@@ -89,8 +90,12 @@ internal class PenShortcutMenu(private val context: Context, private val handler
         entries.add(Entry(R.string.stylus_menu_screenshot, android.R.drawable.ic_menu_camera) {
             StylusActions.run(context, handler, StylusSettingsContract.Action.SCREENSHOT)
         })
+        entries.add(Entry(R.string.stylus_menu_settings, android.R.drawable.ic_menu_manage) {
+            val settings = Intent(context, StylusSettingsActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivityAsUser(settings, user)
+        })
         // Laser is added only when its native input bridge can provide interception and cursor hiding.
-        if (entries.size == 1) { invoke(entries.first()); return }
         val geometry = PenMenuGeometry(entries.size)
         val density = context.resources.displayMetrics.density
         val menu = object : FrameLayout(context) {
