@@ -48,7 +48,8 @@ DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.bootanim.set_orientation_logical_0=ORIENTATION_90
 
-# Let the setup wizard follow the tablet's rotation.
+# EvoX reads PRODUCT_CHARACTERISTICS before the tablet sets it. Override its
+# optional setup-wizard default so first-boot setup can follow tablet rotation.
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.setupwizard.rotation_locked=false
 
