@@ -1,4 +1,4 @@
-import android.os.*; import android.content.pm.PackageManager; import org.lineageos.pianoparts.pencilengine.*;
+import android.os.*; import android.content.pm.ApplicationInfo; import android.content.pm.PackageManager; import org.lineageos.pianoparts.pencilengine.*;
 public class PencilEngineBinderTest {
  static int checks; static boolean trusted=true,supported=true,throwSupport=false; static long lease; static int effects; static boolean accept=true;
  static class Token extends Binder { DeathRecipient death; boolean alive=true; public void linkToDeath(DeathRecipient d,int f){death=d;} public boolean unlinkToDeath(DeathRecipient d,int f){return true;} public boolean isBinderAlive(){return alive;} void die(){alive=false; death.binderDied();} }
@@ -30,6 +30,11 @@ public class PencilEngineBinderTest {
  try{register(new Token(),null);throw new AssertionError();}catch(SecurityException ok){checks++;}
  Parcel legacy=data();legacy.writeStrongBinder(new Token());binder.transact(1,legacy,Parcel.obtain(),0);
  check(trigger(2,1)==0);check(trigger(2,0)==0);binder.close();
+ for(boolean system:new boolean[]{true,false}){
+  binder=new PencilEngineBinder(new PackageManager(){public int checkSignatures(int a,int b){return -1;}public String[] getPackagesForUid(int u){return new String[]{"com.miui.notes"};}public ApplicationInfo getApplicationInfo(String n,int f){ApplicationInfo i=new ApplicationInfo();i.flags=system?ApplicationInfo.FLAG_SYSTEM:0;return i;}},new PencilEngineBinder.Backend(){public boolean supports(int f){return true;}public boolean apply(PencilEngineRegistry.Caller c,long l,PencilEngineRegistry.Action a){return true;}});
+  try{register(new Token(),"com.miui.notes");check(system);}catch(SecurityException rejected){check(!system);}
+  binder.close();
+ }
  System.out.println(checks+" Binder transport fixture checks passed; not Android runtime proof");
  }
 }

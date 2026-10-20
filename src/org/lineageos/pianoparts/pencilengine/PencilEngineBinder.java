@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 package org.lineageos.pianoparts.pencilengine;
 
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.IBinder;
@@ -20,6 +21,8 @@ import java.util.Objects;
  * touchservice/sources/com/xiaomi/touchservice/pencilengine/IPencilEngine.java.
  */
 public final class PencilEngineBinder extends Binder {
+    private static final String NOTES = "com.miui.notes";
+
     public interface Backend {
         /** Optional authoritative package resolution for a legacy unnamed registration. */
         default String registrationPackage(PencilEngineRegistry.Caller caller) { return null; }
@@ -41,8 +44,21 @@ public final class PencilEngineBinder extends Binder {
         Objects.requireNonNull(packages);
         registry = new PencilEngineRegistry(new PencilEngineRegistry.AccessPolicy() {
             public boolean isAuthorized(PencilEngineRegistry.Caller caller) {
-                return packages.checkSignatures(caller.uid, Process.SYSTEM_UID)
-                        == PackageManager.SIGNATURE_MATCH;
+                if (packages.checkSignatures(caller.uid, Process.SYSTEM_UID)
+                        == PackageManager.SIGNATURE_MATCH) {
+                    return true;
+                }
+                // Xiaomi Notes is preinstalled with its own key, not the platform
+                // key. Trust only the system copy, never a user-installed package.
+                return uidOwnsPackage(caller.uid, NOTES) && isPreinstalled(NOTES);
+            }
+            private boolean isPreinstalled(String name) {
+                try {
+                    return (packages.getApplicationInfo(name, 0).flags
+                            & ApplicationInfo.FLAG_SYSTEM) != 0;
+                } catch (PackageManager.NameNotFoundException missing) {
+                    return false;
+                }
             }
             public boolean uidOwnsPackage(int uid, String name) {
                 String[] names = packages.getPackagesForUid(uid);
