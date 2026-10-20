@@ -36,32 +36,42 @@ straight to the kernel.
 | Volume and power keys in Visor | Works: volume moves through entries and power icons, power selects |
 | Fastboot / recovery by holding a volume key | Works |
 | Reboot / Shut down from UEFI | Works |
-| Real-ESP installer ZIP for OrangeFox and TWRP | Implemented; fresh F2FS shrink not hardware-validated |
+| Installer, uninstall and clean uninstall zips | Built; making the ESP not yet tested on a tablet |
 | Debug fastboot in UEFI (`piano-uefi`) | Works: screenshot, log, memory dump, run an EFI app |
 | Linux (Arch) from Visor | Not yet |
 | Touch screen in UEFI | Removed: its SMMU streams keep Android from starting from Visor |
 
 ## Install
 
-Download `piano-uefi-N-installer.zip` from a run of the "UEFI Builder (piano)" action
-(below) and flash it in OrangeFox or TWRP. It:
+From a run of the **UEFI Builder (piano)** action (see Build), download and
+flash in OrangeFox or TWRP:
 
-- puts the selector and UEFI into `boot_a` and `boot_b`, whatever ROM they
-  hold, and keeps the old images in `/sdcard/piano-uefi/`
-- validates an existing GPT ESP and updates Visor files without formatting it
-- if no ESP exists, backs up GPT, shrinks decrypted mounted F2FS `/data`,
-  verifies the shrink, creates a 512 MiB ESP and writes its FAT16 Visor image
-- patches both boot slots only after Visor installation succeeds; no embedded ESP
+| Zip | What it does |
+| --- | --- |
+| `piano-uefi-N-installer.zip` | Installs the UEFI and Visor |
+| `piano-uefi-N-uninstall.zip` | Removes the UEFI, keeps the ESP partition |
+| `piano-uefi-N-uninstall-clean.zip` | Removes the UEFI and gives the ESP space back to data |
 
-Missing ESP or loader falls through to Android. Fresh creation aborts if recovery
-cannot expose decrypted mounted F2FS or the kernel rejects online shrinking.
-This fresh-install path is experimental and has not been validated on a tablet.
-Ordinary uninstall leaves ESP and the reduced userdata capacity intact. It does not
-repartition or grow Android data. See [installer details](docs/esp-installer.md).
+**Installer.** Puts the selector and UEFI into `boot_a` and `boot_b`, whatever
+ROM they hold, and saves the old images in `/sdcard/piano-uefi/`. If the
+tablet already has an ESP, it only updates Visor's files. If not, it makes a
+512 MiB ESP by shrinking the data partition, without formatting it: data must
+be decrypted in recovery first. Flash it again after every ROM update.
 
-Flash it again after a ROM update, which replaces the boot image. To take it
-out, flash `piano-uefi-N-uninstall.zip`: both boot images get their original
-kernel back.
+**Uninstall.** Puts the original boot images back. The ESP stays.
+
+**Clean uninstall.** Needs two runs:
+
+1. Flash it: boot images are restored, the ESP is backed up and removed,
+   and the data partition grows back.
+2. Reboot to recovery, decrypt data, flash the same zip again: the data
+   filesystem grows to fill the space.
+
+It only removes an ESP the installer made (it checks a receipt saved in
+`/data/adb/piano-uefi/`). A factory reset deletes that receipt.
+
+> Making and removing the ESP is new and not yet tested on a tablet.
+> Back up your data first. Details: [docs/esp-installer.md](docs/esp-installer.md).
 
 ## Build
 
@@ -153,13 +163,3 @@ Our code is BSD-2-Clause-Patent, except `selector/keys.c`, which is
 GPL-2.0-only because its register layout follows Linux's SPMI PMIC arbiter
 driver. The Qualcomm drivers in `uefi/Binaries/piano` are proprietary files
 from the device's own stock firmware, included so the image can be built.
-
-### Reclaiming ESP space
-
-The ZIP builder also emits `-uninstall-clean.zip`. It requires the ownership
-receipt saved by the new fresh-ESP installer. The first run backs up and removes
-the owned ESP and expands userdata's GPT entry; reboot recovery and flash the
-same ZIP again to grow the unmounted decrypted F2FS filesystem. Legacy or
-pre-existing ESPs without a valid receipt are refused. Fresh install and reclaim
-are experimental and have not been hardware validated. See
-[ESP installer details](docs/esp-installer.md) before using either path.
