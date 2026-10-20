@@ -12,32 +12,24 @@
  
 --- a/services/inputflinger/reader/mapper/CursorInputMapper.cpp
 +++ b/services/inputflinger/reader/mapper/CursorInputMapper.cpp
-@@ -282,10 +282,24 @@
+@@ -311,7 +311,19 @@
      mWheelYVelocityControl.move(when, nullptr, &vscroll);
      mWheelXVelocityControl.move(when, &hscroll, nullptr);
  
--    if (mEnableNewMousePointerBallistics) {
--        mNewPointerVelocityControl.move(when, &deltaX, &deltaY);
--    } else {
--        mOldPointerVelocityControl.move(when, &deltaX, &deltaY);
-+    // HyperOS .44 bypasses POINTER acceleration only while the selected
-+    // gen3/gen8 Xiaomi air-pen is drawing. Wheel controls above stay unchanged.
+-    mPointerVelocityControl.move(when, &deltaX, &deltaY);
++    // Skip pointer acceleration during the Xiaomi laser pen drawing lease.
++    // Scroll wheels above retain their existing acceleration behavior.
 +    const auto& identifier = getDeviceContext().getDeviceIdentifier();
 +    const bool isXiaomiLaserMouse = identifier.vendor == 34 &&
 +            (identifier.product == 19840 || identifier.product == 12928 ||
 +             identifier.product == 20609 || identifier.product == 12929) &&
 +            mParameters.mode == Parameters::Mode::POINTER && mSource == AINPUT_SOURCE_MOUSE;
-+    // Xiaomi's separate mirrored-input HID is always in the stock velocity
-+    // bypass device set, independent of the pen laser drawing state.
 +    const bool stockMirrorHid = identifier.vendor == 10007 && identifier.product == 25975;
 +    const bool bypassLaserAcceleration = stockMirrorHid || (isXiaomiLaserMouse &&
 +            getContext()->getPolicy()->isPenLaserDrawingDevice(getDeviceId()));
 +    if (!bypassLaserAcceleration) {
-+        if (mEnableNewMousePointerBallistics) {
-+            mNewPointerVelocityControl.move(when, &deltaX, &deltaY);
-+        } else {
-+            mOldPointerVelocityControl.move(when, &deltaX, &deltaY);
-+        }
-     }
++        mPointerVelocityControl.move(when, &deltaX, &deltaY);
++    }
  
      float xCursorPosition = AMOTION_EVENT_INVALID_CURSOR_POSITION;
+     float yCursorPosition = AMOTION_EVENT_INVALID_CURSOR_POSITION;
