@@ -160,4 +160,16 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <!-- Reading mode type -->
+    <string name="reading_mode_type_title">Mode</string>
+    <string name="reading_mode_type_classic">Classic</string>
+    <string name="reading_mode_type_rhythmic">Rhythmic (follows the time of day)</string>
+    <string-array name="reading_mode_type_entries" translatable="false">
+        <item>@string/reading_mode_type_classic</item>
+        <item>@string/reading_mode_type_rhythmic</item>
+    </string-array>
+    <string-array name="reading_mode_type_values" translatable="false">
+        <item>0</item>
+        <item>2</item>
+    </string-array>
 </resources>

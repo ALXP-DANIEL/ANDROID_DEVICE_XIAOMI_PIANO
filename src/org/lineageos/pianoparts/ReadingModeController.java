@@ -4,8 +4,11 @@
 
 package org.lineageos.pianoparts;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -21,6 +24,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.util.Calendar;
 import java.util.Random;
 
 import lineageos.providers.LineageSettings;
@@ -38,6 +42,10 @@ public class ReadingModeController {
     static final String LEVEL = "screen_paper_texture_level";
     static final String TEXTURE = "screen_texture_eyecare_level";
     static final String COLOR_TYPE = "screen_texture_color_type";
+    static final String MODE_TYPE = "screen_mode_type";
+    static final int MODE_CLASSIC = 0;
+    // Stock DisplayFeatureManagerService reading mode type 2.
+    static final int MODE_RHYTHMIC = 2;
 
     // Stock piano values from device_features/piano.xml.
     static final int LEVEL_MIN = 50;
@@ -49,12 +57,22 @@ public class ReadingModeController {
 
     private static final int FEATURE_EYECARE = 3;
     private static final int FEATURE_PAPER_COLORS = 31;
+    // Rhythmic eye care: the panel follows the time of day. Stock passes
+    // (app category << 16) | minute of day as the cookie, every minute.
+    private static final int FEATURE_RHYTHMIC = 54;
     private static final int NOISE_SIZE = 256;
 
     private final PianoPartsApp mApp;
     private final ContentResolver mResolver;
     private final WindowManager mWindowManager;
     private View mTexture;
+    private boolean mRhythmicActive;
+    private final BroadcastReceiver mMinuteReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sendRhythmicTime();
+        }
+    };
 
     public ReadingModeController(PianoPartsApp app) {
         mApp = app;
@@ -73,7 +91,7 @@ public class ReadingModeController {
                 apply();
             }
         };
-        for (String key : new String[] { ENABLED, LEVEL, TEXTURE, COLOR_TYPE }) {
+        for (String key : new String[] { ENABLED, LEVEL, TEXTURE, COLOR_TYPE, MODE_TYPE }) {
             mResolver.registerContentObserver(Settings.System.getUriFor(key), false, observer);
         }
         mResolver.registerContentObserver(LineageSettings.System.getUriFor(
@@ -95,10 +113,36 @@ public class ReadingModeController {
             LineageSettings.System.putInt(mResolver,
                     LineageSettings.System.DISPLAY_READING_MODE, enabled ? 1 : 0);
         }
-        int texture = enabled ? getInt(TEXTURE, TEXTURE_DEFAULT) : 0;
-        mApp.setDisplayFeature(FEATURE_PAPER_COLORS, enabled ? getInt(COLOR_TYPE, 0) : 0);
-        mApp.setDisplayFeature(FEATURE_EYECARE, enabled ? getInt(LEVEL, LEVEL_DEFAULT) : 0);
+        boolean rhythmic = enabled && getInt(MODE_TYPE, MODE_CLASSIC) == MODE_RHYTHMIC;
+        boolean classic = enabled && !rhythmic;
+        int texture = classic ? getInt(TEXTURE, TEXTURE_DEFAULT) : 0;
+        mApp.setDisplayFeature(FEATURE_PAPER_COLORS, classic ? getInt(COLOR_TYPE, 0) : 0);
+        mApp.setDisplayFeature(FEATURE_EYECARE, classic ? getInt(LEVEL, LEVEL_DEFAULT) : 0);
+        setRhythmic(rhythmic);
         showTexture(texture);
+    }
+
+    // TIME_TICK only arrives while the screen is on, which is when stock
+    // updates the rhythmic effect too.
+    private void setRhythmic(boolean active) {
+        if (active != mRhythmicActive) {
+            mRhythmicActive = active;
+            if (active) {
+                mApp.registerReceiver(mMinuteReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+            } else {
+                mApp.unregisterReceiver(mMinuteReceiver);
+                mApp.setDisplayFeature(FEATURE_RHYTHMIC, 0, 0);
+            }
+        }
+        if (active) {
+            sendRhythmicTime();
+        }
+    }
+
+    private void sendRhythmicTime() {
+        Calendar now = Calendar.getInstance();
+        int minute = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE);
+        mApp.setDisplayFeature(FEATURE_RHYTHMIC, 1, minute);
     }
 
     // Stock draws grey noise, a little bluer, at an alpha of level / 255.
