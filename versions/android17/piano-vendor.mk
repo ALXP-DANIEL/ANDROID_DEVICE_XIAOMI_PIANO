@@ -1486,3 +1486,13 @@ PRODUCT_PACKAGES += \
 # graphics.common-V7 in libui-camera's Soong dependency graph.
 PRODUCT_PACKAGES += \
     android.hardware.graphics.common-V5-ndk.vendor
+
+# Keyboard cover authentication daemon. Stock MiDevAuthService needs it for
+# every challenge and token check, and reports error 3 when it is missing.
+PRODUCT_COPY_FILES += \
+    vendor/xiaomi/piano/proprietary/odm/etc/init/vendor.xiaomi.hardware.aidl.midevauth@1.0-service.rc:$(TARGET_COPY_OUT_ODM)/etc/init/vendor.xiaomi.hardware.aidl.midevauth@1.0-service.rc
+
+PRODUCT_PACKAGES += \
+    libmidevauth \
+    midevauthd \
+    manifest_vendor.xiaomi.hardware.aidl.midevauth.xml

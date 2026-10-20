@@ -18438,3 +18438,76 @@ cc_prebuilt_library_shared {
     prefer: true,
     soc_specific: true,
 }
+
+cc_prebuilt_library_shared {
+    name: "libmidevauth",
+    owner: "xiaomi",
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/odm/lib64/libmidevauth.so",
+            ],
+            shared_libs: [
+                "vendor.xiaomi.hardware.aidl.midevauth-V1-ndk",
+                "liblog",
+                "libutils",
+                "libcutils",
+                "libQSEEComAPI",
+                "libbinder_ndk",
+                "libmisight",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    prefer: true,
+    device_specific: true,
+}
+
+cc_prebuilt_binary {
+    name: "midevauthd",
+    owner: "xiaomi",
+    target: {
+        android_arm64: {
+            srcs: [
+                "proprietary/odm/bin/midevauthd",
+            ],
+            shared_libs: [
+                "vendor.xiaomi.hardware.aidl.midevauth-V1-ndk",
+                "liblog",
+                "libutils",
+                "libcutils",
+                "libQSEEComAPI",
+                "libbinder_ndk",
+                "libmisight",
+                "libmidevauth",
+                "libselinux",
+                "libc++",
+                "libc",
+                "libm",
+                "libdl",
+            ],
+        },
+    },
+    compile_multilib: "64",
+    strip: {
+        none: true,
+    },
+    prefer: true,
+    device_specific: true,
+}
+
+prebuilt_etc_xml {
+    name: "manifest_vendor.xiaomi.hardware.aidl.midevauth.xml",
+    owner: "xiaomi",
+    src: "proprietary/odm/etc/vintf/manifest/manifest_vendor.xiaomi.hardware.aidl.midevauth.xml",
+    filename_from_src: true,
+    sub_dir: "vintf/manifest",
+    device_specific: true,
+}
