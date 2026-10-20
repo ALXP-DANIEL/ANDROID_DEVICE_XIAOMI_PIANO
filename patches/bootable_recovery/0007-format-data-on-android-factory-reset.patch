@@ -1,0 +1,16 @@
+diff --git a/startupArgs.cpp b/startupArgs.cpp
+index 954f3f5..eb97267 100644
+--- a/startupArgs.cpp
++++ b/startupArgs.cpp
+@@ -71,7 +71,10 @@ bool startupArgs::processRecoveryArgs(std::vector<std::string> args, int index)
+ 				Send_Intent = arg;
+ 			}
+ 		} else if (args[index].find(WIPE_DATA) != std::string::npos) {
+-			if (!OpenRecoveryScript::Insert_ORS_Command("wipe data\n"))
++			// Piano uses metadata encryption with FBE: a plain wipe keeps
++			// /data/media, whose old user keys make vold fail init_user0.
++			LOGINFO("Received OpenRecovery 'wipe data' command; converting to 'format data'\n");
++			if (!OpenRecoveryScript::Insert_ORS_Command("format data\n"))
+ 				return false;
+ 		} else if (args[index].find(WIPE_CACHE) != std::string::npos) {
+ 			if (!OpenRecoveryScript::Insert_ORS_Command("wipe cache\n"))

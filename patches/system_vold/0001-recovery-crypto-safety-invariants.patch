@@ -1,0 +1,921 @@
+diff --git a/Android.bp b/Android.bp
+index c06743b..c4524e4 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -388,4 +388,20 @@ aconfig_declarations {
+ cc_aconfig_library {
+     name: "vold_flags_c_lib",
+     aconfig_declarations: "vold_flags",
+-}
+\ No newline at end of file
++}
++
++//
++// Temporary piano fscrypt-policy diagnostic.
++// Self-contained: direct kernel fscrypt ioctls only.
++// Not included in recovery PRODUCT_PACKAGES.
++//
++cc_binary {
++    name: "fscryptpolicyclone",
++
++    recovery: true,
++
++    srcs: [
++        "fscryptpolicyclone.c",
++    ],
++}
++
+diff --git a/Decrypt.cpp b/Decrypt.cpp
+old mode 100755
+new mode 100644
+index a5a5ab5..6452fef
+--- a/Decrypt.cpp
++++ b/Decrypt.cpp
+@@ -15,6 +15,7 @@
+  */
+ 
+ #include "Decrypt.h"
++#include <climits>
+ #include "FsCrypt.h"
+ #include <fscrypt/fscrypt.h>
+ 
+@@ -34,6 +35,7 @@
+ #include <openssl/sha.h>
+ #include <openssl/aes.h>
+ #include <openssl/evp.h>
++#include <openssl/crypto.h>
+ #include <openssl/rand.h>
+ 
+ #include <dirent.h>
+@@ -242,7 +244,6 @@ extern "C" bool Decrypt_DE() {
+ }
+ 
+ // Crappy functions for debugging, please ignore unless you need to debug
+-// void output_hex(const std::string& in) {
+ // 	const char *buf = in.data();
+ // 	char hex[in.size() * 2 + 1];
+ // 	unsigned int index;
+@@ -250,7 +251,6 @@ extern "C" bool Decrypt_DE() {
+ // 		sprintf(&hex[2 * index], "%02X", buf[index]);
+ // }
+ 
+-// void output_hex(const char* buf, const int size) {
+ // 	char hex[size * 2 + 1];
+ // 	int index;
+ // 	for (index = 0; index < size; index++)
+@@ -258,7 +258,6 @@ extern "C" bool Decrypt_DE() {
+ // 	printf("%s", hex);
+ // }
+ 
+-// void output_hex(const unsigned char* buf, const int size) {
+ // 	char hex[size * 2 + 1];
+ // 	int index;
+ // 	for (index = 0; index < size; index++)
+@@ -266,7 +265,6 @@ extern "C" bool Decrypt_DE() {
+ // 	printf("%s", hex);
+ // }
+ 
+-// void output_hex(std::vector<uint8_t>* vec) {
+ // 	char hex[3];
+ // 	unsigned int index;
+ // 	for (index = 0; index < vec->size(); index++) {
+@@ -319,7 +317,6 @@ bool Get_Password_Data(const std::string& spblob_path, const std::string& handle
+ 	std::string pwd_data;
+ 	if (!Get_Spblob_Data(spblob_path, handle_str, ".pwd", "password", &pwd_data))
+ 		return false;
+-	// output_hex(pwd_data.data(), pwd_data.size());printf("\n");
+ 	const int* intptr = (const int*)pwd_data.data();
+ 	pwd->password_type = *intptr;
+ 	endianswap(&pwd->password_type);
+@@ -428,14 +425,28 @@ bool Get_Weaver_Data(const std::string& spblob_path, const std::string& handle_s
+ 		printf("Get_Weaver_Data: No weaver file found for %s\n", handle_str.c_str());
+ 		return found_file;
+ 	} else {
+-		// output_hex(weaver_data.data(), weaver_data.size());printf("\n");
+-		const unsigned char* byteptr = (const unsigned char*)weaver_data.data();
+-		wd->version = *byteptr;
+-		// printf("weaver version %i\n", wd->version);
+-		const int* intptr = (const int*)weaver_data.data() + sizeof(unsigned char);
+-		wd->slot = *intptr;
+-		//endianswap(&wd->slot); not needed
+-		// printf("weaver slot %i\n", wd->slot);
++		// Android writes one version byte followed by a big-endian uint32
++		// slot (SyntheticPasswordManager uses DataOutputStream.writeInt, and
++		// ByteBuffer defaults to big endian).
++		//
++		// The previous expression was (const int*)data + sizeof(unsigned char),
++		// which is pointer arithmetic on int* and therefore advances FOUR
++		// bytes: it read 4 bytes at offset 4 of a 5-byte buffer, one byte out
++		// of bounds, and returned the wrong value in the wrong byte order.
++		if (weaver_data.size() != 5) {
++			printf("Invalid Weaver record length\n");
++			return false;
++		}
++		const unsigned char* bytes = (const unsigned char*)weaver_data.data();
++		if (bytes[0] != 1) {
++			printf("Unsupported Weaver record version\n");
++			return false;
++		}
++		const uint32_t slot = ((uint32_t)bytes[1] << 24) | ((uint32_t)bytes[2] << 16) |
++		                      ((uint32_t)bytes[3] << 8)  |  (uint32_t)bytes[4];
++		if (slot > INT_MAX) return false;
++		wd->version = bytes[0];
++		wd->slot = (int)slot;
+ 	}
+ 	return found_file;
+ }
+@@ -550,6 +561,11 @@ namespace keystore {
+ 		std::string spblob_data;
+ 		if (!Get_Spblob_Data(spblob_path, handle_str, ".spblob", "spblob", &spblob_data))
+ 			return disk_decryption_secret_key;
++		if (spblob_data.size() < 2) {
++		        printf("Invalid synthetic password blob\n");
++		        return disk_decryption_secret_key;
++		}
++
+ 		unsigned char* byteptr = (unsigned char*)spblob_data.data();
+ 		if (*byteptr != SYNTHETIC_PASSWORD_VERSION_V2 && *byteptr != SYNTHETIC_PASSWORD_VERSION_V1
+ 				&& *byteptr != SYNTHETIC_PASSWORD_VERSION_V3) {
+@@ -558,7 +574,8 @@ namespace keystore {
+ 		}
+ 		const unsigned char* synthetic_password_version = byteptr;
+ 		byteptr++;
+-		if (*byteptr != SYNTHETIC_PASSWORD_PASSWORD_BASED) {
++		const unsigned char* synthetic_password_type = byteptr;
++		if (*synthetic_password_type != SYNTHETIC_PASSWORD_PASSWORD_BASED) {
+ 			printf("spblob data is not SYNTHETIC_PASSWORD_PASSWORD_BASED\n");
+ 			return disk_decryption_secret_key;
+ 		}
+@@ -566,6 +583,13 @@ namespace keystore {
+ 		if (*synthetic_password_version == SYNTHETIC_PASSWORD_VERSION_V2
+ 				|| *synthetic_password_version == SYNTHETIC_PASSWORD_VERSION_V3) {
+ 			printf("spblob v2 / v3\n");
++
++						if (*synthetic_password_version != SYNTHETIC_PASSWORD_VERSION_V3 ||
++			    *synthetic_password_type != SYNTHETIC_PASSWORD_PASSWORD_BASED ||
++			    spblob_data.size() != 186) {
++			        printf("Unsupported synthetic password protector\n");
++			        return disk_decryption_secret_key;
++			}
+ 			/* Version 2 / 3 of the spblob is basically the same as version 1, but the order of getting the intermediate key and disk decryption key have been flip-flopped
+ 			* as seen in https://android.googlesource.com/platform/frameworks/base/+/5025791ac6d1538224e19189397de8d71dcb1a12
+ 			*/
+@@ -582,7 +606,6 @@ namespace keystore {
+ 			unsigned char* iv = (unsigned char*)byteptr; // The IV is the first 12 bytes of the spblob
+ 			::keystore::hidl_vec<uint8_t> iv_hidlvec;
+ 			iv_hidlvec.setToExternal((unsigned char*)byteptr, 12);
+-			// printf("iv: "); output_hex((const unsigned char*)iv, 12); printf("\n");
+ 
+ 			KeystoreInfo keystore_info;
+ 			std::string handle = keystore_info.getHandle(user_id);
+@@ -618,40 +641,30 @@ namespace keystore {
+ 			auto keyResponse = std::get<ks2::KeyEntryResponse>(response);
+ 			ks2::CreateOperationResponse encOperationResponse;
+ 			auto begin_rc = keyResponse.iSecurityLevel->createOperation(
+-				keyResponse.metadata.key, begin_params.vector_data(), true,
++				keyResponse.metadata.key, begin_params.vector_data(), false,
+ 				&encOperationResponse);
+ 			if (!begin_rc.isOk()) {
+ 				printf("Begin Operation failed\n");
+ 				return disk_decryption_secret_key;
+ 			}
+ 			if (encOperationResponse.upgradedBlob) {
+-				/* KeyMint rebound the synthetic password key because our OS
+-				 * version or patch levels do not match the installed system.
+-				 * The upgrade only lives in the tmpfs Keystore database, so the
+-				 * blob on /data stays usable, but keystore2 has marked the old
+-				 * one superseded and its garbage collector deletes superseded
+-				 * blobs from KeyMint itself. That collector is gated on
+-				 * sys.boot_completed, so it stays idle here unless something
+-				 * sets that property. */
+-				printf("WARNING: KeyMint upgraded the synthetic password key\n");
+-				printf("WARNING: the recovery environment does not match the installed system\n");
+-				char boot_completed[PROPERTY_VALUE_MAX] = {};
+-				property_get("sys.boot_completed", boot_completed, "");
+-				if (!strcmp(boot_completed, "1")) {
+-					printf("ERROR: sys.boot_completed is set, so keystore2 will garbage\n");
+-					printf("ERROR: collect the original key blob. Do not set that property\n");
+-					printf("ERROR: in recovery.\n");
+-				}
++			        printf("Unexpected upgraded synthetic password key blob\n");
++			        return disk_decryption_secret_key;
+ 			}
+-			std::optional<std::vector<uint8_t>> optPlaintext;
+ 
++			std::optional<std::vector<uint8_t>> optPlaintext;
+ 			begin_rc = encOperationResponse.iOperation->finish(cipher_text_hidlvec, {}, &optPlaintext);
+ 			if (!begin_rc.isOk()) {
+ 				printf("finish reponse failed");
+ 				return disk_decryption_secret_key;
+ 			}
+ 
+-			size_t keystore_result_size = optPlaintext->size();
++			if (!optPlaintext || optPlaintext->size() != 156) {
++			        printf("Invalid synthetic password outer layer\n");
++			        return disk_decryption_secret_key;
++			}
++
++						size_t keystore_result_size = optPlaintext->size();
+ 			unsigned char* keystore_result = (unsigned char*)malloc(keystore_result_size);
+ 			if (!keystore_result) {
+ 				printf("malloc on keystore_result\n");
+@@ -660,7 +673,6 @@ namespace keystore {
+ 			memcpy(keystore_result, &optPlaintext->front(), keystore_result_size);
+ 
+ 			const unsigned char* intermediate_iv = keystore_result;
+-			// printf("intermediate_iv: "); output_hex((const unsigned char*)intermediate_iv, 12); printf("\n");
+ 			const unsigned char* intermediate_cipher_text = (const unsigned char*)keystore_result + 12; // The cipher text comes immediately after the IV
+ 			int cipher_size = keystore_result_size - 12;
+ 			// First we personalize as seen https://android.googlesource.com/platform/frameworks/base/+/android-8.0.0_r23/services/core/java/com/android/server/locksettings/SyntheticPasswordCrypto.java#102
+@@ -669,28 +681,51 @@ namespace keystore {
+ 				printf("Unable to obtain personalized_application_id\n");
+ 				return disk_decryption_secret_key;
+ 			}
+-			// printf("personalized application id: "); output_hex((unsigned char*)personalized_application_id, SHA512_DIGEST_LENGTH); printf("\n");
+ 			// Now we'll decrypt using openssl AES/GCM/NoPadding
+ 			OpenSSL_add_all_ciphers();
+ 			int actual_size=0, final_size=0;
+ 			EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
+ 			const unsigned char* key = (const unsigned char*)personalized_application_id; // The key is the now personalized copy of the application ID
+-			// printf("key: "); output_hex((const unsigned char*)key, 32); printf("\n");
+-			EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), key, intermediate_iv);
++			// The previous code was not authenticated at all: it set the GCM
++			// tag from an UNINITIALISED stack buffer, passed cipher_size
++			// (which includes the trailing 16-byte tag) as ciphertext length,
++			// and discarded the EVP_DecryptFinal_ex result. Any ciphertext
++			// would "decrypt".
++			const int plaintext_capacity = cipher_size - 16;
+ 			unsigned char* secret_key = (unsigned char*)malloc(cipher_size);
+-			if (!secret_key) {
++			if (!d_ctx || !secret_key) {
++				EVP_CIPHER_CTX_free(d_ctx);
++				free(secret_key);
+ 				printf("malloc failure on secret key\n");
+ 				return disk_decryption_secret_key;
+ 			}
+-			EVP_DecryptUpdate(d_ctx, secret_key, &actual_size, intermediate_cipher_text, cipher_size);
+-			unsigned char tag[AES_BLOCK_SIZE];
+-			EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag);
+-			EVP_DecryptFinal_ex(d_ctx, secret_key + actual_size, &final_size);
++			const bool authenticated =
++				EVP_DecryptInit_ex(d_ctx, EVP_aes_256_gcm(), nullptr, key, intermediate_iv) == 1 &&
++				EVP_DecryptUpdate(d_ctx, secret_key, &actual_size, intermediate_cipher_text,
++				                  plaintext_capacity) == 1 &&
++				EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16,
++				                   (void*)(intermediate_cipher_text + plaintext_capacity)) == 1 &&
++				EVP_DecryptFinal_ex(d_ctx, secret_key + actual_size, &final_size) == 1;
+ 			EVP_CIPHER_CTX_free(d_ctx);
++			if (!authenticated) {
++				OPENSSL_cleanse(secret_key, cipher_size);
++				free(secret_key);
++				free(personalized_application_id);
++				free(keystore_result);
++				printf("Synthetic password authentication failed\n");
++				return disk_decryption_secret_key;
++			}
+ 			free(personalized_application_id);
+ 			free(keystore_result);
+-			int secret_key_real_size = actual_size - 16;
+-			// printf("secret key:  "); output_hex((const unsigned char*)secret_key, secret_key_real_size); printf("\n");
++			int secret_key_real_size = actual_size + final_size;
++
++			if (secret_key_real_size != 128) {
++				OPENSSL_cleanse(secret_key, cipher_size);
++				free(secret_key);
++				printf("Invalid synthetic password length\n");
++				return disk_decryption_secret_key;
++			}
++
+ 			// The payload data from the keystore update is further personalized at https://android.googlesource.com/platform/frameworks/base/+/android-8.0.0_r23/services/core/java/com/android/server/locksettings/SyntheticPasswordManager.java#153
+ 			// We now have the disk decryption key!
+ 			if (*synthetic_password_version == SYNTHETIC_PASSWORD_VERSION_V3) {
+@@ -699,7 +734,7 @@ namespace keystore {
+ 			} else {
+ 				disk_decryption_secret_key = PersonalizedHash(PERSONALIZATION_FBE_KEY, (const char*)secret_key, secret_key_real_size);
+ 			}
+-			// printf("disk_decryption_secret_key: '%s'\n", disk_decryption_secret_key.c_str());
++			OPENSSL_cleanse(secret_key, cipher_size);
+ 			free(secret_key);
+ 			return disk_decryption_secret_key;
+ 		}
+@@ -712,7 +747,6 @@ namespace keystore {
+ //  * https://android.googlesource.com/platform/frameworks/base/+/android-8.0.0_r23/services/core/java/com/android/server/locksettings/SyntheticPasswordManager.java#813 */
+ bool Get_Secdis(const std::string& spblob_path, const std::string& handle_str, std::string& secdis_data) {
+ 	return Get_Spblob_Data(spblob_path, handle_str, ".secdis", "secdis", &secdis_data);
+-	// output_hex(secdis_data.data(), secdis_data.size());printf("\n");
+ }
+ 
+ // // C++ replacement for https://android.googlesource.com/platform/frameworks/base/+/android-8.0.0_r23/services/core/java/com/android/server/locksettings/SyntheticPasswordManager.java#1033
+@@ -786,18 +820,16 @@ bool Decrypt_User_Synth_Pass(const userid_t user_id, const std::string& Password
+ 	// Get the handle: https://android.googlesource.com/platform/frameworks/base/+/android-8.0.0_r23/services/core/java/com/android/server/locksettings/LockSettingsService.java#2017
+ 	KeystoreInfo keystore_info;
+ 	std::string handle_str = keystore_info.getHandle(user_id);
+-	// The synthetic password key is looked up by alias, so keystore2 needs the
+-	// installed system's database before any of the calls below.
+ 	if (!android::keystore::syncKeystoreDb()) {
+-		printf("Failed to sync the keystore database\n");
++		printf("Unable to initialize recovery keystore\n");
+ 		return Free_Return(retval, weaver_key, &pwd);
+ 	}
++	// Do not touch keystore2 during the Weaver-read isolation experiment.
++	// It is needed only later, when the synthetic-password blob is unwrapped.
+ 	// Now we begin driving unwrapPasswordBasedSyntheticPassword from: https://android.googlesource.com/platform/frameworks/base/+/android-8.0.0_r23/services/core/java/com/android/server/locksettings/SyntheticPasswordManager.java#758
+ 	// First we read the password data which contains scrypt parameters
+-	// printf("pwd N %i R %i P %i salt ", pwd.scryptN, pwd.scryptR, pwd.scryptP); output_hex((char*)pwd.salt, pwd.salt_len); printf("\n");
+-	// printf("Password: '%s'\n", Password.c_str());
+ 	// The password token is the password scrypted with the parameters from the password data file
+-	unsigned char password_token[PASSWORD_TOKEN_SIZE];
++	unsigned char password_token[PASSWORD_TOKEN_SIZE] = {};
+ 	if (Password != "!") {
+ 		if (!Get_Password_Data(spblob_path, handle_str, &pwd)) {
+ 			printf("Failed to Get_Password_Data\n");
+@@ -812,7 +844,6 @@ bool Decrypt_User_Synth_Pass(const userid_t user_id, const std::string& Password
+ 		std::string defpassword = "default-password";
+ 		memcpy(password_token, defpassword.data(), defpassword.length());
+ 	}
+-	// output_hex(&password_token[0], PASSWORD_TOKEN_SIZE);printf("\n");
+ 	if (Is_Weaver(spblob_path, handle_str)) {
+ 		printf("using weaver\n");
+ 		// BEGIN PIXEL 2 WEAVER
+@@ -845,26 +876,29 @@ bool Decrypt_User_Synth_Pass(const userid_t user_id, const std::string& Password
+ 		} else {
+ 			printf("weaver key size is %u\n", weaver_key_size);
+ 		}
+-		// printf("weaver key: "); output_hex((unsigned char*)weaver_key, weaver_key_size); printf("\n");
+ 		// Send the slot from the .weaver file, the computed weaver key, and get the escrowed key data
+-		std::vector<uint8_t> weaver_payload;
++
++            std::vector<uint8_t> weaver_payload;
+ 		// TODO: we should return more information about the status including time delays before the next retry
+ 		if (!weaver.WeaverVerify(wd.slot, weaver_key, &weaver_payload)) {
+ 			printf("failed to weaver verify\n");
+ 			return Free_Return(retval, weaver_key, &pwd);
+ 		}
+-		// printf("weaver payload: "); output_hex(&weaver_payload); printf("\n");
++
+ 		// Done with weaverVerify
+ 		// Now we will compute the application ID
+ 		// https://android.googlesource.com/platform/frameworks/base/+/android-8.0.0_r23/services/core/java/com/android/server/locksettings/SyntheticPasswordManager.java#964
+ 		// Called from https://android.googlesource.com/platform/frameworks/base/+/android-8.0.0_r23/services/core/java/com/android/server/locksettings/SyntheticPasswordManager.java#780
+-		// The escrowed weaver key data is prefixed with "weaver-pwd" padded to 128 with nulls with the weaver payload appended then SHA512
+ 		void* weaver_secret = PersonalizedHashBinary(PERSONALISATION_WEAVER_PASSWORD, (const char*)weaver_payload.data(), weaver_payload.size());
+-		// printf("weaver secret: "); output_hex((unsigned char*)weaver_secret, SHA512_DIGEST_LENGTH); printf("\n");
++		if (!weaver_secret) {
++			printf("Unable to derive Weaver protector secret\n");
++			return Free_Return(retval, weaver_key, &pwd);
++		}
+ 		// The application ID is the password token and weaver secret appended to each other
+ 		memcpy((void*)&application_id[0], (void*)&password_token[0], PASSWORD_TOKEN_SIZE);
+ 		memcpy((void*)&application_id[PASSWORD_TOKEN_SIZE], weaver_secret, SHA512_DIGEST_LENGTH);
+-		// printf("application ID: "); output_hex((unsigned char*)application_id, PASSWORD_TOKEN_SIZE + SHA512_DIGEST_LENGTH); printf("\n");
++		OPENSSL_cleanse(weaver_secret, SHA512_DIGEST_LENGTH);
++		free(weaver_secret);
+ 		// END PIXEL 2 WEAVER
+ 	} else {
+ 		printf("using secdis to decrypt spblob\n");
+@@ -1011,10 +1045,14 @@ bool Decrypt_User_Synth_Pass(const userid_t user_id, const std::string& Password
+ 		return Free_Return(retval, weaver_key, &pwd);
+ 	}
+ 
++	OPENSSL_cleanse(application_id, sizeof(application_id));
++	OPENSSL_cleanse(password_token, sizeof(password_token));
++
+ 	if (!Decrypt_CE_storage(user_id, secret)) {
++		if (!secret.empty()) OPENSSL_cleanse(&secret[0], secret.size());
+ 		return Free_Return(retval, weaver_key, &pwd);
+ 	}
+-
++	if (!secret.empty()) OPENSSL_cleanse(&secret[0], secret.size());
+ 	retval = true;
+ 	return Free_Return(retval, weaver_key, &pwd);
+ }
+diff --git a/FsCrypt.cpp b/FsCrypt.cpp
+index 54dd91c..d3c0ab8 100644
+--- a/FsCrypt.cpp
++++ b/FsCrypt.cpp
+@@ -189,25 +189,13 @@ static bool get_ce_key_new_path(const std::string& directory_path,
+     return false;
+ }
+ 
+-// Discard all keys but the named one; rename it to canonical name.
+-static bool fixate_user_ce_key(const std::string& directory_path, const std::string& to_fix,
+-                               const std::vector<std::string>& paths) {
+-    bool need_sync = false;
+-    for (auto const other_path : paths) {
+-        if (other_path != to_fix) {
+-            android::vold::destroyKey(other_path);
+-            need_sync = true;
+-        }
+-    }
+-    auto const current_path = get_ce_key_current_path(directory_path);
+-    if (to_fix != current_path) {
+-        LOG(DEBUG) << "Renaming " << to_fix << " to " << current_path;
+-        if (!android::vold::RenameKeyDir(to_fix, current_path)) return false;
+-        need_sync = true;
+-    }
+-    if (need_sync && !android::vold::FsyncDirectory(directory_path)) return false;
+-    return true;
+-}
++// AOSP fixates the CE key here: it deletes every sibling key binding and
++// renames the survivor to the canonical path. That is an unrecoverable
++// Keystore deletion, and in recovery we have no way to know whether the user
++// was midway through a credential change when the device was rebooted. The
++// call site in read_user_ce_key() is therefore removed, and with no caller
++// left the function itself is removed too rather than silenced -- keeping a
++// dead copy of a destructive routine in the tree invites it back.
+ 
+ // Unlike AOSP this does not fixate the key it found: dropping the sibling
+ // bindings is a Keystore deletion we cannot undo if the user was midway
+@@ -884,8 +872,12 @@ bool fscrypt_set_ce_key_protection(userid_t user_id, const std::string& secret_h
+         LOG(INFO) << "Deferring fixation of " << directory_path << " until checkpoint is committed";
+         s_deferred_fixations[directory_path] = ce_key_path;
+     } else {
++        // Fixation deletes every other on-disk binding of this key. Recovery
++        // must never erase existing key material: only the in-memory key is
++        // needed, and a failed attempt must leave the user's protectors
++        // exactly as they were.
+         s_deferred_fixations.erase(directory_path);
+-        if (!fixate_user_ce_key(directory_path, ce_key_path, paths)) return false;
++        LOG(INFO) << "Skipping CE key fixation: recovery never deletes key material";
+     }
+ 
+     if (s_new_ce_keys.erase(user_id)) {
+@@ -898,8 +890,8 @@ void fscrypt_deferred_fixate_ce_keys() {
+     for (const auto& it : s_deferred_fixations) {
+         const auto& directory_path = it.first;
+         const auto& to_fix = it.second;
+-        LOG(INFO) << "Doing deferred fixation of " << directory_path;
+-        fixate_user_ce_key(directory_path, to_fix, get_ce_key_paths(directory_path));
++        LOG(INFO) << "Skipping deferred fixation of " << directory_path
++                  << ": recovery never deletes key material";
+         // Continue on error.
+     }
+     s_deferred_fixations.clear();
+diff --git a/KeyStorage.cpp b/KeyStorage.cpp
+index be66f88..1e8f1ef 100644
+--- a/KeyStorage.cpp
++++ b/KeyStorage.cpp
+@@ -353,6 +353,35 @@ static KeystoreOperation BeginKeystoreOp(Keystore& keystore, const std::string&
+ //     }
+ 
+     auto opHandle = keystore.begin(blob, inParams, outParams);
++
++    // Fall back to the stock "key_back" blob.
++    //
++    // HyperOS keeps a second copy of the metadata key beside the live one, at
++    // <key_dir>/../key_back. On this device the two directories hold an
++    // IDENTICAL encrypted_key but DIFFERENT keymaster_key_blob, which is what a
++    // key upgrade leaves behind: the same wrapped payload re-bound under a new
++    // KeyMint blob. Either blob may therefore be the one this TEE state will
++    // open, and trying only the live one gives up a working key for no reason.
++    //
++    // This is read-only. Nothing in /metadata is written, renamed or deleted,
++    // and the live blob is left exactly as found even when the backup is the one
++    // that works.
++    if (!opHandle) {
++        auto backup_blob_file = dir + "/../key_back/" + kFn_keymaster_key_blob;
++        std::string backup_blob;
++        if (android::base::ReadFileToString(backup_blob_file, &backup_blob) &&
++            backup_blob != blob) {
++            LOG(WARNING) << "begin() failed on " << blob_file << "; trying the stock backup blob "
++                         << backup_blob_file << " read-only";
++            opHandle = keystore.begin(backup_blob, inParams, outParams);
++            if (opHandle) {
++                LOG(INFO) << "The stock backup blob opened; the live blob is left unchanged";
++            } else {
++                LOG(ERROR) << "The stock backup blob did not open either";
++            }
++        }
++    }
++
+     if (!opHandle) return opHandle;
+ 
+     // If key blob wasn't upgraded, nothing left to do.
+diff --git a/MetadataCrypt.cpp b/MetadataCrypt.cpp
+index bc2e7ea..ba1ab57 100644
+--- a/MetadataCrypt.cpp
++++ b/MetadataCrypt.cpp
+@@ -291,6 +291,16 @@ bool fscrypt_mount_metadata_encrypted(const std::string& blk_device, const std::
+                << fs_type << " block device: " << blk_device << " with zoned " << is_zoned
+                << " length: " << length;
+ 
++    // Recovery is existing-data-only. Encrypting or formatting userdata from
++    // here destroys the very data the user is trying to reach, so both are
++    // refused unconditionally rather than trusting every caller to pass the
++    // right flags. This makes encrypt_inplace and f2fs::Format unreachable.
++    if (needs_encrypt || should_format) {
++        LOG(ERROR) << "fscrypt_mount_metadata_encrypted: refusing to encrypt or format "
++                   << mount_point << " in recovery";
++        return false;
++    }
++
+     for (auto& device : user_devices) {
+         LOG(DEBUG) << " - user devices: " << device;
+     }
+diff --git a/Weaver1.cpp b/Weaver1.cpp
+index a2eeaaa..ffcf2c3 100644
+--- a/Weaver1.cpp
++++ b/Weaver1.cpp
+@@ -61,33 +61,14 @@ Weaver::Weaver() {
+ }
+ 
+ bool Weaver::GetConfig() {
+-	if (GottenConfig)
+-		return true;
+-
+-	if (mAidlDevice != nullptr) {
+-		auto r = mAidlDevice->getConfig(&aidlConfig);
+-		if (r.isOk()) {
+-			GottenConfig = true;
+-			return true;
+-		}
+-		return false;
+-	}
+-
+-	WeaverStatus status;
+-	WeaverConfig cfg;
+-
+-	bool callbackCalled = false;
+-	auto ret = mDevice->getConfig([&](WeaverStatus s, WeaverConfig c) {
+-		callbackCalled = true;
+-		status = s;
+-		cfg = c;
+-	});
+-	if (ret.isOk() && callbackCalled && status == WeaverStatus::OK) {
+-		config = cfg;
+-		GottenConfig = true;
+-		return true;
+-	}
+-	return false;
++	if (GottenConfig) return true;
++	// Xiaomi piano must not call the vendor configuration transaction.
++	if (mAidlDevice == nullptr) return false;
++	aidlConfig.slots = 128;
++	aidlConfig.keySize = 16;
++	aidlConfig.valueSize = 16;
++	GottenConfig = true;
++	return true;
+ }
+ 
+ bool Weaver::GetSlots(uint32_t* slots) {
+@@ -144,7 +125,12 @@ bool Weaver::WeaverVerify(const uint32_t slot, const void* weaver_key, std::vect
+ 	if (mAidlDevice != nullptr) {
+ 		::aidl::android::hardware::weaver::WeaverReadResponse rep;
+ 		auto r = mAidlDevice->read(slot, key, &rep);
+-		if (r.isOk() && rep.status == ::aidl::android::hardware::weaver::WeaverReadStatus::OK) {
++		const bool valid_response =
++			r.isOk() &&
++			rep.status == ::aidl::android::hardware::weaver::WeaverReadStatus::OK &&
++			rep.timeout == 0 &&
++			rep.value.size() == 16;
++		if (valid_response) {
+ 			*payload = rep.value;
+ 			return true;
+ 		}
+diff --git a/fscryptpolicyclone.c b/fscryptpolicyclone.c
+new file mode 100644
+index 0000000..0909f06
+--- /dev/null
++++ b/fscryptpolicyclone.c
+@@ -0,0 +1,341 @@
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/fs.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <string.h>
++#include <dirent.h>
++#include <sys/ioctl.h>
++#include <sys/stat.h>
++#include <unistd.h>
++
++static int verify_directory(const char *path, struct stat *st)
++{
++    if (lstat(path, st) != 0) {
++        fprintf(stderr,
++                "ERROR: lstat(%s): %s\n",
++                path,
++                strerror(errno));
++        return 0;
++    }
++
++    if (!S_ISDIR(st->st_mode)) {
++        fprintf(stderr,
++                "ERROR: not a directory: %s\n",
++                path);
++        return 0;
++    }
++
++    return 1;
++}
++
++static int directory_is_empty(const char *path)
++{
++    DIR *dir = opendir(path);
++
++    if (!dir) {
++        fprintf(stderr,
++                "ERROR: opendir(%s): %s\n",
++                path,
++                strerror(errno));
++        return -1;
++    }
++
++    struct dirent *entry;
++
++    while ((entry = readdir(dir)) != NULL) {
++        if (!strcmp(entry->d_name, ".") ||
++            !strcmp(entry->d_name, "..")) {
++            continue;
++        }
++
++        closedir(dir);
++        return 0;
++    }
++
++    closedir(dir);
++    return 1;
++}
++
++static int read_policy_v2(const char *path,
++                          struct fscrypt_policy_v2 *policy)
++{
++    int fd = open(path,
++                  O_DIRECTORY |
++                  O_RDONLY |
++                  O_NOFOLLOW |
++                  O_CLOEXEC);
++
++    if (fd < 0) {
++        fprintf(stderr,
++                "ERROR: open(%s): %s\n",
++                path,
++                strerror(errno));
++        return 0;
++    }
++
++    struct fscrypt_get_policy_ex_arg arg;
++    memset(&arg, 0, sizeof(arg));
++
++    arg.policy_size = sizeof(arg.policy);
++
++    if (ioctl(fd,
++              FS_IOC_GET_ENCRYPTION_POLICY_EX,
++              &arg) != 0) {
++        int saved_errno = errno;
++        close(fd);
++
++        fprintf(stderr,
++                "ERROR: GET policy for %s: %s (errno=%d)\n",
++                path,
++                strerror(saved_errno),
++                saved_errno);
++        return 0;
++    }
++
++    close(fd);
++
++    if (arg.policy.v2.version != 2) {
++        fprintf(stderr,
++                "ERROR: %s uses unexpected fscrypt policy version %u\n",
++                path,
++                (unsigned)arg.policy.v2.version);
++        return 0;
++    }
++
++    memcpy(policy,
++           &arg.policy.v2,
++           sizeof(*policy));
++
++    return 1;
++}
++
++static int probe_policy(const char *path,
++                        int *has_policy)
++{
++    int fd = open(path,
++                  O_DIRECTORY |
++                  O_RDONLY |
++                  O_NOFOLLOW |
++                  O_CLOEXEC);
++
++    if (fd < 0) {
++        fprintf(stderr,
++                "ERROR: open(%s): %s\n",
++                path,
++                strerror(errno));
++        return 0;
++    }
++
++    struct fscrypt_get_policy_ex_arg arg;
++    memset(&arg, 0, sizeof(arg));
++
++    arg.policy_size = sizeof(arg.policy);
++
++    errno = 0;
++
++    int rc = ioctl(fd,
++                   FS_IOC_GET_ENCRYPTION_POLICY_EX,
++                   &arg);
++
++    int saved_errno = errno;
++
++    close(fd);
++
++    if (rc == 0) {
++        *has_policy = 1;
++        return 1;
++    }
++
++    if (saved_errno == ENODATA) {
++        *has_policy = 0;
++        return 1;
++    }
++
++    fprintf(stderr,
++            "ERROR: policy probe for %s: %s (errno=%d)\n",
++            path,
++            strerror(saved_errno),
++            saved_errno);
++
++    return 0;
++}
++
++static int set_policy_v2(const char *path,
++                         const struct fscrypt_policy_v2 *policy)
++{
++    int fd = open(path,
++                  O_DIRECTORY |
++                  O_RDONLY |
++                  O_NOFOLLOW |
++                  O_CLOEXEC);
++
++    if (fd < 0) {
++        fprintf(stderr,
++                "ERROR: open(%s): %s\n",
++                path,
++                strerror(errno));
++        return 0;
++    }
++
++    if (ioctl(fd,
++              FS_IOC_SET_ENCRYPTION_POLICY,
++              policy) != 0) {
++        int saved_errno = errno;
++        close(fd);
++
++        fprintf(stderr,
++                "ERROR: SET policy for %s: %s (errno=%d)\n",
++                path,
++                strerror(saved_errno),
++                saved_errno);
++
++        return 0;
++    }
++
++    close(fd);
++    return 1;
++}
++
++static void print_hex(const uint8_t *bytes,
++                      size_t length)
++{
++    size_t i;
++
++    for (i = 0; i < length; ++i) {
++        printf("%02x", bytes[i]);
++    }
++
++    putchar('\n');
++}
++
++static void print_policy(const char *label,
++                         const struct fscrypt_policy_v2 *policy)
++{
++    printf(
++        "%s version=%u contents_mode=%u filenames_mode=%u flags=0x%02x\n",
++        label,
++        (unsigned)policy->version,
++        (unsigned)policy->contents_encryption_mode,
++        (unsigned)policy->filenames_encryption_mode,
++        (unsigned)policy->flags
++    );
++
++    printf("%s key_identifier=", label);
++
++    print_hex(
++        policy->master_key_identifier,
++        sizeof(policy->master_key_identifier)
++    );
++}
++
++int main(int argc, char **argv)
++{
++    if (argc != 3) {
++        fprintf(
++            stderr,
++            "usage: %s SOURCE DEST\n"
++            "\n"
++            "SOURCE must already have an fscrypt V2 policy.\n"
++            "DEST must exist, be empty, and have no policy.\n",
++            argv[0]
++        );
++
++        return 2;
++    }
++
++    const char *source = argv[1];
++    const char *dest   = argv[2];
++
++    struct stat source_stat;
++    struct stat dest_stat;
++
++    if (!verify_directory(source, &source_stat) ||
++        !verify_directory(dest, &dest_stat)) {
++        return 3;
++    }
++
++    if (source_stat.st_dev == dest_stat.st_dev &&
++        source_stat.st_ino == dest_stat.st_ino) {
++        fprintf(stderr,
++                "ERROR: SOURCE and DEST are the same directory\n");
++        return 4;
++    }
++
++    if (source_stat.st_dev != dest_stat.st_dev) {
++        fprintf(stderr,
++                "ERROR: SOURCE and DEST are on different filesystems\n");
++        return 5;
++    }
++
++    int empty = directory_is_empty(dest);
++
++    if (empty < 0) {
++        return 6;
++    }
++
++    if (!empty) {
++        fprintf(stderr,
++                "ERROR: destination is not empty: %s\n",
++                dest);
++        return 7;
++    }
++
++    int has_policy = 0;
++
++    if (!probe_policy(dest, &has_policy)) {
++        return 8;
++    }
++
++    if (has_policy) {
++        fprintf(stderr,
++                "ERROR: destination already has an fscrypt policy\n");
++        return 9;
++    }
++
++    struct fscrypt_policy_v2 source_policy;
++    memset(&source_policy, 0, sizeof(source_policy));
++
++    if (!read_policy_v2(source, &source_policy)) {
++        return 10;
++    }
++
++    puts("SOURCE policy:");
++    print_policy("  ", &source_policy);
++
++    printf(
++        "Applying exact policy struct:\n"
++        "  %s -> %s\n",
++        source,
++        dest
++    );
++
++    if (!set_policy_v2(dest, &source_policy)) {
++        return 11;
++    }
++
++    struct fscrypt_policy_v2 dest_policy;
++    memset(&dest_policy, 0, sizeof(dest_policy));
++
++    if (!read_policy_v2(dest, &dest_policy)) {
++        fprintf(stderr,
++                "ERROR: destination policy cannot be read back\n");
++        return 12;
++    }
++
++    puts("DEST readback policy:");
++    print_policy("  ", &dest_policy);
++
++    if (memcmp(&source_policy,
++               &dest_policy,
++               sizeof(source_policy)) != 0) {
++        fprintf(stderr,
++                "ERROR: destination policy struct differs from source\n");
++        return 13;
++    }
++
++    puts("POLICY_STRUCT_COMPARE=PASS");
++    puts("FSCRYPT_POLICY_CLONE=PASS");
++
++    return 0;
++}
