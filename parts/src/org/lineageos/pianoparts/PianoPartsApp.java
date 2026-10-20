@@ -65,6 +65,7 @@ public class PianoPartsApp extends Application {
     private static final String KEY_SUNLIGHT_MODE = "sunlight_mode";
 
     private DisplayManager mDisplayManager;
+    private TouchpadFlickManager mTouchpadFlickManager;
     private ReadingModeController mReadingModeController;
     private SunlightModeController mSunlightModeController;
     private ITouchFeature mTouchFeature;
@@ -108,7 +109,8 @@ public class PianoPartsApp extends Application {
         }
         new PenBatteryNotifier(this);
         new VolumeBoostNotifier(this);
-        new TouchpadFlickManager(this).start();
+        mTouchpadFlickManager = new TouchpadFlickManager(this);
+        mTouchpadFlickManager.start();
         new StylusController(this, new Handler(Looper.getMainLooper())).start();
         new StylusAppModeController(this, new Handler(Looper.getMainLooper()),
                 this::setTouchMode).start();

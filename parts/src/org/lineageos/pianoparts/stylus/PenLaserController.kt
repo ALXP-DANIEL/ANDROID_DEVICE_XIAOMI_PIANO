@@ -41,7 +41,7 @@ internal class PenLaserController(private val context: Context, private val hand
     private val heartbeat = object : Runnable {
         override fun run() { if (overlay != null) { control(true); handler.postDelayed(this, 2000) } }
     }
-    private val hold = Runnable { if (keyDown) { held = true; present(); overlay?.setDrawing(mode == 1) } }
+    private val hold = Runnable { if (keyDown) { held = true; present(); setDrawing(mode == 1) } }
     private val click = Runnable {
         if (pressCount == 1) {
             mode = 1 - mode; sendMode(mode == 1); present(); overlay?.mode = mode
@@ -53,13 +53,8 @@ internal class PenLaserController(private val context: Context, private val hand
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                MOTION -> if (intent.getIntExtra("device", -1) == device && overlay != null) {
-                    val dx = intent.getFloatExtra("dx", 0f); val dy = intent.getFloatExtra("dy", 0f)
-                    if (dx.isFinite() && dy.isFinite()) {
-                        overlay?.move(dx, dy)
-                        handler.removeCallbacks(remove); handler.postDelayed(remove, 120000)
-                    }
-                }
+                MOTION -> handleMotion(intent.getIntExtra("device", -1),
+                    intent.getFloatExtra("dx", 0f), intent.getFloatExtra("dy", 0f))
                 KEY -> handleKey(intent)
                 EXIT -> closePresentation()
                 TOGGLE -> {
@@ -86,7 +81,23 @@ internal class PenLaserController(private val context: Context, private val hand
             addAction(Intent.ACTION_SCREEN_OFF); addAction(Intent.ACTION_USER_SWITCHED)
             addAction(Intent.ACTION_CONFIGURATION_CHANGED); addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
         }, null, handler, Context.RECEIVER_NOT_EXPORTED)
+        PenLaserMotionService.attach(::handleMotion)
         started = true
+    }
+
+    private fun handleMotion(id: Int, dx: Float, dy: Float) {
+        if (id != device || overlay == null || !dx.isFinite() || !dy.isFinite()) return
+        overlay?.move(dx, dy)
+        handler.removeCallbacks(remove)
+        handler.postDelayed(remove, 120000)
+    }
+
+    /** Publish the same drawing-only acceleration gate that Xiaomi sets via InputCommonConfig. */
+    private fun setDrawing(drawing: Boolean) {
+        val current = overlay ?: return
+        if (current.isDrawing == drawing) return
+        current.setDrawing(drawing)
+        control(true)
     }
     private fun handleKey(intent: Intent) {
         val id = intent.getIntExtra("device", -1)
@@ -109,12 +120,12 @@ internal class PenLaserController(private val context: Context, private val hand
             handler.removeCallbacks(click)
             handler.postDelayed(stuckKey, 240000)
             if (generation == 8 && virtual) {
-                mode = 1; sendMode(true); present(); overlay?.mode = 1; overlay?.setDrawing(true)
+                mode = 1; sendMode(true); present(); overlay?.mode = 1; setDrawing(true)
             } else if (pressCount == 2) overlay?.clearPaths()
             else { held = false; handler.postDelayed(hold, 200) }
         } else {
-            if (generation == 8 && virtual) { mode = 0; overlay?.mode = 0; overlay?.setDrawing(false) }
-            else if (held) { overlay?.setDrawing(false); if (mode == 0) overlay?.presenting = false }
+            if (generation == 8 && virtual) { mode = 0; overlay?.mode = 0; setDrawing(false) }
+            else if (held) { setDrawing(false); if (mode == 0) overlay?.presenting = false }
             else if (pressCount == 1) handler.postDelayed(click, 300)
         }
     }
@@ -142,6 +153,7 @@ internal class PenLaserController(private val context: Context, private val hand
         val pen = inputs.getInputDevice(device)
         context.sendBroadcast(Intent(CONTROL).setPackage("android")
             .putExtra("device", device).putExtra("active", active)
+            .putExtra("drawing", active && overlay?.isDrawing == true)
             .putExtra("vendor", pen?.vendorId ?: -1)
             .putExtra("product", pen?.productId ?: -1))
     }
@@ -153,7 +165,12 @@ internal class PenLaserController(private val context: Context, private val hand
         overlay = null; keyDown = false; held = false; virtual = false; mode = 0
         sendMode(false)
     }
-    fun close() { closePresentation(); if (started) context.unregisterReceiver(receiver); started = false }
+    fun close() {
+        PenLaserMotionService.detach()
+        closePresentation()
+        if (started) context.unregisterReceiver(receiver)
+        started = false
+    }
 
     private class LaserView(context: Context) : View(context) {
         private val density = resources.displayMetrics.density
@@ -161,6 +178,7 @@ internal class PenLaserController(private val context: Context, private val hand
         private val paths = mutableListOf<Path>()
         private val cursor = context.getDrawable(R.drawable.pen_laser_cursor)!!
         private var x = 0f; private var y = 0f; private var drawing = false
+        val isDrawing: Boolean get() = drawing
         private var points = 0
         var mode = 0; set(value) { field = value; invalidate() }
         var presenting = false; set(value) { field = value; invalidate() }

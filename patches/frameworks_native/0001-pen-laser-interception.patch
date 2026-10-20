@@ -1,27 +1,46 @@
 --- a/services/inputflinger/PointerChoreographer.cpp
 +++ b/services/inputflinger/PointerChoreographer.cpp
-@@ -170,6 +170,25 @@
+@@ -170,6 +170,44 @@
  }
  
  void PointerChoreographer::notifyMotion(const NotifyMotionArgs& args) {
-+    {
++    // AOSP's policy interface must not be called with the pointer lock held.
++    // Collect the identified pen and its display-space delta under the lock,
++    // then invoke the system_server laser lease check after releasing it.
++    std::optional<std::pair<ui::LogicalDisplayId, vec2>> laserMotion;
++    if (args.getPointerCount() == 1 &&
++        isFromMouse(args.source, args.pointerProperties[0].toolType)) {
 +        std::scoped_lock _l(getLock());
 +        const InputDeviceInfo* device = findInputDeviceLocked(args.deviceId);
-+        if (device != nullptr && args.getPointerCount() == 1 &&
-+            isFromMouse(args.source, args.pointerProperties[0].toolType)) {
++        if (device != nullptr && device->isEnabled() &&
++            isFromSource(device->getSources(), AINPUT_SOURCE_MOUSE)) {
 +            const auto& id = device->getIdentifier();
 +            if (id.vendor == 34 && (id.product == 19840 || id.product == 12928 ||
 +                                    id.product == 20609 || id.product == 12929)) {
-+                auto [display, pc] = ensureMouseControllerLocked(args.displayId);
-+                const vec2 delta{args.pointerCoords[0].getAxisValue(AMOTION_EVENT_AXIS_RELATIVE_X),
-+                                 args.pointerCoords[0].getAxisValue(AMOTION_EVENT_AXIS_RELATIVE_Y)};
-+                const vec2 logical = transformWithoutTranslation(pc.getDisplayTransform(), delta);
-+                if (mPolicy.filterPenLaserMotion(args.deviceId, logical, display)) {
-+                    pc.fade(PointerControllerInterface::Transition::IMMEDIATE);
-+                    return; // Native interception: no cursor movement or app pointer dispatch.
++                // Stock intercepts only on the currently selected mouse display.
++                const auto display = getTargetMouseDisplayLocked(args.displayId);
++                if (mCurrentMouseDisplayId.isValid() && display == mCurrentMouseDisplayId) {
++                    auto [target, pc] = ensureMouseControllerLocked(args.displayId);
++                    const vec2 delta{args.pointerCoords[0].getAxisValue(AMOTION_EVENT_AXIS_RELATIVE_X),
++                                     args.pointerCoords[0].getAxisValue(AMOTION_EVENT_AXIS_RELATIVE_Y)};
++                    laserMotion.emplace(target,
++                            transformWithoutTranslation(pc.getDisplayTransform(), delta));
 +                }
 +            }
 +        }
++    }
++    if (laserMotion && mPolicy.filterPenLaserMotion(args.deviceId, laserMotion->second,
++                                                   laserMotion->first)) {
++        // Re-resolve the cursor after the callback: device and display state
++        // may have changed while the policy ran without the pointer lock.
++        {
++            std::scoped_lock _l(getLock());
++            const auto it = mMousePointersByDisplay.find(laserMotion->first);
++            if (it != mMousePointersByDisplay.end()) {
++                it->second->fade(PointerControllerInterface::Transition::IMMEDIATE);
++            }
++        }
++        return; // Laser movement never advances the cursor or reaches apps.
 +    }
      NotifyMotionArgs newArgs = processMotion(args);
  

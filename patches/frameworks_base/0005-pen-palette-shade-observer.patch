@@ -1,6 +1,6 @@
 --- a/packages/SystemUI/src/com/android/systemui/shade/ShadeExpansionStateManager.kt
 +++ b/packages/SystemUI/src/com/android/systemui/shade/ShadeExpansionStateManager.kt
-@@ -21,5 +21,10 @@
+@@ -17,12 +17,24 @@
  package com.android.systemui.shade
  
  import android.annotation.IntDef
@@ -11,15 +11,30 @@
 +import android.os.UserHandle
  import android.os.Trace
  import android.os.Trace.TRACE_TAG_APP as TRACE_TAG
-@@ -27,2 +32,3 @@
+ import android.util.Log
+ import androidx.annotation.FloatRange
  import com.android.systemui.dagger.SysUISingleton
 +import com.android.systemui.dagger.qualifiers.Application
++import com.android.systemui.shade.data.repository.ShadeRepository
  import com.android.systemui.util.Compile
-@@ -38,5 +44,38 @@
++import kotlinx.coroutines.CoroutineScope
++import kotlinx.coroutines.flow.collect
++import kotlinx.coroutines.flow.combine
++import kotlinx.coroutines.flow.distinctUntilChanged
++import kotlinx.coroutines.launch
+ import java.util.concurrent.CopyOnWriteArrayList
+ import javax.inject.Inject
+ 
+@@ -33,7 +45,60 @@
+  */
  @SysUISingleton
  @Deprecated("Use ShadeInteractor instead")
 -class ShadeExpansionStateManager @Inject constructor() {
-+class ShadeExpansionStateManager @Inject constructor(@Application private val context: Context) {
++class ShadeExpansionStateManager @Inject constructor(
++    @Application private val context: Context,
++    @Application scope: CoroutineScope,
++    private val shadeRepository: ShadeRepository,
++) {
 +    // Read-only handshake with the system-UID PianoParts pen palette. No shade
 +    // disable flags, panel collapse or persistent state is ever changed here.
 +    private var penShadeOpen = false
@@ -42,9 +57,25 @@
 +        } catch (exception: RuntimeException) {
 +            Log.w(TAG, "Pen palette shade query unavailable", exception)
 +        }
++        // QS may expand independently of the notification shade (including
++        // separate/scene panels). Observe both legacy and fractional QS state.
++        scope.launch {
++            combine(shadeRepository.qsExpansion, shadeRepository.legacyIsQsExpanded) {
++                fraction, expanded -> fraction > 0f || expanded
++            }.distinctUntilChanged().collect { publishPenShadeTransition() }
++        }
 +    }
 +
-+    private fun isPenShadeOpen(): Boolean = !isClosed() || expanded || fraction > 0f
++    private fun isPenShadeOpen(): Boolean = !isClosed() || expanded || fraction > 0f ||
++        shadeRepository.qsExpansion.value > 0f || shadeRepository.legacyIsQsExpanded.value
++
++    private fun publishPenShadeTransition() {
++        val open = isPenShadeOpen()
++        if (open != penShadeOpen) {
++            penShadeOpen = open
++            publishPenShadeState(0L, open)
++        }
++    }
 +
 +    private fun publishPenShadeState(request: Long, open: Boolean) {
 +        context.sendBroadcastAsUser(Intent(penShadeStateAction)
@@ -55,11 +86,12 @@
 +
  
      private val expansionListeners = CopyOnWriteArrayList<ShadeExpansionListener>()
-@@ -136,2 +175,7 @@
+     private val stateListeners = CopyOnWriteArrayList<ShadeStateListener>()
+@@ -132,6 +197,7 @@
+         val expansionChangeEvent =
+             ShadeExpansionChangeEvent(fraction, expanded, tracking, dragDownPxAmount)
          expansionListeners.forEach { it.onPanelExpansionChanged(expansionChangeEvent) }
-+        val isOpen = isPenShadeOpen()
-+        if (isOpen != penShadeOpen) {
-+            penShadeOpen = isOpen
-+            publishPenShadeState(0L, isOpen)
-+        }
++        publishPenShadeTransition()
      }
+ 
+     /** Updates the panel state if necessary. */
