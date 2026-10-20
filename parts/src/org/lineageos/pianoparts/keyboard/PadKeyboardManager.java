@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -74,6 +75,10 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         void onUpdateProgress(boolean touchpad, int percent);
 
         void onUpdateFinished(boolean touchpad, boolean success);
+
+        default void onMcuUpdateProgress(int percent) {}
+
+        default void onMcuUpdateFinished(boolean success) {}
     }
 
     private static volatile PadKeyboardManager sInstance;
@@ -81,6 +86,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     private final Context mContext;
     private final KeyboardTransport mTransport;
     private final KeyboardUpdater mUpdater;
+    private final KeyboardMcuUpdater mMcuUpdater;
     private final KeyboardFeatureCommands mFeatures;
     private final KeyboardBacklightFilter mBacklightFilter = new KeyboardBacklightFilter();
     private final Handler mHandler;
@@ -209,6 +215,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         mContext = context;
         mTransport = new KeyboardTransport(this);
         mUpdater = new KeyboardUpdater(mTransport);
+        mMcuUpdater = new KeyboardMcuUpdater(mTransport);
         mHandler = mTransport.getHandler();
         mFeatures = new KeyboardFeatureCommands(new KeyboardFeatureCommands.Scheduler() {
             @Override
@@ -221,7 +228,8 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                 mHandler.removeCallbacks(task);
             }
         }, (command, value) -> mTransport.send(KeyboardProtocol.feature(command, value)),
-                () -> mConnected && !mSleeping && !mRejected && !mUpdater.isRunning());
+                () -> mConnected && !mSleeping && !mRejected
+                        && !mUpdater.isRunning() && !mMcuUpdater.isRunning());
         mInputManager = context.getSystemService(InputManager.class);
         mPowerManager = context.getSystemService(PowerManager.class);
         mSensorManager = context.getSystemService(SensorManager.class);
@@ -321,6 +329,9 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
 
     // The stock images from odm/etc, installed where the platform may read them.
     private static final String FIRMWARE_DIR = "/system_ext/etc/piano_keyboard/";
+    private static final Path MCU_IMAGE = Path.of("/odm/firmware/MCU_Upgrade.bin");
+
+    private KeyboardMcuFirmware mVerifiedMcuImage;
 
     private String firmwareDir() {
         return FIRMWARE_DIR;
@@ -358,7 +369,64 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     }
 
     public boolean isUpdating() {
-        return mUpdater.isRunning();
+        return mUpdater.isRunning() || mMcuUpdater.isRunning();
+    }
+
+    private KeyboardMcuFirmware mcuFirmware() {
+        if (mVerifiedMcuImage == null) {
+            try {
+                mVerifiedMcuImage = KeyboardMcuFirmware.inspect(MCU_IMAGE);
+            } catch (IOException e) {
+                Log.w(TAG, "No trusted MCU firmware available", e);
+            }
+        }
+        return mVerifiedMcuImage;
+    }
+
+    /** The known pinned stock MCU image may be upgraded or manually reinstalled. */
+    public String getAvailableMcuUpdate() {
+        KeyboardMcuFirmware image = mcuFirmware();
+        return mConnected && "1260".equalsIgnoreCase(mPid) && mKeyboardType == 1
+                && mMcuVersion != null && image != null && canFlashKeyboardFirmware()
+                && (image.isCandidateNewerThan(mMcuVersion)
+                    || image.version().equals(mMcuVersion)) ? image.version() : null;
+    }
+
+    /** Explicit user-started MCU firmware transfer; never called by auto-update. */
+    public boolean startMcuUpdate() {
+        KeyboardMcuFirmware image = mcuFirmware();
+        if (image == null || getAvailableMcuUpdate() == null || isUpdating()
+                || !canFlashKeyboardFirmware()) return false;
+        int generation = mAuthGeneration;
+        String pid = mPid;
+        byte type = mKeyboardType;
+        String originalVersion = mMcuVersion;
+        PowerManager.WakeLock lock = mPowerManager.newWakeLock(
+                PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE,
+                "PianoParts:McuUpdate");
+        lock.acquire(10 * 60 * 1000L);
+        mMcuUpdater.start(image,
+                () -> canFlashKeyboardFirmware() && !mUpdater.isRunning()
+                        && generation == mAuthGeneration && pid.equals(mPid)
+                        && type == mKeyboardType && originalVersion.equals(mMcuVersion),
+                new KeyboardMcuUpdater.Callback() {
+                    @Override public void onProgress(int percent) {
+                        for (Listener listener : mListeners) {
+                            mMainHandler.post(() -> listener.onMcuUpdateProgress(percent));
+                        }
+                    }
+
+                    @Override public void onFinished(boolean success) {
+                        if (lock.isHeld()) lock.release();
+                        mHandler.postDelayed(() -> mTransport.send(
+                                KeyboardProtocol.getVersion(KeyboardProtocol.ADDRESS_MCU)), 2000);
+                        for (Listener listener : mListeners) {
+                            mMainHandler.post(() -> listener.onMcuUpdateFinished(success));
+                        }
+                        notifyChanged();
+                    }
+                });
+        return true;
     }
 
     /** Starts a manual update; returns false when nothing can be flashed. */
@@ -366,7 +434,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         KeyboardFirmware firmware = touchpad ? touchpadFirmware() : keyboardFirmware();
         String currentVersion = touchpad ? mTouchpadVersion : mKeyboardVersion;
         if (firmware == null || !firmware.isNewerThan(currentVersion)
-                || !canFlashKeyboardFirmware() || mUpdater.isRunning()) {
+                || !canFlashKeyboardFirmware() || isUpdating()) {
             return false;
         }
         PowerManager.WakeLock wakeLock = mPowerManager.newWakeLock(
@@ -437,6 +505,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
         if (mUpdater.onReply(reply)) {
             return;
         }
+        if (mMcuUpdater.onReply(reply)) return;
         byte source = reply[2];
         byte command = reply[4];
         if (command >= KeyboardProtocol.CMD_AUTH_START
@@ -560,6 +629,9 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
             // Invalidate its result before a different cover can be attached.
             mAuthGeneration++;
             mUpdater.abort();
+            // Controller reset may momentarily detach a cover; keep polling
+            // its version only after a successful FLASH ACK and RESET send.
+            if (!mMcuUpdater.isVerifying()) mMcuUpdater.abort();
             mFeatures.clear();
             mAuthHandler.removeCallbacksAndMessages(null);
             mAuthRunning = false;
@@ -663,6 +735,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
             if (mUpdater.isRunning()) {
                 mUpdater.abort();
             }
+            if (mMcuUpdater.isRunning()) mMcuUpdater.abort();
             stopSensors();
         }
     }
@@ -987,6 +1060,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                 mAuthVerified = false;
                 mRejected = true;
                 mUpdater.abort();
+                mMcuUpdater.abort();
                 mFeatures.clear();
                 // Like stock, stop keeping a rejected cover awake.
                 mHandler.removeCallbacks(mKeepAwake);
@@ -1040,7 +1114,7 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
      * once per attachment.
      */
     private void maybeAutoUpdate() {
-        if (!canFlashKeyboardFirmware() || mUpdater.isRunning()) {
+        if (!canFlashKeyboardFirmware() || isUpdating()) {
             return;
         }
         if (!mAutoKeyboardTried && getAvailableKeyboardUpdate() != null) {
