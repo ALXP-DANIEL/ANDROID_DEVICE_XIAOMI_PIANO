@@ -1,0 +1,12 @@
+diff --git a/gpt-utils/Android.bp b/gpt-utils/Android.bp
+index 7a845a3..a1052b1 100644
+--- a/gpt-utils/Android.bp
++++ b/gpt-utils/Android.bp
+@@ -6,7 +6,6 @@
+ cc_library {
+     name: "libgptutils.qti",
+     export_include_dirs: ["."],
+-    header_libs: ["generated_kernel_headers"],
+     recovery_available: true,
+     shared_libs: [
+         "libcutils",
