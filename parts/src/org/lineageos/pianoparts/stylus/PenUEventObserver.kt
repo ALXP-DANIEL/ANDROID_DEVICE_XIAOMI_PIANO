@@ -24,7 +24,13 @@ internal class PenUEventObserver(
     fun start() {
         if (started) return
         started = true
-        startObserving("SUBSYSTEM=power_supply")
+        // Stock HyperOS observes the named charger keys, rather than assuming
+        // that every producer of pen notifications uses the power_supply match.
+        startObserving("POWER_SUPPLY_PEN_MAC=")
+        startObserving("POWER_SUPPLY_REVERSE_PEN_CHG_STATE=")
+        startObserving("POWER_SUPPLY_REVERSE_PEN_SOC=")
+        startObserving("POWER_SUPPLY_PEN_HALL3=")
+        startObserving("POWER_SUPPLY_PEN_HALL4=")
         startObserving("MIPP_PEN_STATE=")
         startObserving("PEN_HIBERNATION_STATE=")
     }
