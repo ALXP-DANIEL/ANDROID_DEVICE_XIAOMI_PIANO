@@ -45,8 +45,10 @@ PRODUCT_VENDOR_PROPERTIES += \
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
 # Pixel Launcher with a translucent gesture handle that hides after 10 s.
+ifneq ($(wildcard vendor/gms),)
 PRODUCT_PACKAGES += \
     NexusLauncherPiano
+endif
 
 # Show the boot animation in landscape, the way the tablet is normally held.
 PRODUCT_PRODUCT_PROPERTIES += \
@@ -72,7 +74,6 @@ PRODUCT_PRODUCT_PROPERTIES += ro.sf.lcd_density=440
 PRODUCT_PACKAGES += \
     libprocessgroup_shim
 
-# Evolution X uses the manifest selected at device-tree sync.
 $(call inherit-product, device/xiaomi/piano-parts/pianoparts.mk)
 
 # Lineage LiveDisplay reading mode and high touch polling rate,
