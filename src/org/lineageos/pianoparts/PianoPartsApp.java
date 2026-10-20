@@ -44,8 +44,14 @@ public class PianoPartsApp extends Application {
             "vendor.xiaomi.hw.touchfeature.ITouchFeature/default";
     private static final int TOUCH_ID = 0;
     private static final int MODE_PANEL_ORIENTATION = 8;
-    // Stock TouchWakeUpFeatureManager arms double tap to wake with mode 14.
+    // Stock TouchWakeUpFeatureManager arms double tap to wake with mode 14
+    // and single tap to wake with mode 34; only one is on at a time.
     private static final int MODE_DOUBLE_TAP_WAKE = 14;
+    private static final int MODE_SINGLE_TAP_WAKE = 34;
+    static final int TAP_TO_WAKE_OFF = 0;
+    static final int TAP_TO_WAKE_SINGLE = 1;
+    static final int TAP_TO_WAKE_DOUBLE = 2;
+    private static final String SETTING_SINGLE_TAP_WAKE = "piano_single_tap_to_wake";
 
     private static final String DISPLAY_FEATURE_SERVICE =
             "vendor.xiaomi.hardware.displayfeature_aidl.IDisplayFeature/default";
@@ -125,6 +131,25 @@ public class PianoPartsApp extends Application {
         watchDoubleTapToWake();
     }
 
+    /** Off, single tap or double tap, as the stock pad gesture wakeup option. */
+    int getTapToWake() {
+        if (Settings.Secure.getIntForUser(getContentResolver(),
+                Settings.Secure.DOUBLE_TAP_TO_WAKE, 0, UserHandle.USER_CURRENT) != 0) {
+            return TAP_TO_WAKE_DOUBLE;
+        }
+        return Settings.Secure.getIntForUser(getContentResolver(),
+                SETTING_SINGLE_TAP_WAKE, 0, UserHandle.USER_CURRENT) != 0
+                ? TAP_TO_WAKE_SINGLE : TAP_TO_WAKE_OFF;
+    }
+
+    void setTapToWake(int option) {
+        // The observer applies the change to the panel.
+        Settings.Secure.putIntForUser(getContentResolver(), SETTING_SINGLE_TAP_WAKE,
+                option == TAP_TO_WAKE_SINGLE ? 1 : 0, UserHandle.USER_CURRENT);
+        Settings.Secure.putIntForUser(getContentResolver(), Settings.Secure.DOUBLE_TAP_TO_WAKE,
+                option == TAP_TO_WAKE_DOUBLE ? 1 : 0, UserHandle.USER_CURRENT);
+    }
+
     /** Android's Tap to wake switch only reaches the panel through here. */
     private void watchDoubleTapToWake() {
         ContentObserver observer = new ContentObserver(new Handler(Looper.getMainLooper())) {
@@ -136,13 +161,22 @@ public class PianoPartsApp extends Application {
         getContentResolver().registerContentObserver(
                 Settings.Secure.getUriFor(Settings.Secure.DOUBLE_TAP_TO_WAKE), false,
                 observer, UserHandle.USER_ALL);
+        getContentResolver().registerContentObserver(
+                Settings.Secure.getUriFor(SETTING_SINGLE_TAP_WAKE), false,
+                observer, UserHandle.USER_ALL);
         applyDoubleTapToWake();
     }
 
     private void applyDoubleTapToWake() {
-        int enabled = Settings.Secure.getIntForUser(getContentResolver(),
-                Settings.Secure.DOUBLE_TAP_TO_WAKE, 0, UserHandle.USER_CURRENT);
-        setTouchMode(MODE_DOUBLE_TAP_WAKE, enabled != 0 ? 1 : 0);
+        int option = getTapToWake();
+        // Like stock, turn the other gesture off first.
+        if (option == TAP_TO_WAKE_DOUBLE) {
+            setTouchMode(MODE_SINGLE_TAP_WAKE, 0);
+            setTouchMode(MODE_DOUBLE_TAP_WAKE, 1);
+        } else {
+            setTouchMode(MODE_DOUBLE_TAP_WAKE, 0);
+            setTouchMode(MODE_SINGLE_TAP_WAKE, option == TAP_TO_WAKE_SINGLE ? 1 : 0);
+        }
     }
 
     /**
