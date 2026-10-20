@@ -15,7 +15,7 @@ fun main() {
     check(!shade.answer(12, false))
     check(shade.begin(13))
     check(!shade.answer(13, false)) // Stale closed reply cannot override open event.
-    check(!shade.changed(false))
+    check(shade.changed(false)) // Stock dismisses even on a shade/QS collapse callback.
     check(shade.begin(14))
     check(shade.answer(14, false))
 

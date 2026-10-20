@@ -14,8 +14,10 @@ internal class PenShadeGate {
 
     fun changed(open: Boolean): Boolean {
         shadeOpen = open
-        if (open) pending = 0L
-        return open
+        // Stock palette closes on *every* shade or Control Center expansion
+        // callback, including collapse. A pending query cannot outlive one.
+        pending = 0L
+        return true
     }
 
     fun answer(request: Long, open: Boolean): Boolean {
