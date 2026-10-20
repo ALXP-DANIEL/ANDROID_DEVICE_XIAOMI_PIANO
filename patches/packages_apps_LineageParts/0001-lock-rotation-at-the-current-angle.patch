@@ -1,0 +1,13 @@
+diff --git a/src/org/lineageos/lineageparts/hardware/DisplayRotation.java b/src/org/lineageos/lineageparts/hardware/DisplayRotation.java
+index 74fde65..24d75cd 100644
+--- a/src/org/lineageos/lineageparts/hardware/DisplayRotation.java
++++ b/src/org/lineageos/lineageparts/hardware/DisplayRotation.java
+@@ -51,7 +51,7 @@ public class DisplayRotation extends SettingsPreferenceFragment {
+ 
+         mAccelerometer = findPreference(KEY_ACCELEROMETER);
+         mAccelerometer.setOnPreferenceChangeListener((preference, newValue) -> {
+-            RotationPolicy.setRotationLockForAccessibility(requireActivity(),
++            RotationPolicy.setRotationLock(requireActivity(),
+                     !(Boolean) newValue, /* caller= */ "DisplayRotation");
+             return true;
+         });
