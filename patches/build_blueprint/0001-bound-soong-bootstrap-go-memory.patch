@@ -1,0 +1,13 @@
+diff --git a/bootstrap/bootstrap.go b/bootstrap/bootstrap.go
+--- a/bootstrap/bootstrap.go
++++ b/bootstrap/bootstrap.go
+@@ -171,5 +171,8 @@ var (
+ 			Command: `cd "$$(dirname "$builder")" && ` +
+ 				`BUILDER="$$PWD/$$(basename "$builder")" && ` +
+ 				`cd / && ` +
+-				`env -i $env "$$BUILDER" ` +
++				// The sandboxed builder intentionally clears its environment.
++				// Forward the launcher Go limits explicitly so the full ROM
++				// dependency graph does not exhaust a small builder's RAM/swap.
++				`env -i GOMEMLIMIT="$${SOONG_GOMEMLIMIT:-14GiB}" GOMAXPROCS="$${GOMAXPROCS:-4}" $env "$$BUILDER" ` +
+ 				`    --top "$$TOP" ` +
