@@ -14,6 +14,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.provider.Settings;
+import org.lineageos.pianoparts.pencilengine.PencilEngineLease;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.util.Log;
@@ -44,7 +47,7 @@ class StylusAppModeController {
     private static final int MODE_STYLUS_PAINT = 36;
 
     interface TouchModeSetter {
-        void setTouchMode(int mode, int value);
+        boolean setTouchMode(int mode, int value);
     }
 
     private final Handler mHandler;
@@ -63,6 +66,22 @@ class StylusAppModeController {
     private boolean mStarted;
     private boolean mScreenWatchRegistered;
     private boolean mTaskWatchRegistered;
+    private boolean mPostureHalReady;
+    private final Runnable mLeaseRefresh = new Runnable() {
+        @Override public void run() {
+            try {
+                refreshPosture();
+            } catch (RuntimeException unavailable) {
+                Log.w(TAG, "Posture state unavailable; clearing mode", unavailable);
+                mPostureHalReady = false;
+                mPosturePolicy.invalidate();
+                try { mSetter.setTouchMode(PencilEnginePosturePolicy.TOUCH_MODE, 0); }
+                catch (RuntimeException denied) { Log.w(TAG, "Cannot clear posture mode", denied); }
+            } finally {
+                mHandler.postDelayed(this, 500);
+            }
+        }
+    };
     private final Runnable mRefreshTask = this::refreshTopTask;
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mSettingsListener =
@@ -80,7 +99,8 @@ class StylusAppModeController {
     private final BroadcastReceiver mScreenReceiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
             mHandler.post(() -> {
-                if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) refreshTopTask();
+                if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())
+                        || Intent.ACTION_USER_SWITCHED.equals(intent.getAction())) refreshTopTask();
                 refreshPosture();
             });
         }
@@ -118,15 +138,16 @@ class StylusAppModeController {
     }
 
     void start() {
-        if (mStarted || !loadConfig()) {
-            return;
-        }
+        if (mStarted) return;
+        // Engine clients remain supported when the optional game/app list is absent.
+        loadConfig();
         mStarted = true;
         mSettings.registerOnSharedPreferenceChangeListener(mSettingsListener);
         mPenStatus.registerOnSharedPreferenceChangeListener(mPenListener);
         IntentFilter screen = new IntentFilter();
         screen.addAction(Intent.ACTION_SCREEN_ON);
         screen.addAction(Intent.ACTION_SCREEN_OFF);
+        screen.addAction(Intent.ACTION_USER_SWITCHED);
         try {
             mContext.registerReceiver(mScreenReceiver, screen, Context.RECEIVER_NOT_EXPORTED);
             mScreenWatchRegistered = true;
@@ -141,6 +162,7 @@ class StylusAppModeController {
             Log.e(TAG, "Failed to watch the app in front", e);
         }
         refreshTopTask();
+        mHandler.post(mLeaseRefresh);
     }
 
     private void refreshTopTask() {
@@ -159,20 +181,44 @@ class StylusAppModeController {
 
     private void refreshPosture() {
         if (!mStarted) return;
+        int boot = Settings.Global.getInt(mContext.getContentResolver(),
+                Settings.Global.BOOT_COUNT, -1);
+        boolean consumerReady = boot >= 0 && mScreenWatchRegistered && mTaskWatchRegistered
+                && ActivityManager.getCurrentUser() == mContext.getUserId();
+        boolean clientRequested = false;
+        try {
+            int uid = mContext.getPackageManager().getPackageUid("com.miui.notes", 0);
+            clientRequested = consumerReady && PencilEngineLease.accepts(
+                    Settings.Secure.getString(mContext.getContentResolver(), PencilEngineLease.POSTURE),
+                    boot, uid, SystemClock.elapsedRealtime());
+        } catch (android.content.pm.PackageManager.NameNotFoundException absent) {
+            // No installed Notes UID can own a request.
+        }
         boolean enabled = mSettings.getBoolean(PencilEnginePosturePolicy.KEY_ENABLED, false);
         boolean ready = mPenStatus.getBoolean("pen_initialized", false)
                 && "CONNECTED".equals(mPenStatus.getString("state", null))
                 && mPenStatus.getInt("vendor", -1) == 34
                 && (mPenStatus.getInt("product", -1) == 20609
                     || mPenStatus.getInt("product", -1) == 12929);
-        boolean interactive = mPower != null && mPower.isInteractive();
+        boolean interactive = consumerReady && mPower != null && mPower.isInteractive();
         boolean drawing = mForegroundPackage != null
                 && mPaintApps.contains(mForegroundPackage);
-        int requested = mPosturePolicy.transition(enabled && mScreenWatchRegistered
-                && mTaskWatchRegistered, ready, interactive, drawing);
+        int requested = mPosturePolicy.transition(enabled && consumerReady, ready, interactive, drawing,
+                clientRequested);
         if (requested != PencilEnginePosturePolicy.UNCHANGED) {
             Log.i(TAG, "App-aware PencilEngine posture " + (requested == 1 ? "on" : "off"));
-            mSetter.setTouchMode(PencilEnginePosturePolicy.TOUCH_MODE, requested);
+            mPostureHalReady = mSetter.setTouchMode(PencilEnginePosturePolicy.TOUCH_MODE, requested);
+            if (!mPostureHalReady) mPosturePolicy.invalidate();
+        }
+        try {
+            if (consumerReady && mPostureHalReady) {
+                // Advertise only after a real HAL transaction, never merely app startup.
+                Settings.Global.putInt(mContext.getContentResolver(), PencilEngineLease.POSTURE_READY, boot);
+                Settings.Global.putLong(mContext.getContentResolver(),
+                        PencilEngineLease.POSTURE_HEARTBEAT, SystemClock.elapsedRealtime());
+            }
+        } catch (RuntimeException denied) {
+            Log.w(TAG, "Cannot publish PencilEngine posture readiness", denied);
         }
     }
 

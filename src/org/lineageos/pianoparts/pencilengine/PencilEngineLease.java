@@ -5,6 +5,9 @@ package org.lineageos.pianoparts.pencilengine;
 public final class PencilEngineLease {
     public static final String TOUCH_FILM = "piano_pencil_touchfilm_request";
     public static final String TOUCH_FILM_READY = "piano_pencil_touchfilm_backend_boot";
+    public static final String POSTURE = "piano_pencil_posture_request";
+    public static final String POSTURE_READY = "piano_pencil_posture_backend_boot";
+    public static final String POSTURE_HEARTBEAT = "piano_pencil_posture_backend_alive";
     public static final long DURATION_MS = 5000;
 
     public static String create(int boot, int uid, long now, String owner) {
