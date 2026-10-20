@@ -1,5 +1,8 @@
 LOCAL_PATH := device/xiaomi/piano
 
+# Recovery has no QTI DRM.
+TARGET_RECOVERY_USES_QTI_DRM := false
+
 $(call inherit-product, device/xiaomi/sm8750-common/common.mk)
 
 PRODUCT_SHIPPING_API_LEVEL := 36
