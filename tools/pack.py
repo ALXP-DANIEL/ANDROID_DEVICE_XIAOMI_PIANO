@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-2-Clause-Patent
-"""Wrap a boot.img (header v4, raw arm64 GKI kernel) with the boot menu.
+"""Wrap a boot.img (header v4, raw arm64 GKI kernel) with the selector.
 
 The selector goes after the kernel's memory footprint (image_size), and the
 kernel's second instruction, its branch to primary_entry, is redirected to
@@ -11,7 +11,6 @@ the selector. Any AVB footer is dropped; this image is for unlocked devices.
 import argparse
 import hashlib
 import os
-import re
 import struct
 import subprocess
 import sys
@@ -67,28 +66,7 @@ def kernel_info(kernel):
     return code1, image_size
 
 
-def note(text):
-    """A menu note: the menu's 5x7 font has no lowercase, so it reads as caps."""
-    data = text.encode('ascii')[:39]
-    return data + bytes(40 - len(data))
-
-
-def android_note(data, label):
-    """'<label> - Android N' from the boot header's os_version."""
-    os_version = struct.unpack_from('<I', data, 16)[0]
-    major = (os_version >> 25) & 0x7f
-    android = f'Android {major}' if major else 'Android'
-    return f'{label} - {android}' if label else android
-
-
-def linux_note(image, label):
-    """'<label> - Linux X.Y.Z' from the Image's version banner."""
-    found = re.search(rb'Linux version (\d+\.\d+(?:\.\d+)?)', image)
-    kernel = f'Linux {found.group(1).decode()}' if found else 'Linux'
-    return f'{label} - {kernel}'
-
-
-def wrap(kernel, selector, uefi=b'', initrd=b'', image=b'', dtb=b'', notes=(bytes(40), bytes(40))):
+def wrap(kernel, selector, uefi=b''):
     code1, image_size = kernel_info(kernel)
     meta = selector.find(META_MAGIC)
     if meta < 0 or selector.find(META_MAGIC, meta + 1) >= 0:
@@ -97,42 +75,17 @@ def wrap(kernel, selector, uefi=b'', initrd=b'', image=b'', dtb=b'', notes=(byte
     sel_off = align(image_size)        # past the kernel's BSS, which Linux clears
     uefi_off = align(sel_off + len(selector) + 16384, 0x10000) if uefi else 0
     end = (uefi_off + len(uefi)) if uefi else sel_off + len(selector) + 16384
-    linux_off = align(end) if initrd else 0
-    if initrd:
-        end = linux_off + len(initrd)
-    dtb_off = align(end) if image else 0
-    image_off = align(dtb_off + len(dtb)) if image else 0
-    if image:
-        if image[56:60] != b'ARMd':
-            fail('--linux-image is not an arm64 Image')
-        end = image_off + len(image)
-        # The menu copies the Image to the next 2 MiB boundary; it and its
-        # BSS must stay inside the bank ABL loads us into (ends 0xB8000000).
-        dest = (ABL_KERNEL_BASE + end + 0x1FFFFF) & ~0x1FFFFF
-        if dest + struct.unpack_from('<Q', image, 16)[0] > 0xB8000000:
-            fail('mainline Image does not fit below 0xB8000000')
     total = align(end)
     if sel_off - 4 >= BRANCH_RANGE:
         fail('selector out of branch range')
 
-    out = bytearray(image_off + len(image) if image else
-                    linux_off + len(initrd) if initrd else
-                    uefi_off + len(uefi) if uefi else sel_off + len(selector))
+    out = bytearray(uefi_off + len(uefi) if uefi else sel_off + len(selector))
     out[:len(kernel)] = kernel
     out[sel_off:sel_off + len(selector)] = selector
     if uefi:
         out[uefi_off:uefi_off + len(uefi)] = uefi
-    if initrd:
-        out[linux_off:linux_off + len(initrd)] = initrd
-    if image:
-        out[dtb_off:dtb_off + len(dtb)] = dtb
-        out[image_off:] = image
-    struct.pack_into('<QIIQQQ', out, sel_off + meta + 16, sel_off, code1,
-                     image_size & 0xffffffff, image_size, uefi_off, len(uefi))
-    struct.pack_into('<IIIIIIQ', out, sel_off + meta + 56, linux_off, len(initrd),
-                     image_off, len(image), dtb_off, end,
-                     struct.unpack_from('<Q', image, 16)[0] if image else 0)
-    out[sel_off + meta + 88:sel_off + meta + 168] = notes[0] + notes[1]
+    struct.pack_into('<QIIQQQQ', out, sel_off + meta + 16, sel_off, code1,
+                     image_size & 0xffffffff, image_size, uefi_off, len(uefi), len(kernel))
     struct.pack_into('<I', out, 4, 0x14000000 | ((sel_off - 4) // 4))
     struct.pack_into('<Q', out, 16, total)
 
@@ -185,7 +138,7 @@ def main():
     ap.add_argument('-o', '--output', required=True)
     ap.add_argument('--kernel-only', action='store_true',
                     help='wrap a kernel Image and write the wrapped Image; a ROM build '
-                    'that uses it as its prebuilt kernel then keeps the menu in every '
+                    'that uses it as its prebuilt kernel then keeps the selector in every '
                     'boot.img and OTA it makes')
     ap.add_argument('--avb', metavar='ORIGINAL',
                     help='sign for flashing: copy partition size, rollback index and '
@@ -195,32 +148,14 @@ def main():
                     'deps', 'avb', 'testkey_rsa4096.pem'))
     ap.add_argument('--avbtool', default=os.path.join(os.path.dirname(__file__), '..',
                     'deps', 'avb', 'avbtool.py'))
-    ap.add_argument('--linux', metavar='INITRAMFS',
-                    help='initramfs the menu passes to the same kernel for "Arch Linux"')
-    ap.add_argument('--linux-image', metavar='IMAGE',
-                    help='mainline arm64 Image for "Arch Linux" (with --linux-dtb)')
-    ap.add_argument('--linux-dtb', metavar='DTB')
-    ap.add_argument('--android-label', metavar='NAME',
-                    help='ROM name shown under Android, e.g. "Evolution X 12.3"')
-    ap.add_argument('--linux-label', metavar='NAME', default='Arch Linux ARM',
-                    help='distribution shown under Arch Linux')
     ap.add_argument('--uefi', help='Mu-Silicium boot.img whose kernel (BootShim + FD) '
-                    'the menu starts for "UEFI"')
+                    'started instead of Android')
     a = ap.parse_args()
 
     data = open(a.boot, 'rb').read()
     boot = {'kernel': data} if a.kernel_only else read_boot(data)
     uefi = read_boot(open(a.uefi, 'rb').read())['kernel'] if a.uefi else b''
-    initrd = open(a.linux, 'rb').read() if a.linux else b''
-    image = open(a.linux_image, 'rb').read() if a.linux_image else b''
-    dtb = open(a.linux_dtb, 'rb').read() if a.linux_dtb else b''
-    if bool(image) != bool(dtb) or (image and not initrd):
-        fail('--linux-image needs --linux-dtb and --linux')
-    notes = (note(android_note(data, a.android_label)) if not a.kernel_only else
-             note(a.android_label or ''),
-             note(linux_note(image, a.linux_label)) if image else bytes(40))
-    kernel, sel_off, total = wrap(boot['kernel'], open(a.selector, 'rb').read(), uefi,
-                                  initrd, image, dtb, notes)
+    kernel, sel_off, total = wrap(boot['kernel'], open(a.selector, 'rb').read(), uefi)
     image = kernel if a.kernel_only else write_boot(boot, kernel)
     if a.kernel_only and a.avb:
         fail('--avb is for boot images; the ROM build signs its own')

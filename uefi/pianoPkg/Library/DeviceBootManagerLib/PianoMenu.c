@@ -15,7 +15,7 @@
 
 typedef UINT8 u8;
 
-/* 5x7 font, shared with the boot menu (selector/font.c). */
+/* 5x7 font. */
 static const u8 letters[26][7] = {
 	{0x0E,0x11,0x11,0x1F,0x11,0x11,0x11}, /* A */
 	{0x1E,0x11,0x11,0x1E,0x11,0x11,0x1E}, /* B */
@@ -135,7 +135,7 @@ Text (UINTN X, UINTN Y, UINTN S, UINT32 Color, CONST CHAR8 *Str)
 
 STATIC CONST CHAR8 *mTitle[] = { "Reboot", "UEFI Shell", "Power off" };
 STATIC CONST CHAR8 *mNote[]  = {
-  "Back to the boot menu and Android",
+  "Restart the tablet",
   "Needs a keyboard to type",
   "Turn the tablet off",
 };
