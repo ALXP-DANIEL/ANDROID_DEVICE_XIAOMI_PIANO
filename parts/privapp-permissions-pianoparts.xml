@@ -2,6 +2,8 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <permissions>
     <privapp-permissions package="org.lineageos.pianoparts">
+        <permission name="android.permission.BLUETOOTH_PRIVILEGED" />
+        <permission name="android.permission.LOCAL_MAC_ADDRESS" />
         <permission name="android.permission.DEVICE_POWER" />
         <permission name="android.permission.DISABLE_INPUT_DEVICE" />
         <permission name="android.permission.TABLET_MODE" />
