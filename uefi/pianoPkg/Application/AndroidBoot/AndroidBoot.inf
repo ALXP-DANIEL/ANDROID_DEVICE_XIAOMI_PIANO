@@ -1,0 +1,35 @@
+## @file
+#  Start Android from UEFI without a restart.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = AndroidBoot
+  FILE_GUID                      = 2F6C1A4E-8B3D-4C57-A1E9-6D0B7F3C5A21
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = AndroidBootMain
+
+
+[Sources]
+  AndroidBoot.c
+
+[Sources.AARCH64]
+  AndroidBootJump.S
+
+[Packages]
+  MdePkg/MdePkg.dec
+  QcomPkg/QcomPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  IoLib
+  MemoryAllocationLib
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+
+[Protocols]
+  gQcomScmProtocolGuid
