@@ -74,6 +74,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/tablet_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/tablet_core_hardware.xml
 
+# Battery anti-aging
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/etc/init.piano.batteryantiaging.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/init.piano.batteryantiaging.rc
+
 # Respect fixed-orientation apps on the internal display.
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/display/display_settings.xml:$(TARGET_COPY_OUT_VENDOR)/etc/display_settings.xml

@@ -1,0 +1,12 @@
+# Stock battery anti-aging runs once at boot and tunes the charge voltage
+# from the battery's cycle count and health. The stock power-off charging
+# service and its charger fstab are left out.
+on post-fs-data
+    mkdir /data/vendor/batteryantiaging 0770 system system
+
+service batteryantiaging /vendor/bin/hw/vendor.xiaomi.hardware.batteryantiaging-service
+    interface aidl vendor.xiaomi.hardware.batteryantiaging.IBatteryAntiAging/default
+    class hal
+    user root
+    group system
+    oneshot

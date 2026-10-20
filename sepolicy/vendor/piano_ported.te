@@ -394,3 +394,9 @@ allow minetd vendor_wlan_chip_prop:file { read getattr map open };
 allow minetd self:capability { net_raw };
 allow minetd self:packet_socket { read create bind setopt shutdown };
 allow minetd vendor_wlan_chip_prop:file { read getattr open };
+
+# Battery anti-aging writes charge limits through the smart charge
+# device.
+allow hal_batteryantiaging_default vendor_smart_charge_device:chr_file rw_file_perms;
+allow hal_batteryantiaging_default mnt_vendor_file:dir search;
+r_dir_file(hal_batteryantiaging_default, vendor_persist_file)
