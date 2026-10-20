@@ -1,0 +1,12 @@
+diff --git a/src/config/config_util.c b/src/config/config_util.c
+index 016443e..d3b4d04 100644
+--- a/src/config/config_util.c
++++ b/src/config/config_util.c
+@@ -211,6 +211,7 @@ CHAR16* icon_path_for(const CHAR16 *file) {
+ 
+ CHAR16* distro_icon(CHAR16 *hint) {
+     static const struct { const CHAR16 *needle; const CHAR16 *file; } map[] = {
++        { L"android",    L"android.png" },
+         { L"endeavour",  L"endeavouros.png" },
+         { L"arch",       L"arch.png" },
+         { L"fedora",     L"fedora.png" },

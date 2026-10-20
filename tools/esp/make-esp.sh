@@ -28,17 +28,23 @@ out=$1
 shift
 src=deps/visor
 shell=deps/Mu-Silicium/Build/pianoPkg/RELEASE_CLANGPDB/AARCH64/Shell.efi
+android=deps/Mu-Silicium/Build/pianoPkg/RELEASE_CLANGPDB/AARCH64/AndroidBoot.efi
 
-[ -f "$shell" ] || { echo "make-esp: build the firmware first ($shell)"; exit 1; }
+[ -f "$shell" ] && [ -f "$android" ] || { echo "make-esp: build the firmware first ($shell)"; exit 1; }
 
 if [ ! -d "$src" ]; then
 	git clone -q "$VISOR_URL" "$src"
 	git -C "$src" checkout -q "$VISOR_COMMIT"
 	git clone -q --depth 1 --branch "$GNU_EFI_TAG" "$GNU_EFI_URL" "$src/gnu-efi-src"
 fi
-# Square selection card when names are hidden (ours).
-git -C "$src" apply --reverse --check ../../tools/esp/visor-square-card.patch 2>/dev/null ||
-	git -C "$src" apply ../../tools/esp/visor-square-card.patch
+# Ours: a square selection card when names are hidden, left/right reaching
+# the power actions too (the tablet only has volume keys), an Android icon,
+# with quiet=1 the chosen entry's icon on black until the system's own boot
+# screen, and default= taking an entry's title.
+for p in visor-square-card visor-key-ring visor-android-icon visor-boot-logo visor-default-name; do
+	git -C "$src" apply --reverse --check "../../tools/esp/$p.patch" 2>/dev/null ||
+		git -C "$src" apply "../../tools/esp/$p.patch"
+done
 
 if [ ! -d deps/refind-bin-0.14.2 ]; then
 	curl -sL -o deps/refind.zip "$REFIND_ZIP"
@@ -59,8 +65,13 @@ cp "$src/visor_aa64.efi" "$out/EFI/BOOT/BOOTAA64.EFI"
 cp "$src"/assets/icons/*.png "$out/EFI/visor/icons/"
 cp deps/refind-bin-0.14.2/refind/drivers_aa64/{ext4,btrfs}_aa64.efi "$out/EFI/visor/drivers/"
 cp tools/esp/boot.conf "$out/EFI/visor/boot.conf"
-cp tools/esp/uefi-shell.conf "$out/loader/entries/"
+# The UEFI Shell stays in \EFI\tools without a menu entry.
+cp tools/esp/android.conf "$out/loader/entries/"
 cp "$shell" "$out/EFI/tools/shellaa64.efi"
+cp "$android" "$out/EFI/tools/AndroidBoot.efi"
+python3 tools/esp/android-logo.py "$out/EFI/visor/icons/android.png"
+# Arch in its own blue, beside the green Android.
+python3 tools/esp/tint-icon.py "$out/EFI/visor/icons/arch.png" 1793D1
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT

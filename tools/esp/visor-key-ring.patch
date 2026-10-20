@@ -1,0 +1,49 @@
+diff --git a/src/gui/gui_run.c b/src/gui/gui_run.c
+index 5dbfd18..4235b48 100644
+--- a/src/gui/gui_run.c
++++ b/src/gui/gui_run.c
+@@ -365,19 +365,36 @@ boot_entry_t* gui_run(gui_state_t *state) {
+                 int power_top = (state->power_position == POWER_POS_TOPLEFT ||
+                                  state->power_position == POWER_POS_TOPRIGHT);
+                 switch (key.ScanCode) {
++                    /* Left and right walk one ring: the entries, then the
++                     * power actions, then back to the first entry. Devices
++                     * with only two buttons reach everything this way. */
+                     case 0x04:
+-                        state->focus = FOCUS_ENTRIES;
+-                        if (state->entry_count) {
+-                            if (state->selected > 0) state->selected--;
+-                            else state->selected = state->entry_count - 1;
++                        if (state->focus == FOCUS_POWER) {
++                            if (state->power_sel < POWER_ACTION_COUNT - 1) state->power_sel++;
++                            else if (state->entry_count) {
++                                state->focus = FOCUS_ENTRIES;
++                                state->selected = state->entry_count - 1;
++                            }
++                        } else if (state->entry_count && state->selected > 0) {
++                            state->selected--;
++                        } else {
++                            state->focus = FOCUS_POWER;
++                            state->power_sel = 0;
+                         }
+                         need_redraw = 1;
+                         break;
+                     case 0x03:
+-                        state->focus = FOCUS_ENTRIES;
+-                        if (state->entry_count) {
+-                            if (state->selected + 1 < state->entry_count) state->selected++;
+-                            else state->selected = 0;
++                        if (state->focus == FOCUS_POWER) {
++                            if (state->power_sel > 0) state->power_sel--;
++                            else {
++                                state->focus = FOCUS_ENTRIES;
++                                state->selected = 0;
++                            }
++                        } else if (state->entry_count && state->selected + 1 < state->entry_count) {
++                            state->selected++;
++                        } else {
++                            state->focus = FOCUS_POWER;
++                            state->power_sel = POWER_ACTION_COUNT - 1;
+                         }
+                         need_redraw = 1;
+                         break;
