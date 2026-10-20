@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Piano Parts</string>
+    <string name="thermal_profile_title">Thermal profile</string>
+    <string name="thermal_profile_default">Default</string>
+    <string name="thermal_profile_game">Game</string>
+    <string name="touch_game_mode_title">Game touch</string>
+    <!-- Color scheme, as stock HyperOS names it -->
+    <string name="color_scheme_title">Color scheme</string>
+    <string name="color_scheme_summary">Colors, color temperature and adaptive colors</string>
+    <string name="color_modes_title">Colors</string>
+    <string-array name="color_mode_titles">
+        <item>Vivid (recommended)</item>
+        <item>Saturated</item>
+        <item>Original color</item>
+    </string-array>
+    <string-array name="color_mode_summaries">
+        <item>Adjust colors based on the content displayed</item>
+        <item>Always enhance colors</item>
+        <item>Restore standard color of screen content with color calibration</item>
+    </string-array>
+    <string name="color_temperature_title">Color temperature</string>
+    <string-array name="color_level_titles">
+        <item>Warm</item>
+        <item>Standard</item>
+        <item>Cool</item>
+    </string-array>
+    <string name="color_more_title">More</string>
+    <string name="livedisplay_title">LiveDisplay</string>
+    <string name="livedisplay_summary">Night color temperature schedule</string>
+    <string name="reading_mode_title">Reading mode</string>
+    <string name="sunlight_mode_title">Sunlight mode</string>
+    <string name="pen_battery_channel">Pen battery</string>
+    <string name="pen_battery_title">Pen</string>
+    <string name="pen_battery_level">Battery <xliff:g id="level" example="80">%1$d</xliff:g>%%</string>
+    <string name="true_tone_title">Adaptive colors</string>
+    <string name="bypass_charging_title">Bypass charging</string>
+    <string name="keyboard_settings_title">Keyboard cover</string>
+    <string name="keyboard_settings_summary">Backlight, touchpad and firmware</string>
+    <string name="stylus_not_connected">Attach the Focus Pen to the tablet to change these settings</string>
+    <string name="keyboard_not_connected">Attach the keyboard cover to change these settings</string>
+    <string name="keyboard_backlight_auto_title">Automatic backlight</string>
+    <string name="keyboard_backlight_auto_summary">Adjust to the ambient light</string>
+    <string name="keyboard_backlight_title">Backlight brightness</string>
+    <string name="keyboard_touchpad_title">Touchpad</string>
+    <string name="keyboard_touchpad_summary">Use the keyboard cover touchpad</string>
+    <string name="keyboard_about_title">Keyboard cover</string>
+    <string name="keyboard_model_title">Model</string>
+    <string name="keyboard_version_title">Keyboard firmware</string>
+    <string name="touchpad_version_title">Touchpad firmware</string>
+    <string name="mcu_version_title">Connector firmware</string>
+    <string name="keyboard_connect_failed">Couldn\'t connect keyboard. Attach again.</string>
+    <string name="keyboard_upgrade_start">Updating keyboard…</string>
+    <string name="keyboard_upgrade_success">Updated keyboard successfully</string>
+    <string name="keyboard_upgrade_failed">Couldn\'t update keyboard</string>
+    <string name="keyboard_reset_success">Reset keyboard successfully</string>
+    <string name="keyboard_identity_reject_message">Looks like your keyboard isn\'t compatible with this device.</string>
+    <string name="keyboard_identity_transfer_error_message">Couldn\'t connect keyboard. Try again.</string>
+    <string name="keyboard_identity_reject_confirm">Got it</string>
+    <string name="keyboard_unknown">Unknown</string>
+    <string name="keyboard_update_title">Update keyboard firmware</string>
+    <string name="touchpad_update_title">Update touchpad firmware</string>
+    <string name="keyboard_update_available">Version <xliff:g id="version" example="1294">%1$s</xliff:g> is available</string>
+    <string name="keyboard_update_none">Up to date</string>
+    <string name="keyboard_update_progress">Updating… <xliff:g id="percent" example="40">%1$d</xliff:g>%%</string>
+    <string name="keyboard_update_warning">Firmware version <xliff:g id="version" example="1294">%1$s</xliff:g> from the stock software will be installed. Keep the keyboard cover attached and the tablet charged until it finishes. Interrupting the update can leave the keyboard cover unusable.</string>
+    <string name="keyboard_update_start">Update</string>
+    <string name="keyboard_update_success">The keyboard cover firmware was updated.</string>
+    <string name="keyboard_update_failed">The update failed. Reattach the keyboard cover and try again.</string>
+    <string name="xiaomi_settings_title">Xiaomi features</string>
+    <string name="xiaomi_settings_summary">Display, performance, battery and accessories</string>
+    <string name="xiaomi_intro">Hardware features of the Xiaomi Pad 8 Pro from the stock software</string>
+    <string name="category_display">Display</string>
+    <string name="category_performance">Performance</string>
+    <string name="category_battery">Battery</string>
+    <string name="reading_mode_summary">Paper-like colors that are easier on the eyes</string>
+    <string name="sunlight_mode_summary">Raise the brightness limit in bright light</string>
+    <string name="true_tone_summary">Adjust colors to ambient light</string>
+    <string name="thermal_game_title">Game thermal profile</string>
+    <string name="thermal_game_summary">Allow more heat for higher sustained performance</string>
+    <string name="touch_game_mode_summary">Faster touch response with less edge rejection</string>
+    <string name="bypass_charging_summary">While plugged in, power the tablet from the charger and rest the battery</string>
+    <string name="keyboard_cover_title">Keyboard cover settings</string>
+    <string name="keyboard_layout_title">Shortcuts, layout and pointer</string>
+    <string name="keyboard_layout_summary">Keyboard shortcuts, layouts, pointer speed and scrolling</string>
+    <string name="pen_category_title">Focus Pen</string>
+    <string name="stylus_handwriting_title">Write in text fields</string>
+    <string name="stylus_handwriting_summary">Turn handwriting into text in any text field</string>
+    <string name="stylus_buttons_title">Pen buttons</string>
+    <string name="stylus_buttons_summary">Use the pen buttons for shortcuts such as opening the notes app</string>
+    <string name="stylus_device_info_title">Device information</string>
+    <string name="stylus_connection_title">Connection</string>
+    <string name="stylus_battery_title">Battery</string>
+    <string name="stylus_firmware_title">Firmware version</string>
+    <string name="stylus_button_actions_title">Button actions</string>
+    <string name="stylus_primary_button_title">Primary button</string>
+    <string name="stylus_secondary_button_title">Secondary button</string>
+    <string name="stylus_pinch_title">Squeeze</string>
+    <string name="stylus_screen_off_quick_note_title">Quick note with screen off</string>
+    <string name="stylus_screen_off_quick_note_summary">A button set to open notes also works when the screen is off</string>
+    <string name="stylus_connected">Connected</string>
+    <string name="stylus_disconnected">Not connected</string>
+    <string name="stylus_connecting">Connecting</string>
+    <string name="stylus_pairing">Pairing</string>
+    <string name="stylus_bluetooth_off">Bluetooth is off</string>
+    <string name="stylus_connection_failed">Connection failed</string>
+    <string name="stylus_unavailable">Unavailable</string>
+    <string name="stylus_charging_battery">%1$d%%, attached</string>
+    <string name="stylus_battery_percent">%1$d%%</string>
+    <string-array name="stylus_button_actions"><item>None</item><item>Notes</item><item>Screenshot</item><item>Back</item><item>Home</item><item>Recent apps</item><item>Play/pause</item><item>Laser pointer (hold)</item></string-array>
+    <string-array name="stylus_button_values" translatable="false"><item>none</item><item>open_notes</item><item>screenshot</item><item>back</item><item>home</item><item>recents</item><item>media_play_pause</item><item>laser</item></string-array>
+    <string name="stylus_settings_summary">Button actions, connection, battery and firmware</string>
+
+    <!-- Same wording as the stock HyperOS notice. -->
+    <string name="volume_boost_on">Volume boost is on. Your device may heat up and use more power.</string>
+
+</resources>
