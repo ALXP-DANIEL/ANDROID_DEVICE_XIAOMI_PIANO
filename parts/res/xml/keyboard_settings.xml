@@ -90,6 +90,11 @@
             android:title="@string/touchpad_update_title"
             app:iconSpaceReserved="false" />
 
+        <Preference
+            android:key="mcu_update"
+            android:title="@string/mcu_update_title"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
