@@ -21,6 +21,8 @@ import java.util.Objects;
  */
 public final class PencilEngineBinder extends Binder {
     public interface Backend {
+        /** Optional authoritative package resolution for a legacy unnamed registration. */
+        default String registrationPackage(PencilEngineRegistry.Caller caller) { return null; }
         /** True only if this function has a working implementation. */
         boolean supports(int function);
         /** Apply synchronously, return true only on real acceptance. Never call clients. */
@@ -119,8 +121,15 @@ public final class PencilEngineBinder extends Binder {
             if (leases.containsKey(caller)) throw new IllegalStateException("Already registered");
             Lease lease = new Lease(caller, token);
             token.linkToDeath(lease, 0);
-            PencilEngineRegistry.Outcome outcome = named
-                    ? registry.registerByPackage(caller, (f, a, b) -> {}, name)
+            String resolved = name;
+            if (!named) {
+                long identity = Binder.clearCallingIdentity();
+                try { resolved = backend.registrationPackage(caller); }
+                catch (RuntimeException unavailable) { resolved = null; }
+                finally { Binder.restoreCallingIdentity(identity); }
+            }
+            PencilEngineRegistry.Outcome outcome = named || resolved != null
+                    ? registry.registerByPackage(caller, (f, a, b) -> {}, resolved)
                     : registry.registerListener(caller, (f, a, b) -> {});
             if (outcome.status != PencilEngineRegistry.Status.OK) {
                 unlink(lease);
@@ -138,7 +147,7 @@ public final class PencilEngineBinder extends Binder {
     private int trigger(PencilEngineRegistry.Caller caller, int function, int value) {
         synchronized (operations) {
             // Unsupported effects must not advance the registry or report success.
-            if (closed || !backend.supports(function)) return -1;
+            if (closed || !supports(function)) return -1;
             PencilEngineRegistry.Outcome outcome = registry.triggerFunction(caller, function, value);
             if (!apply(caller, outcome)) {
                 Lease lease = leases.get(caller);
@@ -154,6 +163,13 @@ public final class PencilEngineBinder extends Binder {
             }
             return 0;
         }
+    }
+
+    private boolean supports(int function) {
+        long identity = Binder.clearCallingIdentity();
+        try { return backend.supports(function); }
+        catch (RuntimeException unavailable) { return false; }
+        finally { Binder.restoreCallingIdentity(identity); }
     }
 
     private boolean apply(PencilEngineRegistry.Caller caller,
