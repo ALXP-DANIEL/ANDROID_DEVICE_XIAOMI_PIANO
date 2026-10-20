@@ -2,9 +2,33 @@
 // shared-library tag. Platform signing is performed by the ROM build.
 soong_namespace {}
 
+java_library {
+    name: "PianoNotesCompat",
+    srcs: ["compat/src/**/*.java"],
+    platform_apis: true,
+    compile_dex: true,
+    installable: false,
+    min_sdk_version: "29",
+    optimize: { enabled: false },
+}
+
+python_binary_host {
+    name: "piano-notes-append-compat",
+    main: "append-compat.py",
+    srcs: ["append-compat.py"],
+}
+
+genrule {
+    name: "piano-notes-compatible-apk",
+    srcs: ["prebuilt/MIUINotes.apk", ":PianoNotesCompat", "compat/device_features/piano.xml"],
+    tools: ["piano-notes-append-compat"],
+    out: ["MIUINotes-compatible.apk"],
+    cmd: "$(location piano-notes-append-compat) $(location prebuilt/MIUINotes.apk) $(location :PianoNotesCompat) $(out) $(location compat/device_features/piano.xml)",
+}
+
 android_app_import {
     name: "MIUINotes",
-    apk: "prebuilt/MIUINotes.apk",
+    apk: ":piano-notes-compatible-apk",
     certificate: "platform",
     product_specific: true,
     optional_uses_libs: [

@@ -14,7 +14,8 @@ python3 vendor/xiaomi/piano-notes/stage-originals.py --from-parts
 This verifies the exact original APK, removes **only** the required
 `micloud-sdk` binary AndroidManifest uses-library element, discards the
 invalidated original v1 signing files, and writes an ignored, repackaged
-`prebuilt/MIUINotes.apk`. The AOSP/ROM `android_app_import` signs this APK
+`prebuilt/MIUINotes.apk`. The build then appends an app-local compatibility DEX
+and pinned piano hardware metadata before `android_app_import` signs the result
 with the ROM platform key. No MiCloud SDK is included. The package identity
 remains `com.miui.notes` and the original minSdk remains 29.
 
@@ -24,6 +25,14 @@ does not automatically replace or eliminate those code paths. Android 16/17
 build acceptance and runtime Notes features must be tested independently.
 It also changes the app signature, so a stock-signed existing installation
 cannot be upgraded in place without a compatible signature/data migration.
+
+The compatibility DEX supplies `miui.os.Build` fields using actual Android
+properties and a read-only `miui.util.FeatureParser` for the pinned `.44`
+`piano.xml`. Original Notes DEX and resources remain byte-identical. It does
+not claim the MIUI framework, cloud services, or licensed recognition exists.
+Android 17 diagnostic APK testing reached the tablet list, text editor and
+drawing toolbar after fixing the two observed missing-class crashes. Real pen
+pressure/gestures and ROM-built Soong integration still require validation.
 
 Run `python3 selfcheck.py` to verify reconstruction, manifest edits,
 output integrity, and corrupted-segment rejection in a temporary directory.
