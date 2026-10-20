@@ -1,4 +1,10 @@
+#
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
 PRODUCT_MAKEFILES := \
+    $(LOCAL_DIR)/custom_piano.mk \
     $(LOCAL_DIR)/lineage_piano.mk
 
 COMMON_LUNCH_CHOICES := \

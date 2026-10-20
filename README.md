@@ -36,6 +36,7 @@ test key is used.
 
 ```
 source build/envsetup.sh
-lunch lineage_piano-bp4a-userdebug
+lunch lineage_piano-bp4a-userdebug   # LineageOS, Evolution X
+lunch custom_piano-bp4a-userdebug    # PixelOS
 m bacon
 ```
