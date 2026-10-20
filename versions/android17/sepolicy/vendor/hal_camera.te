@@ -48,5 +48,5 @@ allow hal_camera_server vendor_sysfs_xm_power:file rw_file_perms;
 
 # Xiaomi's platform-signed camera app exchanges callbacks directly with the
 # stock camera provider in addition to using cameraserver.
-binder_call(hal_camera_default, platform_app)
-binder_call(platform_app, hal_camera_default)
+binder_call(hal_camera_default, platform_app_all)
+binder_call(platform_app_all, hal_camera_default)
