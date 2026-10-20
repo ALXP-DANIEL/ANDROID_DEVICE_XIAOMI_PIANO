@@ -1,0 +1,4 @@
+# The stock app starts only after setting this single cross-partition property.
+set_prop(midevauth_app, vendor_security_devauth_keyboard_connected_prop)
+# Stock Java uses the existing secure MTD backend when standalone MiDevAuth is absent.
+hal_client_domain(midevauth_app, hal_mtdservice)

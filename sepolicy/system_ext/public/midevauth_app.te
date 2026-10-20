@@ -1,0 +1,2 @@
+# Export this domain so vendor policy can grant only its required HAL/property access.
+type midevauth_app, domain;
