@@ -61,6 +61,10 @@ python3 tools/pack.py boot.img out/selector.bin \
 	--uefi deps/Mu-Silicium/Mu-piano.img -o boot-uefi.img
 ```
 
+On GitHub, run the "UEFI Builder (piano)" action from the Actions tab. It
+asks for a wallpaper (a link, or files from `tools/esp/wallpapers`) and the
+color style taken from it, and uploads the firmware, the menu and the ESP.
+
 `boot.img` is the boot image of the Android build you run. The ESP with
 Visor and your own wallpaper is made by `tools/esp/make-esp.sh`.
 
