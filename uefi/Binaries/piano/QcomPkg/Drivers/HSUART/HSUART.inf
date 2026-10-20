@@ -1,0 +1,13 @@
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = HSUART
+  FILE_GUID                      = 8C102BBA-15A9-4C40-8599-6D0F5689DA5B
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+
+[Binaries.AARCH64]
+  DXE_DEPEX|HSUART.depex|*
+  PE32|HSUART.efi|*
+
+[Depex]
+  TRUE

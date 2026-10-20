@@ -1,0 +1,32 @@
+## @file
+#  Enable the touch bus before the Qualcomm drivers read their settings.
+#
+#  Copyright (c) 2026, MUHAMMAD ALIF DANIEL BIN MOHD HAIRUL HEZZELIN.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = TouchBusDxe
+  FILE_GUID                      = 9C41E7B2-5D38-4A6F-8E12-7B3F0A9D6C54
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = TouchBusInitialize
+
+[Sources]
+  TouchBus.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  CacheMaintenanceLib
+  DebugLib
+  FdtLib
+  UefiDriverEntryPoint
+
+[Depex]
+  TRUE
