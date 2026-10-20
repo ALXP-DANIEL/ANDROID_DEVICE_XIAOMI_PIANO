@@ -1,16 +1,17 @@
-# Xiaomi Pad 8 Pro stock Camera
+# Xiaomi Camera for Xiaomi Pad 8 Pro (piano)
 
-One `camera` branch provides both HyperOS 3 Global (Android 16) and HyperOS 4
-China (Android 17) camera imports. Android native camera libraries and APKs
-are retained per version under `versions/android16` and `versions/android17`.
-They are never mixed across Android versions.
+The stock Xiaomi Camera app and its libraries, unchanged.
 
-After syncing this repo to `vendor/xiaomi/piano-miuicamera`, the source sync
-script automatically runs `python3 select-camera.py 16` or `17` and stages
-only the matching Soong configuration as an ignored `Android.bp` file.
-`miuicamera.mk` verifies the staged version against the platform SDK.
-There is no optional user flag; selecting the ROM and Android version is enough.
+Goes in `vendor/xiaomi/piano-miuicamera`. The sync script on the
+[main branch](../../tree/main) checks it out and prepares it for you.
 
-The original signed camera APKs and libraries remain unchanged in the branch;
-Android build compatibility and camera hardware functionality still require
-checking on the chosen ROM.
+## Android 16 and Android 17 in one branch
+
+| Folder | Used for |
+| --- | --- |
+| `versions/android17` | Android 17 builds (from HyperOS 4 China) |
+| `versions/android16` | Android 16 builds (from HyperOS 3 Global) |
+
+After syncing, `select-camera.py 16` or `17` writes the matching
+`Android.bp`. `miuicamera.mk` stops the build if it does not match the
+Android version being built. The two sets are never mixed.
