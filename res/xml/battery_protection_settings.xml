@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Like the stock Security app charge protection page. -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/battery_protection_title">
+
+    <com.android.settingslib.widget.TopIntroPreference
+        android:key="battery_protection_intro"
+        android:title="@string/battery_protection_intro" />
+
+    <PreferenceCategory
+        android:key="battery_protection_modes"
+        android:title="@string/battery_protection_mode_title">
+
+        <com.android.settingslib.widget.SelectorWithWidgetPreference
+            android:key="protect_0"
+            android:title="@string/battery_protection_normal"
+            android:summary="@string/battery_protection_normal_summary"
+            android:persistent="false" />
+
+        <com.android.settingslib.widget.SelectorWithWidgetPreference
+            android:key="protect_2"
+            android:title="@string/battery_protection_always"
+            android:summary="@string/battery_protection_always_summary"
+            android:persistent="false" />
+
+        <com.android.settingslib.widget.SelectorWithWidgetPreference
+            android:key="protect_1"
+            android:title="@string/battery_protection_smart"
+            android:summary="@string/battery_protection_smart_summary"
+            android:persistent="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

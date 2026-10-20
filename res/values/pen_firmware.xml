@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <string name="stylus_firmware_check">Check bundled pen firmware</string>
+    <string name="stylus_firmware_update">Update pen firmware</string>
+    <string name="stylus_firmware_available">Verified bundled version %1$s available</string>
+    <string name="stylus_firmware_unavailable">No verified newer firmware package is available in this ROM</string>
+    <string name="stylus_firmware_unsupported">Firmware updates support P81C model 20609</string>
+    <string name="stylus_firmware_not_ready" formatted="false">Connect the pen with at least 20% battery and try again</string>
+    <string name="stylus_firmware_failed">Update failed or firmware package could not be validated</string>
+    <string name="stylus_firmware_progress">Updating: %1$d%%</string>
+    <string name="stylus_firmware_verifying">Reconnecting to verify the installed firmware</string>
+    <string name="stylus_firmware_complete">Installed firmware version verified</string>
+    <string name="stylus_firmware_confirm">Install pen firmware %1$s? Keep the pen close and charged until verification completes. Pen input pauses during the update.</string>
+</resources>

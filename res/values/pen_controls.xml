@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <string name="stylus_menu_assistant">Assistant</string>
+    <string name="stylus_menu_notes">Notes</string>
+    <string name="stylus_menu_screenshot">Screenshot</string>
+    <string name="stylus_menu_settings">Pen settings</string>
+    <string name="stylus_pen_controls">Pen gestures and feedback</string>
+    <string name="stylus_double_tap_enabled">Double tap</string>
+    <string name="stylus_squeeze_enabled">Squeeze gesture</string>
+    <string name="stylus_slide_enabled">Slide gestures</string>
+    <string name="stylus_hover_enabled">Hover</string>
+    <string name="stylus_squeeze_pressure">Squeeze sensitivity</string>
+    <string name="stylus_squeeze_feedback">Squeeze feedback strength</string>
+    <string name="stylus_writing_tool">Drawing feedback tool</string>
+    <string name="stylus_writing_feedback">Drawing feedback strength</string>
+    <string name="stylus_double_tap_action">Double tap action</string>
+    <string name="stylus_slide_up_action">Slide up action</string>
+    <string name="stylus_slide_down_action">Slide down action</string>
+    <string name="stylus_initializing">Connected, initializing pen input</string>
+    <string name="stylus_battery_error">Pen reported a battery fault</string>
+    <string name="stylus_temperature_error">Pen reported excessive temperature</string>
+    <string name="stylus_current_error">Pen reported excessive current</string>
+    <string name="stylus_setting_rejected">Pen rejected a setting</string>
+    <string-array name="stylus_pressure_levels">
+        <item>Very light</item><item>Light</item><item>Medium</item><item>Firm</item><item>Very firm</item>
+    </string-array>
+    <string-array name="stylus_feedback_levels">
+        <item>Off</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
+    </string-array>
+    <string-array name="stylus_writing_tools">
+        <item>Pencil</item><item>Eraser</item><item>Ballpoint pen</item><item>Fountain pen</item>
+    </string-array>
+</resources>
