@@ -5,17 +5,17 @@
     android:title="@string/xiaomi_settings_title">
 
     <Preference android:key="xiaomi_intro" android:selectable="false"
-        android:layout="@layout/features_hero_preference"
+        app:layout="@layout/features_hero_preference"
         app:allowDividerAbove="false" app:allowDividerBelow="false" />
 
     <PreferenceCategory android:title="@string/features_accessories">
-        <Preference android:key="pen" android:layout="@layout/features_accessory_card"
+        <Preference android:key="pen" app:layout="@layout/features_accessory_card"
             android:icon="@drawable/features_pen_illustration"
             android:title="@string/pen_category_title" android:summary="@string/features_pen_summary"
             app:allowDividerAbove="false" app:allowDividerBelow="false">
             <intent android:targetClass="org.lineageos.pianoparts.StylusSettingsActivity" android:targetPackage="org.lineageos.pianoparts" />
         </Preference>
-        <Preference android:key="keyboard" android:layout="@layout/features_accessory_card"
+        <Preference android:key="keyboard" app:layout="@layout/features_accessory_card"
             android:icon="@drawable/accessory_keyboard_settings_image_normal_pad"
             android:title="@string/keyboard_cover_title" android:summary="@string/features_keyboard_summary"
             app:allowDividerAbove="false" app:allowDividerBelow="false">
@@ -27,7 +27,7 @@
 
         <Preference
             android:key="color_scheme"
-            android:layout="@layout/features_navigation_card"
+            app:layout="@layout/features_navigation_card"
             app:allowDividerAbove="false" app:allowDividerBelow="false"
             android:icon="@drawable/ic_true_tone_tile"
             android:title="@string/color_scheme_title"
@@ -79,7 +79,7 @@
         <Preference
             android:key="battery_protection"
             android:icon="@drawable/ic_bypass_tile"
-            android:layout="@layout/features_navigation_card"
+            app:layout="@layout/features_navigation_card"
             app:allowDividerAbove="false" app:allowDividerBelow="false"
             android:title="@string/battery_protection_title"
             android:summary="@string/battery_protection_summary">
