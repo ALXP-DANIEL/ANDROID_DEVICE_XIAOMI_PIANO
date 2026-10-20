@@ -5,6 +5,10 @@
 
 package org.lineageos.pianoparts.stylus
 
+import android.app.ActivityManager
+import android.app.KeyguardManager
+import android.content.pm.PackageManager
+import android.os.PowerManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -21,10 +25,10 @@ import android.view.WindowManager
 import com.android.internal.util.ScreenshotHelper
 
 object StylusActions {
-    fun run(context: Context, handler: Handler, action: String) {
+    fun run(context: Context, handler: Handler, action: String, notesScene: String? = null) {
         when (action) {
             StylusSettingsContract.Action.NONE -> Unit
-            StylusSettingsContract.Action.OPEN_NOTES -> openNotes(context)
+            StylusSettingsContract.Action.OPEN_NOTES -> openNotes(context, notesScene)
             StylusSettingsContract.Action.SCREENSHOT -> takePartialScreenshot(context, handler)
             StylusSettingsContract.Action.BACK -> injectKey(context, KeyEvent.KEYCODE_BACK)
             StylusSettingsContract.Action.HOME -> injectKey(context, KeyEvent.KEYCODE_HOME)
@@ -34,7 +38,30 @@ object StylusActions {
         }
     }
 
-    private fun openNotes(context: Context) {
+    private fun openNotes(context: Context, requestedScene: String?) {
+        val scene = requestedScene ?: when {
+            context.getSystemService(PowerManager::class.java)?.isInteractive == false -> "off_screen"
+            context.getSystemService(KeyguardManager::class.java)?.isKeyguardLocked == true -> "keyguard"
+            else -> try {
+                val task = context.getSystemService(ActivityManager::class.java)?.getRunningTasks(1)?.firstOrNull()
+                if (task?.baseIntent?.hasCategory(Intent.CATEGORY_HOME) == true) "home" else "app"
+            } catch (_: RuntimeException) { "app" }
+        }
+        // Stock prefers Creation when available, otherwise Notes. Resolve for
+        // the active user and require an enabled exported entry point.
+        for (pkg in listOf(NotesLaunchContract.CREATION, NotesLaunchContract.NOTES)) {
+            val stockIntent = NotesLaunchContract.create(pkg, scene)
+            try {
+                val info = context.packageManager.resolveActivityAsUser(stockIntent,
+                    PackageManager.MATCH_DEFAULT_ONLY, ActivityManager.getCurrentUser())?.activityInfo
+                if (info == null || !info.exported || !info.enabled || !info.applicationInfo.enabled) continue
+                context.startActivityAsUser(stockIntent, UserHandle.CURRENT)
+                return
+            } catch (exception: RuntimeException) {
+                Log.w(TAG, "Stock notes entry unavailable for $pkg", exception)
+            }
+        }
+
         val intent = Intent(Intent.ACTION_CREATE_NOTE).apply {
             putExtra(Intent.EXTRA_USE_STYLUS_MODE, true)
             addFlags(
