@@ -26,8 +26,6 @@
     <string name="color_level_warm">Warm</string>
     <string name="color_level_cool">Cool</string>
     <string name="color_more_title">More</string>
-    <string name="livedisplay_title">LiveDisplay</string>
-    <string name="livedisplay_summary">Night color temperature schedule</string>
     <string name="reading_mode_title">Reading mode</string>
     <string name="sunlight_mode_title">Sunlight mode</string>
     <string name="pen_battery_channel">Pen battery</string>
