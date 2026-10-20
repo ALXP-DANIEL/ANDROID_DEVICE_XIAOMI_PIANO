@@ -93,7 +93,6 @@ DeviceBootManagerAfterConsole ()
   // Consoles are up: start the boot manager on the ESP, or show the
   // button menu when there is none.
   PianoResetHookInstall ();
-  PianoTouchStart ();
   PianoDtbInstall ();
   PianoFastbootStart ();
   StartEspLoader ();
@@ -140,9 +139,8 @@ DeviceBootManagerPriorityBoot (IN OUT EFI_BOOT_MANAGER_LOAD_OPTION *BootOption)
 }
 
 //
-// Nothing bootable (no storage drivers yet): show the button menu, whose
-// way back to Android is a reboot into the boot menu. Its shell entry opens
-// the UEFI Shell from the firmware volume.
+// Nothing bootable (no Visor on the ESP): show the button menu. Its shell
+// entry opens the UEFI Shell from the firmware volume.
 //
 VOID
 EFIAPI

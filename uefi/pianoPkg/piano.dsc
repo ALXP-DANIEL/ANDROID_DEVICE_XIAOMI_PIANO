@@ -131,7 +131,6 @@
   # Console at half resolution with 2x2 pixels, so text is readable
   #
   pianoPkg/Drivers/ScaledFbDxe/ScaledFbDxe.inf
-  pianoPkg/Drivers/TouchBusDxe/TouchBusDxe.inf
 
   #
   # UEFI Shell, opened when nothing else can boot

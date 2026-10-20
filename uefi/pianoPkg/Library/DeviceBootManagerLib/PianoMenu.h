@@ -12,10 +12,6 @@ typedef enum {
 PIANO_MENU_CHOICE
 PianoMenuRun (VOID);
 
-/* Start the touch screen and offer its gestures as keys (PianoTouch.c). */
-VOID
-PianoTouchStart (VOID);
-
 /* Publish \EFI\piano\piano.dtb for Linux, if present (PianoDtb.c). */
 VOID
 PianoDtbInstall (VOID);
