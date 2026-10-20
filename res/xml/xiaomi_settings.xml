@@ -55,6 +55,15 @@
             android:summary="@string/sunlight_mode_summary"
             android:persistent="false" />
 
+        <ListPreference
+            android:key="tap_to_wake"
+            android:icon="@drawable/ic_touch_tile"
+            android:title="@string/tap_to_wake_title"
+            android:summary="%s"
+            android:entries="@array/tap_to_wake_entries"
+            android:entryValues="@array/tap_to_wake_values"
+            android:persistent="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/category_performance">

@@ -145,4 +145,19 @@
     <string name="battery_protection_always_summary">Stop charging at 80%</string>
     <string name="battery_protection_smart">Smart protection</string>
     <string name="battery_protection_smart_summary" formatted="false">Hold at 80%, then charge to 100% before you usually unplug</string>
+    <!-- Tap to wake -->
+    <string name="tap_to_wake_title">Wake by tapping the screen</string>
+    <string name="tap_to_wake_off">Off</string>
+    <string name="tap_to_wake_single">Single tap</string>
+    <string name="tap_to_wake_double">Double tap</string>
+    <string-array name="tap_to_wake_entries" translatable="false">
+        <item>@string/tap_to_wake_off</item>
+        <item>@string/tap_to_wake_single</item>
+        <item>@string/tap_to_wake_double</item>
+    </string-array>
+    <string-array name="tap_to_wake_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>
