@@ -7,6 +7,7 @@ private data class Exchange(val bytes: ByteArray, val opcode: Int, val reply: (B
 private fun ByteArray.hex() = joinToString("") { "%02x".format(it.toInt() and 255) }
 
 fun main() {
+    checkPenUEvents()
     for ((product, type) in listOf(19840 to 3, 12928 to 3, 20609 to 8, 12929 to 8,
         20867 to 9, 20868 to 9, 20869 to 10, 20870 to 11)) {
         check(XiaomiStylusDevice.typeOf(android.view.InputDevice(34, product)) == type)
@@ -105,11 +106,15 @@ fun main() {
     // Test firmware forwarding order in a separate full initialization.
     val order = mutableListOf<String>()
     var settingError = 0
+    val appliedFps = mutableListOf<Int>()
     val advanced = MippSession(address, { bytes, opcode, callback ->
         queue.add(Exchange(bytes, opcode, callback))
     }, { mode, _ -> if (mode == 37) order.add("enable"); true },
         { error("Unexpected failure") }, setFirmware = { order.add("firmware"); true },
-        onReady = { order.add("ready") }, onError = { settingError = it })
+        onReady = { order.add("ready") }, onError = { settingError = it },
+        onFpsApplied = { appliedFps.add(it) })
+    // Events arriving during initialization must not interleave startup exchanges.
+    advanced.onFps(120)
     advanced.start(false, false)
     for (opcode in opcodes) {
         val request = queue.removeFirst()
@@ -117,6 +122,24 @@ fun main() {
         request.reply(byteArrayOf(request.opcode.toByte(), length.toByte()) + ByteArray(length))
     }
     check(order == listOf("firmware", "enable", "ready"))
+    val initialFps = queue.removeFirst()
+    check(initialFps.bytes.hex() ==
+        "301e1234567811220300a01e3e171a041a0300000d680000052800000d68f401")
+    check(appliedFps.isEmpty())
+    initialFps.reply(byteArrayOf(0xb0.toByte(), 0))
+    check(appliedFps == listOf(90))
+    advanced.onFps(90)
+    advanced.onFps(144)
+    advanced.onFps(-1)
+    check(queue.isEmpty())
+    advanced.onPanelState(0x314202)
+    queue.removeFirst().reply(byteArrayOf(0xb1.toByte(), 0))
+    advanced.onFps(60)
+    val lowerFps = queue.removeFirst()
+    check(lowerFps.bytes.size == 32 && lowerFps.bytes[17] == 3.toByte())
+    check(lowerFps.bytes[9] == 0x42.toByte()) // Latest negotiated panel ID, as stock.
+    lowerFps.reply(byteArrayOf(0xb0.toByte(), 0))
+    check(appliedFps == listOf(90, 60))
     advanced.onPanelState(0x344201)
     val air = queue.removeFirst()
     check(air.bytes.hex() == "5b0101")
@@ -128,5 +151,7 @@ fun main() {
     val errorAck = queue.removeFirst()
     check(settingError == 2 && errorAck.bytes.hex() == "dd00" && errorAck.opcode == -1)
     advanced.close()
-    println("PASS: stock vectors, dual IDs, ACK gating, hall race, panel events, disconnect, malformed replies, firmware order, air mode, nonuniform setting ACKs, error response")
+    advanced.onFps(90)
+    check(queue.isEmpty())
+    println("PASS: stock vectors, dual IDs, ACK gating, hall race, panel events, disconnect, malformed replies, firmware order, air mode, nonuniform setting ACKs, error response, FPS normalization/resend and placement event lifecycle")
 }

@@ -14,6 +14,7 @@ internal class MippSession(
     private val onReady: () -> Unit = {},
     private val onDocked: (Boolean) -> Unit = {},
     private val onError: (Int) -> Unit = {},
+    private val onFpsApplied: (Int) -> Unit = {},
 ) {
     var initialized = false
         private set
@@ -22,6 +23,8 @@ internal class MippSession(
     private var hall = 1
     private var id = 0
     private var pendingPanelState: Int? = null
+    private var fps = 0
+    private var pendingFps = false
 
     fun start(docked: Boolean, readActive: Boolean) {
         hall = if (docked) 0 else 1
@@ -67,6 +70,7 @@ internal class MippSession(
                                             }
                                             pendingPanelState?.let(::onPanelState)
                                             pendingPanelState = null
+                                            if (pendingFps) sendFpsParameters()
                                         }
                                     }
                                 }
@@ -95,12 +99,15 @@ internal class MippSession(
         val operation = value and 255
         when (opcode) {
             0x31 -> if (operation in 0..3) {
+                id = panelId
                 command(MippProtocol.frequency(panelId, operation), 0) { touch(22, 49) }
             }
             0x35 -> if (operation in 0..1) {
+                id = panelId
                 command(byteArrayOf(0x62, 1, operation.toByte()), 0) {}
             }
             0x34 -> if (operation in 0..1) {
+                id = panelId
                 setting(byteArrayOf(0x5b, 1, operation.toByte()), 1, true)
             }
         }
@@ -108,6 +115,26 @@ internal class MippSession(
 
     fun sleep(sleeping: Boolean) {
         if (initialized) command(byteArrayOf(0x56, 1, if (sleeping) 1 else 0), 0) {}
+    }
+
+    fun onFps(value: Int) {
+        if (closed || value < 0) return
+        val normalized = if (value < 90) 60 else 90
+        if (fps == normalized) return
+        fps = normalized
+        pendingFps = true
+        if (initialized) sendFpsParameters()
+    }
+
+    private fun sendFpsParameters() {
+        pendingFps = false
+        val sentFps = fps
+        // Stock worker 2021 resends B4 after the dual-ID stage resets phase to 1.
+        // Piano's default profile is unchanged by 60/90; never select another
+        // tablet's 34-byte timing profile based on Android version or refresh.
+        command(MippProtocol.parameters(localAddress, id, false), 0) {
+            onFpsApplied(sentFps)
+        }
     }
 
     fun laser(on: Boolean) {

@@ -14,6 +14,8 @@ internal data class PenChargingEvent(
     val docked: Boolean?,
     val panelState: Int? = null,
     val hibernation: Boolean? = null,
+    val fps: Int? = null,
+    val placementError: Int? = null,
 )
 
 internal class PenUEventObserver(
@@ -33,6 +35,8 @@ internal class PenUEventObserver(
         startObserving("POWER_SUPPLY_PEN_HALL4=")
         startObserving("MIPP_PEN_STATE=")
         startObserving("PEN_HIBERNATION_STATE=")
+        startObserving("PEN_FPS=")
+        startObserving("POWER_SUPPLY_PEN_PLACE_ERR=")
     }
 
     override fun onUEvent(event: UEvent) {
@@ -47,10 +51,14 @@ internal class PenUEventObserver(
         val panelState = event["MIPP_PEN_STATE"]?.toIntOrNull()
         val hibernation = event["PEN_HIBERNATION_STATE"]?.toIntOrNull()
             ?.takeIf { it in 0..1 }?.let { it == 1 }
+        val fps = event["PEN_FPS"]?.toIntOrNull()?.takeIf { it >= 0 }
+        val placementError = event["POWER_SUPPLY_PEN_PLACE_ERR"]?.toIntOrNull()
+            ?.takeIf { it >= 0 }
         if (chargeState != null || address != null || battery != null || docked != null ||
-            panelState != null || hibernation != null
+            panelState != null || hibernation != null || fps != null || placementError != null
         ) {
-            onEvent(PenChargingEvent(chargeState, address, battery, docked, panelState, hibernation))
+            onEvent(PenChargingEvent(chargeState, address, battery, docked, panelState,
+                hibernation, fps, placementError))
         }
     }
 

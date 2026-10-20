@@ -30,6 +30,7 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
     private lateinit var connection: AccessoryConnectionPreference
     private lateinit var battery: Preference
     private lateinit var notConnected: Preference
+    private lateinit var placementWarning: Preference
     private lateinit var buttonsCategory: PreferenceCategory
     private lateinit var deviceInfoCategory: PreferenceCategory
     private lateinit var firmware: Preference
@@ -82,6 +83,13 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
             isIconSpaceReserved = false
         }
         preferenceScreen.addPreference(notConnected)
+        placementWarning = Preference(context).apply {
+            order = 11
+            setTitle(R.string.stylus_attachment_warning_title)
+            isSelectable = false
+            isIconSpaceReserved = false
+        }
+        preferenceScreen.addPreference(placementWarning)
 
         buttonsCategory = PreferenceCategory(context).apply {
             order = 40
@@ -391,6 +399,9 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
             else -> status.state
         }
         val connected = connectionState == StylusConnectionState.CONNECTED
+        placementWarning.isVisible = status.placementError != 0
+        placementWarning.summary = getString(R.string.stylus_attachment_warning,
+            status.placementError)
         deviceInfoCategory.isVisible = connected
         notConnected.isVisible = !connected
         buttonsCategory.isEnabled = connected
