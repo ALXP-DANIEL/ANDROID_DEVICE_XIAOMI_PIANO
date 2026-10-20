@@ -9,6 +9,9 @@ TARGET_EXCLUDES_AUDIOFX := true
 
 $(call inherit-product, vendor/lineage/config/common_full_tablet_wifionly.mk)
 
+# Use the existing private release certificates installed on the ROM builder.
+$(call inherit-product, vendor/lineage-priv/keys/keys.mk)
+
 PRODUCT_DEVICE := piano
 PRODUCT_NAME := lineage_piano
 PRODUCT_BRAND := Xiaomi
