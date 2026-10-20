@@ -1,6 +1,6 @@
 --- a/packages/SystemUI/src/com/android/systemui/shade/ShadeExpansionStateManager.kt
 +++ b/packages/SystemUI/src/com/android/systemui/shade/ShadeExpansionStateManager.kt
-@@ -17,12 +17,24 @@
+@@ -17,6 +17,11 @@
  package com.android.systemui.shade
  
  import android.annotation.IntDef
@@ -12,7 +12,9 @@
  import android.os.Trace
  import android.os.Trace.TRACE_TAG_APP as TRACE_TAG
  import android.util.Log
- import androidx.annotation.FloatRange
+@@ -24,14 +29,25 @@
+ import com.android.app.tracing.TraceStateLogger
+ import com.android.app.tracing.TrackGroupUtils.trackGroup
  import com.android.systemui.dagger.SysUISingleton
 +import com.android.systemui.dagger.qualifiers.Application
 +import com.android.systemui.shade.data.repository.ShadeRepository
@@ -25,8 +27,7 @@
  import java.util.concurrent.CopyOnWriteArrayList
  import javax.inject.Inject
  
-@@ -33,7 +45,60 @@
-  */
+ /** A class responsible for managing the notification panel's current state. */
  @SysUISingleton
  @Deprecated("Use ShadeInteractor instead")
 -class ShadeExpansionStateManager @Inject constructor() {
@@ -35,8 +36,15 @@
 +    @Application scope: CoroutineScope,
 +    private val shadeRepository: ShadeRepository,
 +) {
-+    // Read-only handshake with the system-UID PianoParts pen palette. No shade
-+    // disable flags, panel collapse or persistent state is ever changed here.
+ 
+     private val expansionListeners = CopyOnWriteArrayList<ShadeExpansionListener>()
+     private val stateListeners = CopyOnWriteArrayList<ShadeStateListener>()
+@@ -43,6 +59,51 @@
+     private var expanded: Boolean = false
+     private var tracking: Boolean = false
+ 
++    // SystemUI reports shade and Control Center transitions to the pen palette.
++    // This is a read-only notification channel; no panel state is changed.
 +    private var penShadeOpen = false
 +    private val penShadeQueryAction = "org.lineageos.pianoparts.action.PEN_SHADE_QUERY"
 +    private val penShadeStateAction = "org.lineageos.pianoparts.action.PEN_SHADE_STATE"
@@ -49,16 +57,12 @@
 +    }
 +
 +    init {
-+        // SystemUI and PianoParts have different UIDs. Only privileged
-+        // signature STATUS_BAR senders can query the current shade state.
 +        try {
 +            context.registerReceiver(penShadeReceiver, IntentFilter(penShadeQueryAction),
 +                    "android.permission.STATUS_BAR", null, Context.RECEIVER_EXPORTED)
 +        } catch (exception: RuntimeException) {
 +            Log.w(TAG, "Pen palette shade query unavailable", exception)
 +        }
-+        // QS may expand independently of the notification shade (including
-+        // separate/scene panels). Observe both legacy and fractional QS state.
 +        scope.launch {
 +            combine(shadeRepository.qsExpansion, shadeRepository.legacyIsQsExpanded) {
 +                fraction, expanded -> fraction > 0f || expanded
@@ -84,12 +88,12 @@
 +                .putExtra("expanded", open), UserHandle.SYSTEM)
 +    }
 +
+     /**
+      * Adds a listener that will be notified when the panel expansion fraction has changed and
+      * returns the current state in a ShadeExpansionChangeEvent for legacy purposes (b/281038056).
+@@ -121,6 +182,7 @@
  
-     private val expansionListeners = CopyOnWriteArrayList<ShadeExpansionListener>()
-     private val stateListeners = CopyOnWriteArrayList<ShadeStateListener>()
-@@ -132,6 +197,7 @@
-         val expansionChangeEvent =
-             ShadeExpansionChangeEvent(fraction, expanded, tracking, dragDownPxAmount)
+         val expansionChangeEvent = ShadeExpansionChangeEvent(fraction, expanded, tracking)
          expansionListeners.forEach { it.onPanelExpansionChanged(expansionChangeEvent) }
 +        publishPenShadeTransition()
      }
