@@ -18,7 +18,6 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreferenceCompat
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
 import org.lineageos.pianoparts.R
-import org.lineageos.pianoparts.PencilEnginePosturePolicy
 import org.lineageos.pianoparts.AccessoryConnectionPreference
 
 /**
@@ -61,20 +60,6 @@ class StylusSettingsFragment : SettingsBasePreferenceFragment() {
             setTitle(R.string.stylus_palette_title)
             setSummary(R.string.stylus_palette_summary)
             setOnPreferenceClickListener { showPaletteEditor(); true }
-        })
-        preferenceScreen.addPreference(SwitchPreferenceCompat(context).apply {
-            order = 31
-            setTitle(R.string.pencil_engine_posture_title)
-            setSummary(R.string.pencil_engine_posture_summary)
-            val prefs = context.createDeviceProtectedStorageContext()
-                .getSharedPreferences(PencilEnginePosturePolicy.PREFS_NAME, 0)
-            isPersistent = false
-            isChecked = prefs.getBoolean(PencilEnginePosturePolicy.KEY_ENABLED, false)
-            setOnPreferenceChangeListener { _, value ->
-                prefs.edit().putBoolean(PencilEnginePosturePolicy.KEY_ENABLED, value as Boolean)
-                    .apply()
-                true
-            }
         })
         notConnected = Preference(context).apply {
             order = 10
