@@ -657,6 +657,12 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
                 scheduleAuth(true, AUTH_START_DELAY_MS);
             }
         } else {
+            // Stock IICKeyboard.onScreenStateChanged stops all pending OTA
+            // workers when the display goes off (lines 149-154). An update
+            // must not continue across an unobserved suspend/reconnect.
+            if (mUpdater.isRunning()) {
+                mUpdater.abort();
+            }
             stopSensors();
         }
     }
@@ -788,7 +794,10 @@ public final class PadKeyboardManager implements KeyboardTransport.Listener {
     // Touchpad switch.
 
     private void applyTouchpad() {
-        if (!mConnected) {
+        // The ordinary 1260/type1 cover has no touchpad. Stock capability
+        // checks only accept keyboard types 16, 32 and 33; avoid sending
+        // touchpad feature 0x21 to an unsupported keyboard.
+        if (!mConnected || !hasTouchpad(mKeyboardType)) {
             return;
         }
         boolean enabled = prefs().getBoolean(KEY_TOUCHPAD, true) && mKeysEnabled;
