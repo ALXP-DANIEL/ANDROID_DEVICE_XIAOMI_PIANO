@@ -26,6 +26,16 @@ compile. These checks do not prove a complete Android 16 ROM or physical pen
 operation. Native laser still requires matching ROM framework patches and
 its current-boot readiness marker; installing this app alone cannot enable it.
 
+Notes PencilEngine posture requests share mode 20036 with the optional drawing
+app setting through one Parts controller. The service verifies the Notes UID,
+active user, current boot and a fresh controller heartbeat. Requests expire
+after five seconds without renewal. Binder cleanup, screen-off and user switch
+remove active effects while Parts is running. Readiness is published only after
+a HAL transaction succeeds; this is not proof of physical controller behavior.
+If Parts itself dies after enabling a hardware mode, clearing that mode waits
+for its persistent process to restart; a lease cannot write the HAL from a dead
+process. This does not implement Xiaomi's native recognition algorithms.
+
 Run the host checks from this tree's root using `bash tests/run-mipp-tests.sh`
 and `python3 tests/check-devauth-policy.py`. The full Android build and
 tablet hardware integration must be checked separately.

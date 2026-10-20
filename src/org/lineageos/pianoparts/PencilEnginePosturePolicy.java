@@ -2,11 +2,12 @@
 package org.lineageos.pianoparts;
 
 /**
- * AOSP-native, opt-in subset of the HyperOS PencilEngine app policy.
+ * Shared owner for optional drawing-app tuning and authorized engine requests.
  *
  * No JNI, proprietary authorization, untrusted client Binder or BLE input
  * handling is involved. The only output is a requested stock TouchFeature
- * posture mode when a trusted foreground drawing app is using a ready pen.
+ * posture mode when a ready pen has an optional foreground drawing-app
+ * request or an authorized PencilEngine client's live global request.
  */
 public final class PencilEnginePosturePolicy {
     public static final String PREFS_NAME = "piano_pencil_engine";
@@ -21,7 +22,14 @@ public final class PencilEnginePosturePolicy {
      */
     public int transition(boolean optedIn, boolean penReady, boolean interactive,
             boolean drawingForeground) {
-        boolean wanted = optedIn && penReady && interactive && drawingForeground;
+        return transition(optedIn, penReady, interactive, drawingForeground, false);
+    }
+
+    /** A live authorized engine client also owns the stock global mode. */
+    public int transition(boolean optedIn, boolean penReady, boolean interactive,
+            boolean drawingForeground, boolean clientRequested) {
+        boolean wanted = penReady && interactive
+                && (clientRequested || (optedIn && drawingForeground));
         if (lastRequested != null && lastRequested == wanted) return UNCHANGED;
         lastRequested = wanted;
         return wanted ? 1 : 0;

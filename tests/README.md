@@ -24,3 +24,9 @@ android17-framework.jar` with full platform jars to compile the actual
 PencilEngine service and Binder transport against both releases. Public SDK
 stubs omit required privileged APIs. This is a compilation check, not a ROM
 resource-linking, permission or device-behavior test.
+
+`python3 tests/run-pencilengine-effects-tests.py` runs the production Effects
+backend against settings/clock/handler fixtures. Covers lease ownership,
+readiness freshness, user and UID checks, renewal, revocation, write failure
+and scheduling failure. `PencilEnginePosturePolicyTest.java` checks the single
+mode owner's user-option/client-request merge and lifecycle transitions.

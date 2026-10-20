@@ -143,16 +143,18 @@ public class PianoPartsApp extends Application {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
-    private void setTouchMode(int mode, int value) {
+    private boolean setTouchMode(int mode, int value) {
         ITouchFeature touchFeature = getTouchFeature();
         if (touchFeature == null) {
-            return;
+            return false;
         }
         try {
             touchFeature.setTouchMode(TOUCH_ID, mode, value);
-        } catch (RemoteException e) {
+            return true;
+        } catch (RemoteException | RuntimeException e) {
             Log.e(TAG, "Failed to set touch mode " + mode, e);
             mTouchFeature = null;
+            return false;
         }
     }
 
