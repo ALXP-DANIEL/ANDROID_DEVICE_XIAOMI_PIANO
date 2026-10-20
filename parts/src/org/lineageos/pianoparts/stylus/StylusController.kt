@@ -114,6 +114,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             handler.postDelayed(controlsChanged, 100L)
         }
     }
+    private var mippMtuPending = false
+    private var mippNegotiatedMtu = 0
     private var gattAttempts = 0
     private var hibernating = false
     private val pendingWrites = ArrayDeque<PenWrite>()
@@ -329,9 +331,20 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                     return@dispatch
                 }
                 if (descriptor.characteristic.uuid == MIPP_REPLY) {
-                    if (result != BluetoothGatt.GATT_SUCCESS || !client.requestMtu(512)) {
+                    if (result != BluetoothGatt.GATT_SUCCESS) {
                         closeGatt()
-                    } else armGattTimeout()
+                    } else {
+                        // Android may negotiate the shared MTU before service discovery.
+                        // MIPP must never start until its reply notifications are ready.
+                        if (mippNegotiatedMtu >= 35) {
+                            handler.removeCallbacks(gattTimeout)
+                            startMipp()
+                        } else {
+                            mippMtuPending = true
+                            armGattTimeout()
+                            if (!client.requestMtu(512)) closeGatt()
+                        }
+                    }
                 } else readNextCharacteristic()
             }
         }
@@ -342,6 +355,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 firmwareAdapter?.takeUnless { firmwareVerifying }?.let {
                     it.onMtuChanged(mtu, result); return@dispatch
                 }
+                if (result == BluetoothGatt.GATT_SUCCESS) mippNegotiatedMtu = mtu
+                if (!mippMtuPending) return@dispatch
+                mippMtuPending = false
                 handler.removeCallbacks(gattTimeout)
                 if (result != BluetoothGatt.GATT_SUCCESS || mtu < 35) closeGatt()
                 else startMipp()
@@ -803,6 +819,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun openGatt(device: BluetoothDevice) {
+        mippMtuPending = false
+        mippNegotiatedMtu = 0
         freshPenIdentity = false
         freshPenBattery = false
         freshPenRevision = false
@@ -964,6 +982,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     }
 
     private fun closeGatt() {
+        mippMtuPending = false
+        mippNegotiatedMtu = 0
         laserPresentation.closePresentation()
         firmwareCheckGeneration++
         freshPenIdentity = false
