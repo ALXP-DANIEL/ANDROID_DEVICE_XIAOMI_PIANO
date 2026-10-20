@@ -61,6 +61,7 @@ internal class PenLaserController(private val context: Context, private val hand
                     }
                 }
                 KEY -> handleKey(intent)
+                EXIT -> closePresentation()
                 TOGGLE -> {
                     if (!isAvailable(context)) return
                     if (overlay != null) closePresentation() else {
@@ -81,7 +82,7 @@ internal class PenLaserController(private val context: Context, private val hand
     fun start() {
         if (started) return
         context.registerReceiver(receiver, IntentFilter().apply {
-            addAction(KEY); addAction(MOTION); addAction(TOGGLE)
+            addAction(KEY); addAction(MOTION); addAction(TOGGLE); addAction(EXIT)
             addAction(Intent.ACTION_SCREEN_OFF); addAction(Intent.ACTION_USER_SWITCHED)
             addAction(Intent.ACTION_CONFIGURATION_CHANGED); addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
         }, null, handler, Context.RECEIVER_NOT_EXPORTED)
@@ -136,7 +137,13 @@ internal class PenLaserController(private val context: Context, private val hand
         handler.postDelayed(remove, 120000)
     }
     private fun control(active: Boolean) {
-        context.sendBroadcast(Intent(CONTROL).putExtra("device", device).putExtra("active", active))
+        // The native input bridge and system-server key handler use this same
+        // short heartbeat; a dead Parts process cannot leave laser keys seized.
+        val pen = inputs.getInputDevice(device)
+        context.sendBroadcast(Intent(CONTROL).setPackage("android")
+            .putExtra("device", device).putExtra("active", active)
+            .putExtra("vendor", pen?.vendorId ?: -1)
+            .putExtra("product", pen?.productId ?: -1))
     }
     fun closePresentation() {
         handler.removeCallbacks(heartbeat); handler.removeCallbacks(hold); handler.removeCallbacks(click)
@@ -185,6 +192,7 @@ internal class PenLaserController(private val context: Context, private val hand
         const val MOTION="org.lineageos.pianoparts.action.LASER_MOTION"
         const val KEY="org.lineageos.pianoparts.action.LASER_KEY"
         const val TOGGLE="org.lineageos.pianoparts.action.LASER_TOGGLE"
+        const val EXIT="org.lineageos.pianoparts.action.LASER_EXIT"
         fun isReadyForBoot(bootCount: Int, marker: Int): Boolean = bootCount >= 0 && marker == bootCount
         fun isAvailable(context: Context): Boolean {
             val bootCount = Settings.Global.getInt(context.contentResolver, Settings.Global.BOOT_COUNT, -1)
