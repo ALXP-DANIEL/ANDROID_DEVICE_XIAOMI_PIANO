@@ -1,5 +1,5 @@
-// The stock Notes APK is repackaged solely to remove its mandatory MiCloud
-// shared-library tag. Platform signing is performed by the ROM build.
+// Offline Notes port: signed-out account policy, reviewed AI gates and cloud
+// entry-point removal. Platform signing is performed by the ROM build.
 soong_namespace {}
 
 java_library {
@@ -15,7 +15,14 @@ java_library {
 python_binary_host {
     name: "piano-notes-append-compat",
     main: "append-compat.py",
-    srcs: ["append-compat.py"],
+    srcs: ["append-compat.py", "offline_dex.py", "offline_manifest.py", "manifest.py", "strip_micloud.py"],
+}
+
+java_binary_host {
+    name: "piano-notes-offline-dex",
+    srcs: ["OfflineDex.java", "ReplayableDexPool.java"],
+    main_class: "OfflineDex",
+    static_libs: ["smali-dexlib2"],
 }
 
 // A plain genrule requests an empty-variant dependency and cannot consume
@@ -24,9 +31,9 @@ python_binary_host {
 java_genrule {
     name: "piano-notes-compatible-apk",
     srcs: ["prebuilt/MIUINotes.apk", ":PianoNotesCompat", "compat/device_features/piano.xml"],
-    tools: ["piano-notes-append-compat"],
+    tools: ["piano-notes-append-compat", "piano-notes-offline-dex"],
     out: ["MIUINotes-compatible.apk"],
-    cmd: "$(location piano-notes-append-compat) $(location prebuilt/MIUINotes.apk) $(location :PianoNotesCompat) $(out) $(location compat/device_features/piano.xml)",
+    cmd: "$(location piano-notes-append-compat) $(location prebuilt/MIUINotes.apk) $(location :PianoNotesCompat) $(out) $(location compat/device_features/piano.xml) $(location piano-notes-offline-dex)",
 }
 
 android_app_import {
