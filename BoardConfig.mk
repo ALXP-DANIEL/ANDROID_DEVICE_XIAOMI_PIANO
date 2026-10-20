@@ -32,7 +32,15 @@ BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
 BOARD_USES_METADATA_PARTITION := true
 
 # Recovery
-TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
+# Use a recovery-only fstab. Android's first-stage fstab stays unchanged:
+# recovery must not silently reformat encrypted /data after a failed mount.
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery.fstab
+TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+
+# The recovery partition is a kernel-less boot image on piano. Keep the
+# working stock header v4 / legacy LZ4 layout inherited from the common tree.
+# recovery/root/system/etc/init/ overrides the stock-derived recovery init
+# without changing vendor init on normal Android boots.
 
 # Filesystems
 TARGET_USERIMAGES_USE_F2FS := true
