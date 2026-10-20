@@ -1,0 +1,22 @@
+diff --git a/src/gui/gui_menu.c b/src/gui/gui_menu.c
+index be91cad..89a9b2c 100644
+--- a/src/gui/gui_menu.c
++++ b/src/gui/gui_menu.c
+@@ -131,6 +131,8 @@ static void draw_page(gui_state_t *state, UINTN start, UINTN n, UINTN sel_local,
+ 
+     INTN  ecard_top = (INTN)icon_cy - (INTN)sel_ei / 2 - pad;
+     INTN  ecard_bot = (INTN)name_y + (INTN)name_px + pad / 2;
++    /* No name under the icon: keep the card square. */
++    if (!state->show_names) ecard_bot = ecard_top + (INTN)sel_ei + 2 * pad;
+     UINTN ul_len = ul_len_cfg ? ul_len_cfg : (sel_ei + 2 * pad - 20);
+     INTN  ulx = sel_left + (INTN)sel_ei / 2 - (INTN)ul_len / 2;
+     UINTN ul_rad = ul_th / 2; if (ul_rad > 2) ul_rad = 2;
+@@ -457,6 +459,8 @@ void gui_draw_menu(gui_state_t *state, int partial) {
+     INTN sel_top  = (INTN)icon_cy - (INTN)sel_ei / 2;
+     INTN ecard_top = sel_top - pad;
+     INTN ecard_bot = (INTN)name_y + (INTN)name_px + pad / 2;
++    /* No name under the icon: keep the card square. */
++    if (!state->show_names) ecard_bot = ecard_top + (INTN)sel_ei + 2 * pad;
+ 
+     INTN tgt[9];
+     tgt[A_CARDX] = sel_left;

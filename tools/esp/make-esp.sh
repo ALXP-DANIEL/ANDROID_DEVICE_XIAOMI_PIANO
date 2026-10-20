@@ -36,6 +36,9 @@ if [ ! -d "$src" ]; then
 	git -C "$src" checkout -q "$VISOR_COMMIT"
 	git clone -q --depth 1 --branch "$GNU_EFI_TAG" "$GNU_EFI_URL" "$src/gnu-efi-src"
 fi
+# Square selection card when names are hidden (ours).
+git -C "$src" apply --reverse --check ../../tools/esp/visor-square-card.patch 2>/dev/null ||
+	git -C "$src" apply ../../tools/esp/visor-square-card.patch
 
 if [ ! -d deps/refind-bin-0.14.2 ]; then
 	curl -sL -o deps/refind.zip "$REFIND_ZIP"
