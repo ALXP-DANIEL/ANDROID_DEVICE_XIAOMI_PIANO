@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.lineageos.pianoparts"
+    android:sharedUserId="android.uid.system">
+
+    <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW" />
+    <uses-permission android:name="android.permission.DEVICE_POWER" />
+    <uses-permission android:name="android.permission.DISABLE_INPUT_DEVICE" />
+    <uses-permission android:name="android.permission.TABLET_MODE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.OVERRIDE_COMPAT_CHANGE_CONFIG" />
+
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    <uses-permission android:name="android.permission.MANAGE_NOTIFICATIONS" />
+
+    <application
+        android:name=".PianoPartsApp"
+        android:label="@string/app_name"
+        android:persistent="true"
+        android:directBootAware="true">
+
+        <service
+            android:name=".ThermalProfileTileService"
+            android:icon="@drawable/ic_thermal_tile"
+            android:label="@string/thermal_profile_title"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data android:name="android.service.quicksettings.TILE_CATEGORY"
+                android:value="org.lineageos.qs.CATEGORY_DEVICE" />
+        </service>
+
+        <service
+            android:name=".TouchGameModeTileService"
+            android:icon="@drawable/ic_touch_tile"
+            android:label="@string/touch_game_mode_title"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data android:name="android.service.quicksettings.TILE_CATEGORY"
+                android:value="org.lineageos.qs.CATEGORY_DEVICE" />
+        </service>
+
+        <service
+            android:name=".SunlightModeTileService"
+            android:icon="@drawable/ic_sunlight_tile"
+            android:label="@string/sunlight_mode_title"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data android:name="android.service.quicksettings.TILE_CATEGORY"
+                android:value="org.lineageos.qs.CATEGORY_DEVICE" />
+        </service>
+
+        <service
+            android:name=".TrueToneTileService"
+            android:icon="@drawable/ic_true_tone_tile"
+            android:label="@string/true_tone_title"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data android:name="android.service.quicksettings.TILE_CATEGORY"
+                android:value="org.lineageos.qs.CATEGORY_DEVICE" />
+        </service>
+
+        <service
+            android:name=".BypassChargingTileService"
+            android:icon="@drawable/ic_bypass_tile"
+            android:label="@string/bypass_charging_title"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data android:name="android.service.quicksettings.TILE_CATEGORY"
+                android:value="org.lineageos.qs.CATEGORY_DEVICE" />
+        </service>
+
+        <service android:name=".keyboard.KeyboardKeyService"
+            android:exported="true"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data android:name="android.accessibilityservice"
+                android:resource="@xml/keyboard_key_service" />
+        </service>
+
+        <activity
+            android:name=".KeyboardSettingsActivity"
+            android:label="@string/keyboard_settings_title"
+            android:theme="@style/Theme.SubSettingsBase.Expressive"
+            android:exported="false" />
+
+        <activity
+            android:name=".StylusSettingsActivity"
+            android:label="@string/pen_category_title"
+            android:theme="@style/Theme.SubSettingsBase.Expressive"
+            android:exported="false" />
+
+        <!-- Takes LiveDisplay's place in Settings > Display, as on HyperOS. -->
+        <activity
+            android:name=".ColorSchemeActivity"
+            android:exported="true"
+            android:label="@string/color_scheme_title"
+            android:theme="@style/Theme.SubSettingsBase.Expressive">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data android:name="com.android.settings.category"
+                       android:value="com.android.settings.category.ia.display" />
+            <meta-data android:name="com.android.settings.group_key"
+                       android:value="category_key_color" />
+            <meta-data android:name="com.android.settings.order"
+                       android:value="-10" />
+            <meta-data android:name="com.android.settings.summary"
+                       android:resource="@string/color_scheme_summary" />
+        </activity>
+
+        <activity
+            android:name=".XiaomiSettingsActivity"
+            android:label="@string/xiaomi_settings_title"
+            android:theme="@style/Theme.SubSettingsBase.Expressive"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data android:name="com.android.settings.category"
+                       android:value="com.android.settings.category.ia.homepage" />
+            <meta-data android:name="com.android.settings.group_key"
+                       android:value="top_level_system_info_category" />
+            <meta-data android:name="com.android.settings.summary"
+                       android:resource="@string/xiaomi_settings_summary" />
+            <meta-data android:name="com.android.settings.icon"
+                       android:resource="@drawable/ic_xiaomi_features" />
+            <meta-data android:name="com.android.settings.icon_color_scheme"
+                       android:value="orange" />
+        </activity>
+    </application>
+</manifest>

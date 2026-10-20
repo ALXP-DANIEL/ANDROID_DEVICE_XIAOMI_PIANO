@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/color_scheme_title">
+
+    <com.android.settingslib.widget.LayoutPreference
+        android:key="color_preview"
+        android:layout="@layout/color_preview"
+        android:selectable="false" />
+
+    <PreferenceCategory
+        android:key="screen_optimize"
+        android:title="@string/color_modes_title" />
+
+    <PreferenceCategory
+        android:key="screen_color"
+        android:title="@string/color_temperature_title" />
+
+    <PreferenceCategory android:title="@string/color_more_title">
+
+        <SwitchPreferenceCompat
+            android:key="screen_truetone_pref"
+            android:title="@string/true_tone_title"
+            android:summary="@string/true_tone_summary"
+            android:persistent="false" />
+
+        <Preference
+            android:key="livedisplay"
+            android:title="@string/livedisplay_title"
+            android:summary="@string/livedisplay_summary">
+            <intent android:action="org.lineageos.lineageparts.LIVEDISPLAY_SETTINGS" />
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>
