@@ -44,12 +44,6 @@ PRODUCT_VENDOR_PROPERTIES += \
 # Minimal tablet values traced to the pinned stock framework overlay.
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
-# Pixel Launcher with a translucent gesture handle that hides after 10 s.
-ifneq ($(wildcard vendor/gms),)
-PRODUCT_PACKAGES += \
-    NexusLauncherPiano
-endif
-
 # Show the boot animation in landscape, the way the tablet is normally held.
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.bootanim.set_orientation_logical_0=ORIENTATION_90
@@ -74,7 +68,9 @@ PRODUCT_PRODUCT_PROPERTIES += ro.sf.lcd_density=440
 PRODUCT_PACKAGES += \
     libprocessgroup_shim
 
-$(call inherit-product, device/xiaomi/piano-xiaomi-parts/pianoparts.mk)
+# Optional trees, included when synced.
+$(call inherit-product-if-exists, device/xiaomi/piano-xiaomi-parts/pianoparts.mk)
+$(call inherit-product-if-exists, device/xiaomi/piano-patches/patches.mk)
 
 # Lineage LiveDisplay reading mode and high touch polling rate,
 # served with the stock Xiaomi display and touch features
@@ -105,13 +101,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.camera.external.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.external.xml
 
-# MiuiCamera selected automatically by the Android SDK.
-$(call inherit-product, vendor/xiaomi/piano-xiaomi-camera/miuicamera.mk)
+# Xiaomi camera, when synced.
+$(call inherit-product-if-exists, vendor/xiaomi/piano-xiaomi-camera/miuicamera.mk)
 
-# Xiaomi Notes is rebuilt without the required MiCloud SDK library.
-# The shared Notes checkout is automatically staged by sync-device.sh.
-$(call inherit-product, vendor/xiaomi/piano-xiaomi-notes/notes.mk)
-PRODUCT_SOONG_NAMESPACES += vendor/xiaomi/piano-xiaomi-notes
+# Xiaomi Notes, when synced.
+$(call inherit-product-if-exists, vendor/xiaomi/piano-xiaomi-notes/notes.mk)
 
 # Focus Pen 3: its touch-film buttons must not type characters, like stock.
 PRODUCT_COPY_FILES += \
