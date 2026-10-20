@@ -31,6 +31,7 @@ object StylusSettingsContract {
         const val RECENTS = "recents"
         const val MEDIA_PLAY_PAUSE = "media_play_pause"
         const val LASER = "laser"
+        const val MENU = "menu"
 
         val SUPPORTED: Set<String> = setOf(
             NONE,
@@ -41,6 +42,7 @@ object StylusSettingsContract {
             RECENTS,
             MEDIA_PLAY_PAUSE,
             LASER,
+            MENU,
         )
     }
 
@@ -48,11 +50,13 @@ object StylusSettingsContract {
     const val ACTION_LASER_MODE = "org.lineageos.pianoparts.action.LASER_MODE"
     const val EXTRA_LASER_ON = "on"
     const val ACTION_HAPTIC = "org.lineageos.pianoparts.action.PEN_HAPTIC"
+    const val ACTION_SHOW_MENU = "org.lineageos.pianoparts.action.PEN_SHORTCUT_MENU"
+    const val ACTION_UPDATE_FIRMWARE = "org.lineageos.pianoparts.action.PEN_UPDATE_FIRMWARE"
     const val EXTRA_HAPTIC_TYPE = "haptic_type"
 
     const val DEFAULT_PRIMARY_BUTTON_ACTION = Action.OPEN_NOTES
     const val DEFAULT_SECONDARY_BUTTON_ACTION = Action.SCREENSHOT
-    const val DEFAULT_PINCH_ACTION = Action.RECENTS
+    const val DEFAULT_PINCH_ACTION = Action.MENU
 
     fun sanitizeAction(value: String?, defaultValue: String): String =
         value?.takeIf(Action.SUPPORTED::contains) ?: defaultValue

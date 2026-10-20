@@ -7,6 +7,11 @@ private data class Exchange(val bytes: ByteArray, val opcode: Int, val reply: (B
 private fun ByteArray.hex() = joinToString("") { "%02x".format(it.toInt() and 255) }
 
 fun main() {
+    for ((product, type) in listOf(19840 to 3, 12928 to 3, 20609 to 8, 12929 to 8,
+        20867 to 9, 20868 to 9, 20869 to 10, 20870 to 11)) {
+        check(XiaomiStylusDevice.typeOf(android.view.InputDevice(34, product)) == type)
+    }
+    check(XiaomiStylusDevice.typeOf(android.view.InputDevice(1, 20609)) == 0)
     val address = byteArrayOf(0x12, 0x34, 0x56, 0x78, 0x11, 0x22)
     // Golden vectors from .44 piano overlay, not generated from the implementation.
     check(MippProtocol.parameters(address, 0x42, false).hex() ==
@@ -16,6 +21,10 @@ fun main() {
     check(MippProtocol.frequency(0x43, 3).hex() == "31084303204ef7213c00")
     check(MippProtocol.voltage(0x42).hex() == "3203422800")
     check(MippProtocol.timestamp(0x12345678).hex() == "330412345678")
+    check(MippProtocol.pressure(600, 300).hex() == "5c040258012c")
+    check(MippProtocol.pressure(900, 300).hex() == "5c040384012c")
+    check(MippProtocol.pressure(0, 300).hex() == "5c0400000000")
+    check(runCatching { MippProtocol.pressure(901, 300) }.isFailure)
     check(!MippProtocol.validReply(byteArrayOf(0x84.toByte(), 1), 0x84, 1))
 
     val queue = ArrayDeque<Exchange>()
@@ -93,5 +102,31 @@ fun main() {
     active.close()
     abandoned.reply(byteArrayOf(0x80.toByte(), 1, 0))
     check(queue.isEmpty())
-    println("PASS: stock vectors, two-ID handshake, ACK gating, hall race, panel events, disconnect, malformed reply, panel failure, active-state initialization")
+    // Test firmware forwarding order in a separate full initialization.
+    val order = mutableListOf<String>()
+    var settingError = 0
+    val advanced = MippSession(address, { bytes, opcode, callback ->
+        queue.add(Exchange(bytes, opcode, callback))
+    }, { mode, _ -> if (mode == 37) order.add("enable"); true },
+        { error("Unexpected failure") }, setFirmware = { order.add("firmware"); true },
+        onReady = { order.add("ready") }, onError = { settingError = it })
+    advanced.start(false, false)
+    for (opcode in opcodes) {
+        val request = queue.removeFirst()
+        val length = when (opcode) { 0, 4 -> 1; 1, 2 -> 2; 3 -> 3; else -> 0 }
+        request.reply(byteArrayOf(request.opcode.toByte(), length.toByte()) + ByteArray(length))
+    }
+    check(order == listOf("firmware", "enable", "ready"))
+    advanced.onPanelState(0x344201)
+    val air = queue.removeFirst()
+    check(air.bytes.hex() == "5b0101")
+    air.reply(byteArrayOf(0xdb.toByte(), 1, 1))
+    advanced.setting(byteArrayOf(0x5f, 1, 1), 1, true)
+    queue.removeFirst().reply(byteArrayOf(0xdf.toByte(), 1, 0))
+    check(settingError == 4 && advanced.initialized)
+    advanced.onNotification(byteArrayOf(0x5d, 1, 2))
+    val errorAck = queue.removeFirst()
+    check(settingError == 2 && errorAck.bytes.hex() == "dd00" && errorAck.opcode == -1)
+    advanced.close()
+    println("PASS: stock vectors, dual IDs, ACK gating, hall race, panel events, disconnect, malformed replies, firmware order, air mode, nonuniform setting ACKs, error response")
 }
