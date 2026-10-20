@@ -26,6 +26,9 @@ data class StylusStatus(
     val firmwareRevision: String? = null,
     val vendorId: Int? = null,
     val productId: Int? = null,
+    val features: Int? = null,
+    val penInitialized: Boolean = false,
+    val penError: Int = 0,
 )
 
 object StylusStatusStore {
@@ -47,6 +50,9 @@ object StylusStatusStore {
             firmwareRevision = prefs.getString("firmware", null),
             vendorId = prefs.getInt("vendor", -1).takeIf { it >= 0 },
             productId = prefs.getInt("product", -1).takeIf { it >= 0 },
+            features = prefs.getInt("features", -1).takeIf { it >= 0 },
+            penInitialized = prefs.getBoolean("pen_initialized", false),
+            penError = prefs.getInt("pen_error", 0),
         )
     }
 
@@ -60,6 +66,9 @@ object StylusStatusStore {
             .putString("firmware", status.firmwareRevision)
             .putInt("vendor", status.vendorId ?: -1)
             .putInt("product", status.productId ?: -1)
+            .putInt("features", status.features ?: -1)
+            .putBoolean("pen_initialized", status.penInitialized)
+            .putInt("pen_error", status.penError)
             .apply()
     }
 }

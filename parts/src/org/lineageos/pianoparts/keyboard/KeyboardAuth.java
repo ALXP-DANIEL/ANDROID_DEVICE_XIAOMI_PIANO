@@ -4,9 +4,11 @@
 
 package org.lineageos.pianoparts.keyboard;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
@@ -55,6 +57,7 @@ final class KeyboardAuth {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private volatile IMiDevAuthInterface mService;
     private boolean mBound;
+    private final Runnable mRebind = this::bind;
     private int mTransferErrors;
     private int mInternalErrors;
 
@@ -70,13 +73,36 @@ final class KeyboardAuth {
             // Like stock, drop the binding and connect again a second later.
             Log.i(TAG, "Device authentication service disconnected");
             unbind();
-            mHandler.postDelayed(KeyboardAuth.this::bind, REBIND_DELAY_MS);
+            scheduleRebind();
+        }
+
+        @Override
+        public void onBindingDied(ComponentName name) {
+            Log.w(TAG, "Device authentication service binding died");
+            unbind();
+            scheduleRebind();
+        }
+
+        @Override
+        public void onNullBinding(ComponentName name) {
+            Log.w(TAG, "Device authentication service returned a null binding");
+            // Release this binding so a later check/unlock can try again.
+            unbind();
         }
     };
 
     KeyboardAuth(Context context, Link link) {
         mContext = context;
         mLink = link;
+        // The stock service is not directBootAware. Retry after credential
+        // storage becomes available, even if no cover check is pending.
+        mContext.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                unbind();
+                bind();
+            }
+        }, new IntentFilter(Intent.ACTION_USER_UNLOCKED), Context.RECEIVER_NOT_EXPORTED);
     }
 
     /**
@@ -87,6 +113,7 @@ final class KeyboardAuth {
         if (mBound) {
             return;
         }
+        mHandler.removeCallbacks(mRebind);
         Intent intent = new Intent().setComponent(new ComponentName(SERVICE_PACKAGE, SERVICE_CLASS));
         try {
             mBound = mContext.bindServiceAsUser(intent, mConnection, Context.BIND_AUTO_CREATE,
@@ -100,6 +127,7 @@ final class KeyboardAuth {
     }
 
     synchronized void unbind() {
+        mHandler.removeCallbacks(mRebind);
         if (mBound) {
             try {
                 mContext.unbindService(mConnection);
@@ -109,6 +137,11 @@ final class KeyboardAuth {
             mBound = false;
         }
         mService = null;
+    }
+
+    private synchronized void scheduleRebind() {
+        mHandler.removeCallbacks(mRebind);
+        mHandler.postDelayed(mRebind, REBIND_DELAY_MS);
     }
 
     /**
@@ -215,10 +248,16 @@ final class KeyboardAuth {
             mTransferErrors = 0;
             mInternalErrors = 0;
             return RESULT_OK;
-        } catch (RemoteException | RuntimeException e) {
+        } catch (RemoteException e) {
+            mInternalErrors++;
+            Log.w(TAG, "The device authentication service connection failed", e);
+            // Clearing only mService would leave mBound true forever.
+            unbind();
+            scheduleRebind();
+            return RESULT_AGAIN;
+        } catch (RuntimeException e) {
             mInternalErrors++;
             Log.w(TAG, "The device authentication service failed", e);
-            mService = null;
             return RESULT_AGAIN;
         }
     }
