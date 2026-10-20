@@ -12,13 +12,13 @@ public final class PenFirmwareRepository {
         return find(ROOT, vendor, product, installedVersion);
     }
     public static FirmwareImage find(Path root, int vendor, int product, String installedVersion) throws Exception {
-        if (vendor != 34 || product != 20609 || installedVersion == null) return null;
+        if (!FirmwareImage.supports(vendor, product) || installedVersion == null) return null;
         Path manifestPath = root.resolve("manifest.json");
         if (!Files.isRegularFile(manifestPath)) return null;
         if (Files.size(manifestPath) > 8192) throw new IllegalArgumentException("Firmware metadata too large");
         JSONObject json = new JSONObject(Files.readString(manifestPath));
         String file = json.getString("file");
-        if (!file.matches("[A-Za-z0-9_.-]+\\.img") || file.contains(".."))
+        if (!file.matches("[A-Za-z0-9_.-]+\\.(img|bin)") || file.contains(".."))
             throw new IllegalArgumentException("Invalid firmware filename");
         FirmwareImage.Manifest manifest = new FirmwareImage.Manifest(json.getInt("vendorId"),
                 json.getInt("productId"), json.getString("profile"),

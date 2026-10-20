@@ -52,7 +52,14 @@ public final class MippV2SessionTest {
         r=new Run();r.session.start();r.session.onReply(new byte[0]);check(r.session.state()==MippV2Session.State.FAILED);
         r=new Run();r.initialize();r.session.timeout();check(r.session.state()==MippV2Session.State.FAILED);
         r=new Run();r.session.start();r.sent(1);r.session.onReply(reply(1,1,0,0,1,0));r.sent(2);r.session.onReply(reply(2,1));check(r.session.state()==MippV2Session.State.FAILED);
-        r=new Run();r.initialize();r.sent(6);r.session.onReply(reply(4,0,2,0));r.sent(6);r.session.onReply(reply(4,0,3,0));r.sent(4);r.session.onReply(reply(4,0,3,0));r.sent(3);r.session.onReply(reply(3,1));check(r.session.state()==MippV2Session.State.FAILED);
+        r=new Run();r.initialize();r.sent(6);r.session.onReply(reply(4,0,2,0));r.sent(6);r.session.onReply(reply(4,0,3,0));r.sent(4);r.session.onReply(reply(4,0,3,0));check(MippV2Protocol.parse(r.frames.remove()).opcode==3);r.session.onReply(reply(3,1));r.session.onWrite(true);check(r.session.state()==MippV2Session.State.FAILED);
+        // An early final-block reply must not complete before the end write callback.
+        r=new Run();r.initialize();r.sent(6);r.session.onReply(reply(4,0,2,0));
+        r.sent(6);r.session.onReply(reply(4,0,3,0));
+        check(MippV2Protocol.parse(r.frames.remove()).opcode==4);
+        r.session.onReply(reply(4,0,3,0));r.session.onWrite(true);
+        check(r.session.state()==MippV2Session.State.END && r.completions==0);
+        r.sent(3);check(r.session.state()==MippV2Session.State.VERIFY_REVISION);
         System.out.println(checks+" V2 session checks passed; no GATT/hardware validation");
     }
 }

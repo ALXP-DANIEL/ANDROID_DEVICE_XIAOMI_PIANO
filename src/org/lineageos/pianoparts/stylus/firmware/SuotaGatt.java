@@ -10,7 +10,7 @@ import android.os.Handler;
 import java.util.UUID;
 
 /** Exclusive GATT adapter: owner forwards callbacks on its handler and suspends normal MIPP. */
-public final class SuotaGatt implements SuotaV1.Transport {
+public final class SuotaGatt implements SuotaV1.Transport, PenFirmwareGatt {
     public static final UUID PATCH_SIZE = UUID.fromString("42c3dfdd-77be-4d9c-8454-8f875267fb3b");
     private static final UUID CCCD = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
     private final BluetoothGatt gatt;
@@ -29,7 +29,9 @@ public final class SuotaGatt implements SuotaV1.Transport {
     /** PNP/battery must come from this connected session, never cached accessory name. */
     public void prepare(int vendorId, int productId, int battery, boolean exclusiveGatt) {
         if (active || prepared || failed) throw new IllegalStateException("Adapter already used");
-        if (!exclusiveGatt || vendorId != 34 || productId != 20609 || battery < 20 || battery > 100)
+        if (!exclusiveGatt || vendorId != 34 || productId != 20609 || battery < 20 || battery > 100
+                || !FirmwareImage.PROFILE.equals(image.manifest.profile)
+                || image.manifest.vendorId != vendorId || image.manifest.productId != productId)
             throw new IllegalArgumentException("Exclusive connected P81C with battery >=20 required");
         BluetoothGattService service = gatt.getService(SuotaV1.SERVICE);
         if (service == null) { abort("P81C SUOTA service absent"); return; }

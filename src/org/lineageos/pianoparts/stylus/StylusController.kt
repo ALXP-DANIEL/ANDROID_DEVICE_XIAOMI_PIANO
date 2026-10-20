@@ -31,8 +31,7 @@ import java.util.UUID
 import java.util.concurrent.Executors
 import org.lineageos.pianoparts.stylus.firmware.FirmwareImage
 import org.lineageos.pianoparts.stylus.firmware.PenFirmwareRepository
-import org.lineageos.pianoparts.stylus.firmware.SuotaGatt
-import org.lineageos.pianoparts.stylus.firmware.SuotaV1
+import org.lineageos.pianoparts.stylus.firmware.PenFirmwareGatt
 
 /** Magnetic charger pairing, MIPP touch initialization and Bluetooth information. */
 class StylusController(context: Context, handler: Handler) : AutoCloseable {
@@ -57,7 +56,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     private val laserPresentation = PenLaserController(this.context, this.handler,
         { mode -> mippSession?.laser(mode) },
         { started && screenOn && status.penInitialized && firmwareAdapter == null })
-    private var firmwareAdapter: SuotaGatt? = null
+    private var firmwareAdapter: PenFirmwareGatt? = null
     private var firmwareImage: FirmwareImage? = null
     private val firmwareLoader = Executors.newSingleThreadExecutor()
     private var firmwareCheckGeneration = 0
@@ -1051,9 +1050,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         firmwareImage = null
         firmwareLoader.execute {
             var image: FirmwareImage? = null
-            val state = if (snapshot.vendorId != 34 || snapshot.productId != 20609) "unsupported" else {
+            val state = if (!FirmwareImage.supports(snapshot.vendorId ?: -1, snapshot.productId ?: -1)) "unsupported" else {
                 try {
-                    image = PenFirmwareRepository.find(34, 20609, snapshot.firmwareRevision)
+                    image = PenFirmwareRepository.find(snapshot.vendorId ?: -1, snapshot.productId ?: -1, snapshot.firmwareRevision)
                     if (image == null) "unavailable" else "available"
                 } catch (exception: Exception) {
                     Log.w(TAG, "Bundled pen firmware validation failed", exception)
@@ -1094,7 +1093,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         val image = firmwareImage ?: return
         val client = gatt ?: return
         if (status.state != StylusConnectionState.CONNECTED || !status.penInitialized ||
-            status.vendorId != 34 || status.productId != 20609 || (status.battery ?: -1) < 20 ||
+            status.vendorId != image.manifest.vendorId || status.productId != image.manifest.productId ||
+            (status.battery ?: -1) < 20 ||
             status.penError != 0 ||
             !freshPenIdentity || !freshPenBattery || !freshPenRevision ||
             status.firmwareRevision != firmwareImageRevision ||
@@ -1113,14 +1113,14 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         status = status.copy(penInitialized = false, updateState = "updating", updateProgress = 0)
         publish()
         firmwareWakeLock.acquire(240_000L)
-        val update = SuotaGatt(client, handler, image, object : SuotaV1.Listener {
+        val update = PenFirmwareGatt.create(client, handler, image, object : PenFirmwareGatt.Listener {
             override fun progress(percent: Int) {
                 status = status.copy(updateProgress = percent); publish()
             }
-            override fun finished(state: SuotaV1.State, reason: String) {
+            override fun finished(state: PenFirmwareGatt.State, reason: String) {
                 Log.i(TAG, "Pen firmware $state: $reason")
                 when (state) {
-                    SuotaV1.State.VERIFY_REVISION -> {
+                    PenFirmwareGatt.State.VERIFY_REVISION -> {
                         firmwareVerifying = true
                         status = status.copy(updateState = "verifying"); publish()
                         handler.postDelayed(firmwareVerifyTimeout, 60_000L)
@@ -1128,7 +1128,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                         closeGatt()
                         handler.postDelayed(firmwareReconnect, 2_000L)
                     }
-                    SuotaV1.State.COMPLETE -> finishFirmware("complete")
+                    PenFirmwareGatt.State.COMPLETE -> finishFirmware("complete")
                     else -> {
                         finishFirmware("failed")
                         handler.post { if (started) { gattAttempts = 0; closeGatt() } }
@@ -1137,7 +1137,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             }
         })
         firmwareAdapter = update
-        try { update.prepare(34, 20609, status.battery ?: -1, true) }
+        try { update.prepare(image.manifest.vendorId, image.manifest.productId, status.battery ?: -1, true) }
         catch (exception: RuntimeException) {
             Log.w(TAG, "Pen firmware preparation failed", exception)
             firmwareAdapter = null; finishFirmware("failed"); closeGatt()
@@ -1157,7 +1157,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
 
     private fun verifyFirmwareIdentity() {
         if (!firmwareVerifying || !freshPenIdentity || !freshPenRevision || !freshPenBattery) return
-        if (status.address != firmwareAddress || status.vendorId != 34 || status.productId != 20609) {
+        if (status.address != firmwareAddress || status.vendorId != firmwareImage?.manifest?.vendorId ||
+            status.productId != firmwareImage?.manifest?.productId) {
             finishFirmware("failed")
         } else firmwareAdapter?.verifyRevision(status.firmwareRevision)
     }
