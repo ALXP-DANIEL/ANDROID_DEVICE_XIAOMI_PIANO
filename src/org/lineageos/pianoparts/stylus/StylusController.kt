@@ -116,6 +116,8 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     private var mippMtuPending = false
     private var mippNegotiatedMtu = 0
     private var gattAttempts = 0
+    private var gattPhase = "idle"
+    private var batteryNotifyWrite: Runnable? = null
     private var hibernating = false
     private var penFps: Int? = null
     private val pendingWrites = ArrayDeque<PenWrite>()
@@ -169,8 +171,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         }
     }
     private val gattTimeout = Runnable {
-        Log.w(TAG, "Pen GATT operation timed out")
-        closeGatt()
+        closeGatt("operation timed out")
     }
 
     private val profileListener = object : BluetoothProfile.ServiceListener {
@@ -285,10 +286,11 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             dispatch {
                 if (client !== gatt) return@dispatch
                 if (result == BluetoothGatt.GATT_SUCCESS && state == BluetoothProfile.STATE_CONNECTED) {
+                    gattPhase = "service discovery"
                     armGattTimeout()
-                    if (!client.discoverServices()) closeGatt()
+                    if (!client.discoverServices()) closeGatt("service discovery request rejected")
                 } else if (result != BluetoothGatt.GATT_SUCCESS || state == BluetoothProfile.STATE_DISCONNECTED) {
-                    closeGatt()
+                    closeGatt("connection callback status=$result state=$state")
                 }
             }
         }
@@ -297,13 +299,15 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
             dispatch {
                 if (client !== gatt) return@dispatch
                 if (result != BluetoothGatt.GATT_SUCCESS) {
-                    closeGatt()
+                    closeGatt("service discovery failed: $result")
                     return@dispatch
                 }
                 mippCommand = client.getService(MIPP_SERVICE)?.getCharacteristic(MIPP_COMMAND)
                 mippReply = client.getService(MIPP_SERVICE)?.getCharacteristic(MIPP_REPLY)
                 val battery = client.getService(BATTERY_SERVICE)?.getCharacteristic(BATTERY)
                 val info = client.getService(INFORMATION_SERVICE)
+                Log.i(TAG, "Pen GATT services: battery=${battery != null} " +
+                    "MIPP_FE11=${mippCommand != null} MIPP_FE12=${mippReply != null}")
                 listOfNotNull(battery, info?.getCharacteristic(FIRMWARE), info?.getCharacteristic(PNP_ID))
                     .forEach(pendingReads::add)
                 val descriptor = battery?.getDescriptor(CLIENT_CONFIG)
@@ -311,13 +315,28 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                     battery.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 &&
                     client.setCharacteristicNotification(battery, true)
                 ) {
+                    // HyperOS .44 defers the battery CCCD write by 100ms after discovery.
+                    // Keep this on the controller handler; never overlap it with GATT reads.
+                    gattPhase = "battery CCCD deferred"
                     armGattTimeout()
-                    if (client.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) ==
-                        BluetoothStatusCodes.SUCCESS
-                    ) {
-                        return@dispatch
+                    val subscription = Runnable {
+                        if (client !== gatt) return@Runnable
+                        batteryNotifyWrite = null
+                        gattPhase = "battery CCCD write"
+                        val submitted = client.writeDescriptor(
+                            descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+                        if (submitted == BluetoothStatusCodes.SUCCESS) {
+                            armGattTimeout()
+                        } else {
+                            Log.w(TAG, "Pen battery CCCD request rejected: $submitted; trying MIPP")
+                            readNextCharacteristic()
+                        }
                     }
+                    batteryNotifyWrite = subscription
+                    handler.postDelayed(subscription, 100L)
+                    return@dispatch
                 }
+                Log.w(TAG, "Pen battery CCCD unavailable; continuing with MIPP initialization")
                 readNextCharacteristic()
             }
         }
@@ -332,7 +351,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 }
                 if (descriptor.characteristic.uuid == MIPP_REPLY) {
                     if (result != BluetoothGatt.GATT_SUCCESS) {
-                        closeGatt()
+                        closeGatt("MIPP FE12 notification descriptor failed: $result")
                     } else {
                         // Android may negotiate the shared MTU before service discovery.
                         // MIPP must never start until its reply notifications are ready.
@@ -341,11 +360,17 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                             startMipp()
                         } else {
                             mippMtuPending = true
+                            gattPhase = "MTU negotiation"
                             armGattTimeout()
-                            if (!client.requestMtu(512)) closeGatt()
+                            if (!client.requestMtu(512)) closeGatt("MTU request rejected")
                         }
                     }
-                } else readNextCharacteristic()
+                } else {
+                    if (result != BluetoothGatt.GATT_SUCCESS) {
+                        Log.w(TAG, "Pen characteristic notification descriptor failed: $result; continuing")
+                    }
+                    readNextCharacteristic()
+                }
             }
         }
 
@@ -359,7 +384,9 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
                 if (!mippMtuPending) return@dispatch
                 mippMtuPending = false
                 handler.removeCallbacks(gattTimeout)
-                if (result != BluetoothGatt.GATT_SUCCESS || mtu < 35) closeGatt()
+                if (result != BluetoothGatt.GATT_SUCCESS || mtu < 35) {
+                    closeGatt("MTU negotiation failed: status=$result mtu=$mtu")
+                }
                 else startMipp()
             }
         }
@@ -828,6 +855,7 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
     private fun openGatt(device: BluetoothDevice) {
         mippMtuPending = false
         mippNegotiatedMtu = 0
+        gattPhase = "connecting"
         freshPenIdentity = false
         freshPenBattery = false
         freshPenRevision = false
@@ -844,29 +872,35 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         handler.removeCallbacks(gattTimeout)
         val client = gatt ?: return
         while (pendingReads.isNotEmpty()) {
+            gattPhase = "reading ${pendingReads.first.uuid}"
             if (client.readCharacteristic(pendingReads.first)) {
                 armGattTimeout()
                 return
             }
+            Log.w(TAG, "Pen GATT characteristic read request rejected: ${pendingReads.first.uuid}")
             pendingReads.removeFirst()
         }
-        val reply = mippReply ?: return
-        val command = mippCommand ?: return
-        val descriptor = reply.getDescriptor(CLIENT_CONFIG) ?: run { closeGatt(); return }
+        val reply = mippReply ?: run { closeGatt("MIPP FE12 missing"); return }
+        val command = mippCommand ?: run { closeGatt("MIPP FE11 missing"); return }
+        val descriptor = reply.getDescriptor(CLIENT_CONFIG) ?: run {
+            closeGatt("MIPP FE12 notification descriptor missing")
+            return
+        }
         if (reply.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY == 0 ||
             command.properties and BluetoothGattCharacteristic.PROPERTY_WRITE == 0 ||
             !client.setCharacteristicNotification(reply, true)
         ) {
-            closeGatt()
+            closeGatt("MIPP notification/write properties or local subscription rejected")
             return
         }
+        gattPhase = "MIPP FE12 CCCD write"
         armGattTimeout()
-        if (client.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) !=
-            BluetoothStatusCodes.SUCCESS
-        ) closeGatt()
+        val result = client.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+        if (result != BluetoothStatusCodes.SUCCESS) closeGatt("MIPP FE12 CCCD request rejected: $result")
     }
 
     private fun startMipp() {
+        gattPhase = "MIPP initialization"
         // Retry generation notification if the touch HAL was unavailable at Parts startup.
         inputManager.inputDeviceIds.forEach(::updatePenInput)
         val address = PenUEventObserver.normalizeAddress(adapter?.address)
@@ -998,7 +1032,12 @@ class StylusController(context: Context, handler: Handler) : AutoCloseable {
         mippSession?.laser(on)
     }
 
-    private fun closeGatt() {
+    private fun closeGatt(reason: String = "caller requested close") {
+        if (gatt != null) Log.w(TAG, "Pen GATT closing: phase=$gattPhase " +
+            "reason=$reason attempt=$gattAttempts")
+        batteryNotifyWrite?.let { handler.removeCallbacks(it) }
+        batteryNotifyWrite = null
+        gattPhase = "idle"
         mippMtuPending = false
         mippNegotiatedMtu = 0
         laserPresentation.closePresentation()
