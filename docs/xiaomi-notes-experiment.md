@@ -2,7 +2,7 @@
 
 This is a **build-default integration of the original signed APK pair**, not a
 claim that every stock Notes feature runs on AOSP. Android 17 piano products
-require the separately staged `vendor/xiaomi/piano-notes` inputs and fail
+require the separately staged `vendor/xiaomi/piano-xiaomi-notes` inputs and fail
 closed if either APK or the required Soong extension is missing or altered.
 
 ## Stock inputs
@@ -26,7 +26,7 @@ verify again for every tested build. Do not treat the Canvas/Etar
 
 ## Required Android 17 build inputs
 
-Prepare a **separate local** `vendor/xiaomi/piano-notes` directory with its own
+Prepare a **separate local** `vendor/xiaomi/piano-xiaomi-notes` directory with its own
 `Android.bp`, both hash-verified APKs and a `notes.mk` containing:
 
 ```make
@@ -44,7 +44,7 @@ partition and class. Notes should declare `required: ["RtMiCloudSDK"]`
 for installation ordering; that alone does *not* resolve its manifest
 `<uses-library android:name="micloud-sdk">` dependency.
 
-`device.mk` always inherits `vendor/xiaomi/piano-notes/notes.mk`
+`device.mk` always inherits `vendor/xiaomi/piano-xiaomi-notes/notes.mk`
 and exposes the external Soong namespace. There is **no opt-in flag**;
 missing `notes.mk` or verified APKs is deliberately a build error. Do not add the APKs to
 `proprietary-files.txt`: the existing extraction generator automatically
@@ -56,7 +56,7 @@ The stock SDK exposes its library from an **APK manifest `<library>` tag**,
 not a system Java JAR. Standard Soong `android_app_import` does not publish
 `JavaInfoProvider` for such an imported APK, but Notes requires a genuine
 `micloud-sdk` class-loader dependency. The separate local
-`vendor/xiaomi/piano-notes` package carries a narrowly scoped opt-in Soong
+`vendor/xiaomi/piano-xiaomi-notes` package carries a narrowly scoped opt-in Soong
 provider patch publishing the **real original SDK APK** and installed path.
 It supplies no fake JAR or replacement manifest.
 
