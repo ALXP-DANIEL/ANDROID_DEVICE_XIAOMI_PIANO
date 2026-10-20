@@ -15,13 +15,22 @@ repo sync
 
 ## Trees
 
-| Path | Repository |
-| --- | --- |
-| `device/xiaomi/piano` | this repository |
-| `device/xiaomi/sm8750-common` | [android_device_xiaomi_sm8750-common](https://github.com/xiaomi-pad-8-pro-development/android_device_xiaomi_sm8750-common) |
-| `device/xiaomi/piano-kernel` | [android_device_xiaomi_piano-kernel](https://github.com/xiaomi-pad-8-pro-development/android_device_xiaomi_piano-kernel) |
-| `vendor/xiaomi/piano` | [android_vendor_xiaomi_piano](https://github.com/xiaomi-pad-8-pro-development/android_vendor_xiaomi_piano) |
-| `vendor/xiaomi/sm8750-common` | [android_vendor_xiaomi_sm8750-common](https://github.com/xiaomi-pad-8-pro-development/android_vendor_xiaomi_sm8750-common) |
+| Path | Repository | |
+| --- | --- | --- |
+| `device/xiaomi/piano` | this repository | required |
+| `device/xiaomi/sm8750-common` | [android_device_xiaomi_sm8750-common](https://github.com/xiaomi-pad-8-pro-development/android_device_xiaomi_sm8750-common) | required |
+| `device/xiaomi/piano-kernel` | [android_device_xiaomi_piano-kernel](https://github.com/xiaomi-pad-8-pro-development/android_device_xiaomi_piano-kernel) | required |
+| `vendor/xiaomi/piano` | [android_vendor_xiaomi_piano](https://github.com/xiaomi-pad-8-pro-development/android_vendor_xiaomi_piano) | required |
+| `vendor/xiaomi/sm8750-common` | [android_vendor_xiaomi_sm8750-common](https://github.com/xiaomi-pad-8-pro-development/android_vendor_xiaomi_sm8750-common) | required |
+| `device/xiaomi/piano-xiaomi-parts` | [android_device_xiaomi_piano-xiaomi-parts](https://github.com/xiaomi-pad-8-pro-development/android_device_xiaomi_piano-xiaomi-parts) | optional |
+| `device/xiaomi/piano-alxp-parts` | [android_device_xiaomi_piano-alxp-parts](https://github.com/xiaomi-pad-8-pro-development/android_device_xiaomi_piano-alxp-parts) | optional |
+| `device/xiaomi/piano-patches` | [android_device_xiaomi_piano-patches](https://github.com/xiaomi-pad-8-pro-development/android_device_xiaomi_piano-patches) | optional |
+| `vendor/xiaomi/piano-xiaomi-camera` | [android_vendor_xiaomi_piano-xiaomi-camera](https://github.com/xiaomi-pad-8-pro-development/android_vendor_xiaomi_piano-xiaomi-camera) | optional |
+| `vendor/xiaomi/piano-xiaomi-notes` | [android_vendor_xiaomi_piano-xiaomi-notes](https://github.com/xiaomi-pad-8-pro-development/android_vendor_xiaomi_piano-xiaomi-notes) | optional |
+
+Optional trees are picked up when synced; the device builds without them.
+Release builds set `PIANO_AVB_KEY_PATH` to their AVB key; otherwise the AOSP
+test key is used.
 
 ## Building
 
