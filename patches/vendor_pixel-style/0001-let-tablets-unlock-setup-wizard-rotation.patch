@@ -1,0 +1,19 @@
+diff --git a/config/common.mk b/config/common.mk
+index c76814f..6a676e6 100644
+--- a/config/common.mk
++++ b/config/common.mk
+@@ -59,11 +59,9 @@ PRODUCT_PRODUCT_PROPERTIES += \
+     setupwizard.feature.joined_up_loading=true \
+     setupwizard.feature.locale_agnostic_enabled=true
+ 
+-ifeq ($(PRODUCT_CHARACTERISTICS),tablet)
+-PRODUCT_PRODUCT_PROPERTIES += ro.setupwizard.rotation_locked=false
+-else
+-PRODUCT_PRODUCT_PROPERTIES += ro.setupwizard.rotation_locked=true
+-endif
++# PRODUCT_CHARACTERISTICS is not set yet when this file is read, so lock
++# rotation by default and let tablets set ro.setupwizard.rotation_locked=false.
++PRODUCT_PRODUCT_PROPERTIES += ro.setupwizard.rotation_locked?=true
+ 
+ # StorageManager configuration
+ PRODUCT_PRODUCT_PROPERTIES += \
