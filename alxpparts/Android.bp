@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //
 
-// AirPods audio switching between Apple devices, trimmed from LibrePods
-// (see UPSTREAM). Built from source with the ROM; installed only when the
-// product sets WITH_ALXP_PARTS (see product.mk).
+// ALXP Features: AirPods switching (trimmed from LibrePods, see UPSTREAM),
+// iPhone notifications and the ALXP for Mac link. Built from source with
+// the ROM; installed only when the product sets WITH_ALXP_PARTS (see
+// product.mk). The Mac side lives in mac/ and is not part of the ROM.
 android_app {
     name: "ALXPParts",
     min_sdk_version: "current",
@@ -14,6 +15,7 @@ android_app {
     static_libs: [
         "SettingsLib",
         "androidx.preference_preference",
+        "androidx.core_core",
     ],
     certificate: "platform",
     platform_apis: true,

@@ -7,6 +7,14 @@ switch on that page:
 - **AirPods automatic switching** with iPhone and Mac.
 - **iPhone notifications** on the Pad through Apple Notification Center
   Service (ANCS), the way a smartwatch gets them.
+- **Mac shared clipboard**: text and images, both ways.
+- **Mac second display**: the Pad as an extra Mac display, like Sidecar.
+
+The Mac features need **ALXP for Mac**, a menu bar app in `mac/`. Build it
+on the Mac with `mac/make-app.sh` and open `mac/build/ALXP.app`. It finds the
+Pad over Bonjour on the same Wi-Fi; the first time, the Mac menu shows a
+six-digit code and the Pad asks you to confirm it. The display needs Screen
+Recording and Accessibility permission on the Mac.
 
 The app is GPL-3.0-or-later. AirPods switching is trimmed from LibrePods (see UPSTREAM),
 with the original copyright notices kept in the source.

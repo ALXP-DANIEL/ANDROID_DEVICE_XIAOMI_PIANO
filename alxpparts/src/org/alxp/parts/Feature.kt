@@ -10,18 +10,34 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
+import org.alxp.parts.mac.MacLinkService
 import org.alxp.parts.services.AirPodsService
 import org.alxp.parts.services.AncsService
 
-/** Each ALXP feature is one service, on while its component is enabled. */
+/**
+ * Each ALXP feature is a switch backed by a service. The service component is
+ * enabled while any feature that uses it is on; the AirPods Bluetooth patch
+ * checks that component directly.
+ */
 enum class Feature(val key: String, private val service: Class<out Service>) {
     AIRPODS_SWITCHING("airpods_switching", AirPodsService::class.java),
-    IPHONE_NOTIFICATIONS("iphone_notifications", AncsService::class.java);
+    IPHONE_NOTIFICATIONS("iphone_notifications", AncsService::class.java),
+    MAC_CLIPBOARD("mac_clipboard", MacLinkService::class.java),
+    MAC_DISPLAY("mac_display", MacLinkService::class.java);
+
+    private fun prefs(context: Context) =
+        context.getSharedPreferences("features", Context.MODE_PRIVATE)
 
     private fun component(context: Context) = ComponentName(context, service)
 
-    fun isOn(context: Context) = context.packageManager.getComponentEnabledSetting(
-        component(context)) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+    private fun serviceEnabled(context: Context) = context.packageManager
+        .getComponentEnabledSetting(component(context)) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+
+    fun isOn(context: Context) = serviceEnabled(context) &&
+        prefs(context).getBoolean(key, sharedBy().size == 1)
+
+    /** Features that share this one's service. */
+    private fun sharedBy() = entries.filter { it.service == service }
 
     fun start(context: Context) {
         context.startForegroundService(Intent(context, service))
@@ -29,9 +45,11 @@ enum class Feature(val key: String, private val service: Class<out Service>) {
 
     fun setOn(context: Context, on: Boolean) {
         val app = context.applicationContext
-        if (!on) app.stopService(Intent(app, service))
+        prefs(app).edit().putBoolean(key, on).apply()
+        val needed = sharedBy().any { prefs(app).getBoolean(it.key, false) }
+        if (!needed) app.stopService(Intent(app, service))
         app.packageManager.setComponentEnabledSetting(component(app),
-            if (on) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            if (needed) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
             else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP)
         if (this == AIRPODS_SWITCHING) {
@@ -40,7 +58,7 @@ enum class Feature(val key: String, private val service: Class<out Service>) {
             NativeIntegration.setIdentity(on)
             restartBluetooth(app)
         }
-        if (on) start(app)
+        if (needed) start(app)
     }
 
     @Suppress("DEPRECATION")

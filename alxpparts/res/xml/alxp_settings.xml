@@ -23,6 +23,20 @@
             android:icon="@drawable/ic_feature_iphone"
             android:title="@string/iphone_title"
             android:summary="@string/iphone_summary" />
+        <SwitchPreferenceCompat android:key="mac_clipboard"
+            android:persistent="false"
+            app:layout="@layout/feature_card"
+            app:allowDividerAbove="false" app:allowDividerBelow="false"
+            android:icon="@drawable/ic_feature_clipboard"
+            android:title="@string/mac_clipboard_title"
+            android:summary="@string/mac_clipboard_summary" />
+        <SwitchPreferenceCompat android:key="mac_display"
+            android:persistent="false"
+            app:layout="@layout/feature_card"
+            app:allowDividerAbove="false" app:allowDividerBelow="false"
+            android:icon="@drawable/ic_feature_mac"
+            android:title="@string/mac_display_title"
+            android:summary="@string/mac_display_summary" />
     </PreferenceCategory>
 
     <com.android.settingslib.widget.FooterPreference

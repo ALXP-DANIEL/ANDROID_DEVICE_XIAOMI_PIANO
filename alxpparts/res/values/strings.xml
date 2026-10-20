@@ -2,7 +2,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <resources>
     <string name="app_name" translatable="false">ALXP Features</string>
-    <string name="app_summary">AirPods switching, iPhone notifications and more</string>
+    <string name="app_summary">AirPods, iPhone and Mac</string>
 
     <string name="hero_title">ALXP Features</string>
     <string name="hero_summary">Extras that make the Pad work with the rest of your devices</string>
@@ -16,6 +16,11 @@
     <string name="iphone_title">iPhone notifications</string>
     <string name="iphone_summary">Shows your iPhone notifications on the Pad. Pair once from the iPhone: Settings &gt; Bluetooth &gt; %1$s.</string>
 
+    <string name="mac_clipboard_title">Mac shared clipboard</string>
+    <string name="mac_clipboard_summary">Copy on the Pad, paste on your Mac, and back. Text and images, over your Wi-Fi with ALXP for Mac.</string>
+    <string name="mac_display_title">Mac second display</string>
+    <string name="mac_display_summary">Use the Pad as an extra Mac display, like Sidecar. Start it from ALXP for Mac; touch and the pen move the pointer.</string>
+
     <string name="footer">AirPods switching is based on LibrePods.</string>
 
     <string name="notification_channel">AirPods switching</string>
@@ -26,4 +31,14 @@
     <string name="ancs_channel">iPhone notifications</string>
     <string name="ancs_waiting">Waiting for your iPhone</string>
     <string name="ancs_connected">Connected to %1$s</string>
+
+    <string name="mac_title">ALXP for Mac</string>
+    <string name="mac_channel">Mac connection</string>
+    <string name="mac_pair_channel">Mac pairing</string>
+    <string name="mac_waiting">Waiting for your Mac</string>
+    <string name="mac_connected">Connected to your Mac</string>
+    <string name="mac_pair_title">Pair with your Mac?</string>
+    <string name="mac_pair_text">Check that your Mac shows %1$s</string>
+    <string name="mac_pair_accept">Pair</string>
+    <string name="mac_pair_reject">Reject</string>
 </resources>
