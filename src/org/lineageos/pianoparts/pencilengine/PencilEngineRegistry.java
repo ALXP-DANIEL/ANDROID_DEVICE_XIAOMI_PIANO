@@ -23,10 +23,10 @@ import java.util.Objects;
  * global aggregate posture mode 20036, per-app reference-counted feature
  * ownership, and declarative effects. No Android Binder or OEM libraries.
  *
- * TODO for future integration: an authenticated, permission-checked Binder
- * adapter, PackageManager UID ownership checks, linkToDeath/unlinkToDeath,
- * color-picker UI and callback delivery, foreground-app policy, and verified
- * touch HAL / system-server dispatch. None of these are active in this class.
+ * PencilEngineBinder supplies the separately tested transport, caller checks,
+ * death recipients and callback delivery. A service owner, real color-picker
+ * and touch backends, foreground-app policy, and runtime validation are still
+ * required. None of those effects are active in this pure state machine.
  *
  * Deliberate secure compatibility changes from the decompiled stock code:
  * register by package requires UID ownership, identity keys include UID,
