@@ -176,4 +176,12 @@
             <instance>default</instance>
         </interface>
     </hal>
+    <hal format="aidl">
+        <name>vendor.xiaomi.hardware.aidl.midevauth</name>
+        <version>1</version>
+        <interface>
+            <name>IMidevauthService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
 </compatibility-matrix>
