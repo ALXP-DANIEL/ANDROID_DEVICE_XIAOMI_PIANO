@@ -11,11 +11,13 @@ import org.lineageos.pianoparts.pencilengine.PencilEngineBinder;
 public final class PencilEngineManagerService extends Service {
     private PencilEngineBinder transport;
     private ScreenColorPicker picker;
+    private PencilEngineEffects effects;
 
     @Override public void onCreate() {
         super.onCreate();
         picker = new ScreenColorPicker(this);
-        transport = new PencilEngineBinder(getPackageManager(), picker);
+        effects = new PencilEngineEffects(this, picker);
+        transport = new PencilEngineBinder(getPackageManager(), effects);
         picker.setTransport(transport);
     }
 
@@ -28,6 +30,7 @@ public final class PencilEngineManagerService extends Service {
 
     @Override public void onDestroy() {
         transport.close();
+        effects.close();
         picker.close();
         super.onDestroy();
     }
