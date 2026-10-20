@@ -1,0 +1,16 @@
+# Stock QSEE listener completion property.
+vendor_internal_prop(vendor_tee_listener_prop)
+
+# Recovery stock vendor/odm mount one-shot state
+# (vendor.piano.stock.mounted).
+vendor_internal_prop(vendor_piano_qsee_mount_state_prop)
+
+# Secure-service security level selector. Stock ships
+# vendor.gatekeeper.is_security_level_spu=0 in vendor build.prop; recovery
+# sets the same value so KeyMint and Gatekeeper select the TZ-backed
+# implementation instead of SPU.
+vendor_internal_prop(vendor_piano_spu_level_prop)
+
+# KeyMint retry interval. Stock ships vendor.keymint.retry_timer=5 in
+# vendor build.prop; the type name matches stock.
+vendor_internal_prop(vendor_keymint_retry_timer_prop)
