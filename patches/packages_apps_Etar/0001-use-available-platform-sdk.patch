@@ -1,0 +1,11 @@
+diff --git a/app/Android.bp b/app/Android.bp
+--- a/app/Android.bp
++++ b/app/Android.bp
+@@ -39,6 +39,6 @@ android_app {
+         proguard_flags_files: ["proguard-rules.pro"],
+     },
+ 
+-    sdk_version: "37",
++    sdk_version: "36.1",
+ 
+     aaptflags: [
