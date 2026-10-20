@@ -16,6 +16,7 @@
   PianoMenu.c
   PianoMenu.h
   PianoDtb.c
+  PianoReset.c
   PianoTouch.c
   PianoTouchKeys.h
 
@@ -27,6 +28,7 @@
   QcomPkg/QcomPkg.dec
 
 [LibraryClasses]
+  PeCoffGetEntryPointLib
   CacheMaintenanceLib
   DebugLib
   IoLib
@@ -52,3 +54,5 @@
   gEfiGraphicsOutputProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
   gEfiClockProtocolGuid
+  gEfiBlockIoProtocolGuid
+  gEfiResetNotificationProtocolGuid

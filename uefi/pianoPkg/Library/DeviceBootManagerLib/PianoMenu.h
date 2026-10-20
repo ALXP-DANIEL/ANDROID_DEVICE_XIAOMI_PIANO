@@ -20,4 +20,8 @@ PianoTouchStart (VOID);
 VOID
 PianoDtbInstall (VOID);
 
+/* Keep Reboot and Shut down from hanging (PianoReset.c). */
+VOID
+PianoResetHookInstall (VOID);
+
 #endif
