@@ -93,6 +93,8 @@
     <string name="stylus_handwriting_summary">Turn handwriting into text in any text field</string>
     <string name="stylus_buttons_title">Pen buttons</string>
     <string name="stylus_buttons_summary">Use the pen buttons for shortcuts such as opening the notes app</string>
+    <string name="pencil_engine_posture_title">Drawing app pen posture (experimental)</string>
+    <string name="pencil_engine_posture_summary">Use Xiaomi's posture touch mode while a supported drawing app is in front and your Focus Pen Pro is ready. No proprietary handwriting recognition. Off by default.</string>
     <string name="stylus_device_info_title">Device information</string>
     <string name="stylus_connection_title">Connection</string>
     <string name="stylus_battery_title">Battery</string>
