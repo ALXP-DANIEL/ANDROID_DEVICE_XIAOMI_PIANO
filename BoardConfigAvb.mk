@@ -29,5 +29,5 @@ VENDOR_SECURITY_PATCH := 2026-09-01
 # their descriptors libavb reports invalid metadata and the slot falls back.
 # Take the hash descriptors from the stock OS4.0.0.44 images (they carry AVB footers).
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(PIANO_KERNEL_PATH)/avb/pvmfw.img \
-    --include_descriptors_from_image $(PIANO_KERNEL_PATH)/avb/countrycode.img
+    --include_descriptors_from_image vendor/xiaomi/piano/avb/pvmfw.img \
+    --include_descriptors_from_image vendor/xiaomi/piano/avb/countrycode.img

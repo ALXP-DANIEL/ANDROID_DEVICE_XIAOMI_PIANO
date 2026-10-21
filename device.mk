@@ -15,7 +15,6 @@ PRODUCT_CHARACTERISTICS := tablet
 
 # Offline extraction must generate both vendor trees before product evaluation.
 $(call inherit-product, vendor/xiaomi/piano/piano-vendor.mk)
-$(call inherit-product, device/xiaomi/piano/kernel.mk)
 PRODUCT_SOONG_NAMESPACES += device/xiaomi/piano device/xiaomi/sm8750-common
 
 PRODUCT_COPY_FILES += \
