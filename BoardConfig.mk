@@ -2,10 +2,6 @@ DEVICE_PATH := device/xiaomi/piano
 
 include device/xiaomi/sm8750-common/BoardConfigCommon.mk
 
-# Boot
-BOARD_BOOT_HEADER_VERSION := 4
-BOARD_KERNEL_PAGESIZE := 4096
-
 # Physical partition sizes
 BOARD_BOOTIMAGE_PARTITION_SIZE := 100663296
 BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE := 8388608
@@ -45,9 +41,6 @@ TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 # Filesystems
 TARGET_USERIMAGES_USE_F2FS := true
 
-# Platform
-TARGET_BOARD_PLATFORM := sun
-
 BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE := true
 
 # Read-only logical partitions use EROFS; persist still needs ext4 image support.
@@ -76,8 +69,6 @@ BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
 SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/system_ext/public
 SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/system_ext/private
 DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/configs/vintf/manifest.xml
-
-TARGET_FS_CONFIG_GEN := $(COMMON_PATH)/configs/config.fs
 
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += $(DEVICE_PATH)/configs/vintf/framework_matrix.xml
 
