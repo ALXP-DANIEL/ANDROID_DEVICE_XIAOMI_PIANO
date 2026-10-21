@@ -72,6 +72,7 @@ PRODUCT_PACKAGES += \
 
 # Optional trees, included when synced.
 $(call inherit-product-if-exists, device/xiaomi/piano-xiaomi-parts/pianoparts.mk)
+$(call inherit-product-if-exists, device/xiaomi/piano-alxp-parts/alxpparts.mk)
 $(call inherit-product-if-exists, device/xiaomi/piano-patches/patches.mk)
 
 # Lineage LiveDisplay reading mode and high touch polling rate,
