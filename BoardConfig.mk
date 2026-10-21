@@ -35,11 +35,17 @@ TARGET_CPU_VARIANT_RUNTIME := oryon
 # API level
 BOARD_SHIPPING_API_LEVEL := 202404
 
+# Audio
+BOARD_SUPPORTS_OPENSOURCE_STHAL := true
+
 # Bootloader
 TARGET_NO_BOOTLOADER := true
 
 # Display
 TARGET_SCREEN_DENSITY := 440
+
+# Filesystem
+TARGET_FS_CONFIG_GEN := $(DEVICE_PATH)/configs/config.fs
 
 # Kernel
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
@@ -148,6 +154,12 @@ BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE := true
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery.fstab
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 
+# Sepolicy
+include device/qcom/sepolicy_vndr/SEPolicy.mk
+BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/system_ext/public
+SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/system_ext/private
+
 # Security patch
 BOOT_SECURITY_PATCH := 2026-09-01
 VENDOR_SECURITY_PATCH := 2026-09-01
@@ -187,6 +199,14 @@ BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := $(PIANO_AVB_KEY_PATH)
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := 1788220800
 BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
+
+# VINTF
+# The stock HALs ship their own manifest fragments; the device manifest only
+# adds services whose fragments are not shipped.
+DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/configs/vintf/manifest.xml
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
+    $(DEVICE_PATH)/configs/vintf/compatibility_matrix.xml \
+    hardware/qcom-caf/common/vendor_framework_compatibility_matrix.xml
 
 # WiFi
 BOARD_WLAN_DEVICE := qcwcn
