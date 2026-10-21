@@ -44,6 +44,28 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 # Characteristics
 PRODUCT_CHARACTERISTICS := tablet
 
+# Init
+PRODUCT_PACKAGES += \
+    fstab.qcom \
+    init.piano.audio.rc \
+    init.piano.rc \
+    init.piano.wallpaper.rc \
+    init.qcom.rc \
+    init.recovery.qcom.rc \
+    init.target.rc \
+    init.xiaomi.rc \
+    piano-body-color.sh \
+    ueventd.qcom.rc
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/etc/fstab.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
+
+# Stock init and module-loading scripts use the vendor shell and tools.
+PRODUCT_PACKAGES += \
+    sh_vendor \
+    toolbox_vendor \
+    toybox_vendor
+
 # Shipping API level
 PRODUCT_SHIPPING_API_LEVEL := 36
 
