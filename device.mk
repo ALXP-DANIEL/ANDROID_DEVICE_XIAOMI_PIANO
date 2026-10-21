@@ -451,3 +451,10 @@ PRODUCT_PACKAGES += \
 
 # Vendor
 $(call inherit-product, vendor/xiaomi/piano/piano-vendor.mk)
+
+# Optional trees, included when synced
+$(call inherit-product-if-exists, device/xiaomi/piano-alxp-parts/alxpparts.mk)
+$(call inherit-product-if-exists, device/xiaomi/piano-patches/patches.mk)
+$(call inherit-product-if-exists, device/xiaomi/piano-xiaomi-parts/pianoparts.mk)
+$(call inherit-product-if-exists, vendor/xiaomi/piano-xiaomi-camera/miuicamera.mk)
+$(call inherit-product-if-exists, vendor/xiaomi/piano-xiaomi-notes/notes.mk)
