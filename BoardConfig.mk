@@ -133,6 +133,13 @@ TARGET_USERIMAGES_USE_F2FS := true
 BOARD_USES_QCOM_HARDWARE := true
 TARGET_BOARD_PLATFORM := sun
 
+# Properties
+TARGET_ODM_PROP += $(DEVICE_PATH)/properties/odm.prop
+TARGET_PRODUCT_PROP += $(DEVICE_PATH)/properties/product.prop
+TARGET_SYSTEM_PROP += $(DEVICE_PATH)/properties/system.prop
+TARGET_SYSTEM_EXT_PROP += $(DEVICE_PATH)/properties/system_ext.prop
+TARGET_VENDOR_PROP += $(DEVICE_PATH)/properties/vendor.prop
+
 # Recovery
 # The recovery partition is a kernel-less boot image.
 BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE := true
