@@ -1,0 +1,4 @@
+service vendor.livedisplay-hal-piano /vendor/bin/hw/vendor.lineage.livedisplay-service.piano
+    class hal
+    user system
+    group system
