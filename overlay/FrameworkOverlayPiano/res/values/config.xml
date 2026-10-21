@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <bool name="config_showNavigationBar">true</bool>
+
+    <bool name="config_voice_capable">false</bool>
+
+    <item name="config_screenBrightnessDimFloat" format="float" type="dimen">0.00170982</item>
+
+    <item name="config_screenBrightnessSettingMinimumFloat" format="float" type="dimen">0.00170982</item>
+
+    <item name="config_screenBrightnessSettingMaximumFloat" format="float" type="dimen">1.0</item>
+
+    <item name="config_screenBrightnessSettingDefaultFloat" format="float" type="dimen">0.0747435</item>
+
+    <!-- Tablet: let the lock screen follow the device orientation. -->
+    <bool name="config_enableLockScreenRotation">true</bool>
+
+    <!-- Keep the currently displayed angle when rotation is locked from
+         Quick Settings, Android Settings or LineageParts. The platform default
+         otherwise snaps to the tablet's natural (landscape) orientation. Do
+         not change config_allowAllRotations: that affects auto-rotate modes. -->
+    <bool name="config_useCurrentRotationOnRotationLockChange">true</bool>
+
+    <!-- The smart cover's hall sensor reports SW_LID: sleep when it closes,
+         wake when it opens. -->
+    <bool name="config_lidControlsSleep">true</bool>
+
+    <!-- Stock piano auto-brightness curve: ambient lux thresholds and the
+         backlight level (0-255) used above each of them. -->
+    <integer-array name="config_autoBrightnessLevels">
+        <item>1</item><item>2</item><item>5</item><item>9</item>
+        <item>13</item><item>17</item><item>21</item><item>26</item>
+        <item>30</item><item>40</item><item>83</item><item>104</item>
+        <item>200</item><item>400</item><item>500</item><item>600</item>
+        <item>700</item><item>800</item><item>1000</item><item>1200</item>
+        <item>1500</item><item>1800</item><item>2000</item><item>2165</item>
+        <item>2680</item><item>3000</item><item>3540</item><item>4000</item>
+    </integer-array>
+
+    <integer-array name="config_autoBrightnessLcdBacklightValues">
+        <item>4</item><item>4</item><item>4</item><item>8</item>
+        <item>15</item><item>20</item><item>26</item><item>35</item>
+        <item>45</item><item>46</item><item>46</item><item>46</item>
+        <item>60</item><item>60</item><item>60</item><item>64</item>
+        <item>66</item><item>70</item><item>73</item><item>80</item>
+        <item>88</item><item>110</item><item>130</item><item>135</item>
+        <item>145</item><item>180</item><item>200</item><item>240</item>
+        <item>255</item>
+    </integer-array>
+
+    <fraction name="config_autoBrightnessAdjustmentMaxGamma">300%</fraction>
+
+    <integer name="config_brightness_ramp_rate_fast">180</integer>
+
+    <integer name="config_brightness_ramp_rate_slow">60</integer>
+
+    <!-- Stock panel corner radius. -->
+    <dimen name="rounded_corner_radius">20dp</dimen>
+
+    <dimen name="rounded_corner_content_padding">0dp</dimen>
+
+    <!-- Stock: shut down when the battery reaches 58 C. -->
+    <integer name="config_shutdownBatteryTemperature">580</integer>
+
+    <!-- The stock composer has no Android color modes; the color scheme is set
+         through DisplayFeature on the Xiaomi settings page, as on HyperOS. -->
+    <integer-array name="config_availableColorModes" />
+
+    <!-- Global stock: allow light and deep idle (Doze). -->
+    <bool name="config_enableAutoPowerModes">true</bool>
+
+    <!-- Global stock: offer the microphone privacy toggle. -->
+    <bool name="config_supportsMicToggle">true</bool>
+
+    <!-- Android desktop windowing (floating, resizable app windows), the
+         counterpart of the HyperOS workstation mode. This is the documented
+         OEM configuration: the tablet screen can host desktops, and apps
+         stay full screen until the user enters the desktop from the app
+         header. -->
+    <bool name="config_isDesktopModeSupported">true</bool>
+
+    <bool name="config_canInternalDisplayHostDesktops">true</bool>
+
+    <bool name="config_enterDesktopByDefaultOnFreeformDisplay">false</bool>
+
+    <!-- MiuiCamera finishes itself in a multi-window or freeform window, so
+         keep it full screen in desktop mode, as HyperOS does. -->
+    <string-array name="config_desktopExemptPackages" translatable="false">
+        <item>com.android.camera</item>
+    </string-array>
+
+    <!-- Use the RGB status LED for notifications. -->
+    <bool name="config_intrusiveNotificationLed">true</bool>
+
+    <!-- Flag indicating whether we should enable the automatic brightness.
+         Software implementation will be used if config_hardware_auto_brightness_available is not set -->
+    <bool name="config_automatic_brightness_available">true</bool>
+
+    <!-- Whether UI for multi user should be shown -->
+    <bool name="config_enableMultiUserUI">true</bool>
+
+    <!-- Boolean indicating whether the HWC setColorTransform function can be performed efficiently
+         in hardware. -->
+    <bool name="config_setColorTransformAccelerated">true</bool>
+
+    <!-- Whether the Unprocessed audio source supports the required frequency range and level -->
+    <bool name="config_supportAudioSourceUnprocessed">true</bool>
+
+    <!-- If this is true, the screen will come on when you unplug usb/power/whatever. -->
+    <bool name="config_unplugTurnsOnScreen">true</bool>
+
+    <!-- Boolean indicating if restoring network selection should be skipped -->
+    <!-- The default refresh rate for a given device. Change this value to set a higher default
+         refresh rate. If the hardware composer on the device supports display modes with a higher
+         refresh rate than the default value specified here, the framework may use those higher
+         refresh rate modes if an app chooses one by setting preferredDisplayModeId or calling
+         setFrameRate().
+         If a non-zero value is set for config_defaultPeakRefreshRate, then
+         config_defaultRefreshRate may be set to 0, in which case the value set for
+         config_defaultPeakRefreshRate will act as the default frame rate. -->
+    <!-- Stock odm overlay value: apps may render up to 144 Hz unless the
+         user picks a lower peak refresh rate. -->
+    <integer name="config_defaultRefreshRate">144</integer>
+
+    <!-- The default peak refresh rate for a given device. Change this value if you want to prevent
+         the framework from using higher refresh rates, even if display modes with higher refresh
+         rates are available from hardware composer. Only has an effect if the value is
+         non-zero. -->
+    <integer name="config_defaultPeakRefreshRate">120</integer>
+
+    <!--  Maximum number of supported users -->
+    <integer name="config_multiuserMaximumUsers">4</integer>
+
+    <!-- Screen brightness used to dim the screen while dozing in a very low power state.
+         May be less than the minimum allowed brightness setting
+         that can be set by the user. -->
+    <integer name="config_screenBrightnessDoze">17</integer>
+
+    <!-- ComponentName of a dream to show whenever the system would otherwise have
+         gone to sleep.  When the PowerManager is asked to go to sleep, it will instead
+         try to start this dream if possible.  The dream should typically call startDozing()
+         to put the display into a low power state and allow the application processor
+         to be suspended.  When the dream ends, the system will go to sleep as usual.
+         Specify the component name or an empty string if none.
+
+         Note that doze dreams are not subject to the same start conditions as ordinary dreams.
+         Doze dreams will run whenever the power manager is in a dozing state. -->
+    <string name="config_dozeComponent">com.android.systemui/com.android.systemui.doze.DozeService</string>
+
+    <!-- Control whether the always on display mode is available. This should only be enabled on
+         devices where the display has been tuned to be power efficient in DOZE and/or DOZE_SUSPEND
+         states. -->
+    <bool name="config_dozeAlwaysOnDisplayAvailable">false</bool>
+
+    <!-- Control whether the always on display mode is enabled by default. This value will be used
+         during initialization when the setting is still null. -->
+    <bool name="config_dozeAlwaysOnEnabled">false</bool>
+
+    <!-- Power Management: Specifies whether to decouple the auto-suspend state of the
+         device from the display on/off state.
+
+         When false, autosuspend_disable() will be called before the display is turned on
+         and autosuspend_enable() will be called after the display is turned off.
+         This mode provides best compatibility for devices using legacy power management
+         features such as early suspend / late resume.
+
+         When true, autosuspend_display() and autosuspend_enable() will be called
+         independently of whether the display is being turned on or off.  This mode
+         enables the power manager to suspend the application processor while the
+         display is on.
+
+         This resource should be set to "true" when a doze component has been specified
+         to maximize power savings but not all devices support it.
+
+         Refer to autosuspend.h for details.
+    -->
+    <bool name="config_powerDecoupleAutoSuspendModeFromDisplay">true</bool>
+
+    <!-- When true use the linux /dev/input/event subsystem to detect the switch changes
+         on the headphone/microphone jack. When false use the older uevent framework. -->
+    <bool name="config_useDevInputEventForAudioJack">true</bool>
+
+    <!-- Is the device capable of hot swapping an UICC Card -->
+    <bool name="config_hotswapCapable">true</bool>
+
+    <!-- Whether WiFi display is supported by this device.
+         There are many prerequisites for this feature to work correctly.
+         Here are a few of them:
+         * The WiFi radio must support WiFi P2P.
+         * The WiFi radio must support concurrent connections to the WiFi display and
+           to an access point.
+         * The Audio Flinger audio_policy.conf file must specify a rule for the "r_submix"
+           remote submix module.  This module is used to record and stream system
+           audio output to the WiFi display encoder in the media server.
+         * The remote submix module "audio.r_submix.default" must be installed on the device.
+         * The device must be provisioned with HDCP keys (for protected content).
+    -->
+    <bool name="config_enableWifiDisplay">true</bool>
+
+    <!-- Whether device supports double tap to wake -->
+    <bool name="config_supportDoubleTapWake">true</bool>
+
+    <!-- Doze: should the TYPE_PICK_UP_GESTURE sensor be used as a pulse signal. -->
+    <bool name="config_dozePulsePickup">true</bool>
+
+    <!-- The default intensity level for haptic feedback. See
+         Settings.System.HAPTIC_FEEDBACK_INTENSITY more details on the constant values and
+         meanings. -->
+    <integer name="config_defaultHapticFeedbackIntensity">3</integer>
+
+    <!-- The default intensity level for notification vibrations. See
+         Settings.System.NOTIFICATION_VIBRATION_INTENSITY more details on the constant values and
+         meanings. -->
+    <integer name="config_defaultNotificationVibrationIntensity">3</integer>
+
+    <!-- The default intensity level for notification vibrations. See
+         Settings.System.RING_VIBRATION_INTENSITY more details on the constant values and
+         meanings. -->
+    <integer name="config_defaultRingVibrationIntensity">3</integer>
+</resources>
