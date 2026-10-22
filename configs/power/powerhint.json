@@ -1,0 +1,28 @@
+{
+    "Nodes": [
+        {
+            "Name": "CpuMinFreq",
+            "Path": "/sys/kernel/msm_performance/parameters/cpu_min_freq",
+            "Values": [
+                "0:2745000 6:4089000",
+                "0:0 6:0"
+            ],
+            "DefaultIndex": 1,
+            "ResetOnInit": true
+        }
+    ],
+    "Actions": [
+        {
+            "PowerHint": "INTERACTION",
+            "Node": "CpuMinFreq",
+            "Value": "0:2745000 6:4089000",
+            "Duration": 400
+        },
+        {
+            "PowerHint": "LAUNCH",
+            "Node": "CpuMinFreq",
+            "Value": "0:2745000 6:4089000",
+            "Duration": 1500
+        }
+    ]
+}

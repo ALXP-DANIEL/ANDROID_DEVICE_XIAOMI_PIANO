@@ -23,3 +23,8 @@ service piano-body-color /vendor/bin/piano-body-color.sh
     group system
     disabled
     oneshot
+
+# libperfmgr CPU QoS requests (policy0: 0-5, policy6: 6-7).
+on post-fs-data
+    chown system system /sys/kernel/msm_performance/parameters/cpu_min_freq
+    chmod 0660 /sys/kernel/msm_performance/parameters/cpu_min_freq

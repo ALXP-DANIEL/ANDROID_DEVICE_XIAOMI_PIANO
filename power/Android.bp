@@ -1,0 +1,12 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_library_static {
+    name: "libperfmgr-ext-piano",
+    defaults: ["android.hardware.power-ndk_shared"],
+    vendor: true,
+    srcs: ["PowerModeExtension.cpp"],
+    shared_libs: ["libbase"],
+}
