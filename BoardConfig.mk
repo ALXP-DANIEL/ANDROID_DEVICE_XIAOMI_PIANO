@@ -75,13 +75,14 @@ BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PATH)/dtbo.img
 BOARD_KERNEL_CMDLINE := \
     video=vfb:640x400,bpp=32,memsize=3072000 \
     erofs.reserved_pages=64 \
-    lz4asm.support=1
+    lz4asm.support=1 \
+    printk.devkmsg=on
 
 BOARD_BOOTCONFIG := \
     androidboot.hardware=qcom \
     androidboot.memcg=1 \
     androidboot.usbcontroller=a600000.dwc3 \
-    androidboot.load_modules_parallel=true \
+    androidboot.load_modules_parallel=false \
     androidboot.hypervisor.protected_vm.supported=0 \
     androidboot.vendor.qspa=true \
     androidboot.init_fatal_reboot_target=recovery

@@ -84,6 +84,7 @@ def serial_vendor_modprobe(ctx, file, file_path, *args, **kwargs):
     start = text.index('\tfirst_module=')
     end = text.index('\n\tsetprop vendor.all.modules.ready', start)
     text = text[:start] + """	# Attempt every module, keeping failures visible and ordered.
+	echo "piano-modprobe: start ${dir}" >&2
 	for module in ${load_modules}; do
 		if ! ${MODPROBE} -b -d ${dir} -a ${module}; then
 			echo "piano-modprobe: failed ${dir}/${module}" >&2
