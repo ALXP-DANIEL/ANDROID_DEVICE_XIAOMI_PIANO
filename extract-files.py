@@ -76,7 +76,25 @@ lib_fixups: lib_fixups_user_type = {
 }
 
 
+def serial_vendor_modprobe(ctx, file, file_path, *args, **kwargs):
+    path = Path(file_path)
+    text = path.read_text()
+    if 'piano-modprobe: failed' in text:
+        return
+    start = text.index('\tfirst_module=')
+    end = text.index('\n\tsetprop vendor.all.modules.ready', start)
+    text = text[:start] + """	# Attempt every module, keeping failures visible and ordered.
+	for module in ${load_modules}; do
+		if ! ${MODPROBE} -b -d ${dir} -a ${module}; then
+			echo "piano-modprobe: failed ${dir}/${module}" >&2
+		fi
+	done
+""" + text[end:]
+    path.write_text(text)
+
 blob_fixups: blob_fixups_user_type = {
+    'vendor/bin/vendor_modprobe.sh': blob_fixup()
+        .call(serial_vendor_modprobe, need_tmp_dir=False),
     # Persist is mounted during fs; QSEE must not start in the earlier init phase.
     'vendor/etc/init/qseecomd.rc': blob_fixup()
         .regex_replace(r'on init\n    start vendor.qseecomd',
